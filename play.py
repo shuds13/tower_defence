@@ -4,7 +4,7 @@ import pygame
 import sys
 from enemy import Enemy
 from tower import Tower, tower_types
-from placements import is_valid_position
+import placements as place
 import navigation as nav
 import levels as lev
 
@@ -83,7 +83,7 @@ while running:
             if new_type is not None:
                 current_tower_type = tower_types[new_type]
             # Check if the position is valid for tower placement
-            elif is_valid_position(mouse_pos, path, towers):
+            elif place.is_valid_position(mouse_pos, path, towers):
                 if player_money >= current_tower_type.price:
                     #towers.append(Tower(position=mouse_pos))
                     towers.append(current_tower_type(position=mouse_pos))
@@ -195,6 +195,19 @@ while running:
     for tower in towers:
         if tower.is_attacking and tower.target:
             pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)  # should be in tower
+
+    if current_tower_type is not None:
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        # This doesn't work as well as I want - not sure if to use
+        use_ghost_image = True
+
+        if use_ghost_image:
+            ghost_tower_image = place.create_ghost_image(current_tower_type.image, alpha=200)
+        else:
+            ghost_tower_image = current_tower_type.image
+        ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
+        window.blit(ghost_tower_image, ghost_tower_rect.topleft)
 
     if game_over:  # Game over condition
         #game_over = True

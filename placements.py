@@ -50,3 +50,17 @@ def is_valid_position(pos, path, towers):
             return False
 
     return True
+
+# This works on fighter image but not burger - also makes transparent background black
+def create_ghost_image(original_image, alpha=128):
+    """Create a semi-transparent version of the given image."""
+    # Copy the original image
+    ghost_image = original_image.copy()
+
+    # Modify the alpha value of every pixel
+    for x in range(ghost_image.get_width()):
+        for y in range(ghost_image.get_height()):
+            color = ghost_image.get_at((x, y))
+            ghost_image.set_at((x, y), (color.r, color.g, color.b, alpha))
+
+    return ghost_image
