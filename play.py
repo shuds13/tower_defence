@@ -73,6 +73,7 @@ enemy_spawn_interval = 40  # Number of frames to wait before spawning a new enem
 enemies = []  # List to store enemies
 towers = []
 
+path_thickness = 15
 max_enemies = 20
 spawned_enemies = 0
 tower_cost = 50
@@ -198,7 +199,7 @@ while running:
 
     # Draw the path
     for i in range(len(path) - 1):
-        pygame.draw.line(window, (255, 255, 255), path[i], path[i+1], 2)
+        pygame.draw.line(window, (255, 255, 255), path[i], path[i+1], path_thickness)
 
     # Draw enemies
     for enemy in enemies:
@@ -207,7 +208,7 @@ while running:
     # Draw tower attacks
     for tower in towers:
         if tower.is_attacking and tower.target:
-            pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 2)
+            pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)
 
     if game_over:  # Game over condition
         #game_over = True
