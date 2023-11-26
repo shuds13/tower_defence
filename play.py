@@ -13,7 +13,8 @@ initial_money = 100
 initial_level = 1
 
 def reset_game():
-    global player_money, level_num, level, towers, enemies, lives, running, enemy_spawn_timer, game_over
+    global player_money, level_num, level, towers, enemies, lives
+    global running, enemy_spawn_timer, game_over, active, current_tower_type
     player_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
@@ -23,14 +24,18 @@ def reset_game():
     running = True
     enemy_spawn_timer = 0
     game_over = False
+    active = False
+    current_tower_type = None
     #spawned_enemies = 0
     #enemy_spawn_interval = 40
 
 def reset_level():
-    global enemies, running, spawned_enemies, enemy_spawn_timer
+    global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type
     enemies = []
     running = True
     enemy_spawn_timer = 0
+    active = False
+    current_tower_type = None
     #spawned_enemies = 0
 
 # Initialize Pygame
@@ -50,11 +55,14 @@ side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_w
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
 path_thickness = 15
 
-current_tower_type = tower_types[0]  # Will be selected
+play_again_button = None  # To store the button rectangle
+start_level_button = None  # To store the button rectangle
+
+#current_tower_type = tower_types[0]  # Will be selected
+#current_tower_type = None # Will be selected
 alert_message = ""
 alert_timer = 0
 restart_timer = 12000
-play_again_button = None  # To store the button rectangle
 round_bonus = 20
 
 reset_game()
@@ -79,21 +87,27 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
+            if not active and start_level_button:
+                if nav.is_click_inside_rect(pygame.mouse.get_pos(), start_level_button):
+                    active = True
+                    start_level_button = None
+                    continue
             new_type = select_tower_type(tower_types)
             if new_type is not None:
                 current_tower_type = tower_types[new_type]
             # Check if the position is valid for tower placement
-            elif place.is_valid_position(mouse_pos, path, towers):
-                if player_money >= current_tower_type.price:
-                    #towers.append(Tower(position=mouse_pos))
-                    towers.append(current_tower_type(position=mouse_pos))
-                    player_money -= current_tower_type.price
+            elif current_tower_type is not None:
+                if place.is_valid_position(mouse_pos, path, towers):
+                    if player_money >= current_tower_type.price:
+                        #towers.append(Tower(position=mouse_pos))
+                        towers.append(current_tower_type(position=mouse_pos))
+                        player_money -= current_tower_type.price
+                    else:
+                        alert_message = "Not enough money!"
+                        alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
                 else:
-                    alert_message = "Not enough money!"
+                    alert_message = "Cant place here"
                     alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
-            else:
-                alert_message = "Cant place here"
-                alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
 
 
     if game_over:
@@ -103,49 +117,50 @@ while running:
             running = False
         continue
 
-    # Spawn a new enemy at intervals if the max number has not been reached
-    if not level.done():
-        enemy_spawn_timer += 1
-        if enemy_spawn_timer >= level.interval():
-            enemies.append(Enemy(path))  # Type will be determined also by level
-            enemy_spawn_timer = 0
-            level.update()
+    if active:
+        # Spawn a new enemy at intervals if the max number has not been reached
+        if not level.done():
+            enemy_spawn_timer += 1
+            if enemy_spawn_timer >= level.interval():
+                enemies.append(Enemy(path))  # Type will be determined also by level
+                enemy_spawn_timer = 0
+                level.update()
 
-    # Update positions of all enemies
-    for enemy in enemies:
-        enemy.move()
+        # Update positions of all enemies
+        for enemy in enemies:
+            enemy.move()
 
-        # Check if the enemy has reached the end of the path
-        if enemy.reached_end:
-            lives -= 1  # Decrease the lives
+            # Check if the enemy has reached the end of the path
+            if enemy.reached_end:
+                lives -= 1  # Decrease the lives
 
-    # Check win condition
-    if not enemies and lives > 0 and level.done():
-        font = pygame.font.SysFont(None, 72)
-        win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
-        text_rect = win_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2))
-        window.blit(win_text, text_rect)
-        pygame.display.flip()  # Update the full display Surface to the screen
-        player_money += round_bonus
+        # Check win condition
+        if not enemies and lives > 0 and level.done():
+            font = pygame.font.SysFont(None, 72)
+            win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
+            text_rect = win_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2))
+            window.blit(win_text, text_rect)
+            pygame.display.flip()  # Update the full display Surface to the screen
+            player_money += round_bonus
 
-        # Pause for a few seconds to display the win message
-        pygame.time.wait(2000)
-        if level_num == lev.max_level:
-            #print(f"{lev.max_level=} {level_num=}")
+            # Pause for a few seconds to display the win message
+            pygame.time.wait(2000)
+            if level_num == lev.max_level:
+                #print(f"{lev.max_level=} {level_num=}")
+                game_over = True
+            else:
+                level_num += 1
+                level = lev.levels[level_num]()
+                #print(f"{level.level_id=}")
+                reset_level()
+                continue
+
+        if lives <= 0:
+            #running = False  # Stop the game if the lives is 0 or less
             game_over = True
-        else:
-            level_num += 1
-            level = lev.levels[level_num]()
-            #print(f"{level.level_id=}")
-            reset_level()
-            continue
 
-    if lives <= 0:
-        #running = False  # Stop the game if the lives is 0 or less
-        game_over = True
-
-    # Remove enemies that have reached the end of the path
-    enemies = [enemy for enemy in enemies if not enemy.reached_end]
+        # Remove enemies that have reached the end of the path
+        enemies = [enemy for enemy in enemies if not enemy.reached_end]
 
 
     # Render game state ------------------------------------------------------
@@ -208,8 +223,11 @@ while running:
             ghost_tower_image = place.create_ghost_image(current_tower_type_mod, alpha=128)
         else:
             ghost_tower_image = current_tower_type.image
-        ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
-        window.blit(ghost_tower_image, ghost_tower_rect.topleft)
+
+        # Show ghost image if not in side panel
+        if mouse_x < 675:
+            ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
+            window.blit(ghost_tower_image, ghost_tower_rect.topleft)
 
     if game_over:  # Game over condition
         #game_over = True
@@ -220,6 +238,9 @@ while running:
 
         # Draw the play again button
         play_again_button = nav.play_button(window, window_size)
+    else:
+        if not active:
+            start_level_button = nav.start_level_button(window, window_size)
 
     pygame.display.flip()  # Update the full display Surface to the screen
     clock.tick(60)  # Maintain 60 frames per second
