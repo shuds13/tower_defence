@@ -31,19 +31,22 @@ class Tower:
         return distance <= self.range
 
     def attack(self):
+        score = 0
         if self.target and self.attack_timer <= 0:
-            self.target.take_damage(self.damage)
+            score = self.target.take_damage(self.damage)
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
+        return score
 
     def update(self, enemies):
         self.attack_timer -= 1
         #if not self.target or not self.in_range(self.target):
             #self.find_target(enemies)
         self.find_target(enemies)
-        self.attack()
+        score = self.attack()
+        return score
 
     def get_target_angle(self):
         if not self.target:

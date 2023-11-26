@@ -11,6 +11,7 @@ class Enemy:
         self.speed = 2
         self.reached_end = False  # Indicates if the enemy has reached the end of the path
         self.health = 1
+        self.value = 1
 
     def move(self):
         # Move towards the next point in the path
@@ -35,3 +36,6 @@ class Enemy:
         snd_blop.play()
         if self.health <= 0:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
+        if self.reached_end:
+            return self.value
+        return 0

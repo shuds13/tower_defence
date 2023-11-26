@@ -49,7 +49,7 @@ alert_message = ""
 alert_timer = 0
 restart_timer = 12000
 play_again_button = None  # To store the button rectangle
-money_per_kill = 1
+#money_per_kill = 1
 round_bonus = 20
 
 reset_game()
@@ -136,6 +136,21 @@ while running:
     # Render game state ------------------------------------------------------
     window.fill((0, 0, 0))  # Clear screen
 
+    if alert_timer > 0:
+        alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
+        window.blit(alert_text, (500, 10))
+        alert_timer -= 1
+
+    for tower in towers:
+        rotated_image, new_rect = tower.rotate()
+        window.blit(rotated_image, new_rect.topleft)
+        player_money += tower.update(enemies)
+
+        pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
+        pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # Range
+
+    enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
+
     font = pygame.font.SysFont(None, 36)
     lives_text = font.render(f"Lives: {lives}", True, (255, 255, 255))
     window.blit(lives_text, (10, 10))
@@ -148,27 +163,6 @@ while running:
     font = pygame.font.SysFont(None, 36)
     lives_text = font.render(f"Level: {level_num}", True, (255, 255, 255))
     window.blit(lives_text, (200, 10))
-
-
-    if alert_timer > 0:
-        alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
-        window.blit(alert_text, (500, 10))
-        alert_timer -= 1
-
-    for tower in towers:
-        tower.update(enemies)
-        rotated_image, new_rect = tower.rotate()
-        window.blit(rotated_image, new_rect.topleft)
-
-        pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
-        pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # Range
-
-        ## Check if the enemy is dead (health <= 0) and reward the player
-        for enemy in enemies:
-            if enemy.health <= 0:
-                player_money += money_per_kill
-
-    enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
 
     # Draw the path
     for i in range(len(path) - 1):
