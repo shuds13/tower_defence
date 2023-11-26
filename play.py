@@ -4,28 +4,32 @@ from enemy import Enemy
 from tower import Tower, Fighter
 from placements import is_valid_position
 import navigation as nav
+import levels as lev
 
 initial_lives = 10
 initial_money = 100
 initial_level = 1
-max_level = 2
 
 def reset_game():
-    global player_money, towers, enemies, lives, running, spawned_enemies, level, enemy_spawn_interval
+    global player_money, level_num, level, towers, enemies, lives, running, enemy_spawn_timer, game_over
     player_money = initial_money
-    level = initial_level
+    level_num = initial_level
+    level = lev.levels[level_num]()
     towers = []
     enemies = []
     lives = initial_lives
     running = True
-    spawned_enemies = 0
-    enemy_spawn_interval = 40
+    enemy_spawn_timer = 0
+    game_over = False
+    #spawned_enemies = 0
+    #enemy_spawn_interval = 40
 
 def reset_level():
-    global enemies, running, spawned_enemies
+    global enemies, running, spawned_enemies, enemy_spawn_timer
     enemies = []
     running = True
-    spawned_enemies = 0
+    enemy_spawn_timer = 0
+    #spawned_enemies = 0
 
 # Initialize Pygame
 pygame.init()
@@ -36,56 +40,35 @@ window = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Tower Defense Game")
 clock = pygame.time.Clock()
 
-# Game variables
-running = True
-
-# Define a simple path as a list of (x, y) tuples
+# Define a simple path as a list of (x, y) tuples - will be under map.py
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
-
-# Enemy spawning variables
-enemy_spawn_timer = 0
-enemy_spawn_interval = 40  # Number of frames to wait before spawning a new enemy
-enemies = []  # List to store enemies
-towers = []
-
 path_thickness = 15
-max_enemies = [20, 30]
-
-spawned_enemies = 0
 
 current_tower_type = Fighter  # Will be selected
-
 alert_message = ""
 alert_timer = 0
 restart_timer = 12000
-
-game_over = False  # Add a flag to indicate game over state
 play_again_button = None  # To store the button rectangle
-
-lives = initial_lives
-player_money = initial_money
-level = initial_level
 money_per_kill = 1
 round_bonus = 20
 
+reset_game()
+
 # Game loop
 while running:
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif game_over and event.type == pygame.MOUSEBUTTONDOWN:
             if play_again_button and nav.is_click_inside_rect(pygame.mouse.get_pos(), play_again_button):
                 reset_game()
-                game_over = False
+                #game_over = False
             else:
                 running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
             # Check if the position is valid for tower placement
-
-            #TODO need to work out valid position.
             if is_valid_position(mouse_pos, path, towers):
                 if player_money >= current_tower_type.price:
                     #towers.append(Tower(position=mouse_pos))
@@ -106,36 +89,23 @@ while running:
         continue
 
     # Spawn a new enemy at intervals if the max number has not been reached
-    if spawned_enemies < max_enemies[level-1]:
+    if not level.done():
         enemy_spawn_timer += 1
-        if enemy_spawn_timer >= enemy_spawn_interval:
-            enemies.append(Enemy(path))
+        if enemy_spawn_timer >= level.interval():
+            enemies.append(Enemy(path))  # Type will be determined also by level
             enemy_spawn_timer = 0
-            spawned_enemies += 1  # Increment the counter
-
-            if level == 1:
-                if spawned_enemies >= 10:
-                    enemy_spawn_interval = 15
-            elif level == 2:
-                if spawned_enemies >= 20:
-                    enemy_spawn_interval = 8
+            level.update()
 
     # Update positions of all enemies
-    #print(f"{enemies=}")
     for enemy in enemies:
         enemy.move()
-
-        ## Check if the enemy is dead (health <= 0) and reward the player
-        #if enemy.health <= 0:
-            #player_money += money_per_kill
 
         # Check if the enemy has reached the end of the path
         if enemy.reached_end:
             lives -= 1  # Decrease the lives
-            #enemy = Enemy(path)  # Reset the enemy
 
     # Check win condition
-    if not enemies and lives > 0 and spawned_enemies >= max_enemies[level-1]:
+    if not enemies and lives > 0 and level.done():
         font = pygame.font.SysFont(None, 72)
         win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
         text_rect = win_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2))
@@ -145,15 +115,14 @@ while running:
 
         # Pause for a few seconds to display the win message
         pygame.time.wait(2000)
-        #running = False
-        if level == max_level:
+        if level_num == lev.max_level:
+            print(f"{lev.max_level=} {level_num=}")
             game_over = True
         else:
-            level += 1
+            level_num += 1
+            level = lev.levels[level_num]()
+            print(f"{level.level_id=}")
             reset_level()
-            #TODO generalise this
-            if level == 2:
-                enemy_spawn_interval = 30
             continue
 
     if lives <= 0:
@@ -177,7 +146,7 @@ while running:
     window.blit(money_text, (10, 50))  # Adjust position as needed
 
     font = pygame.font.SysFont(None, 36)
-    lives_text = font.render(f"Level: {level}", True, (255, 255, 255))
+    lives_text = font.render(f"Level: {level_num}", True, (255, 255, 255))
     window.blit(lives_text, (200, 10))
 
 
