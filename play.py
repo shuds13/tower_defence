@@ -125,7 +125,8 @@ play_again_button = None  # To store the button rectangle
 
 lives = initial_lives
 player_money = initial_money
-
+money_per_kill = 1
+round_bonus = 20
 
 # Game loop
 while running:
@@ -174,8 +175,13 @@ while running:
                 enemy_spawn_interval = 15
 
     # Update positions of all enemies
+    #print(f"{enemies=}")
     for enemy in enemies:
         enemy.move()
+
+        ## Check if the enemy is dead (health <= 0) and reward the player
+        #if enemy.health <= 0:
+            #player_money += money_per_kill
 
         # Check if the enemy has reached the end of the path
         if enemy.reached_end:
@@ -189,6 +195,7 @@ while running:
         text_rect = win_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2))
         window.blit(win_text, text_rect)
         pygame.display.flip()  # Update the full display Surface to the screen
+        player_money += round_bonus
 
         # Pause for a few seconds to display the win message
         pygame.time.wait(2000)
@@ -235,6 +242,11 @@ while running:
 
         pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
         pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # Range
+
+        ## Check if the enemy is dead (health <= 0) and reward the player
+        for enemy in enemies:
+            if enemy.health <= 0:
+                player_money += money_per_kill
 
     enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
 
