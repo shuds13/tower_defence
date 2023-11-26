@@ -198,7 +198,8 @@ while running:
 
 
     # Render game state ------------------------------------------------------
-    window.fill((0, 0, 0))  # Clear screen
+    #window.fill((0, 0, 0))  # Clear screen
+    window.fill((50, 25, 0))  # Clear screen
 
     tower_option_rects = draw_side_panel(window, side_panel_rect)
     #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_image)
