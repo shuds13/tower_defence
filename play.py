@@ -172,7 +172,7 @@ while running:
     if not enemies and lives > 0 and level.done():
         font = pygame.font.SysFont(None, 72)
         win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
-        text_rect = win_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2))
+        text_rect = win_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2))
         window.blit(win_text, text_rect)
         pygame.display.flip()  # Update the full display Surface to the screen
         player_money += round_bonus
@@ -249,7 +249,7 @@ while running:
         #game_over = True
         font = pygame.font.SysFont(None, 72)
         game_over_text = font.render("Game Over", True, (255, 0, 0))
-        text_rect = game_over_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2 - 50))
+        text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
         window.blit(game_over_text, text_rect)
 
         # Draw the play again button
