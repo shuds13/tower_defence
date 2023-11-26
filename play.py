@@ -35,7 +35,7 @@ def reset_level():
 pygame.init()
 
 # Set up the display
-window_size = (800, 600)
+window_size = (900, 600)
 window = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Tower Defense Game")
 clock = pygame.time.Clock()
@@ -54,7 +54,7 @@ round_bonus = 20
 
 reset_game()
 
-side_panel_width = 100
+side_panel_width = 200
 side_panel_height = window_size[1]  # same as the game window height
 side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
 
@@ -65,24 +65,47 @@ tower_image = pygame.transform.scale(tower_image, (50, 50))
 tower_image2 = pygame.image.load('burger.png')  # Load your tower image
 tower_image2 = pygame.transform.scale(tower_image2, (50, 50))
 
+#tmp - use tower prices from class
+tower_type_prices = {
+    'Type1': 50,  # Price for tower type 1
+    'Type2': 75   # Price for tower type 2
+    # Add more tower types and their prices as needed
+}
+
 # tmp here - put in placements or navigation
 def draw_side_panel(surface, panel_rect):
     # Draw the background of the side panel
     pygame.draw.rect(surface, (200, 200, 200), panel_rect)  # Light grey background
+    font = pygame.font.SysFont(None, 24)
 
     # Draw tower selection options (simple rectangles or icons)
-    tower_option_rect_1 = pygame.Rect(panel_rect.x + 10, panel_rect.y + 10, 50, 50)  # Example
+    tower_option_rect_1 = pygame.Rect(panel_rect.x + 10, panel_rect.y + 10, 180, 50)  # Example
     pygame.draw.rect(surface, (100, 100, 100), tower_option_rect_1)  # Dark grey option box
+
+    image_rect_1 = tower_image.get_rect(center=(tower_option_rect_1.centerx - 40, tower_option_rect_1.centery))
+    surface.blit(tower_image, image_rect_1.topleft)
+    price_text_1 = font.render(f"${tower_type_prices['Type1']}", True, (0, 0, 0))
+    surface.blit(price_text_1, (image_rect_1.right + 5, tower_option_rect_1.centery - 10))
+
+
 
     # Add more tower options as needed...
     # Draw the tower image on this rectangle
-    image_rect = tower_image.get_rect(center=tower_option_rect_1.center)
-    surface.blit(tower_image, image_rect.topleft)
+    #image_rect = tower_image.get_rect(center=tower_option_rect_1.center)
+    #surface.blit(tower_image, image_rect.topleft)
 
-    tower_option_rect_2 = pygame.Rect(panel_rect.x, panel_rect.y + 70, 50, 50)  # Adjust position
+    tower_option_rect_2 = pygame.Rect(panel_rect.x +10, panel_rect.y + 70, 180, 50)  # Adjust position
     pygame.draw.rect(surface, (100, 100, 100), tower_option_rect_2)
-    image_rect_2 = tower_image2.get_rect(center=tower_option_rect_2.center)
+
+    #image_rect_2 = tower_image2.get_rect(center=tower_option_rect_2.center)
+    #surface.blit(tower_image2, image_rect_2.topleft)
+
+
+    image_rect_2 = tower_image2.get_rect(center=(tower_option_rect_2.centerx - 40, tower_option_rect_2.centery))
     surface.blit(tower_image2, image_rect_2.topleft)
+    price_text_2 = font.render(f"${tower_type_prices['Type2']}", True, (0, 0, 0))
+    surface.blit(price_text_2, (image_rect_2.right + 5, tower_option_rect_2.centery - 10))
+
 
     return [tower_option_rect_1, tower_option_rect_2] # Return a list of rects representing tower options
 
