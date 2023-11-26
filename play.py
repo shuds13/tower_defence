@@ -172,7 +172,7 @@ while running:
 
     if alert_timer > 0:
         alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
-        window.blit(alert_text, (500, 10))
+        window.blit(alert_text, (450, 10))
         alert_timer -= 1
 
     for tower in towers:
