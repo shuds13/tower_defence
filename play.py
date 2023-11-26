@@ -1,3 +1,5 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
 from enemy import Enemy
@@ -5,6 +7,8 @@ from tower import Tower, tower_types
 from placements import is_valid_position
 import navigation as nav
 import levels as lev
+
+
 
 initial_lives = 10
 initial_money = 100
