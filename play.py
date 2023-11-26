@@ -11,7 +11,7 @@ initial_level = 1
 max_level = 2
 
 def reset_game():
-    global player_money, towers, enemies, lives, running, spawned_enemies, level
+    global player_money, towers, enemies, lives, running, spawned_enemies, level, enemy_spawn_interval
     player_money = initial_money
     level = initial_level
     towers = []
@@ -19,6 +19,7 @@ def reset_game():
     lives = initial_lives
     running = True
     spawned_enemies = 0
+    enemy_spawn_interval = 40
 
 def reset_level():
     global enemies, running, spawned_enemies
@@ -33,10 +34,10 @@ pygame.init()
 window_size = (800, 600)
 window = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Tower Defense Game")
+clock = pygame.time.Clock()
 
 # Game variables
 running = True
-clock = pygame.time.Clock()
 
 # Define a simple path as a list of (x, y) tuples
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
@@ -50,9 +51,9 @@ towers = []
 path_thickness = 15
 max_enemies = [20, 30]
 
-
 spawned_enemies = 0
-tower_cost = 50
+
+current_tower_type = Fighter  # Will be selected
 
 alert_message = ""
 alert_timer = 0
@@ -86,10 +87,10 @@ while running:
 
             #TODO need to work out valid position.
             if is_valid_position(mouse_pos, path, towers):
-                if player_money >= tower_cost:
+                if player_money >= current_tower_type.price:
                     #towers.append(Tower(position=mouse_pos))
-                    towers.append(Fighter(position=mouse_pos))
-                    player_money -= tower_cost
+                    towers.append(current_tower_type(position=mouse_pos))
+                    player_money -= current_tower_type.price
                 else:
                     alert_message = "Not enough money!"
                     alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
