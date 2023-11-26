@@ -203,7 +203,9 @@ while running:
         use_ghost_image = True
 
         if use_ghost_image:
-            ghost_tower_image = place.create_ghost_image(current_tower_type.image, alpha=200)
+            # This line ensures image has alpha channel (some do, some dont)
+            current_tower_type_mod = current_tower_type.image.convert_alpha()
+            ghost_tower_image = place.create_ghost_image(current_tower_type_mod, alpha=128)
         else:
             ghost_tower_image = current_tower_type.image
         ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
