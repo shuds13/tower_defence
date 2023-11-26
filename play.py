@@ -8,7 +8,8 @@ tower_image = pygame.transform.scale(tower_image, (50, 50))
 
 initial_lives = 10
 initial_money = 100
-
+initial_level = 1
+max_level = 2
 
 #min_dist_frm_path = 50
 #min_dist_between_towers = 50
@@ -75,13 +76,22 @@ def is_click_inside_rect(click_pos, rect):
     return clicked
 
 def reset_game():
-    global player_money, towers, enemies, lives, running, spawned_enemies
+    global player_money, towers, enemies, lives, running, spawned_enemies, level
     player_money = initial_money
+    level = initial_level
     towers = []
     enemies = []
     lives = initial_lives
     running = True
     spawned_enemies = 0
+
+
+def reset_level():
+    global enemies, running, spawned_enemies
+    enemies = []
+    running = True
+    spawned_enemies = 0
+
 
 def rotate_center(image, angle, position):
     """Rotate an image while keeping its center."""
@@ -112,7 +122,9 @@ enemies = []  # List to store enemies
 towers = []
 
 path_thickness = 15
-max_enemies = 20
+max_enemies = [20, 30]
+
+
 spawned_enemies = 0
 tower_cost = 50
 
@@ -125,11 +137,13 @@ play_again_button = None  # To store the button rectangle
 
 lives = initial_lives
 player_money = initial_money
+level = initial_level
 money_per_kill = 1
 round_bonus = 20
 
 # Game loop
 while running:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -164,15 +178,19 @@ while running:
         continue
 
     # Spawn a new enemy at intervals if the max number has not been reached
-    if spawned_enemies < max_enemies:
+    if spawned_enemies < max_enemies[level-1]:
         enemy_spawn_timer += 1
         if enemy_spawn_timer >= enemy_spawn_interval:
             enemies.append(Enemy(path))
             enemy_spawn_timer = 0
             spawned_enemies += 1  # Increment the counter
 
-            if spawned_enemies >= 10:
-                enemy_spawn_interval = 15
+            if level == 1:
+                if spawned_enemies >= 10:
+                    enemy_spawn_interval = 15
+            elif level == 2:
+                if spawned_enemies >= 20:
+                    enemy_spawn_interval = 8
 
     # Update positions of all enemies
     #print(f"{enemies=}")
@@ -189,7 +207,7 @@ while running:
             #enemy = Enemy(path)  # Reset the enemy
 
     # Check win condition
-    if not enemies and lives > 0 and spawned_enemies >= max_enemies:
+    if not enemies and lives > 0 and spawned_enemies >= max_enemies[level-1]:
         font = pygame.font.SysFont(None, 72)
         win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
         text_rect = win_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2))
@@ -200,7 +218,15 @@ while running:
         # Pause for a few seconds to display the win message
         pygame.time.wait(2000)
         #running = False
-        game_over = True
+        if level == max_level:
+            game_over = True
+        else:
+            level += 1
+            reset_level()
+            #TODO generalise this
+            if level == 2:
+                enemy_spawn_interval = 30
+            continue
 
     if lives <= 0:
         #running = False  # Stop the game if the lives is 0 or less
@@ -213,7 +239,6 @@ while running:
     # Render game state ------------------------------------------------------
     window.fill((0, 0, 0))  # Clear screen
 
-    # Draw the lives
     font = pygame.font.SysFont(None, 36)
     lives_text = font.render(f"Lives: {lives}", True, (255, 255, 255))
     window.blit(lives_text, (10, 10))
@@ -223,9 +248,14 @@ while running:
     money_text = font.render(f"Money: ${player_money}", True, (255, 255, 255))
     window.blit(money_text, (10, 50))  # Adjust position as needed
 
+    font = pygame.font.SysFont(None, 36)
+    lives_text = font.render(f"Level: {level}", True, (255, 255, 255))
+    window.blit(lives_text, (200, 10))
+
+
     if alert_timer > 0:
         alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
-        window.blit(alert_text, (200, 10))
+        window.blit(alert_text, (500, 10))
         alert_timer -= 1
 
 
