@@ -1,7 +1,7 @@
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower, Fighter, Burger
+from tower import Tower, tower_types
 from placements import is_valid_position
 import navigation as nav
 import levels as lev
@@ -44,7 +44,7 @@ clock = pygame.time.Clock()
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
 path_thickness = 15
 
-current_tower_type = Fighter  # Will be selected
+current_tower_type = tower_types[0]  # Will be selected
 alert_message = ""
 alert_timer = 0
 restart_timer = 12000
@@ -58,56 +58,41 @@ side_panel_width = 200
 side_panel_height = window_size[1]  # same as the game window height
 side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
 
-
-# tmp here - in tower
-tower_image = pygame.image.load('tower1.png')  # Load your tower image
-tower_image = pygame.transform.scale(tower_image, (50, 50))
-tower_image2 = pygame.image.load('burger.png')  # Load your tower image
-tower_image2 = pygame.transform.scale(tower_image2, (50, 50))
-
-
 # tmp here - put in placements or navigation
 def draw_side_panel(surface, panel_rect):
     # Draw the background of the side panel
     pygame.draw.rect(surface, (200, 200, 200), panel_rect)  # Light grey background
     font = pygame.font.SysFont(None, 24)
+    y_offset = 10
 
-    # Draw tower selection options (simple rectangles or icons)
-    tower_option_rect_1 = pygame.Rect(panel_rect.x + 10, panel_rect.y + 10, 180, 50)  # Example
-    pygame.draw.rect(surface, (100, 100, 100), tower_option_rect_1)  # Dark grey option box
+    def draw_tower_option(tower_type, y_offset):
+        # Draw tower selection options (simple rectangles or icons)
+        rect = pygame.Rect(panel_rect.x + 10, panel_rect.y + y_offset, 180, 50)  # Example
+        pygame.draw.rect(surface, (100, 100, 100), rect)  # Dark grey option box
 
-    image_rect_1 = tower_image.get_rect(center=(tower_option_rect_1.centerx - 40, tower_option_rect_1.centery))
-    surface.blit(tower_image, image_rect_1.topleft)
-    #price_text_1 = font.render(f"${tower_type_prices['Type1']}", True, (0, 0, 0))
-    price_text_1 = font.render(f"${Fighter.price}", True, (0, 0, 0))
-    surface.blit(price_text_1, (image_rect_1.right + 5, tower_option_rect_1.centery - 10))
+        image_rect_1 = tower_type.image.get_rect(center=(rect.centerx - 40, rect.centery))
+        surface.blit(tower_type.image, image_rect_1.topleft)
+        price_text_1 = font.render(f"${tower_type.price}", True, (0, 0, 0))
+        surface.blit(price_text_1, (image_rect_1.right + 5, rect.centery - 10))
 
-    if current_tower_type.name == "Fighter":
-        pygame.draw.rect(surface, (255, 255, 0), tower_option_rect_1, 3)  # Yellow border
+        if tower_type.name == current_tower_type.name:
+            pygame.draw.rect(surface, (255, 255, 0), rect, 3)  # Yellow border
 
+        return rect
 
-    # Add more tower options as needed...
-    # Draw the tower image on this rectangle
-    #image_rect = tower_image.get_rect(center=tower_option_rect_1.center)
-    #surface.blit(tower_image, image_rect.topleft)
+    #TODO make image part of tower class and use tower_type.image
+    tower_rects = []
+    for tower in tower_types:  # keep this list in tower module
+        tower_rects.append(draw_tower_option(tower, y_offset))
+        y_offset += 60
 
-    tower_option_rect_2 = pygame.Rect(panel_rect.x +10, panel_rect.y + 70, 180, 50)  # Adjust position
-    pygame.draw.rect(surface, (100, 100, 100), tower_option_rect_2)
+    return tower_rects
 
-    #image_rect_2 = tower_image2.get_rect(center=tower_option_rect_2.center)
-    #surface.blit(tower_image2, image_rect_2.topleft)
-
-
-    image_rect_2 = tower_image2.get_rect(center=(tower_option_rect_2.centerx - 40, tower_option_rect_2.centery))
-    surface.blit(tower_image2, image_rect_2.topleft)
-    price_text_2 = font.render(f"${Burger.price}", True, (0, 0, 0))
-    surface.blit(price_text_2, (image_rect_2.right + 5, tower_option_rect_2.centery - 10))
-    if current_tower_type.name == "Burger":
-        pygame.draw.rect(surface, (255, 255, 0), tower_option_rect_2, 3)  # Yellow border
-
-
-    return [tower_option_rect_1, tower_option_rect_2] # Return a list of rects representing tower options
-
+def select_tower_type(tower_types):
+    for i in range(len(tower_types)):
+        if tower_option_rects[i].collidepoint(mouse_pos):
+            return i
+    return None
 
 # Game loop
 while running:
@@ -123,14 +108,9 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
-            if tower_option_rects[0].collidepoint(mouse_pos):
-                current_tower_type = Fighter
-            elif tower_option_rects[1].collidepoint(mouse_pos):
-                current_tower_type = Burger            #for rect in tower_option_rects:
-                #if rect.collidepoint(mouse_pos):
-                    #print(f"{rect=} {type(rect)=}")
-                    #current_tower_type = 'tower_type_here'  # Assign the selected tower type
-                    #break
+            new_type = select_tower_type(tower_types)
+            if new_type is not None:
+                current_tower_type = tower_types[new_type]
             # Check if the position is valid for tower placement
             elif is_valid_position(mouse_pos, path, towers):
                 if player_money >= current_tower_type.price:
@@ -180,12 +160,12 @@ while running:
         # Pause for a few seconds to display the win message
         pygame.time.wait(2000)
         if level_num == lev.max_level:
-            print(f"{lev.max_level=} {level_num=}")
+            #print(f"{lev.max_level=} {level_num=}")
             game_over = True
         else:
             level_num += 1
             level = lev.levels[level_num]()
-            print(f"{level.level_id=}")
+            #print(f"{level.level_id=}")
             reset_level()
             continue
 
@@ -202,7 +182,7 @@ while running:
     window.fill((50, 25, 0))  # Clear screen
 
     tower_option_rects = draw_side_panel(window, side_panel_rect)
-    #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_image)
+    #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_img_1)
 
     if alert_timer > 0:
         alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color

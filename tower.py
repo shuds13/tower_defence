@@ -1,17 +1,18 @@
 import math
 import pygame
 
-tower_image = pygame.image.load('tower1.png')  # Load your tower image
-tower_image = pygame.transform.scale(tower_image, (50, 50))
+fighter_img = pygame.image.load('tower1.png')  # Load your tower image
+fighter_img = pygame.transform.scale(fighter_img, (50, 50))
 
-tower_image2 = pygame.image.load('burger.png')  # Load your tower image
-tower_image2 = pygame.transform.scale(tower_image2, (50, 50))
+burger_img = pygame.image.load('burger.png')  # Load your tower image
+burger_img = pygame.transform.scale(burger_img, (50, 50))
 
 
 class Tower:
 
     price = 0
     name = 'Tower'
+    image = None
 
     def __init__(self, position):
         self.position = position
@@ -63,14 +64,15 @@ class Tower:
     def rotate(self):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
-        rotated_image = pygame.transform.rotate(tower_image, angle)
-        new_rect = rotated_image.get_rect(center=tower_image.get_rect(center=self.position).center)
+        rotated_image = pygame.transform.rotate(self.image, angle)
+        new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
         return rotated_image, new_rect
 
 class Fighter(Tower):
 
     price = 50
     name = 'Fighter'
+    image = fighter_img
 
     def __init__(self, position):
         super().__init__(position)
@@ -78,11 +80,13 @@ class Fighter(Tower):
         self.attack_speed = 40
         self.damage = 1
         self.cost = Fighter.price
+        self.image = Fighter.image
 
 class Burger(Tower):
 
     price = 10
     name = 'Burger'
+    image = burger_img
 
     def __init__(self, position):
         super().__init__(position)
@@ -90,10 +94,13 @@ class Burger(Tower):
         self.attack_speed = 100
         self.damage = 1
         self.cost = Burger.price
+        self.image = Burger.image
 
-    def rotate(self):
-        """Rotate an image while keeping its center."""
-        angle = self.get_target_angle()
-        rotated_image = pygame.transform.rotate(tower_image2, angle)
-        new_rect = rotated_image.get_rect(center=tower_image2.get_rect(center=self.position).center)
-        return rotated_image, new_rect
+    #def rotate(self):
+        #"""Rotate an image while keeping its center."""
+        #angle = self.get_target_angle()
+        #rotated_image = pygame.transform.rotate(burger_img, angle)
+        #new_rect = rotated_image.get_rect(center=burger_img.get_rect(center=self.position).center)
+        #return rotated_image, new_rect
+
+tower_types = [Fighter, Burger]
