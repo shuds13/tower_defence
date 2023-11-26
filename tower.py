@@ -1,4 +1,8 @@
 import math
+import pygame
+
+tower_image = pygame.image.load('tower1.png')  # Load your tower image
+tower_image = pygame.transform.scale(tower_image, (50, 50))
 
 class Tower:
     def __init__(self, position, range, attack_speed):
@@ -44,4 +48,9 @@ class Tower:
         dy = self.target.position[1] - self.position[1]
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
-
+    def rotate(self):
+        """Rotate an image while keeping its center."""
+        angle = self.get_target_angle()
+        rotated_image = pygame.transform.rotate(tower_image, angle)
+        new_rect = rotated_image.get_rect(center=tower_image.get_rect(center=self.position).center)
+        return rotated_image, new_rect

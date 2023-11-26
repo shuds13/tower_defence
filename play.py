@@ -2,78 +2,13 @@ import pygame
 import sys
 from enemy import Enemy
 from tower import Tower
-
-tower_image = pygame.image.load('tower1.png')  # Load your tower image
-tower_image = pygame.transform.scale(tower_image, (50, 50))
+from placements import is_valid_position
+import navigation as nav
 
 initial_lives = 10
-initial_money = 100
+initial_money = 1000
 initial_level = 1
-max_level = 2
-
-#min_dist_frm_path = 50
-#min_dist_between_towers = 50
-
-def point_line_distance(point, line_start, line_end):
-    """Calculate the minimum distance between a point and a line segment."""
-    # Line segment start and end points
-    x1, y1 = line_start
-    x2, y2 = line_end
-
-    # Point coordinates
-    px, py = point
-
-    # Line segment's length squared
-    line_len_sq = (x2 - x1) ** 2 + (y2 - y1) ** 2
-
-    # Calculate the projection
-    u = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / float(line_len_sq)
-
-    # Determine the nearest point on the line segment
-    if u > 1:
-        nearest_point = (x2, y2)
-    elif u < 0:
-        nearest_point = (x1, y1)
-    else:
-        nearest_point = (x1 + u * (x2 - x1), y1 + u * (y2 - y1))
-
-    # Distance from point to nearest point on the line segment
-    dx = px - nearest_point[0]
-    dy = py - nearest_point[1]
-
-    return (dx ** 2 + dy ** 2) ** 0.5
-
-def is_valid_position(pos):
-    """Check if the position is not on the path and not too close to other towers."""
-    min_distance_to_path = 15  # Minimum allowed distance from the path
-    some_minimum_distance_between_towers = 15
-
-    # Check distance from the path
-    for i in range(len(path) - 1):
-        if point_line_distance(pos, path[i], path[i + 1]) < min_distance_to_path:
-            return False
-
-    # Check distance from other towers
-    for tower in towers:
-        if (pos[0] - tower.position[0])**2 + (pos[1] - tower.position[1])**2 < some_minimum_distance_between_towers**2:
-            return False
-
-    return True
-
-
-def draw_button(surface, text, position, size):
-    font = pygame.font.SysFont(None, 36)
-    button_rect = pygame.Rect(position, size)
-    pygame.draw.rect(surface, (0, 0, 255), button_rect)  # Blue button
-    text_surf = font.render(text, True, (255, 255, 255))  # White text
-    text_rect = text_surf.get_rect(center=button_rect.center)
-    surface.blit(text_surf, text_rect)
-    return button_rect
-
-def is_click_inside_rect(click_pos, rect):
-    clicked = rect.collidepoint(click_pos)
-    #print(f"{clicked=}")  #test
-    return clicked
+max_level = 1
 
 def reset_game():
     global player_money, towers, enemies, lives, running, spawned_enemies, level
@@ -85,20 +20,11 @@ def reset_game():
     running = True
     spawned_enemies = 0
 
-
 def reset_level():
     global enemies, running, spawned_enemies
     enemies = []
     running = True
     spawned_enemies = 0
-
-
-def rotate_center(image, angle, position):
-    """Rotate an image while keeping its center."""
-    rotated_image = pygame.transform.rotate(image, angle)
-    #new_rect = rotated_image.get_rect(center=image.get_rect(topleft=position).center)
-    new_rect = rotated_image.get_rect(center=image.get_rect(center=position).center)
-    return rotated_image, new_rect
 
 # Initialize Pygame
 pygame.init()
@@ -148,7 +74,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif game_over and event.type == pygame.MOUSEBUTTONDOWN:
-            if play_again_button and is_click_inside_rect(pygame.mouse.get_pos(), play_again_button):
+            if play_again_button and nav.is_click_inside_rect(pygame.mouse.get_pos(), play_again_button):
                 reset_game()
                 game_over = False
             else:
@@ -159,7 +85,7 @@ while running:
             # Check if the position is valid for tower placement
 
             #TODO need to work out valid position.
-            if is_valid_position(mouse_pos):
+            if is_valid_position(mouse_pos, path, towers):
                 if player_money >= tower_cost:
                     towers.append(Tower(position=mouse_pos, range=100, attack_speed=40))
                     player_money -= tower_cost
@@ -258,16 +184,9 @@ while running:
         window.blit(alert_text, (500, 10))
         alert_timer -= 1
 
-
-    #for tower in towers:
-        #tower.update(enemies)
-        ## Draw the tower and its range
-
-
     for tower in towers:
         tower.update(enemies)
-        angle = tower.get_target_angle()
-        rotated_image, new_rect = rotate_center(tower_image, angle, tower.position)
+        rotated_image, new_rect = tower.rotate()
         window.blit(rotated_image, new_rect.topleft)
 
         pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
@@ -301,7 +220,7 @@ while running:
         window.blit(game_over_text, text_rect)
 
         # Draw the play again button
-        play_again_button = draw_button(window, "Play Again", (window_size[0] / 2 - 100, window_size[1] / 2 + 50), (200, 50))
+        play_again_button = nav.play_button(window, window_size)
 
     pygame.display.flip()  # Update the full display Surface to the screen
     clock.tick(60)  # Maintain 60 frames per second
