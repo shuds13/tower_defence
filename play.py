@@ -82,6 +82,8 @@ def draw_side_panel(surface, panel_rect):
     price_text_1 = font.render(f"${Fighter.price}", True, (0, 0, 0))
     surface.blit(price_text_1, (image_rect_1.right + 5, tower_option_rect_1.centery - 10))
 
+    if current_tower_type.name == "Fighter":
+        pygame.draw.rect(surface, (255, 255, 0), tower_option_rect_1, 3)  # Yellow border
 
 
     # Add more tower options as needed...
@@ -100,6 +102,8 @@ def draw_side_panel(surface, panel_rect):
     surface.blit(tower_image2, image_rect_2.topleft)
     price_text_2 = font.render(f"${Burger.price}", True, (0, 0, 0))
     surface.blit(price_text_2, (image_rect_2.right + 5, tower_option_rect_2.centery - 10))
+    if current_tower_type.name == "Burger":
+        pygame.draw.rect(surface, (255, 255, 0), tower_option_rect_2, 3)  # Yellow border
 
 
     return [tower_option_rect_1, tower_option_rect_2] # Return a list of rects representing tower options

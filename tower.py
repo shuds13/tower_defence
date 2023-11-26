@@ -11,6 +11,7 @@ tower_image2 = pygame.transform.scale(tower_image2, (50, 50))
 class Tower:
 
     price = 0
+    name = 'Tower'
 
     def __init__(self, position):
         self.position = position
@@ -69,6 +70,7 @@ class Tower:
 class Fighter(Tower):
 
     price = 50
+    name = 'Fighter'
 
     def __init__(self, position):
         super().__init__(position)
@@ -80,6 +82,7 @@ class Fighter(Tower):
 class Burger(Tower):
 
     price = 10
+    name = 'Burger'
 
     def __init__(self, position):
         super().__init__(position)
