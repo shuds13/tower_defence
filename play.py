@@ -1,7 +1,7 @@
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower
+from tower import Tower, Fighter
 from placements import is_valid_position
 import navigation as nav
 
@@ -87,7 +87,8 @@ while running:
             #TODO need to work out valid position.
             if is_valid_position(mouse_pos, path, towers):
                 if player_money >= tower_cost:
-                    towers.append(Tower(position=mouse_pos, range=100, attack_speed=40))
+                    #towers.append(Tower(position=mouse_pos))
+                    towers.append(Fighter(position=mouse_pos))
                     player_money -= tower_cost
                 else:
                     alert_message = "Not enough money!"

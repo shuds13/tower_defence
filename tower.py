@@ -5,10 +5,10 @@ tower_image = pygame.image.load('tower1.png')  # Load your tower image
 tower_image = pygame.transform.scale(tower_image, (50, 50))
 
 class Tower:
-    def __init__(self, position, range, attack_speed):
+    def __init__(self, position):
         self.position = position
-        self.range = range
-        self.attack_speed = attack_speed
+        self.range = 100
+        self.attack_speed = 40
         self.attack_timer = 0
         self.target = None
         self.damage = 1
@@ -54,3 +54,10 @@ class Tower:
         rotated_image = pygame.transform.rotate(tower_image, angle)
         new_rect = rotated_image.get_rect(center=tower_image.get_rect(center=self.position).center)
         return rotated_image, new_rect
+
+class Fighter(Tower):
+    def __init__(self, position):
+        super().__init__(position)
+        self.range = 100
+        self.attack_speed = 40
+        self.damage = 1
