@@ -181,7 +181,7 @@ while running:
         player_money += tower.update(enemies)
 
         pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
-        pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # Range
+        #pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # To show range
 
     enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
 
@@ -228,6 +228,7 @@ while running:
         if mouse_x < 675:
             ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
+            pygame.draw.circle(window, (0, 255, 255), (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
 
     if game_over:  # Game over condition
         #game_over = True
