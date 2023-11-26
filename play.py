@@ -11,14 +11,18 @@ initial_lives = 10
 initial_money = 100
 
 
+min_dist_frm_path = 50
+min_dist_between_towers = 50
+
+# this currently only checks if on the points used to draw the line (not the line itself)
 def is_valid_position(pos):
     # Check if the position is not on the path and not too close to other towers
     # This is a simple example; you'll need to replace it with your game's logic
     for point in path:
-        if (pos[0] - point[0])**2 + (pos[1] - point[1])**2 < some_minimum_distance**2:
+        if (pos[0] - point[0])**2 + (pos[1] - point[1])**2 < min_dist_frm_path**2:
             return False
     for tower in towers:
-        if (pos[0] - tower.position[0])**2 + (pos[1] - tower.position[1])**2 < some_minimum_distance_between_towers**2:
+        if (pos[0] - tower.position[0])**2 + (pos[1] - tower.position[1])**2 < min_dist_between_towers**2:
             return False
     return True
 
@@ -106,12 +110,15 @@ while running:
             # Check if the position is valid for tower placement
 
             #TODO need to work out valid position.
-            #if is_valid_position(mouse_pos) and player_money >= tower_cost:
-            if player_money >= tower_cost:
-                towers.append(Tower(position=mouse_pos, range=100, attack_speed=40))
-                player_money -= tower_cost
+            if is_valid_position(mouse_pos):
+                if player_money >= tower_cost:
+                    towers.append(Tower(position=mouse_pos, range=100, attack_speed=40))
+                    player_money -= tower_cost
+                else:
+                    alert_message = "Not enough money!"
+                    alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
             else:
-                alert_message = "Not enough money!"
+                alert_message = "Cant place here"
                 alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
 
     if game_over:
