@@ -1,10 +1,14 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower, Fighter
+from tower import Tower, tower_types
 from placements import is_valid_position
 import navigation as nav
 import levels as lev
+
+
 
 initial_lives = 10
 initial_money = 100
@@ -35,7 +39,7 @@ def reset_level():
 pygame.init()
 
 # Set up the display
-window_size = (800, 600)
+window_size = (900, 600)
 window = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Tower Defense Game")
 clock = pygame.time.Clock()
@@ -44,7 +48,7 @@ clock = pygame.time.Clock()
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
 path_thickness = 15
 
-current_tower_type = Fighter  # Will be selected
+current_tower_type = tower_types[0]  # Will be selected
 alert_message = ""
 alert_timer = 0
 restart_timer = 12000
@@ -53,6 +57,46 @@ play_again_button = None  # To store the button rectangle
 round_bonus = 20
 
 reset_game()
+
+side_panel_width = 200
+side_panel_height = window_size[1]  # same as the game window height
+side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
+
+# tmp here - put in placements or navigation
+def draw_side_panel(surface, panel_rect):
+    # Draw the background of the side panel
+    pygame.draw.rect(surface, (200, 200, 200), panel_rect)  # Light grey background
+    font = pygame.font.SysFont(None, 24)
+    y_offset = 10
+
+    def draw_tower_option(tower_type, y_offset):
+        # Draw tower selection options (simple rectangles or icons)
+        rect = pygame.Rect(panel_rect.x + 10, panel_rect.y + y_offset, 180, 50)  # Example
+        pygame.draw.rect(surface, (100, 100, 100), rect)  # Dark grey option box
+
+        image_rect_1 = tower_type.image.get_rect(center=(rect.centerx - 40, rect.centery))
+        surface.blit(tower_type.image, image_rect_1.topleft)
+        price_text_1 = font.render(f"${tower_type.price}", True, (0, 0, 0))
+        surface.blit(price_text_1, (image_rect_1.right + 5, rect.centery - 10))
+
+        if tower_type.name == current_tower_type.name:
+            pygame.draw.rect(surface, (255, 255, 0), rect, 3)  # Yellow border
+
+        return rect
+
+    #TODO make image part of tower class and use tower_type.image
+    tower_rects = []
+    for tower in tower_types:  # keep this list in tower module
+        tower_rects.append(draw_tower_option(tower, y_offset))
+        y_offset += 60
+
+    return tower_rects
+
+def select_tower_type(tower_types):
+    for i in range(len(tower_types)):
+        if tower_option_rects[i].collidepoint(mouse_pos):
+            return i
+    return None
 
 # Game loop
 while running:
@@ -68,8 +112,11 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
+            new_type = select_tower_type(tower_types)
+            if new_type is not None:
+                current_tower_type = tower_types[new_type]
             # Check if the position is valid for tower placement
-            if is_valid_position(mouse_pos, path, towers):
+            elif is_valid_position(mouse_pos, path, towers):
                 if player_money >= current_tower_type.price:
                     #towers.append(Tower(position=mouse_pos))
                     towers.append(current_tower_type(position=mouse_pos))
@@ -80,6 +127,7 @@ while running:
             else:
                 alert_message = "Cant place here"
                 alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
+
 
     if game_over:
         pygame.display.flip()  # Update the full display Surface to the screen
@@ -108,7 +156,7 @@ while running:
     if not enemies and lives > 0 and level.done():
         font = pygame.font.SysFont(None, 72)
         win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
-        text_rect = win_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2))
+        text_rect = win_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2))
         window.blit(win_text, text_rect)
         pygame.display.flip()  # Update the full display Surface to the screen
         player_money += round_bonus
@@ -116,12 +164,12 @@ while running:
         # Pause for a few seconds to display the win message
         pygame.time.wait(2000)
         if level_num == lev.max_level:
-            print(f"{lev.max_level=} {level_num=}")
+            #print(f"{lev.max_level=} {level_num=}")
             game_over = True
         else:
             level_num += 1
             level = lev.levels[level_num]()
-            print(f"{level.level_id=}")
+            #print(f"{level.level_id=}")
             reset_level()
             continue
 
@@ -134,7 +182,11 @@ while running:
 
 
     # Render game state ------------------------------------------------------
-    window.fill((0, 0, 0))  # Clear screen
+    #window.fill((0, 0, 0))  # Clear screen
+    window.fill((50, 25, 0))  # Clear screen
+
+    tower_option_rects = draw_side_panel(window, side_panel_rect)
+    #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_img_1)
 
     if alert_timer > 0:
         alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
@@ -175,13 +227,13 @@ while running:
     # Draw tower attacks
     for tower in towers:
         if tower.is_attacking and tower.target:
-            pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)
+            pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)  # should be in tower
 
     if game_over:  # Game over condition
         #game_over = True
         font = pygame.font.SysFont(None, 72)
         game_over_text = font.render("Game Over", True, (255, 0, 0))
-        text_rect = game_over_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2 - 50))
+        text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
         window.blit(game_over_text, text_rect)
 
         # Draw the play again button

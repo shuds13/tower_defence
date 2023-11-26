@@ -15,10 +15,10 @@ class Level():
 
     def update(self):
         self.num_spawned += 1
-        print(f"{self.num_spawned=}")
+        #print(f"{self.num_spawned=}")
         if self.num_spawned >= self.phase_counts[self.phase]:
             self.phase += 1
-            print(f"{self.phase=}")
+            #print(f"{self.phase=}")
 
 
 

@@ -15,4 +15,4 @@ def is_click_inside_rect(click_pos, rect):
     return clicked
 
 def play_button(window, window_size):
-    return draw_button(window, "Play Again", (window_size[0] / 2 - 100, window_size[1] / 2 + 50), (200, 50))
+    return draw_button(window, "Play Again", (window_size[0] / 2 - 150, window_size[1] / 2 + 50), (200, 50))
