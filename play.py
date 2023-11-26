@@ -4,7 +4,6 @@ from enemy import Enemy
 from tower import Tower
 
 tower_image = pygame.image.load('tower1.png')  # Load your tower image
-
 tower_image = pygame.transform.scale(tower_image, (50, 50))
 
 initial_lives = 10

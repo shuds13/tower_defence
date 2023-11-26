@@ -1,3 +1,8 @@
+import pygame
+pygame.mixer.init()
+
+snd_blop = pygame.mixer.Sound('blop.wav')
+
 class Enemy:
     def __init__(self, path):
         self.path = path
@@ -27,5 +32,6 @@ class Enemy:
 
     def take_damage(self, damage):
         self.health -= damage
+        snd_blop.play()
         if self.health <= 0:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
