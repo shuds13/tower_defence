@@ -6,9 +6,9 @@ from placements import is_valid_position
 import navigation as nav
 
 initial_lives = 10
-initial_money = 1000
+initial_money = 100
 initial_level = 1
-max_level = 1
+max_level = 2
 
 def reset_game():
     global player_money, towers, enemies, lives, running, spawned_enemies, level
