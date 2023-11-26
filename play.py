@@ -65,12 +65,6 @@ tower_image = pygame.transform.scale(tower_image, (50, 50))
 tower_image2 = pygame.image.load('burger.png')  # Load your tower image
 tower_image2 = pygame.transform.scale(tower_image2, (50, 50))
 
-#tmp - use tower prices from class
-tower_type_prices = {
-    'Type1': 50,  # Price for tower type 1
-    'Type2': 75   # Price for tower type 2
-    # Add more tower types and their prices as needed
-}
 
 # tmp here - put in placements or navigation
 def draw_side_panel(surface, panel_rect):
@@ -84,7 +78,8 @@ def draw_side_panel(surface, panel_rect):
 
     image_rect_1 = tower_image.get_rect(center=(tower_option_rect_1.centerx - 40, tower_option_rect_1.centery))
     surface.blit(tower_image, image_rect_1.topleft)
-    price_text_1 = font.render(f"${tower_type_prices['Type1']}", True, (0, 0, 0))
+    #price_text_1 = font.render(f"${tower_type_prices['Type1']}", True, (0, 0, 0))
+    price_text_1 = font.render(f"${Fighter.price}", True, (0, 0, 0))
     surface.blit(price_text_1, (image_rect_1.right + 5, tower_option_rect_1.centery - 10))
 
 
@@ -103,7 +98,7 @@ def draw_side_panel(surface, panel_rect):
 
     image_rect_2 = tower_image2.get_rect(center=(tower_option_rect_2.centerx - 40, tower_option_rect_2.centery))
     surface.blit(tower_image2, image_rect_2.topleft)
-    price_text_2 = font.render(f"${tower_type_prices['Type2']}", True, (0, 0, 0))
+    price_text_2 = font.render(f"${Burger.price}", True, (0, 0, 0))
     surface.blit(price_text_2, (image_rect_2.right + 5, tower_option_rect_2.centery - 10))
 
 
