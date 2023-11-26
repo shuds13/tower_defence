@@ -1,3 +1,5 @@
+import math
+
 class Tower:
     def __init__(self, position, range, attack_speed):
         self.position = position
@@ -34,3 +36,12 @@ class Tower:
             #self.find_target(enemies)
         self.find_target(enemies)
         self.attack()
+
+    def get_target_angle(self):
+        if not self.target:
+            return 0
+        dx = self.target.position[0] - self.position[0]
+        dy = self.target.position[1] - self.position[1]
+        return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
+
+

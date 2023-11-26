@@ -3,6 +3,9 @@ import sys
 from enemy import Enemy
 from tower import Tower
 
+tower_image = pygame.image.load('tower1.png')  # Load your tower image
+
+tower_image = pygame.transform.scale(tower_image, (50, 50))
 
 initial_lives = 10
 initial_money = 100
@@ -41,6 +44,13 @@ def reset_game():
     lives = initial_lives
     running = True
     spawned_enemies = 0
+
+def rotate_center(image, angle, position):
+    """Rotate an image while keeping its center."""
+    rotated_image = pygame.transform.rotate(image, angle)
+    #new_rect = rotated_image.get_rect(center=image.get_rect(topleft=position).center)
+    new_rect = rotated_image.get_rect(center=image.get_rect(center=position).center)
+    return rotated_image, new_rect
 
 # Initialize Pygame
 pygame.init()
@@ -170,9 +180,17 @@ while running:
         alert_timer -= 1
 
 
+    #for tower in towers:
+        #tower.update(enemies)
+        ## Draw the tower and its range
+
+
     for tower in towers:
         tower.update(enemies)
-        # Draw the tower and its range
+        angle = tower.get_target_angle()
+        rotated_image, new_rect = rotate_center(tower_image, angle, tower.position)
+        window.blit(rotated_image, new_rect.topleft)
+
         pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
         pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # Range
 
