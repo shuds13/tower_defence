@@ -1,7 +1,7 @@
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower, Fighter
+from tower import Tower, Fighter, Burger
 from placements import is_valid_position
 import navigation as nav
 import levels as lev
@@ -54,6 +54,39 @@ round_bonus = 20
 
 reset_game()
 
+side_panel_width = 100
+side_panel_height = window_size[1]  # same as the game window height
+side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
+
+
+# tmp here - in tower
+tower_image = pygame.image.load('tower1.png')  # Load your tower image
+tower_image = pygame.transform.scale(tower_image, (50, 50))
+tower_image2 = pygame.image.load('burger.png')  # Load your tower image
+tower_image2 = pygame.transform.scale(tower_image2, (50, 50))
+
+# tmp here - put in placements or navigation
+def draw_side_panel(surface, panel_rect):
+    # Draw the background of the side panel
+    pygame.draw.rect(surface, (200, 200, 200), panel_rect)  # Light grey background
+
+    # Draw tower selection options (simple rectangles or icons)
+    tower_option_rect_1 = pygame.Rect(panel_rect.x + 10, panel_rect.y + 10, 50, 50)  # Example
+    pygame.draw.rect(surface, (100, 100, 100), tower_option_rect_1)  # Dark grey option box
+
+    # Add more tower options as needed...
+    # Draw the tower image on this rectangle
+    image_rect = tower_image.get_rect(center=tower_option_rect_1.center)
+    surface.blit(tower_image, image_rect.topleft)
+
+    tower_option_rect_2 = pygame.Rect(panel_rect.x, panel_rect.y + 70, 50, 50)  # Adjust position
+    pygame.draw.rect(surface, (100, 100, 100), tower_option_rect_2)
+    image_rect_2 = tower_image2.get_rect(center=tower_option_rect_2.center)
+    surface.blit(tower_image2, image_rect_2.topleft)
+
+    return [tower_option_rect_1, tower_option_rect_2] # Return a list of rects representing tower options
+
+
 # Game loop
 while running:
     for event in pygame.event.get():
@@ -68,8 +101,16 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
+            if tower_option_rects[0].collidepoint(mouse_pos):
+                current_tower_type = Fighter
+            elif tower_option_rects[1].collidepoint(mouse_pos):
+                current_tower_type = Burger            #for rect in tower_option_rects:
+                #if rect.collidepoint(mouse_pos):
+                    #print(f"{rect=} {type(rect)=}")
+                    #current_tower_type = 'tower_type_here'  # Assign the selected tower type
+                    #break
             # Check if the position is valid for tower placement
-            if is_valid_position(mouse_pos, path, towers):
+            elif is_valid_position(mouse_pos, path, towers):
                 if player_money >= current_tower_type.price:
                     #towers.append(Tower(position=mouse_pos))
                     towers.append(current_tower_type(position=mouse_pos))
@@ -80,6 +121,7 @@ while running:
             else:
                 alert_message = "Cant place here"
                 alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
+
 
     if game_over:
         pygame.display.flip()  # Update the full display Surface to the screen
@@ -136,6 +178,9 @@ while running:
     # Render game state ------------------------------------------------------
     window.fill((0, 0, 0))  # Clear screen
 
+    tower_option_rects = draw_side_panel(window, side_panel_rect)
+    #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_image)
+
     if alert_timer > 0:
         alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
         window.blit(alert_text, (500, 10))
@@ -175,7 +220,7 @@ while running:
     # Draw tower attacks
     for tower in towers:
         if tower.is_attacking and tower.target:
-            pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)
+            pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)  # should be in tower
 
     if game_over:  # Game over condition
         #game_over = True

@@ -4,6 +4,10 @@ import pygame
 tower_image = pygame.image.load('tower1.png')  # Load your tower image
 tower_image = pygame.transform.scale(tower_image, (50, 50))
 
+tower_image2 = pygame.image.load('burger.png')  # Load your tower image
+tower_image2 = pygame.transform.scale(tower_image2, (50, 50))
+
+
 class Tower:
 
     price = 0
@@ -73,3 +77,20 @@ class Fighter(Tower):
         self.damage = 1
         self.cost = Fighter.price
 
+class Burger(Tower):
+
+    price = 10
+
+    def __init__(self, position):
+        super().__init__(position)
+        self.range = 75
+        self.attack_speed = 100
+        self.damage = 1
+        self.cost = Burger.price
+
+    def rotate(self):
+        """Rotate an image while keeping its center."""
+        angle = self.get_target_angle()
+        rotated_image = pygame.transform.rotate(tower_image2, angle)
+        new_rect = rotated_image.get_rect(center=tower_image2.get_rect(center=self.position).center)
+        return rotated_image, new_rect

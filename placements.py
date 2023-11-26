@@ -34,6 +34,11 @@ def is_valid_position(pos, path, towers):
     min_distance_to_path = 20  # Minimum allowed distance from the path
     some_minimum_distance_between_towers = 25
 
+
+    #TODO use collide to see if in side panel
+    if pos[0] > 675:  # so no part in side panel
+        return False
+
     # Check distance from the path
     for i in range(len(path) - 1):
         if point_line_distance(pos, path[i], path[i + 1]) < min_distance_to_path:
