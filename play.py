@@ -4,6 +4,10 @@ from enemy import Enemy
 from tower import Tower
 
 
+initial_lives = 10
+initial_money = 100
+
+
 def is_valid_position(pos):
     # Check if the position is not on the path and not too close to other towers
     # This is a simple example; you'll need to replace it with your game's logic
@@ -15,11 +19,31 @@ def is_valid_position(pos):
             return False
     return True
 
+def draw_button(surface, text, position, size):
+    font = pygame.font.SysFont(None, 36)
+    button_rect = pygame.Rect(position, size)
+    pygame.draw.rect(surface, (0, 0, 255), button_rect)  # Blue button
+    text_surf = font.render(text, True, (255, 255, 255))  # White text
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    surface.blit(text_surf, text_rect)
+    return button_rect
+
+def is_click_inside_rect(click_pos, rect):
+    clicked = rect.collidepoint(click_pos)
+    #print(f"{clicked=}")  #test
+    return clicked
+
+def reset_game():
+    global player_money, towers, enemies, lives, running, spawned_enemies
+    player_money = initial_money
+    towers = []
+    enemies = []
+    lives = initial_lives
+    running = True
+    spawned_enemies = 0
 
 # Initialize Pygame
 pygame.init()
-
-lives = 10  # Initial lives
 
 # Set up the display
 window_size = (800, 600)
@@ -35,42 +59,56 @@ path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
 
 # Enemy spawning variables
 enemy_spawn_timer = 0
-
-#standard
-enemy_spawn_interval = 50  # Number of frames to wait before spawning a new enemy
-
-#testing
-#enemy_spawn_interval = 10  # Number of frames to wait before spawning a new enemy
-
+enemy_spawn_interval = 40  # Number of frames to wait before spawning a new enemy
 enemies = []  # List to store enemies
-
-# Create an enemy
-#enemy = Enemy(path)
-
-#pygame.draw.line(window, (0, 255, 0), path[i], path[i+1], 5)
-
-# Define a tower
-#tower = Tower(position=(400, 300), range=100, attack_speed=60)  # Example values
-#tower = Tower(position=(360, 340), range=100, attack_speed=60)  # Example values
-#tower = Tower(position=(360, 340), range=100, attack_speed=20)  # Example values
-
 towers = []
 
 max_enemies = 20
 spawned_enemies = 0
+tower_cost = 50
+
+alert_message = ""
+alert_timer = 0
+restart_timer = 12000
+
+game_over = False  # Add a flag to indicate game over state
+play_again_button = None  # To store the button rectangle
+
+lives = initial_lives
+player_money = initial_money
+
 
 # Game loop
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif game_over and event.type == pygame.MOUSEBUTTONDOWN:
+            if play_again_button and is_click_inside_rect(pygame.mouse.get_pos(), play_again_button):
+                reset_game()
+                game_over = False
+            else:
+                running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
             # Check if the position is valid for tower placement
-            #if is_valid_position(mouse_pos):
-                #towers.append(Tower(position=mouse_pos, range=100, attack_speed=40))
-            towers.append(Tower(position=mouse_pos, range=100, attack_speed=40))
+
+            #TODO need to work out valid position.
+            #if is_valid_position(mouse_pos) and player_money >= tower_cost:
+            if player_money >= tower_cost:
+                towers.append(Tower(position=mouse_pos, range=100, attack_speed=40))
+                player_money -= tower_cost
+            else:
+                alert_message = "Not enough money!"
+                alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
+
+    if game_over:
+        pygame.display.flip()  # Update the full display Surface to the screen
+        restart_timer -= 1
+        if restart_timer <=0:
+            running = False
+        continue
 
     # Spawn a new enemy at intervals if the max number has not been reached
     if spawned_enemies < max_enemies:
@@ -80,7 +118,7 @@ while running:
             enemy_spawn_timer = 0
             spawned_enemies += 1  # Increment the counter
 
-            if spawned_enemies >= 5:
+            if spawned_enemies >= 10:
                 enemy_spawn_interval = 15
 
     # Update positions of all enemies
@@ -101,18 +139,36 @@ while running:
         pygame.display.flip()  # Update the full display Surface to the screen
 
         # Pause for a few seconds to display the win message
-        pygame.time.wait(3000)
-        running = False
+        pygame.time.wait(2000)
+        #running = False
+        game_over = True
 
     if lives <= 0:
-        running = False  # Stop the game if the lives is 0 or less
+        #running = False  # Stop the game if the lives is 0 or less
+        game_over = True
 
     # Remove enemies that have reached the end of the path
     enemies = [enemy for enemy in enemies if not enemy.reached_end]
 
 
-    # Render game state
+    # Render game state ------------------------------------------------------
     window.fill((0, 0, 0))  # Clear screen
+
+    # Draw the lives
+    font = pygame.font.SysFont(None, 36)
+    lives_text = font.render(f"Lives: {lives}", True, (255, 255, 255))
+    window.blit(lives_text, (10, 10))
+
+    # In your game loop, within the rendering section
+    font = pygame.font.SysFont(None, 36)
+    money_text = font.render(f"Money: ${player_money}", True, (255, 255, 255))
+    window.blit(money_text, (10, 50))  # Adjust position as needed
+
+    if alert_timer > 0:
+        alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
+        window.blit(alert_text, (200, 10))
+        alert_timer -= 1
+
 
     for tower in towers:
         tower.update(enemies)
@@ -122,61 +178,35 @@ while running:
 
     enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
 
-
-    ## Update and draw the tower
-    #tower.update(enemies)
-    #enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
-
-    ## Draw the tower (as a simple circle for now)
-    #pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Blue color for the tower
-
-    ## Optional: Draw the tower's range
-    #pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # Cyan color for the range
-
-
-
     # Draw the path
     for i in range(len(path) - 1):
         pygame.draw.line(window, (255, 255, 255), path[i], path[i+1], 2)
 
-    #import pdb;pdb.set_trace()
-    ## Draw the enemy if it hasn't reached the end
-    #if not enemy.reached_end:
-        #pygame.draw.circle(window, (255, 0, 0), (int(enemy.position[0]), int(enemy.position[1])), 10)
-
     # Draw enemies
     for enemy in enemies:
         pygame.draw.circle(window, (255, 0, 0), (int(enemy.position[0]), int(enemy.position[1])), 10)
-
 
     # Draw tower attacks
     for tower in towers:
         if tower.is_attacking and tower.target:
             pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 2)
 
+    if game_over:  # Game over condition
+        #game_over = True
+        font = pygame.font.SysFont(None, 72)
+        game_over_text = font.render("Game Over", True, (255, 0, 0))
+        text_rect = game_over_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2 - 50))
+        window.blit(game_over_text, text_rect)
 
-    # Draw the lives
-    font = pygame.font.SysFont(None, 36)
-    lives_text = font.render(f"Lives: {lives}", True, (255, 255, 255))
-    window.blit(lives_text, (10, 10))
+        # Draw the play again button
+        play_again_button = draw_button(window, "Play Again", (window_size[0] / 2 - 100, window_size[1] / 2 + 50), (200, 50))
 
     pygame.display.flip()  # Update the full display Surface to the screen
     clock.tick(60)  # Maintain 60 frames per second
 
-
-# Game loop exits here if running is False
-font = pygame.font.SysFont(None, 72)
-game_over_text = font.render("Game Over", True, (255, 0, 0))
-text_rect = game_over_text.get_rect(center=(window_size[0] / 2, window_size[1] / 2))
-window.fill((0, 0, 0))  # Clear screen
-window.blit(game_over_text, text_rect)
 pygame.display.flip()  # Update the full display Surface to the screen
 
 # Pause for a few seconds to display the game over message
-pygame.time.wait(3000)
+#pygame.time.wait(200)
 
 pygame.quit()
-
-
-pygame.quit()
-
