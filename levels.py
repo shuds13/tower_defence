@@ -64,5 +64,18 @@ class Level3(Level):
         #self.interval = self.spawn_intervals[0]
 
 
-levels = {1: Level1, 2: Level2, 3: Level3}
-max_level = 3
+class Level4(Level):
+    def __init__(self):
+        Level.__init__(self)
+        # This means 10 bloons at spawn interval of 40 and another 10 at interval of 15
+        self.level_id = 3
+        self.num_enemies = 30
+        self.spawn_intervals = [20, 20, 12]
+        self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [1, 2, 2]
+        #self.interval = self.spawn_intervals[0]
+
+
+
+levels = {1: Level1, 2: Level2, 3: Level3, 4: Level4}
+max_level = 4
