@@ -162,7 +162,7 @@ while running:
 
             # Check if the enemy has reached the end of the path
             if enemy.reached_end:
-                lives -= 1  # Decrease the lives
+                lives -= enemy.value  # Decrease the lives
 
         # Check win condition
         if not enemies and lives > 0 and level.done():
