@@ -86,7 +86,7 @@ class Fighter(Tower):
 
 class Burger(Tower):
 
-    price = 10
+    price = 25
     name = 'Burger'
     image = burger_img
     range = 75
@@ -94,7 +94,7 @@ class Burger(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range = Burger.range
-        self.attack_speed = 100
+        self.attack_speed = 80
         self.damage = 1
         self.cost = Burger.price
         self.image = Burger.image

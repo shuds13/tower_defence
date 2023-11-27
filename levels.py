@@ -1,5 +1,7 @@
 # Dictionaries or classes
 
+from enemy import enemy_types
+
 class Level():
     def __init__(self):
         self.num_spawned = 0
@@ -20,6 +22,10 @@ class Level():
             self.phase += 1
             #print(f"{self.phase=}")
 
+    def spawn_enemy(self, enemies, path):
+        enemy_id = self.enemy_types[self.phase]
+        enemy_class = enemy_types[enemy_id]
+        enemies.append(enemy_class(path))
 
 
 class Level1(Level):
@@ -30,6 +36,7 @@ class Level1(Level):
         self.num_enemies = 20
         self.spawn_intervals = [40, 15]
         self.phase_counts = [10, 20]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [1, 1, 1]
         #self.interval = self.spawn_intervals[0]
 
 
@@ -41,6 +48,7 @@ class Level2(Level):
         self.num_enemies = 30
         self.spawn_intervals = [30, 8]
         self.phase_counts = [20, 30]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [1, 1, 1]
         #self.interval = self.spawn_intervals[0]
 
 
@@ -52,6 +60,7 @@ class Level3(Level):
         self.num_enemies = 30
         self.spawn_intervals = [25, 5, 15]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [2, 1, 1]
         #self.interval = self.spawn_intervals[0]
 
 

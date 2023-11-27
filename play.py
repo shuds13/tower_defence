@@ -124,7 +124,8 @@ while running:
         if not level.done():
             enemy_spawn_timer += 1
             if enemy_spawn_timer >= level.interval():
-                enemies.append(Enemy(path))  # Type will be determined also by level
+                #enemies.append(Enemy(path))  # Type will be determined also by level
+                level.spawn_enemy(enemies, path)  # Type will be determined also by level
                 enemy_spawn_timer = 0
                 level.update()
 
@@ -206,7 +207,7 @@ while running:
 
     # Draw enemies
     for enemy in enemies:
-        pygame.draw.circle(window, (255, 0, 0), (int(enemy.position[0]), int(enemy.position[1])), 10)
+        pygame.draw.circle(window, enemy.color, (int(enemy.position[0]), int(enemy.position[1])), 10)
 
     # Draw tower attacks
     for tower in towers:
