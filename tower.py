@@ -1,11 +1,17 @@
 import math
 import pygame
+#pygame.init()
+#screen = pygame.display.set_mode((800, 600))
 
 fighter_img = pygame.image.load('tower1.png')  # Load your tower image
 fighter_img = pygame.transform.scale(fighter_img, (50, 50))
 
 burger_img = pygame.image.load('burger.png')  # Load your tower image
 burger_img = pygame.transform.scale(burger_img, (50, 50))
+
+wizard_img = pygame.image.load('wizard.png')  # Load your tower image
+#wizard_img = pygame.image.load('wizard.png').convert_alpha()
+wizard_img = pygame.transform.scale(wizard_img, (50, 50))
 
 
 class Tower:
@@ -74,6 +80,9 @@ class Tower:
         radius = 20  # or whatever your tower's radius is
         return (self.position[0] - point[0]) ** 2 + (self.position[1] - point[1]) ** 2 <= radius ** 2
 
+    def attack_animate(self, window):
+        pygame.draw.line(window, (255, 0, 0), self.position, self.target.position, 5)
+
 class Fighter(Tower):
 
     price = 50
@@ -104,11 +113,24 @@ class Burger(Tower):
         self.cost = Burger.price
         self.image = Burger.image
 
-    #def rotate(self):
-        #"""Rotate an image while keeping its center."""
-        #angle = self.get_target_angle()
-        #rotated_image = pygame.transform.rotate(burger_img, angle)
-        #new_rect = rotated_image.get_rect(center=burger_img.get_rect(center=self.position).center)
-        #return rotated_image, new_rect
 
-tower_types = [Fighter, Burger]
+class Wizard(Tower):
+
+    price = 100
+    name = 'Wizard'
+    image = wizard_img
+    range = 120
+
+    def __init__(self, position):
+        super().__init__(position)
+        self.range = Wizard.range
+        self.attack_speed = 60
+        self.damage = 2
+        self.cost = Wizard.price
+        self.image = Wizard.image
+
+    def attack_animate(self, window):
+        pygame.draw.line(window, (128,0,128), self.position, self.target.position, 25)
+
+
+tower_types = [Fighter, Burger, Wizard]

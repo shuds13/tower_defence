@@ -77,6 +77,15 @@ class Level5(Level):
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
         self.enemy_types = [1, 2, 3]
 
+class Level6(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 3
+        self.num_enemies = 6
+        self.spawn_intervals = [20]
+        self.phase_counts = [6]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [4]
 
-levels = {1: Level1, 2: Level2, 3: Level3, 4: Level4, 5: Level5}
-max_level = 5
+
+levels = {1: Level1, 2: Level2, 3: Level3, 4: Level4, 5: Level5, 6: Level6}
+max_level = 6

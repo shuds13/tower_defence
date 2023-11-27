@@ -2,6 +2,9 @@ import pygame
 pygame.mixer.init()
 
 snd_blop = pygame.mixer.Sound('blop.wav')
+ghost_img = pygame.image.load('ghost.png')
+ghost_img = pygame.transform.scale(ghost_img, (50, 50))
+
 
 class Enemy:
     def __init__(self, path):
@@ -13,6 +16,7 @@ class Enemy:
         self.health = 1
         self.value = 1
         self.color = (255, 0, 0)
+        self.image = None
 
     def move(self):
         # Move towards the next point in the path
@@ -77,4 +81,23 @@ class Enemy3(Enemy):
         return val
 
 
-enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3}
+class Ghost(Enemy):
+    def __init__(self, path):
+        super().__init__(path)
+        self.health = 3
+        self.value = 3
+        self.speed = 4
+        self.color = (0, 255, 0)
+        self.image = ghost_img
+
+    # Will require magic to kill but not there yet.
+    def take_damage(self, damage):
+        self.health -= damage
+        snd_blop.play()
+        if self.health <= 0:
+            self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
+        if self.reached_end:
+            return self.value
+        return 0
+
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4:Ghost}

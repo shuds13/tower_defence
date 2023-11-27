@@ -210,7 +210,7 @@ while running:
         window.blit(rotated_image, new_rect.topleft)
         player_money += tower.update(enemies)
 
-        pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
+        #pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
         #pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # To show range
 
     enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
@@ -230,16 +230,24 @@ while running:
 
     # Draw the path
     for i in range(len(path) - 1):
-        pygame.draw.line(window, (255, 255, 255), path[i], path[i+1], path_thickness)
+        #pygame.draw.line(window, (255, 255, 255), path[i], path[i+1], path_thickness)
+        #pygame.draw.line(window, (211, 211, 211), path[i], path[i+1], path_thickness)
+        pygame.draw.line(window, (0, 211, 211), path[i], path[i+1], path_thickness)
 
     # Draw enemies
     for enemy in enemies:
-        pygame.draw.circle(window, enemy.color, (int(enemy.position[0]), int(enemy.position[1])), 10)
+        # This should be in an enemy draw function
+        if enemy.image is None:
+            pygame.draw.circle(window, enemy.color, (int(enemy.position[0]), int(enemy.position[1])), 10)
+        else:
+            image_rect = enemy.image.get_rect(center=enemy.position)
+            window.blit(enemy.image, image_rect.topleft)
 
     # Draw tower attacks
     for tower in towers:
         if tower.is_attacking and tower.target:
-            pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)  # should be in tower
+            tower.attack_animate(window)
+            #pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)  # should be in tower
 
     if current_tower_type is not None:
         mouse_x, mouse_y = pygame.mouse.get_pos()
