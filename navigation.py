@@ -2,10 +2,10 @@ import pygame
 from tower import Tower, tower_types
 
 
-def draw_button(surface, text, position, size):
+def draw_button(surface, text, position, size, color=(0, 0, 255)):
     font = pygame.font.SysFont(None, 36)
     button_rect = pygame.Rect(position, size)
-    pygame.draw.rect(surface, (0, 0, 255), button_rect)  # Blue button
+    pygame.draw.rect(surface, color, button_rect)  # Blue button
     text_surf = font.render(text, True, (255, 255, 255))  # White text
     text_rect = text_surf.get_rect(center=button_rect.center)
     surface.blit(text_surf, text_rect)
@@ -23,7 +23,7 @@ def play_button(window, window_size):
 
 
 def start_level_button(window, window_size):
-    return draw_button(window, "Go", (window_size[0] - 125, window_size[1] - 100), (50, 50))
+    return draw_button(window, "Go", (window_size[0] - 125, window_size[1] - 100), (50, 50), (0,200,20))
 
 
 def draw_side_panel(surface, panel_rect, current_tower_type):
