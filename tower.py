@@ -130,7 +130,7 @@ class Wizard(Tower):
         self.image = Wizard.image
 
     def attack_animate(self, window):
-        pygame.draw.line(window, (128,0,128), self.position, self.target.position, 25)
+        pygame.draw.line(window, (255,0,255), self.position, self.target.position, 15)
 
 
 tower_types = [Fighter, Burger, Wizard]
