@@ -30,6 +30,7 @@ class Tower:
         self.damage = 1
         self.is_attacking = False
         self.cost = Tower.price
+        self.angle = 0
 
     def find_target(self, enemies):
         for enemy in enemies:
@@ -71,6 +72,13 @@ class Tower:
     def rotate(self):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
+
+       # Keep from immediatly returning to upright.
+        if angle == 0:
+            angle = self.angle
+        else:
+            self.angle = angle
+
         rotated_image = pygame.transform.rotate(self.image, angle)
         new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
         return rotated_image, new_rect
