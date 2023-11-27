@@ -8,6 +8,10 @@ import placements as place
 import navigation as nav
 import levels as lev
 
+pygame.mixer.init()
+snd_place = pygame.mixer.Sound('place.wav')
+snd_sell = pygame.mixer.Sound('sell.wav')
+
 initial_lives = 10
 initial_money = 100
 initial_level = 1
@@ -115,6 +119,7 @@ while running:
                 sell_val = sell_tower(mouse_pos)
                 if sell_val:
                     player_money += sell_val
+                    snd_sell.play()
                     alert_message = f"Sold! (${sell_val})"
                     alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
                     continue
@@ -125,6 +130,7 @@ while running:
                     if player_money >= current_tower_type.price:
                         #towers.append(Tower(position=mouse_pos))
                         towers.append(current_tower_type(position=mouse_pos))
+                        snd_place.play()
                         player_money -= current_tower_type.price
                     else:
                         alert_message = "Not enough money!"
