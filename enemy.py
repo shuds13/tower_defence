@@ -47,18 +47,36 @@ class Enemy2(Enemy):
         self.health = 2
         self.value = 2
         self.speed = 3
-        self.color = (0, 0, 255)  # todo maybe turn red after one damage
+        self.color = (0, 0, 255)
 
     def take_damage(self, damage):
-        self.health -= damage
-        snd_blop.play()
-        if self.health <= 0:
-            self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
-        elif self.health == 1:  # same other than these 2 lines - maybe can combine with super.
-            self.color = (255, 0, 0)
-            self.speed = 2
-        if self.reached_end:
-            return self.value
-        return 0
+        print('here')
+        val = super().take_damage(damage)
+        if not val:
+            if self.health == 1:
+                self.color = (255, 0, 0)
+                self.speed = 2
+        return val
 
-enemy_types = {1: Enemy, 2: Enemy2}
+class Enemy3(Enemy):
+    def __init__(self, path):
+        super().__init__(path)
+        self.health = 3
+        self.value = 3
+        self.speed = 4
+        self.color = (0, 255, 0)
+
+    def take_damage(self, damage):
+        print('here')
+        val = super().take_damage(damage)
+        if not val:
+            if self.health == 2:
+                self.color = (0, 0, 255)
+                self.speed = 3
+            elif self.health == 1:
+                self.color = (255, 0, 0)
+                self.speed = 2
+        return val
+
+
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3}
