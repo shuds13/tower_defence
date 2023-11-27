@@ -1,6 +1,9 @@
 import pygame
 from tower import Tower, tower_types
 
+cross_img = pygame.image.load('cross.png')  # Load your tower image
+cross_img = pygame.transform.scale(cross_img, (50, 50))
+
 
 def draw_button(surface, text, position, size, color=(0, 0, 255)):
     font = pygame.font.SysFont(None, 36)
@@ -34,7 +37,7 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
 
     def draw_tower_option(tower_type, y_offset):
         # Draw tower selection options (simple rectangles or icons)
-        rect = pygame.Rect(panel_rect.x + 10, panel_rect.y + y_offset, 180, 50)  # Example
+        rect = pygame.Rect(panel_rect.x + 10, panel_rect.y + y_offset, 180, 50)
         pygame.draw.rect(surface, (100, 100, 100), rect)  # Dark grey option box
 
         image_rect_1 = tower_type.image.get_rect(center=(rect.centerx - 40, rect.centery))
@@ -53,5 +56,16 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
     for tower in tower_types:  # keep this list in tower module
         tower_rects.append(draw_tower_option(tower, y_offset))
         y_offset += 60
+
+    #TODO incorporate with above
+    rect = pygame.Rect(panel_rect.x + 10, panel_rect.y + y_offset, 180, 50)
+    pygame.draw.rect(surface, (100, 100, 100), rect)  # Dark grey option box
+    image_rect_1 = cross_img.get_rect(center=(rect.centerx - 40, rect.centery))
+    surface.blit(cross_img, image_rect_1.topleft)
+    tower_rects.append(rect)
+
+    if current_tower_type is None:
+        pygame.draw.rect(surface, (255, 255, 0), rect, 3)  # Yellow border
+
 
     return tower_rects

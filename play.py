@@ -92,6 +92,9 @@ while running:
                     active = True
                     start_level_button = None
                     continue
+            if tower_option_rects[-1].collidepoint(mouse_pos):
+                current_tower_type = None
+                continue
             new_type = select_tower_type(tower_types)
             if new_type is not None:
                 current_tower_type = tower_types[new_type]
@@ -108,7 +111,6 @@ while running:
                 else:
                     alert_message = "Cant place here"
                     alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
-
 
     if game_over:
         pygame.display.flip()  # Update the full display Surface to the screen
