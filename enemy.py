@@ -50,7 +50,6 @@ class Enemy2(Enemy):
         self.color = (0, 0, 255)
 
     def take_damage(self, damage):
-        print('here')
         val = super().take_damage(damage)
         if not val:
             if self.health == 1:
@@ -67,7 +66,6 @@ class Enemy3(Enemy):
         self.color = (0, 255, 0)
 
     def take_damage(self, damage):
-        print('here')
         val = super().take_damage(damage)
         if not val:
             if self.health == 2:
