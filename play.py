@@ -73,6 +73,17 @@ def select_tower_type(tower_types):
             return i
     return None
 
+def sell_tower(mouse_pos):
+    for tower in towers:
+        if tower.is_clicked(mouse_pos):
+            # Add logic to sell the tower
+            #player_money += int(tower.cost * 0.8)  # Adjust the money received from selling - need to make player object
+            towers.remove(tower)
+            #return True
+            return int(tower.cost * 0.8)
+            break  # Exit the loop after selling one tower to avoid multiple sales
+    return 0
+
 # Game loop
 while running:
     for event in pygame.event.get():
@@ -99,7 +110,17 @@ while running:
             if new_type is not None:
                 current_tower_type = tower_types[new_type]
             # Check if the position is valid for tower placement
+
+            if current_tower_type is None:
+                sell_val = sell_tower(mouse_pos)
+                if sell_val:
+                    player_money += sell_val
+                    alert_message = f"Sold! (${sell_val})"
+                    alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
+                    continue
+
             elif current_tower_type is not None:
+
                 if place.is_valid_position(mouse_pos, path, towers):
                     if player_money >= current_tower_type.price:
                         #towers.append(Tower(position=mouse_pos))

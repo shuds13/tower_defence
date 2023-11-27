@@ -69,6 +69,11 @@ class Tower:
         new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
         return rotated_image, new_rect
 
+    def is_clicked(self, point):
+        # Assuming the tower is drawn as a circle with a certain radius
+        radius = 20  # or whatever your tower's radius is
+        return (self.position[0] - point[0]) ** 2 + (self.position[1] - point[1]) ** 2 <= radius ** 2
+
 class Fighter(Tower):
 
     price = 50
