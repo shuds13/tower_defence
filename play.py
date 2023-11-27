@@ -111,7 +111,7 @@ while running:
                 current_tower_type = tower_types[new_type]
             # Check if the position is valid for tower placement
 
-            if current_tower_type is None:
+            elif current_tower_type is None:
                 sell_val = sell_tower(mouse_pos)
                 if sell_val:
                     player_money += sell_val
