@@ -13,8 +13,8 @@ snd_place = pygame.mixer.Sound('place.wav')
 snd_sell = pygame.mixer.Sound('sell.wav')
 
 initial_lives = 10
-initial_money = 1000
-initial_level = 3
+initial_money = 100
+initial_level = 1
 
 def reset_game():
     global player_money, level_num, level, towers, enemies, lives
