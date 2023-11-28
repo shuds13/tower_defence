@@ -15,7 +15,7 @@ pygame.font.init()  # Initialize font module
 snd_place = pygame.mixer.Sound('place.wav')
 snd_sell = pygame.mixer.Sound('sell.wav')
 
-initial_lives = 10
+initial_lives = 20
 initial_money = 100
 initial_level = 1
 
@@ -305,6 +305,7 @@ while running:
 
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
+    # Though I dont notice it - I should prob update enemy list inside loop to prevent double(multiple) targeting
     for tower in towers:
         if tower.viz_persist:
             tower.show_viz_persist(window)
