@@ -67,5 +67,63 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
     if current_tower_type is None:
         pygame.draw.rect(surface, (255, 255, 0), rect, 3)  # Yellow border
 
-
     return tower_rects
+
+
+def draw_inset_window(surface, window_info):
+    if not window_info['active']:
+        return
+
+
+    # Coordinates and dimensions for the window
+    x, y, width, height = window_info['x'], window_info['y'], window_info['width'], window_info['height']
+
+    # Draw the border
+    border_color = (255, 255, 255)  # White border, change as needed
+    border_width = 4  # Width of the border, change as needed
+    pygame.draw.rect(surface, border_color, (x - border_width, y - border_width, width + 2 * border_width, height + 2 * border_width))
+
+    # Draw the window background
+    pygame.draw.rect(surface, (200, 200, 200), (x, y, width, height))
+
+
+    # Draw the window background
+    rect = (window_info['x'], window_info['y'], window_info['width'], window_info['height'])
+    pygame.draw.rect(surface, (200, 200, 200), rect)  # Light grey background
+
+    # Draw the tower image (replace with actual tower image)
+
+
+    tower = window_info['tower']
+
+    if tower:
+        # Maybe best to use bigger versions of original image
+        tower_image = pygame.transform.scale(tower.image, (100, 100))
+
+        image_rect = tower_image.get_rect(center=(window_info['x'] + window_info['width'] // 2, window_info['y'] + 80))
+        surface.blit(tower_image, image_rect)
+
+    #font = pygame.font.SysFont('Arial', 16)  # Choose a font and size
+    font = pygame.font.SysFont(None, 24)
+
+
+    # Draw buttons for upgrade and sell (placeholder rectangles here)
+    upgrade_button = pygame.Rect(window_info['x'] + 40, window_info['y'] + 160, 120, 40)
+    pygame.draw.rect(surface, (100, 100, 100), upgrade_button)  # Dark grey button
+    # Render and draw "Upgrade" text and amount
+    #upgrade_text = font.render(f"Upgrade ${int(tower.next_upgrade_cost())}", True, (255, 255, 255))  # White text
+    upgrade_text = font.render(f"Upgrade price", True, (255, 255, 255))  # White text
+    upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
+    surface.blit(upgrade_text, upgrade_text_rect)
+
+    sell_button = pygame.Rect(window_info['x'] + 40, window_info['y'] + 230, 120, 40)
+    pygame.draw.rect(surface, (100, 100, 100), sell_button)  # Dark grey button
+    # Render and draw "Sell" text and amount
+    sell_text = font.render(f"Sell ${int(tower.cost * 0.8)}", True, (255, 255, 255))  # White text
+    sell_text_rect = sell_text.get_rect(center=sell_button.center)
+    surface.blit(sell_text, sell_text_rect)
+
+    # Return button rects for further use (e.g., click detection)
+    return upgrade_button, sell_button
+
+
