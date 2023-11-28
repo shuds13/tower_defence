@@ -66,7 +66,7 @@ start_level_button = None  # To store the button rectangle
 #current_tower_type = None # Will be selected
 alert_message = ""
 alert_timer = 0
-restart_timer = 12000
+restart_timer = 20000
 round_bonus = 20
 
 reset_game()
@@ -97,8 +97,8 @@ while running:
             if play_again_button and nav.is_click_inside_rect(pygame.mouse.get_pos(), play_again_button):
                 reset_game()
                 #game_over = False
-            else:
-                running = False
+            #else:
+                #running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
