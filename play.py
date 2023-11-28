@@ -13,8 +13,8 @@ snd_place = pygame.mixer.Sound('place.wav')
 snd_sell = pygame.mixer.Sound('sell.wav')
 
 initial_lives = 10
-initial_money = 100
-initial_level = 1
+initial_money = 1000
+initial_level = 3
 
 def reset_game():
     global player_money, level_num, level, towers, enemies, lives
@@ -246,6 +246,8 @@ while running:
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
     for tower in towers:
+        if tower.viz_persist:
+            tower.show_viz_persist(window)
         if tower.is_attacking and tower.target:
             tower.attack_animate(window)
             #pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)  # should be in tower

@@ -32,6 +32,10 @@ class Tower:
         self.cost = Tower.price
         self.angle = 0
         self.attack_count = 0
+        self.viz_persist = 0
+
+    def show_viz_persis():
+        pass
 
     # Goes through enemies - finds first (could find strongest etc...)
     def find_target(self, enemies):
@@ -156,6 +160,23 @@ class Wizard(Tower):
         pygame.draw.circle(cloud, (128, 0, 128, 128), (radius, radius), radius)
         return cloud
 
+    def show_viz_persist(self, window):
+        # Currently only cloud persists - could also change in size/color etc
+        # TODO avoid duplication
+
+        #cloud = self.create_cloud(self.range)
+        # try changing somwhow
+        radius = max(0, self.range - 100//self.viz_persist)
+        #color = 128
+        color = max(128 - 5*self.viz_persist, 0)
+        cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(cloud, (color, 0, color, color), (radius, radius), radius)
+
+        cloud_rect = cloud.get_rect(center=self.position)
+        window.blit(cloud, cloud_rect)
+        if self.viz_persist > 0:
+            self.viz_persist -= 1
+
     # To be every so many attacks but for now replace
     def attack_animate(self, window):
         if self.cloud_attack:
@@ -163,6 +184,7 @@ class Wizard(Tower):
             cloud = self.create_cloud(self.range)
             cloud_rect = cloud.get_rect(center=self.position)
             window.blit(cloud, cloud_rect)
+            self.viz_persist = 5
         else:
             pygame.draw.line(window, (255,0,255), self.position, self.target.position, 15)
 
