@@ -244,6 +244,7 @@ while running:
             window.blit(enemy.image, image_rect.topleft)
 
     # Draw tower attacks
+    # TODO remind me why this section is separate from above where finds target - though this is just animation
     for tower in towers:
         if tower.is_attacking and tower.target:
             tower.attack_animate(window)

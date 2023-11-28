@@ -31,7 +31,9 @@ class Tower:
         self.is_attacking = False
         self.cost = Tower.price
         self.angle = 0
+        self.attack_count = 0
 
+    # Goes through enemies - finds first (could find strongest etc...)
     def find_target(self, enemies):
         for enemy in enemies:
             if self.in_range(enemy):
@@ -47,6 +49,7 @@ class Tower:
     def attack(self):
         score = 0
         if self.target and self.attack_timer <= 0:
+            self.attack_count += 1
             score = self.target.take_damage(self.damage)
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
@@ -124,7 +127,7 @@ class Burger(Tower):
 
 class Wizard(Tower):
 
-    price = 100
+    price = 125
     name = 'Wizard'
     image = wizard_img
     range = 120
@@ -136,9 +139,73 @@ class Wizard(Tower):
         self.damage = 2
         self.cost = Wizard.price
         self.image = Wizard.image
+        self.cloud_freq = 4
+        self.attack_count = 0
+        self.cloud_attack = False
 
+    def _is_cloud_attack(self):
+        # The slow but elegant way - can do one line also x=y=z
+        if self.attack_count % self.cloud_freq == 0:
+            self.cloud_attack = True
+        else:
+            self.cloud_attack = False
+        return self.cloud_attack
+
+    def create_cloud(self, radius):
+        cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(cloud, (128, 0, 128, 128), (radius, radius), radius)
+        return cloud
+
+    # To be every so many attacks but for now replace
     def attack_animate(self, window):
-        pygame.draw.line(window, (255,0,255), self.position, self.target.position, 15)
+        if self.cloud_attack:
+            #cloud = pygame.transform.scale(cloud_image, (tower.attack_radius*2, tower.attack_radius*2))
+            cloud = self.create_cloud(self.range)
+            cloud_rect = cloud.get_rect(center=self.position)
+            window.blit(cloud, cloud_rect)
+        else:
+            pygame.draw.line(window, (255,0,255), self.position, self.target.position, 15)
+
+    def find_target(self, enemies):
+        # Only place to call function - after just check self.cloud_attack
+        if self._is_cloud_attack():
+            self.target = []
+            for enemy in enemies:
+                if self.in_range(enemy):
+                    self.target.append(enemy)
+            if not self.target:
+                self.target = None
+        else:
+            super().find_target(enemies)
+
+    # Could be generic to deal with lists
+    def attack(self):
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            # If using IF this could be in generic one
+            self.attack_count += 1
+            if type(self.target) is list:
+                for target in self.target:
+                    score += target.take_damage(self.damage)
+            else:
+                score = self.target.take_damage(self.damage)
+            self.attack_timer = self.attack_speed
+            self.is_attacking = True  # Set to True when attacking
+        else:
+            self.is_attacking = False  # Set to False otherwise
+        return score
+
+    # Also could be generic to deal with lists - or he does not rotate when uses cloud attack
+    def get_target_angle(self):
+        if not self.target:
+            return 0
+        if type(self.target) is list:
+            target = self.target[0]
+        else:
+            target = self.target
+        dx = target.position[0] - self.position[0]
+        dy = target.position[1] - self.position[1]
+        return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
 
 tower_types = [Fighter, Burger, Wizard]
