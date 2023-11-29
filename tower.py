@@ -134,12 +134,12 @@ class Fighter(Tower):
 
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 30  # lower is better currently
+            self.attack_speed = 25  # lower is better currently
             self.range = 110
             self.image = fighter2_img
             self.cost += self.upgrade_costs[0]  # used in sell price calc - sell price should prob be returned from this obj
         if self.level == 3:
-            self.attack_speed = 15  # lower is better currently
+            self.attack_speed = 10  # lower is better currently
             self.range = 120
             self.image = fighter3_img
             self.cost += self.upgrade_costs[1]
