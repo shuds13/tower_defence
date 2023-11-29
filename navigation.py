@@ -26,6 +26,9 @@ def play_button(window, window_size):
 
 
 def start_level_button(window, window_size):
+    border_color = (0, 0, 0)
+    bw = 2  # Width of the border, change as needed
+    pygame.draw.rect(window, border_color, (window_size[0] - 125 - bw,window_size[1] - 100 - bw, 50 + 2 * bw, 50 + 2 * bw))
     return draw_button(window, "Go", (window_size[0] - 125, window_size[1] - 100), (50, 50), (0,200,20))
 
 
