@@ -146,7 +146,7 @@ while running:
 
                 if show_tower_info(inset_window):
                     #print('here')
-                    upgrade_button, sell_button = nav.draw_inset_window(window, inset_window)
+                    upgrade_button, sell_button = nav.draw_inset_window(window, inset_window, player_money)
                     continue
 
                 # May want this first incase its over top of a tower
@@ -335,7 +335,7 @@ while running:
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
             pygame.draw.circle(window, (0, 255, 255), (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
 
-    nav.draw_inset_window(window, inset_window)
+    nav.draw_inset_window(window, inset_window, player_money)
 
     if game_over:  # Game over condition
         #game_over = True

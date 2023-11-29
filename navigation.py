@@ -70,10 +70,9 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
     return tower_rects
 
 
-def draw_inset_window(surface, window_info):
+def draw_inset_window(surface, window_info, player_money):
     if not window_info['active']:
         return
-
 
     # Coordinates and dimensions for the window
     x, y, width, height = window_info['x'], window_info['y'], window_info['width'], window_info['height']
@@ -99,7 +98,6 @@ def draw_inset_window(surface, window_info):
     if tower:
         # Maybe best to use bigger versions of original image
         tower_image = pygame.transform.scale(tower.image, (100, 100))
-
         image_rect = tower_image.get_rect(center=(window_info['x'] + window_info['width'] // 2, window_info['y'] + 80))
         surface.blit(tower_image, image_rect)
 
@@ -109,20 +107,46 @@ def draw_inset_window(surface, window_info):
 
     # Draw buttons for upgrade and sell (placeholder rectangles here)
     upgrade_button = pygame.Rect(window_info['x'] + 40, window_info['y'] + 160, 120, 40)
-    pygame.draw.rect(surface, (100, 100, 100), upgrade_button)  # Dark grey button
+
+    border_color = (0, 0, 0)
+    bw = 2  # Width of the border, change as needed
+    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, window_info['y'] + 160 - bw, 120 + 2 * bw, 40 + 2 * bw))
+
+
     # Render and draw "Upgrade" text and amount
     #upgrade_text = font.render(f"Upgrade ${int(tower.next_upgrade_cost())}", True, (255, 255, 255))  # White text
 
+    #again could use  x=y=z
+    #at_max_level = tower.level == tower.__class__.max_level
     if tower.level == tower.__class__.max_level:
+        at_max_level = True
+    else:
+        at_max_level = False
+
+    if at_max_level:
+        upgrade_color = (0, 128, 128)
+    else:
+        upgrade_cost = tower.upgrade_costs[tower.level-1]
+        if player_money < upgrade_cost:
+            upgrade_color = (100, 100, 100)
+        else:
+            upgrade_color = (80, 200, 120)
+
+    pygame.draw.rect(surface, upgrade_color, upgrade_button)  # Dark grey button
+
+    if at_max_level:
         upgrade_text = font.render(f"Max Level", True, (255, 255, 255))  # White text
     else:
         #TODO what if dont have the money? Need diff color when available
-        upgrade_text = font.render(f"Upgrade ${tower.upgrade_costs[tower.level-1]}", True, (255, 255, 255))  # White text
+        upgrade_text = font.render(f"Upgrade ${upgrade_cost}", True, (255, 255, 255))  # White text
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
     surface.blit(upgrade_text, upgrade_text_rect)
 
     sell_button = pygame.Rect(window_info['x'] + 40, window_info['y'] + 230, 120, 40)
-    pygame.draw.rect(surface, (100, 100, 100), sell_button)  # Dark grey button
+    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, window_info['y'] + 230 - bw, 120 + 2 * bw, 40 + 2 * bw))
+
+
+    pygame.draw.rect(surface, (196, 30, 58), sell_button)  # Dark grey button
     # Render and draw "Sell" text and amount
     sell_text = font.render(f"Sell ${int(tower.cost * 0.8)}", True, (255, 255, 255))  # White text
     sell_text_rect = sell_text.get_rect(center=sell_button.center)
