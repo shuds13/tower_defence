@@ -9,7 +9,6 @@ import navigation as nav
 import levels as lev
 
 pygame.mixer.init()
-
 pygame.font.init()  # Initialize font module
 
 snd_place = pygame.mixer.Sound('place.wav')
@@ -18,32 +17,6 @@ snd_sell = pygame.mixer.Sound('sell.wav')
 initial_lives = 20
 initial_money = 100
 initial_level = 1
-
-def reset_game():
-    global player_money, level_num, level, towers, enemies, lives
-    global running, enemy_spawn_timer, game_over, active, current_tower_type
-    player_money = initial_money
-    level_num = initial_level
-    level = lev.levels[level_num]()
-    towers = []
-    enemies = []
-    lives = initial_lives
-    running = True
-    enemy_spawn_timer = 0
-    game_over = False
-    active = False
-    current_tower_type = None
-    #spawned_enemies = 0
-    #enemy_spawn_interval = 40
-
-def reset_level():
-    global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type
-    enemies = []
-    running = True
-    enemy_spawn_timer = 0
-    active = False
-    current_tower_type = None
-    #spawned_enemies = 0
 
 # Initialize Pygame
 pygame.init()
@@ -57,6 +30,44 @@ window = pygame.display.set_mode(window_size)
 side_panel_width = 200
 side_panel_height = window_size[1]  # same as the game window height
 side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
+
+# navigation
+inset_window = {
+    'active': False,
+    'x': 4,  # X position of the window
+    'y': window_size[1] - 304,  # Y position of the window
+    'width': 200,
+    'height': 300,
+    'tower': None  # The tower that is currently selected
+}
+
+def reset_game():
+    global player_money, level_num, level, towers, enemies, lives
+    global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
+    player_money = initial_money
+    level_num = initial_level
+    level = lev.levels[level_num]()
+    towers = []
+    enemies = []
+    lives = initial_lives
+    running = True
+    enemy_spawn_timer = 0
+    game_over = False
+    active = False
+    current_tower_type = None
+    inset_window['active'] = False
+
+    #spawned_enemies = 0
+    #enemy_spawn_interval = 40
+
+def reset_level():
+    global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type
+    enemies = []
+    running = True
+    enemy_spawn_timer = 0
+    active = False
+    current_tower_type = None
+    #spawned_enemies = 0
 
 # Define a simple path as a list of (x, y) tuples - will be under map.py
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
@@ -79,20 +90,6 @@ def select_tower_type(tower_types):
         if tower_option_rects[i].collidepoint(mouse_pos):
             return i
     return None
-
-
-
-# navigation
-inset_window = {
-    'active': False,
-    'x': 4,  # X position of the window
-    'y': window_size[1] - 304,  # Y position of the window
-    'width': 200,
-    'height': 300,
-    'tower': None  # The tower that is currently selected
-}
-
-
 
 
 def sell_tower(mouse_pos):
@@ -148,7 +145,7 @@ while running:
             elif current_tower_type is None:
 
                 if show_tower_info(inset_window):
-                    print('here')
+                    #print('here')
                     upgrade_button, sell_button = nav.draw_inset_window(window, inset_window)
                     continue
 
@@ -156,7 +153,13 @@ while running:
                 elif inset_window['active']:
                     if upgrade_button.collidepoint(mouse_pos):
                         # Upgrade logic here
-                        pass
+                        tower = inset_window['tower']
+                        if tower.level < tower.__class__.max_level:
+                            upgrade_cost = tower.upgrade_costs[tower.level-1]
+                            if player_money >= upgrade_cost:
+                                print('true')
+                                tower.level_up()
+                                player_money -= upgrade_cost
                     elif sell_button.collidepoint(mouse_pos):
                         #print('selling')
                         # Sell logic here

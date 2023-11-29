@@ -3,8 +3,12 @@ import pygame
 #pygame.init()
 #screen = pygame.display.set_mode((800, 600))
 
-fighter_img = pygame.image.load('tower1.png')  # Load your tower image
+fighter_img = pygame.image.load('tower1.png')
 fighter_img = pygame.transform.scale(fighter_img, (50, 50))
+fighter2_img = pygame.image.load('tower1_lev2.png')
+fighter2_img = pygame.transform.scale(fighter2_img, (50, 50))
+fighter3_img = pygame.image.load('tower1_lev3.png')
+fighter3_img = pygame.transform.scale(fighter3_img, (50, 50))
 
 burger_img = pygame.image.load('burger.png')  # Load your tower image
 burger_img = pygame.transform.scale(burger_img, (50, 50))
@@ -20,6 +24,7 @@ class Tower:
     name = 'Tower'
     image = None
     range = 100
+    max_level = 1
 
     def __init__(self, position):
         self.position = position
@@ -33,8 +38,12 @@ class Tower:
         self.angle = 0
         self.attack_count = 0
         self.viz_persist = 0
+        self.level = 1
 
-    def show_viz_persis():
+    def level_up(self):
+        pass
+
+    def show_viz_persis(self, window):
         pass
 
     # Goes through enemies - finds first (could find strongest etc...)
@@ -104,6 +113,7 @@ class Fighter(Tower):
     name = 'Fighter'
     image = fighter_img
     range = 100
+    max_level = 3
 
     def __init__(self, position):
         super().__init__(position)
@@ -112,6 +122,25 @@ class Fighter(Tower):
         self.damage = 1
         self.cost = Fighter.price
         self.image = Fighter.image
+        self.level = 1
+        self.upgrade_costs = [40, 180]
+        #self.max_level = Fighter.max_level  # try using __class__ and if works do same for other attributes
+
+    def level_up(self):
+        #should never happen - if have this condition - then return money to remove from player
+        #if self.level == self.__class__.max_level:
+            #return
+            #print('here3a')
+
+        self.level +=1
+        if self.level == 2:
+            self.attack_speed = 30  # lower is better currently
+            self.range = 110
+            self.image = fighter2_img
+        if self.level == 3:
+            self.attack_speed = 15  # lower is better currently
+            self.range = 120
+            self.image = fighter3_img
 
 class Burger(Tower):
 
@@ -127,6 +156,7 @@ class Burger(Tower):
         self.damage = 1
         self.cost = Burger.price
         self.image = Burger.image
+        self.level = 1
 
 
 class Wizard(Tower):
@@ -143,6 +173,7 @@ class Wizard(Tower):
         self.damage = 2
         self.cost = Wizard.price
         self.image = Wizard.image
+        self.level = 1
         self.cloud_freq = 4
         self.attack_count = 0
         self.cloud_attack = False

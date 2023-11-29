@@ -112,7 +112,12 @@ def draw_inset_window(surface, window_info):
     pygame.draw.rect(surface, (100, 100, 100), upgrade_button)  # Dark grey button
     # Render and draw "Upgrade" text and amount
     #upgrade_text = font.render(f"Upgrade ${int(tower.next_upgrade_cost())}", True, (255, 255, 255))  # White text
-    upgrade_text = font.render(f"Upgrade price", True, (255, 255, 255))  # White text
+
+    if tower.level == tower.__class__.max_level:
+        upgrade_text = font.render(f"Max Level", True, (255, 255, 255))  # White text
+    else:
+        #TODO what if dont have the money? Need diff color when available
+        upgrade_text = font.render(f"Upgrade ${tower.upgrade_costs[tower.level-1]}", True, (255, 255, 255))  # White text
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
     surface.blit(upgrade_text, upgrade_text_rect)
 
