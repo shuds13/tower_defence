@@ -62,7 +62,7 @@ class Level3(Level):
 class Level4(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 3
+        self.level_id = 4
         self.num_enemies = 30
         self.spawn_intervals = [20, 20, 12]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
@@ -71,7 +71,7 @@ class Level4(Level):
 class Level5(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 3
+        self.level_id = 5
         self.num_enemies = 30
         self.spawn_intervals = [20, 20, 20]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
@@ -80,12 +80,58 @@ class Level5(Level):
 class Level6(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 3
+        self.level_id = 6
         self.num_enemies = 6
         self.spawn_intervals = [20]
         self.phase_counts = [6]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [10]  # TODO ghosts will need magic attacks to kill or some such
+
+class Level7(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 7
+        self.num_enemies = 35
+        self.spawn_intervals = [10, 20, 14]
+        self.phase_counts = [10, 22, 35]
+        self.enemy_types = [1,2,2]
+
+class Level8(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 8
+        self.num_enemies = 25
+        self.spawn_intervals = [25, 15]
+        self.phase_counts = [15, 25]
+        self.enemy_types = [3,3]
+
+class Level9(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 9
+        self.num_enemies = 12
+        self.spawn_intervals = [15]
+        self.phase_counts = [12]
         self.enemy_types = [4]
 
+class Level10(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 10
+        self.num_enemies = 50
+        self.spawn_intervals = [25, 15, 8]
+        self.phase_counts = [20, 32, 50]
+        self.enemy_types = [2,2,2]
 
-levels = {1: Level1, 2: Level2, 3: Level3, 4: Level4, 5: Level5, 6: Level6}
-max_level = 6
+class Level11(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 11
+        self.num_enemies = 60
+        self.spawn_intervals = [6, 12, 15, 12]
+        self.phase_counts = [15, 30, 45, 60]
+        self.enemy_types = [2,1,3,4]
+
+
+# TODO auto-add
+levels = {1: Level1, 2: Level2, 3: Level3, 4: Level4, 5: Level5, 6: Level6, 7: Level7, 8: Level8, 9: Level9, 10: Level10, 11: Level11}
+max_level = 11

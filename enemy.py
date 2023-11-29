@@ -81,6 +81,29 @@ class Enemy3(Enemy):
         return val
 
 
+class Enemy4(Enemy):
+    def __init__(self, path):
+        super().__init__(path)
+        self.health = 4
+        self.value = 4
+        self.speed = 5
+        self.color = (255, 255, 0)
+
+    def take_damage(self, damage):
+        val = super().take_damage(damage)
+        if not val:
+            if self.health == 3:
+                self.color = (0, 255, 0)
+                self.speed = 3
+            elif self.health == 2:
+                self.color = (0, 0, 255)
+                self.speed = 3
+            elif self.health == 1:
+                self.color = (255, 0, 0)
+                self.speed = 2
+        return val
+
+
 class Ghost(Enemy):
     def __init__(self, path):
         super().__init__(path)
@@ -100,4 +123,4 @@ class Ghost(Enemy):
             return self.value
         return 0
 
-enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4:Ghost}
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 10:Ghost}

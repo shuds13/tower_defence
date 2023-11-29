@@ -140,7 +140,8 @@ def draw_inset_window(surface, window_info, player_money):
     if at_max_level:
         upgrade_text = font.render(f"Max Level", True, (255, 255, 255))  # White text
     else:
-        #TODO what if dont have the money? Need diff color when available
+        #TODO Instead of word "Upgrade" say name of upgrade tower.upgrade_name (will update with tower level)
+        #burger upgrade - "extra spicy"?
         upgrade_text = font.render(f"Upgrade ${upgrade_cost}", True, (255, 255, 255))  # White text
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
     surface.blit(upgrade_text, upgrade_text_rect)
