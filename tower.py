@@ -151,7 +151,7 @@ class Fighter(Tower):
             self.attack_speed = 5  # lower is better currently
             self.range = 140
             self.image = fighter4_img
-            self.cost += self.upgrade_costs[1]
+            self.cost += self.upgrade_costs[2]
             self.damage = 2  # compare
 
 class Burger(Tower):

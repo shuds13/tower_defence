@@ -176,8 +176,19 @@ class Level16(Level):
         self.phase_counts = [8]
         self.enemy_types = [5]
 
+# Test level - just to try and beat 4th level (gold) Fighter with current strenght
+class Level17(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 16
+        self.num_enemies = 80
+        self.spawn_intervals = [5]
+        self.phase_counts = [80]
+        self.enemy_types = [3]
+        #self.enemy_types = [5]
 
-max_level = 16  # TODO get this from last key in levels
+
+max_level = 17  # TODO get this from last key in levels
 
 # TODO auto-add
 levels = {1: Level1, 2: Level2, 3: Level3,
@@ -185,5 +196,5 @@ levels = {1: Level1, 2: Level2, 3: Level3,
           7: Level7, 8: Level8, 9: Level9,
           10: Level10, 11: Level11, 12: Level12,
           13: Level13, 14: Level14, 15: Level15,
-          16: Level16
+          16: Level16, 17: Level17
           }
