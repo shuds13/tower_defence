@@ -17,8 +17,8 @@ snd_sell = pygame.mixer.Sound('sell.wav')
 # Current defaults: 20 / 100 / 1
 
 initial_lives = 20
-initial_money = 100
-initial_level = 1
+initial_money = 1000
+initial_level = 16
 
 # Initialize Pygame
 pygame.init()

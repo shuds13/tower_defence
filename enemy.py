@@ -7,6 +7,7 @@ ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 
 
 # TODO may not need value and health - will they always be the same?
+# may make enemy0 as way of making a gap - inivisible no value etc...
 
 class Enemy:
     def __init__(self, path):
@@ -78,7 +79,7 @@ class Enemy3(Enemy2):
         return val
 
 
-class Enemy4(Enemy):
+class Enemy4(Enemy3):
     def __init__(self, path):
         super().__init__(path)
         self.health = 4
@@ -94,6 +95,24 @@ class Enemy4(Enemy):
             self.value = 3
         return val
 
+
+class Enemy5(Enemy4):
+    def __init__(self, path):
+        super().__init__(path)
+        self.health = 5
+        self.value = 5
+        self.speed = 6
+        self.color = (127, 0, 255)
+
+    def take_damage(self, damage):
+        val = super().take_damage(damage)
+        if self.health == 4:
+            self.color = (255, 255, 0)
+            self.speed = 5
+            self.value = 4
+        return val
+
+# next put circle round outside to be fortified...
 
 class Ghost(Enemy):
     def __init__(self, path):
@@ -113,4 +132,4 @@ class Ghost(Enemy):
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
         return damage
 
-enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 10:Ghost}
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost}

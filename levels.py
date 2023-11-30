@@ -131,7 +131,59 @@ class Level11(Level):
         self.phase_counts = [15, 30, 45, 60]
         self.enemy_types = [2,1,3,4]
 
+class Level12(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 12
+        self.num_enemies = 50
+        self.spawn_intervals = [4, 8, 20]
+        self.phase_counts = [22, 35, 50]
+        self.enemy_types = [2,1,3]
+
+class Level13(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 13
+        self.num_enemies = 20
+        self.spawn_intervals = [12]
+        self.phase_counts = [20]
+        self.enemy_types = [4]
+
+class Level14(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 14
+        self.num_enemies = 45
+        self.spawn_intervals = [18, 12, 10]
+        self.phase_counts = [20, 33, 45]
+        self.enemy_types = [3, 10, 2]
+
+class Level15(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 15
+        self.num_enemies = 80
+        self.spawn_intervals = [18, 12, 10]
+        self.phase_counts = [20, 33, 80]
+        self.enemy_types = [3, 10, 2]
+
+class Level16(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 16
+        self.num_enemies = 8
+        self.spawn_intervals = [20]
+        self.phase_counts = [8]
+        self.enemy_types = [5]
+
+
+max_level = 16  # TODO get this from last key in levels
 
 # TODO auto-add
-levels = {1: Level1, 2: Level2, 3: Level3, 4: Level4, 5: Level5, 6: Level6, 7: Level7, 8: Level8, 9: Level9, 10: Level10, 11: Level11}
-max_level = 11
+levels = {1: Level1, 2: Level2, 3: Level3,
+          4: Level4, 5: Level5, 6: Level6,
+          7: Level7, 8: Level8, 9: Level9,
+          10: Level10, 11: Level11, 12: Level12,
+          13: Level13, 14: Level14, 15: Level15,
+          16: Level16
+          }
