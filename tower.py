@@ -8,7 +8,9 @@ fighter_img = pygame.transform.scale(fighter_img, (50, 50))
 fighter2_img = pygame.image.load('tower1_lev2.png')
 fighter2_img = pygame.transform.scale(fighter2_img, (50, 50))
 fighter3_img = pygame.image.load('tower1_lev3.png')
-fighter3_img = pygame.transform.scale(fighter3_img, (50, 50))
+fighter3_img = pygame.transform.scale(fighter3_img, (55, 55))
+fighter4_img = pygame.image.load('tower1_lev4.png')
+fighter4_img = pygame.transform.scale(fighter4_img, (60, 60))
 
 burger_img = pygame.image.load('burger.png')  # Load your tower image
 burger_img = pygame.transform.scale(burger_img, (50, 50))
@@ -113,7 +115,7 @@ class Fighter(Tower):
     name = 'Fighter'
     image = fighter_img
     range = 100
-    max_level = 3
+    max_level = 4
 
     def __init__(self, position):
         super().__init__(position)
@@ -123,7 +125,7 @@ class Fighter(Tower):
         self.cost = Fighter.price
         self.image = Fighter.image
         self.level = 1
-        self.upgrade_costs = [40, 180]
+        self.upgrade_costs = [40, 150, 400]
         #self.max_level = Fighter.max_level  # try using __class__ and if works do same for other attributes
 
     def level_up(self):
@@ -143,6 +145,12 @@ class Fighter(Tower):
             self.range = 120
             self.image = fighter3_img
             self.cost += self.upgrade_costs[1]
+        if self.level == 4:
+            self.attack_speed = 5  # lower is better currently
+            self.range = 140
+            self.image = fighter4_img
+            self.cost += self.upgrade_costs[1]
+            self.damage = 2  # compare
 
 class Burger(Tower):
 
