@@ -93,27 +93,43 @@ def draw_inset_window(surface, window_info, player_money):
     rect = (window_info['x'], window_info['y'], window_info['width'], window_info['height'])
     pygame.draw.rect(surface, (200, 200, 200), rect)  # Light grey background
 
-    # Draw the tower image (replace with actual tower image)
-
-
     tower = window_info['tower']
 
-    if tower:
-        # Maybe best to use bigger versions of original image
-        tower_image = pygame.transform.scale(tower.image, (100, 100))
-        image_rect = tower_image.get_rect(center=(window_info['x'] + window_info['width'] // 2, window_info['y'] + 80))
-        surface.blit(tower_image, image_rect)
-
-    #font = pygame.font.SysFont('Arial', 16)  # Choose a font and size
+    font_title = pygame.font.SysFont('Arial', 16, bold=True)  # Choose a font and size
     font = pygame.font.SysFont(None, 24)
 
 
+    #test if that if is necessary
+    tower_name_text = font_title.render(tower.name.upper(), True, (0, 0, 0))  # Black text
+    tower_name_rect = tower_name_text.get_rect(center=(x + width // 2, y + 20))
+    surface.blit(tower_name_text, tower_name_rect.topleft)
+
+    tower_pops_text = font.render(str(tower.total_score), True, (0, 0, 0))  # Black text
+    tower_pops_rect = tower_pops_text.get_rect(center=(x + width // 2, y + 40))
+    surface.blit(tower_pops_text, tower_pops_rect.topleft)
+
+
+
+    # TODO i dont think this if is necessary
+    if tower:
+
+    # Draw the tower image
+
+        # Maybe best to use bigger versions of original image
+        image_y_pos = window_info['y'] + 105  # was 80
+        tower_image = pygame.transform.scale(tower.image, (100, 100))
+        image_rect = tower_image.get_rect(center=(window_info['x'] + window_info['width'] // 2, image_y_pos))
+        surface.blit(tower_image, image_rect)
+
+
+
     # Draw buttons for upgrade and sell (placeholder rectangles here)
-    upgrade_button = pygame.Rect(window_info['x'] + 40, window_info['y'] + 160, 120, 40)
+    upgrade_y_pos = window_info['y'] + 175  # was 160
+    upgrade_button = pygame.Rect(window_info['x'] + 40, upgrade_y_pos, 120, 40)
 
     border_color = (0, 0, 0)
     bw = 2  # Width of the border, change as needed
-    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, window_info['y'] + 160 - bw, 120 + 2 * bw, 40 + 2 * bw))
+    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, upgrade_y_pos - bw, 120 + 2 * bw, 40 + 2 * bw))
 
 
     # Render and draw "Upgrade" text and amount
@@ -146,8 +162,10 @@ def draw_inset_window(surface, window_info, player_money):
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
     surface.blit(upgrade_text, upgrade_text_rect)
 
-    sell_button = pygame.Rect(window_info['x'] + 40, window_info['y'] + 230, 120, 40)
-    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, window_info['y'] + 230 - bw, 120 + 2 * bw, 40 + 2 * bw))
+    sell_y_pos = window_info['y'] + 240  # was 230
+
+    sell_button = pygame.Rect(window_info['x'] + 40, sell_y_pos, 120, 40)
+    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, sell_y_pos - bw, 120 + 2 * bw, 40 + 2 * bw))
 
 
     pygame.draw.rect(surface, (196, 30, 58), sell_button)  # Dark grey button

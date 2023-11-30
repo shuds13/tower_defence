@@ -41,6 +41,7 @@ class Tower:
         self.attack_count = 0
         self.viz_persist = 0
         self.level = 1
+        self.total_score = 0
 
     def level_up(self):
         pass
@@ -78,6 +79,7 @@ class Tower:
             #self.find_target(enemies)
         self.find_target(enemies)
         score = self.attack()
+        self.total_score += score
         return score
 
     def get_target_angle(self):
