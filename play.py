@@ -197,6 +197,8 @@ while running:
                         towers.append(current_tower_type(position=mouse_pos))
                         snd_place.play()
                         player_money -= current_tower_type.price
+                        # I did not used to do this - is it better
+                        current_tower_type = None
                     else:
                         alert_message = "Not enough money!"
                         alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
