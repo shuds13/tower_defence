@@ -14,6 +14,8 @@ pygame.font.init()  # Initialize font module
 snd_place = pygame.mixer.Sound('place.wav')
 snd_sell = pygame.mixer.Sound('sell.wav')
 
+# Current defaults: 20 / 100 / 1
+
 initial_lives = 20
 initial_money = 100
 initial_level = 1

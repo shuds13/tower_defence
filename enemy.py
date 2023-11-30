@@ -6,6 +6,8 @@ ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 
 
+# TODO may not need value and health - will they always be the same?
+
 class Enemy:
     def __init__(self, path):
         self.path = path
@@ -41,9 +43,7 @@ class Enemy:
         snd_blop.play()
         if self.health <= 0:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
-        if self.reached_end:
-            return self.value
-        return 0
+        return damage
 
 class Enemy2(Enemy):
     def __init__(self, path):
@@ -55,13 +55,13 @@ class Enemy2(Enemy):
 
     def take_damage(self, damage):
         val = super().take_damage(damage)
-        if not val:
-            if self.health == 1:
-                self.color = (255, 0, 0)
-                self.speed = 2
+        if self.health == 1:
+            self.color = (255, 0, 0)
+            self.speed = 2
+            self.value = 1
         return val
 
-class Enemy3(Enemy):
+class Enemy3(Enemy2):
     def __init__(self, path):
         super().__init__(path)
         self.health = 3
@@ -71,13 +71,10 @@ class Enemy3(Enemy):
 
     def take_damage(self, damage):
         val = super().take_damage(damage)
-        if not val:
-            if self.health == 2:
-                self.color = (0, 0, 255)
-                self.speed = 3
-            elif self.health == 1:
-                self.color = (255, 0, 0)
-                self.speed = 2
+        if self.health == 2:
+            self.color = (0, 0, 255)
+            self.speed = 3
+            self.value = 2
         return val
 
 
@@ -91,16 +88,10 @@ class Enemy4(Enemy):
 
     def take_damage(self, damage):
         val = super().take_damage(damage)
-        if not val:
-            if self.health == 3:
-                self.color = (0, 255, 0)
-                self.speed = 3
-            elif self.health == 2:
-                self.color = (0, 0, 255)
-                self.speed = 3
-            elif self.health == 1:
-                self.color = (255, 0, 0)
-                self.speed = 2
+        if self.health == 3:
+            self.color = (0, 255, 0)
+            self.speed = 4
+            self.value = 3
         return val
 
 
@@ -116,11 +107,10 @@ class Ghost(Enemy):
     # Will require magic to kill but not there yet.
     def take_damage(self, damage):
         self.health -= damage
+        self.value = self.health
         snd_blop.play()
         if self.health <= 0:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
-        if self.reached_end:
-            return self.value
-        return 0
+        return damage
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 10:Ghost}
