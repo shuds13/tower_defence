@@ -76,69 +76,48 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
     return tower_rects
 
 
+def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
+    pygame.draw.rect(surface, color, (x - border_width, y - border_width, width + 2 * border_width, height + 2 * border_width))
+
+
 def draw_inset_window(surface, window_info, player_money):
     if not window_info['active']:
         return
 
     # Coordinates and dimensions for the window
     x, y, width, height = window_info['x'], window_info['y'], window_info['width'], window_info['height']
+    tower = window_info['tower']
 
     # Draw the border
-    border_color = (255, 255, 255)  # White border, change as needed
-    border_width = 4  # Width of the border, change as needed
-    pygame.draw.rect(surface, border_color, (x - border_width, y - border_width, width + 2 * border_width, height + 2 * border_width))
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
 
     # Draw the window background
     pygame.draw.rect(surface, (200, 200, 200), (x, y, width, height))
 
-
-    # Draw the window background
-    rect = (window_info['x'], window_info['y'], window_info['width'], window_info['height'])
-    pygame.draw.rect(surface, (200, 200, 200), rect)  # Light grey background
-
-    tower = window_info['tower']
-
     font_title = pygame.font.SysFont('Arial', 16, bold=True)  # Choose a font and size
     font = pygame.font.SysFont(None, 24)
 
-
-    #test if that if is necessary
+    # Tower name
     tower_name_text = font_title.render(tower.name.upper(), True, (0, 0, 0))  # Black text
     tower_name_rect = tower_name_text.get_rect(center=(x + width // 2, y + 20))
     surface.blit(tower_name_text, tower_name_rect.topleft)
 
+    # Tower pops
     tower_pops_text = font.render(str(tower.total_score), True, (0, 0, 0))  # Black text
     tower_pops_rect = tower_pops_text.get_rect(center=(x + width // 2, y + 40))
     surface.blit(tower_pops_text, tower_pops_rect.topleft)
 
-
-
-    # TODO i dont think this if is necessary
-    if tower:
-
     # Draw the tower image
+    image_y_pos = y + 105  # was 80
+    tower_image = pygame.transform.scale(tower.image, (100, 100))
+    image_rect = tower_image.get_rect(center=(x + width // 2, image_y_pos))
+    surface.blit(tower_image, image_rect)
 
-        # Maybe best to use bigger versions of original image
-        image_y_pos = window_info['y'] + 105  # was 80
-        tower_image = pygame.transform.scale(tower.image, (100, 100))
-        image_rect = tower_image.get_rect(center=(window_info['x'] + window_info['width'] // 2, image_y_pos))
-        surface.blit(tower_image, image_rect)
+    # Draw buttons for upgrade and sell
+    upgrade_y_pos = y + 175  # was 160
+    upgrade_button = pygame.Rect(x + 40, upgrade_y_pos, 120, 40)
+    draw_border(surface, x+40, upgrade_y_pos, 120, 40, 2)
 
-
-
-    # Draw buttons for upgrade and sell (placeholder rectangles here)
-    upgrade_y_pos = window_info['y'] + 175  # was 160
-    upgrade_button = pygame.Rect(window_info['x'] + 40, upgrade_y_pos, 120, 40)
-
-    border_color = (0, 0, 0)
-    bw = 2  # Width of the border, change as needed
-    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, upgrade_y_pos - bw, 120 + 2 * bw, 40 + 2 * bw))
-
-
-    # Render and draw "Upgrade" text and amount
-    #upgrade_text = font.render(f"Upgrade ${int(tower.next_upgrade_cost())}", True, (255, 255, 255))  # White text
-
-    #again could use  x=y=z
     #at_max_level = tower.level == tower.__class__.max_level
     if tower.level == tower.__class__.max_level:
         at_max_level = True
@@ -165,11 +144,10 @@ def draw_inset_window(surface, window_info, player_money):
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
     surface.blit(upgrade_text, upgrade_text_rect)
 
-    sell_y_pos = window_info['y'] + 240  # was 230
+    sell_y_pos = y + 240  # was 230
 
-    sell_button = pygame.Rect(window_info['x'] + 40, sell_y_pos, 120, 40)
-    pygame.draw.rect(surface, border_color, (window_info['x'] + 40  - bw, sell_y_pos - bw, 120 + 2 * bw, 40 + 2 * bw))
-
+    sell_button = pygame.Rect(x + 40, sell_y_pos, 120, 40)
+    draw_border(surface, x+40, sell_y_pos, 120, 40, 2)
 
     pygame.draw.rect(surface, (196, 30, 58), sell_button)  # Dark grey button
     # Render and draw "Sell" text and amount
