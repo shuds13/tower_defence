@@ -219,7 +219,7 @@ class Wizard(Tower):
             self.attack_speed = 30  # lower is better currently
             self.range = 130
             self.image = wizard2_img
-            #self.cloud_freq = 3  # ironially i think this needs to be less as attack speed is faster
+            self.cloud_freq = 5  # ironially i think this needs to be less as attack speed is faster
             self.cost += self.upgrade_costs[0]
             self.beam_width = 10
         if self.level == 3:
@@ -227,7 +227,7 @@ class Wizard(Tower):
             self.attack_speed = 15  # lower is better currently
             self.range = 150
             self.image = wizard3_img
-            #self.cloud_freq = 3
+            self.cloud_freq = 6  # less freq
             self.cost += self.upgrade_costs[1]
             self.beam_width = 12
 
