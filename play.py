@@ -16,7 +16,7 @@ snd_place = pygame.mixer.Sound('place.wav')
 
 # Current defaults: 20 / 100 / 1
 
-initial_lives = 20
+initial_lives = 30
 initial_money = 100
 initial_level = 1
 
