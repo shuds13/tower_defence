@@ -12,7 +12,7 @@ pygame.mixer.init()
 pygame.font.init()  # Initialize font module
 
 snd_place = pygame.mixer.Sound('place.wav')
-snd_sell = pygame.mixer.Sound('sell.wav')
+#snd_sell = pygame.mixer.Sound('sell.wav')
 
 # Current defaults: 20 / 100 / 1
 
@@ -97,12 +97,9 @@ def select_tower_type(tower_types):
 def sell_tower(mouse_pos):
     for tower in towers:
         if tower.is_clicked(mouse_pos):
-            # Add logic to sell the tower
-            #player_money += int(tower.cost * 0.8)  # Adjust the money received from selling - need to make player object
             towers.remove(tower)
-            #return True
             return int(tower.cost * 0.8)
-            break  # Exit the loop after selling one tower to avoid multiple sales
+            break  # Exit the loop after selling one tower
     return 0
 
 
@@ -111,8 +108,6 @@ def show_tower_info(inset_window):
         if tower.is_clicked(mouse_pos):
             inset_window['active'] = True
             inset_window['tower'] = tower
-            #break
-            #return inset_window  # mutable type
             return True
     return False
 
@@ -125,80 +120,49 @@ while running:
         elif game_over and event.type == pygame.MOUSEBUTTONDOWN:
             if play_again_button and nav.is_click_inside_rect(pygame.mouse.get_pos(), play_again_button):
                 reset_game()
-                #game_over = False
-            #else:
-                #running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Get mouse position and place a tower
             mouse_pos = pygame.mouse.get_pos()
+
+            # If GO button is clicked then start level
             if not active and start_level_button:
-                if nav.is_click_inside_rect(pygame.mouse.get_pos(), start_level_button):
+                if nav.is_click_inside_rect(mouse_pos, start_level_button):
                     active = True
                     start_level_button = None
                     continue
+
+            # Is cross clicked to deselect a tower
             if tower_option_rects[-1].collidepoint(mouse_pos):
                 current_tower_type = None
                 continue
+
+            # Select a tower
             new_type = select_tower_type(tower_types)
             if new_type is not None:
                 current_tower_type = tower_types[new_type]
-            # Check if the position is valid for tower placement
 
             elif current_tower_type is None:
 
+                # If user clicked on tower - open the info (inset) window
                 if show_tower_info(inset_window):
-                    #print('here')
                     upgrade_button, sell_button = nav.draw_inset_window(window, inset_window, player_money)
-                    continue
 
-                # May want this first incase its over top of a tower
+                # Process clicks in the info window
                 elif inset_window['active']:
-                    if upgrade_button.collidepoint(mouse_pos):
-                        # Upgrade logic here
-                        tower = inset_window['tower']
-                        if tower.level < tower.__class__.max_level:
-                            upgrade_cost = tower.upgrade_costs[tower.level-1]
-                            if player_money >= upgrade_cost:
-                                print('true')
-                                tower.level_up()
-                                player_money -= upgrade_cost
-                    elif sell_button.collidepoint(mouse_pos):
-                        #print('selling')
-                        # Sell logic here
-                        # will update the sell_tower function - but inline for now
+                    # should use object for inset window parameters
+                    player_money, alert_message, alert_timer = nav.process_inset_window(
+                        mouse_pos, towers, inset_window, upgrade_button, sell_button, player_money,
+                        alert_message, alert_timer
+                    )
 
-                        sell_val = int(tower.cost * 0.8)
-                        player_money += sell_val
-                        snd_sell.play()
-                        alert_message = f"Sold! (${sell_val})"
-                        alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
-
-                        towers.remove(inset_window['tower'])
-                        inset_window['active'] = False
-                        continue
-                    else:
-                        # Close if click anywhere else
-                        inset_window['active'] = False
-
-                #sell_val = sell_tower(mouse_pos)
-                #if sell_val:
-                    #player_money += sell_val
-                    #snd_sell.play()
-                    #alert_message = f"Sold! (${sell_val})"
-                    #alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
-                    #continue
-
-            # cuurent logic could just be else
+            # Place a tower
             elif current_tower_type is not None:
-
                 if place.is_valid_position(mouse_pos, path, towers):
                     if player_money >= current_tower_type.price:
-                        #towers.append(Tower(position=mouse_pos))
                         towers.append(current_tower_type(position=mouse_pos))
                         snd_place.play()
                         player_money -= current_tower_type.price
                         # I did not used to do this - is it better
-                        current_tower_type = None
+                        current_tower_type = None  # This deselects tower when put down
                     else:
                         alert_message = "Not enough money!"
                         alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)

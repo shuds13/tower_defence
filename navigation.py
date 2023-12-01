@@ -1,6 +1,9 @@
 import pygame
 from tower import Tower, tower_types
 
+pygame.mixer.init()
+snd_sell = pygame.mixer.Sound('sell.wav')
+
 cross_img = pygame.image.load('cross.png')  # Load your tower image
 cross_img = pygame.transform.scale(cross_img, (50, 50))
 
@@ -178,3 +181,28 @@ def draw_inset_window(surface, window_info, player_money):
     return upgrade_button, sell_button
 
 
+def process_inset_window(mouse_pos, towers, inset_window, upgrade_button,
+                         sell_button, player_money, alert_message, alert_timer):
+    # Upgrade tower
+    tower = inset_window['tower']
+    if upgrade_button.collidepoint(mouse_pos):
+        if tower.level < tower.__class__.max_level:
+            upgrade_cost = tower.upgrade_costs[tower.level-1]
+            if player_money >= upgrade_cost:
+                tower.level_up()
+                player_money -= upgrade_cost
+    # Sell tower
+    elif sell_button.collidepoint(mouse_pos):
+        sell_val = int(tower.cost * 0.8)
+        player_money += sell_val
+        snd_sell.play()
+        alert_message = f"Sold! (${sell_val})"
+        alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
+
+        towers.remove(tower)
+        inset_window['active'] = False
+    else:
+        # Close if click anywhere else
+        inset_window['active'] = False
+
+    return player_money, alert_message, alert_timer
