@@ -20,7 +20,6 @@ def draw_button(surface, text, position, size, color=(0, 0, 255)):
 
 def is_click_inside_rect(click_pos, rect):
     clicked = rect.collidepoint(click_pos)
-    #print(f"{clicked=}")  #test
     return clicked
 
 
@@ -57,13 +56,11 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
 
         return rect
 
-    #TODO make image part of tower class and use tower_type.image
     tower_rects = []
-    for tower in tower_types:  # keep this list in tower module
+    for tower in tower_types:
         tower_rects.append(draw_tower_option(tower, y_offset))
         y_offset += 60
 
-    #TODO incorporate with above
     rect = pygame.Rect(panel_rect.x + 10, panel_rect.y + y_offset, 180, 50)
     pygame.draw.rect(surface, (100, 100, 100), rect)  # Dark grey option box
     image_rect_1 = cross_img.get_rect(center=(rect.centerx - 40, rect.centery))
