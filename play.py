@@ -82,7 +82,7 @@ start_level_button = None  # To store the button rectangle
 #current_tower_type = None # Will be selected
 alert_message = ""
 alert_timer = 0
-restart_timer = 20000
+#restart_timer = 20000
 round_bonus = 20
 
 reset_game()
@@ -93,7 +93,6 @@ def select_tower_type(tower_types):
             return i
     return None
 
-
 def sell_tower(mouse_pos):
     for tower in towers:
         if tower.is_clicked(mouse_pos):
@@ -101,7 +100,6 @@ def sell_tower(mouse_pos):
             return int(tower.cost * 0.8)
             break  # Exit the loop after selling one tower
     return 0
-
 
 def show_tower_info(inset_window):
     for tower in towers:
@@ -117,30 +115,31 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif game_over and event.type == pygame.MOUSEBUTTONDOWN:
-            if play_again_button and nav.is_click_inside_rect(pygame.mouse.get_pos(), play_again_button):
-                reset_game()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
+            if game_over:
+                if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
+                    reset_game()
+            else:
+                # If GO button is clicked then start level
+                if not active and start_level_button:
+                    if nav.is_click_inside_rect(mouse_pos, start_level_button):
+                        active = True
+                        start_level_button = None
+                        continue
 
-            # If GO button is clicked then start level
-            if not active and start_level_button:
-                if nav.is_click_inside_rect(mouse_pos, start_level_button):
-                    active = True
-                    start_level_button = None
+                # Is cross clicked to deselect a tower
+                if tower_option_rects[-1].collidepoint(mouse_pos):
+                    current_tower_type = None
                     continue
 
-            # Is cross clicked to deselect a tower
-            if tower_option_rects[-1].collidepoint(mouse_pos):
-                current_tower_type = None
-                continue
+                # Select a tower
+                new_type = select_tower_type(tower_types)
+                if new_type is not None:
+                    current_tower_type = tower_types[new_type]
+                    continue
 
-            # Select a tower
-            new_type = select_tower_type(tower_types)
-            if new_type is not None:
-                current_tower_type = tower_types[new_type]
-
-            elif current_tower_type is None:
+            if current_tower_type is None:
 
                 # If user clicked on tower - open the info (inset) window
                 if show_tower_info(inset_window):
@@ -151,11 +150,12 @@ while running:
                     # should use object for inset window parameters
                     player_money, alert_message, alert_timer = nav.process_inset_window(
                         mouse_pos, towers, inset_window, upgrade_button, sell_button, player_money,
-                        alert_message, alert_timer
+                        alert_message, alert_timer, game_over
                     )
 
             # Place a tower
-            elif current_tower_type is not None:
+            else:
+            #elif current_tower_type is not None:
                 if place.is_valid_position(mouse_pos, path, towers):
                     if player_money >= current_tower_type.price:
                         towers.append(current_tower_type(position=mouse_pos))
@@ -172,9 +172,9 @@ while running:
 
     if game_over:
         pygame.display.flip()  # Update the full display Surface to the screen
-        restart_timer -= 1
-        if restart_timer <=0:
-            running = False
+        #restart_timer -= 1
+        #if restart_timer <=0:
+            #running = False
         continue
 
     if active:
@@ -209,6 +209,7 @@ while running:
             if level_num == lev.max_level:
                 #print(f"{lev.max_level=} {level_num=}")
                 game_over = True
+                current_tower_type = None
             else:
                 level_num += 1
                 level = lev.levels[level_num]()

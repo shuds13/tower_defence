@@ -24,7 +24,12 @@ def is_click_inside_rect(click_pos, rect):
 
 
 def play_button(window, window_size):
-    return draw_button(window, "Play Again", (window_size[0] / 2 - 150, window_size[1] / 2 + 50), (200, 50))
+    x = window_size[0] - 180
+    y = window_size[1] - 100
+    width = 160
+    height = 50
+    draw_border(window, x, y, width, height, 3)
+    return draw_button(window, "Play Again", (x, y), (width, height))
 
 
 def start_level_button(window, window_size):
@@ -157,17 +162,17 @@ def draw_inset_window(surface, window_info, player_money):
 
 
 def process_inset_window(mouse_pos, towers, inset_window, upgrade_button,
-                         sell_button, player_money, alert_message, alert_timer):
+                         sell_button, player_money, alert_message, alert_timer, game_over):
     # Upgrade tower
     tower = inset_window['tower']
-    if upgrade_button.collidepoint(mouse_pos):
+    if upgrade_button.collidepoint(mouse_pos) and not game_over:
         if tower.level < tower.__class__.max_level:
             upgrade_cost = tower.upgrade_costs[tower.level-1]
             if player_money >= upgrade_cost:
                 tower.level_up()
                 player_money -= upgrade_cost
     # Sell tower
-    elif sell_button.collidepoint(mouse_pos):
+    elif sell_button.collidepoint(mouse_pos) and not game_over:
         sell_val = int(tower.cost * 0.8)
         player_money += sell_val
         snd_sell.play()
