@@ -81,10 +81,10 @@ class Level6(Level):
     def __init__(self):
         Level.__init__(self)
         self.level_id = 6
-        self.num_enemies = 6
-        self.spawn_intervals = [20]
-        self.phase_counts = [6]  # How many in each phase - no currently accum at end of each phase
-        self.enemy_types = [10]  # TODO ghosts will need magic attacks to kill or some such
+        self.num_enemies = 20
+        self.spawn_intervals = [20, 15, 10]
+        self.phase_counts = [2, 10, 20]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [10,2,1]  # TODO ghosts will need magic attacks to kill or some such
 
 class Level7(Level):
     def __init__(self):
@@ -149,23 +149,33 @@ class Level13(Level):
         self.phase_counts = [20]
         self.enemy_types = [4]
 
+#so confused now need to stop - i thought copied this to 18 - but thats got diff enemy count WTF!
+#class Level14(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.level_id = 14
+        #self.num_enemies = 45
+        #self.spawn_intervals = [18, 12, 10]
+        #self.phase_counts = [20, 33, 45]
+        #self.enemy_types = [3, 10, 2]
+
 class Level14(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 14
-        self.num_enemies = 45
-        self.spawn_intervals = [18, 12, 10]
-        self.phase_counts = [20, 33, 45]
-        self.enemy_types = [3, 10, 2]
+        self.num_enemies = 6
+        self.spawn_intervals = [20]
+        self.phase_counts = [6]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [10]  # TODO ghosts will need magic attacks to kill or some such
 
+#fix this - its somehow copy of level 5 - WTF!
 class Level15(Level):
     def __init__(self):
         Level.__init__(self)
         self.level_id = 15
-        self.num_enemies = 80
-        self.spawn_intervals = [18, 12, 10]
-        self.phase_counts = [20, 33, 80]
-        self.enemy_types = [3, 10, 2]
+        self.num_enemies = 30
+        self.spawn_intervals = [20, 20, 20]
+        self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [1, 2, 3]
 
 class Level16(Level):
     def __init__(self):
@@ -176,11 +186,20 @@ class Level16(Level):
         self.phase_counts = [8]
         self.enemy_types = [5]
 
-# Test level - just to try and beat 4th level (gold) Fighter with current strenght
 class Level17(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 16
+        self.level_id = 17
+        self.num_enemies = 80
+        self.spawn_intervals = [18, 12, 10]
+        self.phase_counts = [20, 33, 80]
+        self.enemy_types = [3, 10, 2]
+
+# Test level - just to try and beat 4th level (gold) Fighter with current strenght
+class Level18(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 18
         self.num_enemies = 80
         self.spawn_intervals = [5]
         self.phase_counts = [80]
@@ -188,7 +207,7 @@ class Level17(Level):
         #self.enemy_types = [5]
 
 
-max_level = 17  # TODO get this from last key in levels
+max_level = 18  # TODO get this from last key in levels
 
 # TODO auto-add
 levels = {1: Level1, 2: Level2, 3: Level3,
@@ -196,5 +215,5 @@ levels = {1: Level1, 2: Level2, 3: Level3,
           7: Level7, 8: Level8, 9: Level9,
           10: Level10, 11: Level11, 12: Level12,
           13: Level13, 14: Level14, 15: Level15,
-          16: Level16, 17: Level17
+          16: Level16, 17: Level17, 18: Level18
           }

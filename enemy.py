@@ -20,6 +20,7 @@ class Enemy:
         self.value = 1
         self.color = (255, 0, 0)
         self.image = None
+        self.invis = False
 
     def move(self):
         # Move towards the next point in the path
@@ -117,11 +118,12 @@ class Enemy5(Enemy4):
 class Ghost(Enemy):
     def __init__(self, path):
         super().__init__(path)
-        self.health = 3
-        self.value = 3
-        self.speed = 4
+        self.health = 2
+        self.value = 2
+        self.speed = 3
         self.color = (0, 255, 0)
         self.image = ghost_img
+        self.invis = True
 
     # Will require magic to kill but not there yet.
     def take_damage(self, damage):

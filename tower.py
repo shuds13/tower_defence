@@ -46,6 +46,8 @@ class Tower:
         self.viz_persist = 0
         self.level = 1
         self.total_score = 0
+        self.see_ghosts = False
+        self.beam_width = 5
 
     def level_up(self):
         pass
@@ -53,10 +55,13 @@ class Tower:
     def show_viz_persis(self, window):
         pass
 
+    def is_visible(self, enemy):
+        return not enemy.invis or self.see_ghosts
+
     # Goes through enemies - finds first (could find strongest etc...)
     def find_target(self, enemies):
         for enemy in enemies:
-            if self.in_range(enemy):
+            if self.in_range(enemy) and self.is_visible(enemy):
                 self.target = enemy
                 break
         else:
@@ -198,6 +203,7 @@ class Wizard(Tower):
         self.cloud_attack = False
         self.upgrade_costs = [200, 600]  # [200]
         self.beam_width = 8
+        self.see_ghosts = True
 
 
     def rotate(self):
