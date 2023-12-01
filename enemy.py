@@ -129,7 +129,27 @@ class Ghost(Enemy):
         self.value = self.health
         snd_blop.play()
         if self.health <= 0:
-            self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
+            self.reached_end = True
         return damage
+
+# Idea is you kill heart you get lives.
+# but in play - would be to send in a player object, so can update lives instead of money.
+# ie. not yet usable - also need heart image.
+class Heart(Enemy):
+    def __init__(self, path):
+        super().__init__(path)
+        self.health = 5
+        self.value = 10  #testing a diff value
+        self.speed = 4
+        #self.color = (127, 0, 255)
+
+    def take_damage(self, damage):
+        self.health -= damage
+        #self.value = self.health
+        snd_blop.play()
+        if self.health <= 0:
+            self.reached_end = True
+            return self.value  # but will be lives
+        return 0
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost}

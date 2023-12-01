@@ -20,6 +20,8 @@ wizard_img = pygame.image.load('wizard.png')  # Load your tower image
 wizard_img = pygame.transform.scale(wizard_img, (50, 50))
 wizard2_img = pygame.image.load('wizard2.png')  # Load your tower image
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
+wizard3_img = pygame.image.load('wizard3.png')  # Load your tower image
+wizard3_img = pygame.transform.scale(wizard3_img, (55, 55))
 
 
 class Tower:
@@ -181,20 +183,20 @@ class Wizard(Tower):
     name = 'Wizard'
     image = wizard_img
     range = 120
-    max_level = 2
+    max_level = 3
 
     def __init__(self, position):
         super().__init__(position)
         self.range = Wizard.range
         self.attack_speed = 60
-        self.damage = 3
+        self.damage = 2
         self.cost = Wizard.price
         self.image = Wizard.image
         self.level = 1
         self.cloud_freq = 4
         self.attack_count = 0
         self.cloud_attack = False
-        self.upgrade_costs = [200]  # [200]
+        self.upgrade_costs = [200, 600]  # [200]
         self.beam_width = 8
 
 
@@ -211,9 +213,17 @@ class Wizard(Tower):
             self.attack_speed = 30  # lower is better currently
             self.range = 130
             self.image = wizard2_img
-            #self.cloud_freq = 3
+            #self.cloud_freq = 3  # ironially i think this needs to be less as attack speed is faster
             self.cost += self.upgrade_costs[0]
             self.beam_width = 10
+        if self.level == 3:
+            # I really want to introduce a new spell - maybe blow enemies back or something else.
+            self.attack_speed = 15  # lower is better currently
+            self.range = 150
+            self.image = wizard3_img
+            #self.cloud_freq = 3
+            self.cost += self.upgrade_costs[1]
+            self.beam_width = 12
 
     def _is_cloud_attack(self):
         # The slow but elegant way - can do one line also x=y=z
@@ -251,6 +261,8 @@ class Wizard(Tower):
             return (self.position[0]+20, self.position[1]-10)
         elif self.level == 2:
             return (self.position[0]-17, self.position[1]-15)
+        elif self.level == 3:
+            return (self.position[0]+15, self.position[1]-16)
 
     # To be every so many attacks but for now replace
     def attack_animate(self, window):
