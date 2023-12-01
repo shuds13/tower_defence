@@ -209,11 +209,13 @@ class Level18(Level):
 
 max_level = 18  # TODO get this from last key in levels
 
-# TODO auto-add
-levels = {1: Level1, 2: Level2, 3: Level3,
-          4: Level4, 5: Level5, 6: Level6,
-          7: Level7, 8: Level8, 9: Level9,
-          10: Level10, 11: Level11, 12: Level12,
-          13: Level13, 14: Level14, 15: Level15,
-          16: Level16, 17: Level17, 18: Level18
-          }
+levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
+
+# Auto-add replaces the following
+#levels = {1: Level1, 2: Level2, 3: Level3,
+          #4: Level4, 5: Level5, 6: Level6,
+          #7: Level7, 8: Level8, 9: Level9,
+          #10: Level10, 11: Level11, 12: Level12,
+          #13: Level13, 14: Level14, 15: Level15,
+          #16: Level16, 17: Level17, 18: Level18
+          #}
