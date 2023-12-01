@@ -18,6 +18,8 @@ burger_img = pygame.transform.scale(burger_img, (50, 50))
 wizard_img = pygame.image.load('wizard.png')  # Load your tower image
 #wizard_img = pygame.image.load('wizard.png').convert_alpha()
 wizard_img = pygame.transform.scale(wizard_img, (50, 50))
+wizard2_img = pygame.image.load('wizard2.png')  # Load your tower image
+wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
 
 
 class Tower:
@@ -109,7 +111,7 @@ class Tower:
         return (self.position[0] - point[0]) ** 2 + (self.position[1] - point[1]) ** 2 <= radius ** 2
 
     def attack_animate(self, window):
-        pygame.draw.line(window, (255, 0, 0), self.position, self.target.position, 5)
+        pygame.draw.line(window, (255, 0, 0), self.position, self.target.position, self.beam_width)
 
 class Fighter(Tower):
 
@@ -128,6 +130,7 @@ class Fighter(Tower):
         self.image = Fighter.image
         self.level = 1
         self.upgrade_costs = [40, 150, 400]
+        self.beam_width = 5
         #self.max_level = Fighter.max_level  # try using __class__ and if works do same for other attributes
 
     def level_up(self):
@@ -153,6 +156,7 @@ class Fighter(Tower):
             self.image = fighter4_img
             self.cost += self.upgrade_costs[2]
             self.damage = 2  # compare
+            self.beam_width = 7
 
 class Burger(Tower):
 
@@ -177,18 +181,39 @@ class Wizard(Tower):
     name = 'Wizard'
     image = wizard_img
     range = 120
+    max_level = 2
 
     def __init__(self, position):
         super().__init__(position)
         self.range = Wizard.range
         self.attack_speed = 60
-        self.damage = 2
+        self.damage = 3
         self.cost = Wizard.price
         self.image = Wizard.image
         self.level = 1
         self.cloud_freq = 4
         self.attack_count = 0
         self.cloud_attack = False
+        self.upgrade_costs = [200]  # [200]
+        self.beam_width = 8
+
+
+    def rotate(self):
+        """Dont rotate wizard"""
+
+        rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
+        new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
+        return rotated_image, new_rect
+
+    def level_up(self):
+        self.level +=1
+        if self.level == 2:
+            self.attack_speed = 30  # lower is better currently
+            self.range = 130
+            self.image = wizard2_img
+            #self.cloud_freq = 3
+            self.cost += self.upgrade_costs[0]
+            self.beam_width = 10
 
     def _is_cloud_attack(self):
         # The slow but elegant way - can do one line also x=y=z
@@ -220,16 +245,26 @@ class Wizard(Tower):
         if self.viz_persist > 0:
             self.viz_persist -= 1
 
+
+    def get_staff_pos(self):
+        if self.level == 1:
+            return (self.position[0]+20, self.position[1]-10)
+        elif self.level == 2:
+            return (self.position[0]-17, self.position[1]-15)
+
     # To be every so many attacks but for now replace
     def attack_animate(self, window):
+        staff_position = self.get_staff_pos()
         if self.cloud_attack:
             #cloud = pygame.transform.scale(cloud_image, (tower.attack_radius*2, tower.attack_radius*2))
             cloud = self.create_cloud(self.range)
             cloud_rect = cloud.get_rect(center=self.position)
             window.blit(cloud, cloud_rect)
+            pygame.draw.circle(window, (255, 0, 0), staff_position, 15)  # Tower
             self.viz_persist = 5
         else:
-            pygame.draw.line(window, (255,0,255), self.position, self.target.position, 15)
+            #pygame.draw.line(window, (255,0,255), self.position, self.target.position, self.beam_width)
+            pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
 
     def find_target(self, enemies):
         # Only place to call function - after just check self.cloud_attack
