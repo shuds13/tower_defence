@@ -9,7 +9,8 @@ cross_img = pygame.transform.scale(cross_img, (50, 50))
 
 
 def draw_button(surface, text, position, size, color=(0, 0, 255)):
-    font = pygame.font.SysFont(None, 36)
+    #font = pygame.font.SysFont(None, 36)
+    font = pygame.font.SysFont(None, 30)
     button_rect = pygame.Rect(position, size)
     pygame.draw.rect(surface, color, button_rect)  # Blue button
     text_surf = font.render(text, True, (255, 255, 255))  # White text
@@ -24,12 +25,16 @@ def is_click_inside_rect(click_pos, rect):
 
 
 def play_button(window, window_size):
-    x = window_size[0] - 180
+    x = window_size[0] - 190
     y = window_size[1] - 100
-    width = 160
+    width = 80
     height = 50
     draw_border(window, x, y, width, height, 3)
-    return draw_button(window, "Play Again", (x, y), (width, height))
+    replay_button = draw_button(window, "Replay", (x, y), (width, height))
+    x += 100
+    draw_border(window, x, y, width, height, 3)
+    maps_button = draw_button(window, "Maps", (x, y), (width, height), (233, 116, 81))
+    return replay_button, maps_button
 
 
 def start_level_button(window, window_size):

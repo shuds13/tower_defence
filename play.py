@@ -7,6 +7,8 @@ from tower import Tower, tower_types
 import placements as place
 import navigation as nav
 import levels as lev
+from maps import map_window
+
 
 pygame.mixer.init()
 pygame.font.init()  # Initialize font module
@@ -14,7 +16,7 @@ pygame.font.init()  # Initialize font module
 snd_place = pygame.mixer.Sound('place.wav')
 #snd_sell = pygame.mixer.Sound('sell.wav')
 
-# Current defaults: 20 / 100 / 1
+# Current defaults: 30 / 100 / 1
 
 initial_lives = 30
 initial_money = 100
@@ -25,6 +27,7 @@ pygame.init()
 
 pygame.display.set_caption("Tower Defense Game")
 clock = pygame.time.Clock()
+
 
 # Set up the display
 window_size = (900, 600)
@@ -71,19 +74,28 @@ def reset_level():
     current_tower_type = None
     #spawned_enemies = 0
 
+# Use gmap atributes inline but for now
+def set_map(gmap):
+    global pygame, map_name, path, background_color, path_thickness, path_color
+    map_name = gmap.name
+    path = gmap.path
+    background_color = gmap.background_color
+    path_thickness = gmap.path_thickness
+    path_color = gmap.path_color
+    pygame.display.set_caption("Tower Defense Game" + f" (Map {gmap.name})")
+
+
 # Define a simple path as a list of (x, y) tuples - will be under map.py
 # map 1
+# map object needed and map menu - and put map name up.
+map_name = "Staircase"
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
 background_color = (50, 25, 0)
 path_thickness = 15
 path_color = (0, 211, 211)
 
-# map 2
-#path = [(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]
-#background_color = (53, 94, 59)  # (0, 158, 96)
-#path_thickness = 20
-#path_color = (178, 190, 181)
-
+gmap = map_window(pygame.display, window, window_size)
+set_map(gmap)
 
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
@@ -130,6 +142,10 @@ while running:
             if game_over:
                 if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
                     reset_game()
+                if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
+                    reset_game()
+                    gmap = map_window(pygame.display, window, window_size)
+                    set_map(gmap)
             else:
                 # If GO button is clicked then start level
                 if not active and start_level_button:
@@ -328,7 +344,7 @@ while running:
         window.blit(game_over_text, text_rect)
 
         # Draw the play again button
-        play_again_button = nav.play_button(window, window_size)
+        play_again_button, maps_button = nav.play_button(window, window_size)
     else:
         if not active:
             start_level_button = nav.start_level_button(window, window_size)
