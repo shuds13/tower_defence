@@ -21,15 +21,12 @@ burger3_img = pygame.transform.scale(burger3_img, (55, 55))
 burger4_img = pygame.image.load('burger4.png')  # Load your tower image
 burger4_img = pygame.transform.scale(burger4_img, (60, 60))
 
-
-
 wizard_img = pygame.image.load('wizard.png')  # Load your tower image
-#wizard_img = pygame.image.load('wizard.png').convert_alpha()
 wizard_img = pygame.transform.scale(wizard_img, (50, 50))
 wizard2_img = pygame.image.load('wizard2.png')  # Load your tower image
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
 wizard3_img = pygame.image.load('wizard3.png')  # Load your tower image
-wizard3_img = pygame.transform.scale(wizard3_img, (50, 50))
+wizard3_img = pygame.transform.scale(wizard3_img, (58, 58))
 
 splat_img = pygame.image.load('splat.png')
 #splat_img = pygame.transform.scale(splat_img, (120, 120))
@@ -236,7 +233,7 @@ class Burger(Tower):
                     score += target.take_damage(self.damage)
             else:
                 score = self.target.take_damage(self.damage)
-            print(f"{score=}")
+            #print(f"{score=}")
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
         else:
@@ -451,6 +448,8 @@ class Wizard(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score
 
+    # TODO can now use burger algorithm to attach >2 - act is this fumc diff from attack
+    # maybe can remove this - its find_target that has code for targeting multiple
     def multi_attack(self):
         score = 0
         if self.target and self.attack_timer <= 0:
