@@ -72,8 +72,18 @@ def reset_level():
     #spawned_enemies = 0
 
 # Define a simple path as a list of (x, y) tuples - will be under map.py
+# map 1
 path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
+background_color = (50, 25, 0)
 path_thickness = 15
+path_color = (0, 211, 211)
+
+# map 2
+#path = [(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]
+#background_color = (53, 94, 59)  # (0, 158, 96)
+#path_thickness = 20
+#path_color = (178, 190, 181)
+
 
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
@@ -227,7 +237,7 @@ while running:
 
     # Render game state ------------------------------------------------------
     #window.fill((0, 0, 0))  # Clear screen
-    window.fill((50, 25, 0))  # Clear screen
+    window.fill(background_color)  # Clear screen
 
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, current_tower_type)
     #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_img_1)
@@ -265,7 +275,7 @@ while running:
     for i in range(len(path) - 1):
         #pygame.draw.line(window, (255, 255, 255), path[i], path[i+1], path_thickness)
         #pygame.draw.line(window, (211, 211, 211), path[i], path[i+1], path_thickness)
-        pygame.draw.line(window, (0, 211, 211), path[i], path[i+1], path_thickness)
+        pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
 
     # Draw enemies
     for enemy in enemies:
