@@ -23,6 +23,8 @@ wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
 wizard3_img = pygame.image.load('wizard3.png')  # Load your tower image
 wizard3_img = pygame.transform.scale(wizard3_img, (55, 55))
 
+splat_img = pygame.image.load('splat.png')
+splat_img = pygame.transform.scale(splat_img, (120, 120))
 
 class Tower:
 
@@ -98,7 +100,7 @@ class Tower:
         dy = self.target.position[1] - self.position[1]
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
-    def rotate(self):
+    def draw(self, window):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
 
@@ -110,7 +112,9 @@ class Tower:
 
         rotated_image = pygame.transform.rotate(self.image, angle)
         new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
-        return rotated_image, new_rect
+
+        window.blit(rotated_image, new_rect.topleft)
+        #return rotated_image, new_rect
 
     def is_clicked(self, point):
         # Assuming the tower is drawn as a circle with a certain radius
@@ -170,22 +174,82 @@ class Burger(Tower):
     price = 25
     name = 'Burger'
     image = burger_img
-    range = 75
+    range = 65
 
     def __init__(self, position):
         super().__init__(position)
         self.range = Burger.range
-        self.attack_speed = 80
+        self.attack_speed = 100
         self.damage = 1
         self.cost = Burger.price
         self.image = Burger.image
         self.level = 1
+        self.max_attacks = 4
 
-    def rotate(self):
+    # Splat attack!
+    def attack(self):
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            # If using IF this could be in generic one
+            self.attack_count += 1
+            if type(self.target) is list:
+                for target in self.target:
+                    score += target.take_damage(self.damage)
+            else:
+                score = self.target.take_damage(self.damage)
+            self.attack_timer = self.attack_speed
+            self.is_attacking = True  # Set to True when attacking
+        else:
+            self.is_attacking = False  # Set to False otherwise
+        return score
+
+    def create_sublist(self,input_list, N):
+        """
+        Create a sublist of N equally spaced elements from the input list.
+        If the input list has N or fewer elements, the sublist is a copy of the input list.
+        """
+        if len(input_list) <= N:
+            # If the input list is smaller than or equal to N, return a copy of the input list
+            return input_list.copy()
+        else:
+            # Calculate the step size for equally spaced elements
+            step = len(input_list) / N
+            # Create the sublist using list comprehension
+            return [input_list[int(i * step)] for i in range(N)]
+
+    def draw(self, window):
         """Dont rotate burger"""
-        rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
-        new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
-        return rotated_image, new_rect
+        #rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
+        new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
+        window.blit(self.image, new_rect.topleft)
+        #return rotated_image, new_rect
+
+    def find_target(self, enemies):
+        # Only place to call function - after just check self.cloud_attack
+        tmp_target = []
+        self.target = []
+        for enemy in enemies:
+            if self.in_range(enemy):
+                tmp_target.append(enemy)
+        if tmp_target:
+            self.target = self.create_sublist(tmp_target, self.max_attacks)
+
+            self.target.append(tmp_target[0])
+            if len(tmp_target) > 1:
+                #could be strongest (if not same as first) - but try last
+                self.target.append(tmp_target[-1])
+
+    def attack_animate(self, window):
+        #for target in self.target:
+            #pygame.draw.line(window, (255,0,0), self.position, target.position, self.beam_width)
+            #image_rect = splat_img.get_rect(center=(x + width // 2, image_y_pos))
+        image_rect = splat_img.get_rect(center=self.position)
+        window.blit(splat_img, image_rect)
+
+        #pygame.display.flip()
+        #import time
+        #time.sleep(2)
+
 
 class Wizard(Tower):
 
@@ -211,11 +275,17 @@ class Wizard(Tower):
         self.see_ghosts = True
 
 
-    def rotate(self):
-        """Dont rotate wizard"""
-        rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
-        new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
-        return rotated_image, new_rect
+    def draw(self, window):
+        """Dont rotate burger"""
+        #rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
+        new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
+        window.blit(self.image, new_rect.topleft)
+
+    #def rotate(self):
+        #"""Dont rotate wizard"""
+        #rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
+        #new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
+        #return rotated_image, new_rect
 
     def level_up(self):
         self.level +=1

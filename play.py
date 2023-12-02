@@ -238,8 +238,9 @@ while running:
         alert_timer -= 1
 
     for tower in towers:
-        rotated_image, new_rect = tower.rotate()
-        window.blit(rotated_image, new_rect.topleft)
+        tower.draw(window)
+        #rotated_image, new_rect = tower.rotate()
+        #window.blit(rotated_image, new_rect.topleft)
         player_money += tower.update(enemies)
 
         #pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
