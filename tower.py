@@ -181,6 +181,11 @@ class Burger(Tower):
         self.image = Burger.image
         self.level = 1
 
+    def rotate(self):
+        """Dont rotate burger"""
+        rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
+        new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
+        return rotated_image, new_rect
 
 class Wizard(Tower):
 
@@ -208,7 +213,6 @@ class Wizard(Tower):
 
     def rotate(self):
         """Dont rotate wizard"""
-
         rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
         new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
         return rotated_image, new_rect
