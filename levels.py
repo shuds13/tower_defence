@@ -251,7 +251,18 @@ class Level23(Level):
         self.phase_counts = [20, 50]
         self.enemy_types = [2, 10]
 
-max_level = 23  # TODO get this from last key in levels
+# Test dense reds or blues
+class Level24(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 24
+        self.num_enemies = 80
+        self.spawn_intervals = [3]
+        self.phase_counts = [80]
+        self.enemy_types = [2]
+
+
+max_level = 24  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
 

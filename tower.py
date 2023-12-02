@@ -14,6 +14,14 @@ fighter4_img = pygame.transform.scale(fighter4_img, (60, 60))
 
 burger_img = pygame.image.load('burger.png')  # Load your tower image
 burger_img = pygame.transform.scale(burger_img, (50, 50))
+burger2_img = pygame.image.load('burger2.png')  # Load your tower image
+burger2_img = pygame.transform.scale(burger2_img, (52, 52))
+burger3_img = pygame.image.load('burger3.png')  # Load your tower image
+burger3_img = pygame.transform.scale(burger3_img, (55, 55))
+burger4_img = pygame.image.load('burger4.png')  # Load your tower image
+burger4_img = pygame.transform.scale(burger4_img, (60, 60))
+
+
 
 wizard_img = pygame.image.load('wizard.png')  # Load your tower image
 #wizard_img = pygame.image.load('wizard.png').convert_alpha()
@@ -21,10 +29,10 @@ wizard_img = pygame.transform.scale(wizard_img, (50, 50))
 wizard2_img = pygame.image.load('wizard2.png')  # Load your tower image
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
 wizard3_img = pygame.image.load('wizard3.png')  # Load your tower image
-wizard3_img = pygame.transform.scale(wizard3_img, (55, 55))
+wizard3_img = pygame.transform.scale(wizard3_img, (50, 50))
 
 splat_img = pygame.image.load('splat.png')
-splat_img = pygame.transform.scale(splat_img, (120, 120))
+#splat_img = pygame.transform.scale(splat_img, (120, 120))
 
 class Tower:
 
@@ -171,20 +179,51 @@ class Fighter(Tower):
 
 class Burger(Tower):
 
-    price = 25
+    price = 65
     name = 'Burger'
     image = burger_img
-    range = 65
+    range = 60
+    max_level = 4
 
     def __init__(self, position):
         super().__init__(position)
         self.range = Burger.range
-        self.attack_speed = 100
+        self.attack_speed = 80
         self.damage = 1
         self.cost = Burger.price
         self.image = Burger.image
         self.level = 1
         self.max_attacks = 4
+        self.upgrade_costs = [95, 220, 750]
+        self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+
+    def level_up(self):
+        self.level +=1
+        if self.level == 2:
+            self.attack_speed = 70  # lower is better currently
+            self.range = 70
+            self.image = burger2_img
+            #self.image = pygame.transform.scale(burger_img, (55, 55))
+            self.max_attacks = 6
+            self.cost += self.upgrade_costs[0]
+            self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+        if self.level == 3:
+            self.attack_speed = 28  # lower is better currently
+            self.range = 75
+            self.image = burger3_img
+            #self.image = pygame.transform.scale(burger_img, (55, 55))
+            self.max_attacks = 8
+            self.cost += self.upgrade_costs[1]
+            self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+        if self.level == 4:
+            self.attack_speed = 18  # lower is better currently
+            self.range = 80
+            self.image = burger4_img
+            self.max_attacks = 12
+            self.cost += self.upgrade_costs[2]
+            self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+            #either slower attack_speed (~20) and damage 2 or faster <15 and damage 1
+            self.damage = 2 # not sure - with damage 2 and other stats nothing got past
 
     # Splat attack!
     def attack(self):
@@ -197,6 +236,7 @@ class Burger(Tower):
                     score += target.take_damage(self.damage)
             else:
                 score = self.target.take_damage(self.damage)
+            print(f"{score=}")
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
         else:
@@ -229,22 +269,22 @@ class Burger(Tower):
         tmp_target = []
         self.target = []
         for enemy in enemies:
-            if self.in_range(enemy):
+            if self.in_range(enemy) and self.is_visible(enemy):
                 tmp_target.append(enemy)
         if tmp_target:
             self.target = self.create_sublist(tmp_target, self.max_attacks)
 
-            self.target.append(tmp_target[0])
-            if len(tmp_target) > 1:
-                #could be strongest (if not same as first) - but try last
-                self.target.append(tmp_target[-1])
 
+    # Could do retention of image like wizard cloud but its actually ok
     def attack_animate(self, window):
         #for target in self.target:
             #pygame.draw.line(window, (255,0,0), self.position, target.position, self.beam_width)
-            #image_rect = splat_img.get_rect(center=(x + width // 2, image_y_pos))
-        image_rect = splat_img.get_rect(center=self.position)
-        window.blit(splat_img, image_rect)
+            #image_rect = self.splat_img.get_rect(center=(x + width // 2, image_y_pos))
+        image_rect = self.splat_img.get_rect(center=self.position)
+        window.blit(self.splat_img, image_rect)
+        # draw burger back on top - normally dont notice but for end of levels etc.
+        self.draw(window)
+
 
         #pygame.display.flip()
         #import time
