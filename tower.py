@@ -239,6 +239,15 @@ class Wizard(Tower):
             self.cloud_attack = False
         return self.cloud_attack
 
+    def _is_multi_attack(self):
+        # The slow but elegant way - can do one line also x=y=z
+        if self.attack_count % self.cloud_freq == 2:
+            self.multi_attack = True
+        else:
+            self.multi_attack = False
+        return self.multi_attack
+
+
     def create_cloud(self, radius):
         cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
         pygame.draw.circle(cloud, (128, 0, 128, 128), (radius, radius), radius)
@@ -282,7 +291,11 @@ class Wizard(Tower):
             self.viz_persist = 5
         else:
             #pygame.draw.line(window, (255,0,255), self.position, self.target.position, self.beam_width)
-            pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
+            if type(self.target) is list:
+                for target in self.target:
+                    pygame.draw.line(window, (255,0,255), staff_position, target.position, self.beam_width)
+            else:
+                pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
 
     def find_target(self, enemies):
         # Only place to call function - after just check self.cloud_attack
@@ -293,11 +306,38 @@ class Wizard(Tower):
                     self.target.append(enemy)
             if not self.target:
                 self.target = None
+        elif self._is_multi_attack():
+            tmp_target = []
+            self.target = []
+            for enemy in enemies:
+                if self.in_range(enemy):
+                    tmp_target.append(enemy)
+            if tmp_target:
+                self.target.append(tmp_target[0])
+                if len(tmp_target) > 1:
+                    #could be strongest (if not same as first) - but try last
+                    self.target.append(tmp_target[-1])
         else:
             super().find_target(enemies)
 
     # Could be generic to deal with lists
     def attack(self):
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            # If using IF this could be in generic one
+            self.attack_count += 1
+            if type(self.target) is list:
+                for target in self.target:
+                    score += target.take_damage(self.damage)
+            else:
+                score = self.target.take_damage(self.damage)
+            self.attack_timer = self.attack_speed
+            self.is_attacking = True  # Set to True when attacking
+        else:
+            self.is_attacking = False  # Set to False otherwise
+        return score
+
+    def multi_attack(self):
         score = 0
         if self.target and self.attack_timer <= 0:
             # If using IF this could be in generic one
