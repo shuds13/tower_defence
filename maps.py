@@ -1,9 +1,30 @@
 import pygame
 import navigation as nav
 
+
+def render_level_to_surface(gmap, size):
+    # Create a new surface
+    level_surface = pygame.Surface(size)
+    level_surface.fill(gmap.background_color)
+
+    # Draw the background
+    #level_surface.blit(background_image, (0, 0))
+
+    # Draw the path
+    for i in range(len(gmap.path) - 1):
+        pygame.draw.line(level_surface, gmap.path_color, gmap.path[i], gmap.path[i + 1], 5)
+
+    return level_surface
+
+def create_thumbnail(level_surface, thumbnail_size):
+    return pygame.transform.scale(level_surface, thumbnail_size)
+
+
+
 def map_window(display, surface, window_size):
     #window_size = (900, 600)
-    pygame.draw.rect(surface, (159, 226, 191), (0, 0, window_size[0], window_size[1]))
+    #pygame.draw.rect(surface, (159, 226, 191), (0, 0, window_size[0], window_size[1]))
+    pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
     #window = pygame.display.set_mode(window_size)
     window_width = window_size[0]
     chosen = False
@@ -12,7 +33,7 @@ def map_window(display, surface, window_size):
     font = pygame.font.SysFont(None, 24)
 
     map_name_text = font_title.render("Choose a map", True, (0, 0, 0))  # Black text
-    map_name_rect = map_name_text.get_rect(topleft=(10, 10))
+    map_name_rect = map_name_text.get_rect(midleft=(10, 10))
     surface.blit(map_name_text, map_name_rect.topleft)
 
     #loop and call
@@ -30,13 +51,22 @@ def map_window(display, surface, window_size):
         #create? Well if I want to eventually to show thumbnails of maps will need create something
         gmap = map_class()
 
-        #map_name_text = font_title.render(gmap.name.upper(), True, (0, 0, 0))  # Black text
-        #map_name_rect = map_name_text.get_rect(center=(x, y))
-        #surface.blit(map_name_text, map_name_rect.topleft)
+        # if not using thumbnails
+        #map_name_rect = nav.draw_button(surface, gmap.name.upper(), (x, y), (width, height))
 
-        map_name_rect = nav.draw_button(surface, gmap.name.upper(), (x, y), (width, height))
+        # if using thumbnails
+        level_surface = render_level_to_surface(gmap, (700, 600))  # map size without side window
+        thumbnail = create_thumbnail(level_surface, (width, height))
+        surface.blit(thumbnail, (x,y))
+        map_image_rect = thumbnail.get_rect(topleft=(x,y))
+
+        map_name_text = font.render(gmap.name.upper(), True, (0, 0, 0))  # Black text
+        map_name_rect = map_name_text.get_rect(topleft=(x, y+120))
+        surface.blit(map_name_text, map_name_rect.topleft)
+
+
         y+=150
-        map_rects.append(map_name_rect)
+        map_rects.append(map_image_rect)
         maps.append(gmap)
 
     display.flip()

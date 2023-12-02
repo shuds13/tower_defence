@@ -302,8 +302,6 @@ while running:
 
     # Draw the path
     for i in range(len(path) - 1):
-        #pygame.draw.line(window, (255, 255, 255), path[i], path[i+1], path_thickness)
-        #pygame.draw.line(window, (211, 211, 211), path[i], path[i+1], path_thickness)
         pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
 
     # Draw enemies
