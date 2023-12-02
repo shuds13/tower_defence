@@ -18,7 +18,7 @@ snd_place = pygame.mixer.Sound('place.wav')
 
 # Current defaults: 30 / 100 / 1
 
-initial_lives = 30
+initial_lives = 0
 initial_money = 100
 initial_level = 1
 
@@ -85,17 +85,24 @@ def set_map(gmap):
     pygame.display.set_caption("Tower Defense Game" + f" (Map {gmap.name})")
 
 
+def select_map():
+    global pygame, window, window_size, running
+    gmap = map_window(pygame.display, window, window_size)
+    if gmap is None:
+        print('Exiting from map window')
+        running = False
+        return
+    set_map(gmap)
+
+
 # Define a simple path as a list of (x, y) tuples - will be under map.py
 # map 1
 # map object needed and map menu - and put map name up.
-map_name = "Staircase"
-path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
-background_color = (50, 25, 0)
-path_thickness = 15
-path_color = (0, 211, 211)
-
-gmap = map_window(pygame.display, window, window_size)
-set_map(gmap)
+#map_name = "Staircase"
+#path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
+#background_color = (50, 25, 0)
+#path_thickness = 15
+#path_color = (0, 211, 211)
 
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
@@ -108,6 +115,8 @@ alert_timer = 0
 round_bonus = 20
 
 reset_game()
+select_map()
+
 
 def select_tower_type(tower_types):
     for i in range(len(tower_types)):
@@ -144,8 +153,9 @@ while running:
                     reset_game()
                 if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
                     reset_game()
-                    gmap = map_window(pygame.display, window, window_size)
-                    set_map(gmap)
+                    select_map()
+                    #gmap = map_window(pygame.display, window, window_size)
+                    #set_map(gmap)
             else:
                 # If GO button is clicked then start level
                 if not active and start_level_button:
@@ -352,7 +362,7 @@ while running:
     pygame.display.flip()  # Update the full display Surface to the screen
     clock.tick(60)  # Maintain 60 frames per second
 
-pygame.display.flip()  # Update the full display Surface to the screen
+#pygame.display.flip()  # Update the full display Surface to the screen
 
 # Pause for a few seconds to display the game over message
 #pygame.time.wait(200)

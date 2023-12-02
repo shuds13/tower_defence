@@ -8,10 +8,11 @@ cross_img = pygame.image.load('cross.png')  # Load your tower image
 cross_img = pygame.transform.scale(cross_img, (50, 50))
 
 
-def draw_button(surface, text, position, size, color=(0, 0, 255)):
+def draw_button(surface, text, pos, size, color=(0, 0, 255)):
     #font = pygame.font.SysFont(None, 36)
+    draw_border(surface, pos[0], pos[1], size[0], size[1], 3)
     font = pygame.font.SysFont(None, 30)
-    button_rect = pygame.Rect(position, size)
+    button_rect = pygame.Rect(pos, size)
     pygame.draw.rect(surface, color, button_rect)  # Blue button
     text_surf = font.render(text, True, (255, 255, 255))  # White text
     text_rect = text_surf.get_rect(center=button_rect.center)
@@ -29,10 +30,10 @@ def play_button(window, window_size):
     y = window_size[1] - 100
     width = 80
     height = 50
-    draw_border(window, x, y, width, height, 3)
+    #draw_border(window, x, y, width, height, 3)
     replay_button = draw_button(window, "Replay", (x, y), (width, height))
     x += 100
-    draw_border(window, x, y, width, height, 3)
+    #draw_border(window, x, y, width, height, 3)
     maps_button = draw_button(window, "Maps", (x, y), (width, height), (233, 116, 81))
     return replay_button, maps_button
 
