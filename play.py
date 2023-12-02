@@ -18,7 +18,7 @@ snd_place = pygame.mixer.Sound('place.wav')
 
 # Current defaults: 30 / 100 / 1
 
-initial_lives = 0
+initial_lives = 30
 initial_money = 100
 initial_level = 1
 
@@ -154,8 +154,7 @@ while running:
                 if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
                     reset_game()
                     select_map()
-                    #gmap = map_window(pygame.display, window, window_size)
-                    #set_map(gmap)
+                    continue
             else:
                 # If GO button is clicked then start level
                 if not active and start_level_button:
@@ -205,6 +204,10 @@ while running:
                 else:
                     alert_message = "Cant place here"
                     alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
+
+    #  prevent flash of level when close from map screen - is this okay here
+    if not running:
+        break
 
     if game_over:
         pygame.display.flip()  # Update the full display Surface to the screen
