@@ -268,12 +268,15 @@ while running:
 
     # Draw enemies
     for enemy in enemies:
+        enemy.draw(window)
         # This should be in an enemy draw function
-        if enemy.image is None:
-            pygame.draw.circle(window, enemy.color, (int(enemy.position[0]), int(enemy.position[1])), 10)
-        else:
-            image_rect = enemy.image.get_rect(center=enemy.position)
-            window.blit(enemy.image, image_rect.topleft)
+        #if enemy.image is None:
+            #pygame.draw.circle(window, enemy.color, (int(enemy.position[0]), int(enemy.position[1])), 10)
+            #pygame.draw.circle(window, (150, 121, 105), (int(enemy.position[0]), int(enemy.position[1])), 10, 4)
+            ##pygame.draw.circle(window, (150, 121, 105), (int(enemy.position[0]), int(enemy.position[1])), 14)
+        #else:
+            #image_rect = enemy.image.get_rect(center=enemy.position)
+            #window.blit(enemy.image, image_rect.topleft)
 
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation

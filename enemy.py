@@ -2,6 +2,7 @@ import pygame
 pygame.mixer.init()
 
 snd_blop = pygame.mixer.Sound('blop.wav')
+snd_ting = pygame.mixer.Sound('ting.wav')
 ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 
@@ -21,6 +22,21 @@ class Enemy:
         self.color = (255, 0, 0)
         self.image = None
         self.invis = False
+        self.fortified = False
+
+    def draw(self, window):
+        if self.image is not None:
+            image_rect = self.image.get_rect(center=self.position)
+            window.blit(self.image, image_rect.topleft)
+        else:
+            # TODO - check cant you use self.position - isn't it already int.
+            x = self.position[0]
+            y = self.position[1]
+            pygame.draw.circle(window, self.color, (int(x), int(y)), 10)
+            if self.fortified and self.fort_health > 0:
+                w = self.fort_health
+                # could be same size or bigger to go round outside
+                pygame.draw.circle(window, (150, 121, 105), (int(x), int(y)), 10+w, w)
 
     def move(self):
         # Move towards the next point in the path
@@ -42,7 +58,11 @@ class Enemy:
 
     def take_damage(self, damage):
         self.health -= damage
-        snd_blop.play()
+        if self.fortified and self.fort_health > 0:
+            self.fort_health -= damage
+            snd_ting.play()
+        else:
+            snd_blop.play()
         if self.health <= 0:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
         return damage
@@ -114,6 +134,33 @@ class Enemy5(Enemy4):
         return val
 
 # next put circle round outside to be fortified...
+# or maybe whole thing fortified look - can crack
+
+# maybe should be an option in Enemy1
+class Enemy101(Enemy):
+    def __init__(self, path):
+        super().__init__(path)
+        self.fortified = True
+        self.fort_health = 3
+        self.health += self.fort_health
+        self.value = self.health
+
+class Enemy102(Enemy2):
+    def __init__(self, path):
+        super().__init__(path)
+        self.fortified = True
+        self.fort_health = 4
+        self.health += self.fort_health
+        self.value = self.health
+
+class Enemy103(Enemy3):
+    def __init__(self, path):
+        super().__init__(path)
+        self.fortified = True
+        self.fort_health = 5
+        self.health += self.fort_health
+        self.value = self.health
+
 
 class Ghost(Enemy):
     def __init__(self, path):
@@ -121,7 +168,6 @@ class Ghost(Enemy):
         self.health = 2
         self.value = 2
         self.speed = 3
-        self.color = (0, 255, 0)
         self.image = ghost_img
         self.invis = True
 
@@ -133,6 +179,16 @@ class Ghost(Enemy):
         if self.health <= 0:
             self.reached_end = True
         return damage
+
+#class Ghost2(Enemy):
+    #def __init__(self, path):
+        #super().__init__(path)
+        #self.health = 6
+        #self.value = 6
+        #self.speed = 3
+        #self.image = ghost_img2
+        #self.invis = True
+
 
 # Idea is you kill heart you get lives.
 # but in play - would be to send in a player object, so can update lives instead of money.
@@ -154,4 +210,5 @@ class Heart(Enemy):
             return self.value  # but will be lives
         return 0
 
-enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost}
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost,
+               101: Enemy101, 102: Enemy102, 103: Enemy103}

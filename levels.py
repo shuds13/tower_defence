@@ -81,19 +81,19 @@ class Level6(Level):
     def __init__(self):
         Level.__init__(self)
         self.level_id = 6
-        self.num_enemies = 20
-        self.spawn_intervals = [20, 15, 10]
-        self.phase_counts = [2, 10, 20]  # How many in each phase - no currently accum at end of each phase
-        self.enemy_types = [10,2,1]  # TODO ghosts will need magic attacks to kill or some such
+        self.num_enemies = 35
+        self.spawn_intervals = [10, 20, 14]
+        self.phase_counts = [10, 22, 35]
+        self.enemy_types = [1,2,2]
 
 class Level7(Level):
     def __init__(self):
         Level.__init__(self)
         self.level_id = 7
-        self.num_enemies = 35
-        self.spawn_intervals = [10, 20, 14]
-        self.phase_counts = [10, 22, 35]
-        self.enemy_types = [1,2,2]
+        self.num_enemies = 20
+        self.spawn_intervals = [20, 15, 10]
+        self.phase_counts = [2, 10, 20]  # How many in each phase - no currently accum at end of each phase
+        self.enemy_types = [10,2,1]  # TODO ghosts will need magic attacks to kill or some such
 
 class Level8(Level):
     def __init__(self):
@@ -162,6 +162,7 @@ class Level13(Level):
 class Level14(Level):
     def __init__(self):
         Level.__init__(self)
+        self.level_id = 14
         self.num_enemies = 6
         self.spawn_intervals = [20]
         self.phase_counts = [6]  # How many in each phase - no currently accum at end of each phase
@@ -195,19 +196,62 @@ class Level17(Level):
         self.phase_counts = [20, 33, 80]
         self.enemy_types = [3, 10, 2]
 
-# Test level - just to try and beat 4th level (gold) Fighter with current strenght
 class Level18(Level):
     def __init__(self):
         Level.__init__(self)
         self.level_id = 18
+        self.num_enemies = 20
+        self.spawn_intervals = [20]
+        self.phase_counts = [20]
+        self.enemy_types = [101]
+
+class Level19(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 19
+        self.num_enemies = 50
+        self.spawn_intervals = [20, 2, 10]
+        self.phase_counts = [15, 30, 50]
+        self.enemy_types = [4, 1, 3]
+
+# Test level - just to try and beat 4th level (gold) Fighter with current strenght
+class Level20(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 20
         self.num_enemies = 80
         self.spawn_intervals = [5]
         self.phase_counts = [80]
         self.enemy_types = [3]
-        #self.enemy_types = [5]
 
+class Level21(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 21
+        self.num_enemies = 50
+        self.spawn_intervals = [15, 18]
+        self.phase_counts = [25, 50]
+        self.enemy_types = [2, 102]
 
-max_level = 18  # TODO get this from last key in levels
+class Level22(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 22
+        self.num_enemies = 50
+        self.spawn_intervals = [4, 8, 20]
+        self.phase_counts = [22, 35, 50]
+        self.enemy_types = [3,2,4]
+
+class Level23(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.level_id = 23
+        self.num_enemies = 50
+        self.spawn_intervals = [14,14]
+        self.phase_counts = [20, 50]
+        self.enemy_types = [2, 10]
+
+max_level = 23  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
 
