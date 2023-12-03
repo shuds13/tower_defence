@@ -33,7 +33,6 @@ class Level1(Level):
     def __init__(self):
         Level.__init__(self)
         # This means 10 bloons at spawn interval of 40 and another 10 at interval of 15
-        self.level_id = 1
         self.num_enemies = 20
         self.spawn_intervals = [40, 15]
         self.phase_counts = [10, 20]  # How many in each phase - no currently accum at end of each phase
@@ -43,7 +42,6 @@ class Level1(Level):
 class Level2(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 2
         self.num_enemies = 30
         self.spawn_intervals = [30, 8]
         self.phase_counts = [20, 30]  # How many in each phase - no currently accum at end of each phase
@@ -53,7 +51,6 @@ class Level2(Level):
 class Level3(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 3
         self.num_enemies = 30
         self.spawn_intervals = [25, 5, 15]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
@@ -63,7 +60,6 @@ class Level3(Level):
 class Level4(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 4
         self.num_enemies = 30
         self.spawn_intervals = [20, 20, 12]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
@@ -72,7 +68,6 @@ class Level4(Level):
 class Level5(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 5
         self.num_enemies = 30
         self.spawn_intervals = [20, 20, 25]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
@@ -81,7 +76,6 @@ class Level5(Level):
 class Level6(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 6
         self.num_enemies = 35
         self.spawn_intervals = [10, 20, 14]
         self.phase_counts = [10, 22, 35]
@@ -90,7 +84,6 @@ class Level6(Level):
 class Level7(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 7
         self.num_enemies = 20
         self.spawn_intervals = [20, 15, 10]
         self.phase_counts = [2, 10, 20]  # How many in each phase - no currently accum at end of each phase
@@ -99,7 +92,6 @@ class Level7(Level):
 class Level8(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 8
         self.num_enemies = 25
         self.spawn_intervals = [25, 15]
         self.phase_counts = [15, 25]
@@ -108,7 +100,6 @@ class Level8(Level):
 class Level9(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 9
         self.num_enemies = 12
         self.spawn_intervals = [15]
         self.phase_counts = [12]
@@ -117,7 +108,6 @@ class Level9(Level):
 class Level10(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 10
         self.num_enemies = 50
         self.spawn_intervals = [25, 15, 8]
         self.phase_counts = [20, 32, 50]
@@ -126,7 +116,6 @@ class Level10(Level):
 class Level11(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 11
         self.num_enemies = 60
         self.spawn_intervals = [6, 12, 15, 12]
         self.phase_counts = [15, 30, 45, 60]
@@ -135,7 +124,6 @@ class Level11(Level):
 class Level12(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 12
         self.num_enemies = 50
         self.spawn_intervals = [4, 8, 20]
         self.phase_counts = [22, 35, 50]
@@ -144,7 +132,6 @@ class Level12(Level):
 class Level13(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 13
         self.num_enemies = 20
         self.spawn_intervals = [12]
         self.phase_counts = [20]
@@ -154,7 +141,6 @@ class Level13(Level):
 #class Level14(Level):
     #def __init__(self):
         #Level.__init__(self)
-        #self.level_id = 14
         #self.num_enemies = 45
         #self.spawn_intervals = [18, 12, 10]
         #self.phase_counts = [20, 33, 45]
@@ -163,7 +149,6 @@ class Level13(Level):
 class Level14(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 14
         self.num_enemies = 6
         self.spawn_intervals = [20]
         self.phase_counts = [6]  # How many in each phase - no currently accum at end of each phase
@@ -173,7 +158,6 @@ class Level14(Level):
 class Level15(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 15
         self.num_enemies = 30
         self.spawn_intervals = [20, 20, 20]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
@@ -182,7 +166,6 @@ class Level15(Level):
 class Level16(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 16
         self.num_enemies = 8
         self.spawn_intervals = [20]
         self.phase_counts = [8]
@@ -191,7 +174,6 @@ class Level16(Level):
 class Level17(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 17
         self.num_enemies = 80
         self.spawn_intervals = [18, 12, 10]
         self.phase_counts = [20, 33, 80]
@@ -200,7 +182,6 @@ class Level17(Level):
 class Level18(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 18
         self.num_enemies = 20
         self.spawn_intervals = [20]
         self.phase_counts = [20]
@@ -209,7 +190,6 @@ class Level18(Level):
 class Level19(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 19
         self.num_enemies = 50
         self.spawn_intervals = [20, 2, 10]
         self.phase_counts = [15, 30, 50]
@@ -219,7 +199,6 @@ class Level19(Level):
 class Level20(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 20
         self.num_enemies = 80
         self.spawn_intervals = [5]
         self.phase_counts = [80]
@@ -228,7 +207,6 @@ class Level20(Level):
 class Level21(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 21
         self.num_enemies = 50
         self.spawn_intervals = [15, 18]
         self.phase_counts = [25, 50]
@@ -237,7 +215,6 @@ class Level21(Level):
 class Level22(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 22
         self.num_enemies = 50
         self.spawn_intervals = [4, 8, 20]
         self.phase_counts = [22, 35, 50]
@@ -246,7 +223,6 @@ class Level22(Level):
 class Level23(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 23
         self.num_enemies = 50
         self.spawn_intervals = [14,14]
         self.phase_counts = [20, 50]
@@ -256,7 +232,6 @@ class Level23(Level):
 class Level24(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 24
         self.num_enemies = 80
         self.spawn_intervals = [3]
         self.phase_counts = [80]
@@ -265,7 +240,6 @@ class Level24(Level):
 class Level25(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 25
         self.num_enemies = 125
         self.spawn_intervals = [4,4,4,5]
         self.phase_counts = [40, 70, 100, 125]
@@ -274,7 +248,6 @@ class Level25(Level):
 class Level26(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 26
         self.num_enemies = 55
         self.spawn_intervals = [15, 8]
         self.phase_counts = [25, 55]
@@ -283,7 +256,6 @@ class Level26(Level):
 class Level27(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 27
         self.num_enemies = 100
         self.spawn_intervals = [10, 8, 1, 10]
         self.phase_counts = [25, 55, 80, 100]
@@ -292,7 +264,6 @@ class Level27(Level):
 class Level28(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 28
         self.num_enemies = 8
         self.spawn_intervals = [35]
         self.phase_counts = [8]
@@ -301,7 +272,6 @@ class Level28(Level):
 class Level29(Level):
     def __init__(self):
         Level.__init__(self)
-        self.level_id = 29
         self.num_enemies = 90
         self.spawn_intervals = [8,6,3]
         self.phase_counts = [30, 60, 90]

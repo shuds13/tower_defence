@@ -151,7 +151,7 @@ def get_money_per_hit(level_num):
         money_per_hit = 0.6
     else:
         money_per_hit = 0.4
-    print(f"{money_per_hit=}")
+    #print(f"{money_per_hit=}")
     return money_per_hit
 
 money_per_hit = get_money_per_hit(level_num)
