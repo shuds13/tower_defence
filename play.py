@@ -309,6 +309,12 @@ while running:
         #pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
         #pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # To show range
 
+    for enemy in enemies:
+        if enemy.health <= 0 and enemy.spawn_on_die:
+            enemy.spawn_func(path, enemies)
+
+
+
     enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
 
     font = pygame.font.SysFont(None, 36)

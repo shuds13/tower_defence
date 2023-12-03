@@ -13,10 +13,10 @@ troll_img = pygame.transform.scale(troll_img, (50, 50))
 # may make enemy0 as way of making a gap - inivisible no value etc...
 
 class Enemy:
-    def __init__(self, path):
+    def __init__(self, path, position=None, path_index=0):
         self.path = path
-        self.path_index = 0
-        self.position = self.path[0]
+        self.path_index = path_index
+        #self.position = self.path[0]
         self.speed = 2
         self.reached_end = False  # Indicates if the enemy has reached the end of the path
         self.health = 1
@@ -25,6 +25,9 @@ class Enemy:
         self.image = None
         self.invis = False
         self.fortified = False
+        self.spawn_on_die = False  # not used for regular colors - those change attributes.
+
+        self.position = position or self.path[0]
 
     def draw(self, window):
         if self.image is not None:
@@ -69,9 +72,24 @@ class Enemy:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
         return damage
 
+    def spawn_func(self, path, enemies):
+        for i in range(self.spawn_count):
+            #print(self.path_index)
+            enemy = self.spawn_type(path, self.position, self.path_index)
+            # Spread out slightly - need to deal with case when reach end - or reverse and move back
+            # currently if reached end will just be gone
+            # Not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
+            for j in range(i*2):
+                enemy.move()
+            if not enemy.reached_end:
+                enemies.append(enemy)
+
+
+
+
 class Enemy2(Enemy):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.health = 2
         self.value = 2
         self.speed = 3
@@ -86,8 +104,8 @@ class Enemy2(Enemy):
         return val
 
 class Enemy3(Enemy2):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.health = 3
         self.value = 3
         self.speed = 4
@@ -103,8 +121,8 @@ class Enemy3(Enemy2):
 
 
 class Enemy4(Enemy3):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.health = 4
         self.value = 4
         self.speed = 5
@@ -120,8 +138,8 @@ class Enemy4(Enemy3):
 
 
 class Enemy5(Enemy4):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.health = 5
         self.value = 5
         self.speed = 6
@@ -140,24 +158,24 @@ class Enemy5(Enemy4):
 
 # maybe should be an option in Enemy1
 class Enemy101(Enemy):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 3
         self.health += self.fort_health
         self.value = self.health
 
 class Enemy102(Enemy2):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 4
         self.health += self.fort_health
         self.value = self.health
 
 class Enemy103(Enemy3):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 5
         self.health += self.fort_health
@@ -165,8 +183,8 @@ class Enemy103(Enemy3):
 
 
 class Ghost(Enemy):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.health = 2
         self.value = 2
         self.speed = 3
@@ -184,12 +202,16 @@ class Ghost(Enemy):
 
 
 class Troll(Enemy):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.health = 20
         self.value = 20
         self.speed = 2
         self.image = troll_img
+        self.spawn_on_die = True
+        self.spawn_type = Enemy3
+        self.spawn_count = 3
+
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
@@ -198,11 +220,15 @@ class Troll(Enemy):
         snd_blop.play()
         if self.health <= 0:
             self.reached_end = True
+
+            #enemy_id = self.enemy_types[self.phase]
+            #enemy_class = enemy_types[enemy_id]
+            #enemies.append(Enem(path))
         return damage
 
 #class Ghost2(Enemy):
-    #def __init__(self, path):
-        #super().__init__(path)
+    #def __init__(self, path, position=None, path_index=0):
+        #super().__init__(path, position, path_index)
         #self.health = 6
         #self.value = 6
         #self.speed = 3
@@ -214,8 +240,8 @@ class Troll(Enemy):
 # but in play - would be to send in a player object, so can update lives instead of money.
 # ie. not yet usable - also need heart image.
 class Heart(Enemy):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
         self.health = 5
         self.value = 10  #testing a diff value
         self.speed = 4
