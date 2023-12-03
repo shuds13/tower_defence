@@ -15,6 +15,7 @@ class Level():
         #return self.interval
         return self.spawn_intervals[self.phase]
 
+    # TODO this can be combined into spawn_enemy now.
     def update(self):
         self.num_spawned += 1
         #print(f"{self.num_spawned=}")
@@ -73,7 +74,7 @@ class Level5(Level):
         Level.__init__(self)
         self.level_id = 5
         self.num_enemies = 30
-        self.spawn_intervals = [20, 20, 20]
+        self.spawn_intervals = [20, 20, 25]
         self.phase_counts = [10, 20, 30]  # How many in each phase - no currently accum at end of each phase
         self.enemy_types = [1, 2, 3]
 
