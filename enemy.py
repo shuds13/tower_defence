@@ -5,6 +5,8 @@ snd_blop = pygame.mixer.Sound('blop.wav')
 snd_ting = pygame.mixer.Sound('ting.wav')
 ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
+troll_img = pygame.image.load('troll.png')
+troll_img = pygame.transform.scale(troll_img, (50, 50))
 
 
 # TODO may not need value and health - will they always be the same?
@@ -171,7 +173,25 @@ class Ghost(Enemy):
         self.image = ghost_img
         self.invis = True
 
-    # Will require magic to kill but not there yet.
+    # TODO - is this needed - check difference to original function
+    def take_damage(self, damage):
+        self.health -= damage
+        self.value = self.health
+        snd_blop.play()
+        if self.health <= 0:
+            self.reached_end = True
+        return damage
+
+
+class Troll(Enemy):
+    def __init__(self, path):
+        super().__init__(path)
+        self.health = 20
+        self.value = 20
+        self.speed = 2
+        self.image = troll_img
+
+    # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
         self.health -= damage
         self.value = self.health
@@ -210,5 +230,5 @@ class Heart(Enemy):
             return self.value  # but will be lives
         return 0
 
-enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost,
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost, 11: Troll,
                101: Enemy101, 102: Enemy102, 103: Enemy103}

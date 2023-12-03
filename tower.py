@@ -167,7 +167,7 @@ class Fighter(Tower):
             self.image = fighter3_img
             self.cost += self.upgrade_costs[1]
         if self.level == 4:
-            self.attack_speed = 5  # lower is better currently
+            self.attack_speed = 6  # lower is better currently - if dam 1 make faster
             self.range = 140
             self.image = fighter4_img
             self.cost += self.upgrade_costs[2]
@@ -191,7 +191,7 @@ class Burger(Tower):
         self.image = Burger.image
         self.level = 1
         self.max_attacks = 4
-        self.upgrade_costs = [95, 220, 750]
+        self.upgrade_costs = [95, 220, 680]
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
 
     def level_up(self):
