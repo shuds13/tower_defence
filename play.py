@@ -47,7 +47,7 @@ inset_window = {
 }
 
 def reset_game():
-    global player_money, level_num, level, towers, enemies, lives
+    global player_money, level_num, level, towers, enemies, lives, money_per_hit
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     player_money = initial_money
     level_num = initial_level
@@ -61,6 +61,8 @@ def reset_game():
     active = False
     current_tower_type = None
     inset_window['active'] = False
+    money_per_hit = 1.0
+
 
     #spawned_enemies = 0
     #enemy_spawn_interval = 40
@@ -140,9 +142,28 @@ def show_tower_info(inset_window):
             return True
     return False
 
+def get_money_per_hit(level_num):
+    if level_num < 10:
+        money_per_hit = 1.0
+    elif level_num < 20:
+        money_per_hit = 0.8
+    elif level_num < 30:
+        money_per_hit = 0.6
+    else:
+        money_per_hit = 0.4
+    print(f"{money_per_hit=}")
+    return money_per_hit
+
+money_per_hit = get_money_per_hit(level_num)
+
 
 # Game loop
 while running:
+
+    # do here rather than on upgrade as I don't want to be sequence sensitive
+    # maybe dont need here - every loop - before loop and level upgrades should work
+    #money_per_hit = get_money_per_hit(level_num)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -251,6 +272,7 @@ while running:
                 current_tower_type = None
             else:
                 level_num += 1
+                money_per_hit = get_money_per_hit(level_num)
                 level = lev.levels[level_num]()
                 #print(f"{level.level_id=}")
                 reset_level()
@@ -280,7 +302,9 @@ while running:
         tower.draw(window)
         #rotated_image, new_rect = tower.rotate()
         #window.blit(rotated_image, new_rect.topleft)
-        player_money += tower.update(enemies)
+
+        #money_per_hit = 0.9  # this would go down with rounds.
+        player_money += tower.update(enemies) * money_per_hit
 
         #pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
         #pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # To show range
@@ -293,7 +317,8 @@ while running:
 
     # In your game loop, within the rendering section
     font = pygame.font.SysFont(None, 36)
-    money_text = font.render(f"Money: ${player_money}", True, (255, 255, 255))
+    #money_text = font.render(f"Money: ${player_money}", True, (255, 255, 255))
+    money_text = font.render(f"Money: ${int(player_money)}", True, (255, 255, 255))
     window.blit(money_text, (10, 50))  # Adjust position as needed
 
     font = pygame.font.SysFont(None, 36)
