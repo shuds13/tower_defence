@@ -314,8 +314,8 @@ while running:
             enemy.spawn_func(path, enemies)
 
 
-
-    enemies = [enemy for enemy in enemies if enemy.health > 0]  # Remove dead enemies
+    # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
+    enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
 
     font = pygame.font.SysFont(None, 36)
     lives_text = font.render(f"Lives: {lives}", True, (255, 255, 255))

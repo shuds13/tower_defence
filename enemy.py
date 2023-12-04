@@ -42,6 +42,9 @@ class Enemy:
                 w = self.fort_health
                 # could be same size or bigger to go round outside
                 pygame.draw.circle(window, (150, 121, 105), (int(x), int(y)), 10+w, w)
+            else:
+                pygame.draw.circle(window, (0, 0, 0), (int(x), int(y)), 11, 1)
+
 
     def move(self):
         # Move towards the next point in the path
@@ -76,15 +79,11 @@ class Enemy:
         for i in range(self.spawn_count):
             #print(self.path_index)
             enemy = self.spawn_type(path, self.position, self.path_index)
-            # Spread out slightly - need to deal with case when reach end - or reverse and move back
-            # currently if reached end will just be gone
-            # Not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
+            # Spread out slightly
+            # not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
             for j in range(i*2):
                 enemy.move()
-            if not enemy.reached_end:
-                enemies.append(enemy)
-
-
+            enemies.append(enemy)
 
 
 class Enemy2(Enemy):
