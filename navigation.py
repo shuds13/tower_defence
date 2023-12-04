@@ -157,7 +157,6 @@ def draw_options_window(display, surface, options_button):
                 mouse_pos = pygame.mouse.get_pos()
                 if done_button.collidepoint(mouse_pos) or options_button.collidepoint(mouse_pos):
                     not_done = False
-                    print('hit done')
                     break
                 elif mute_b.collidepoint(mouse_pos):
                     sounds.set_volume(0)

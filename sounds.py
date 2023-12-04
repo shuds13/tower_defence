@@ -20,7 +20,7 @@ sounds = {
 # dont know why have to set volume for sounds individually rather than for mixer. But need import here
 # to avoid having to set volume on every call.
 def play(snd):
-    print("sound volume", sounds[snd].get_volume())
+    #print("sound volume", sounds[snd].get_volume())
     sounds[snd].play()
 
 
