@@ -8,13 +8,15 @@ import placements as place
 import navigation as nav
 import levels as lev
 from maps import map_window
-
+import sounds
 
 pygame.mixer.init()
 pygame.font.init()  # Initialize font module
 
-snd_place = pygame.mixer.Sound('place.wav')
-#snd_sell = pygame.mixer.Sound('sell.wav')
+#snd_place = pygame.mixer.Sound('place.wav')
+
+
+#sounds.set_volume(0)
 
 # Current defaults: 30 / 100 / 1
 
@@ -173,7 +175,7 @@ while running:
 
 
             if options_button.collidepoint(mouse_pos):
-                nav.draw_options_window(pygame.display, window)
+                nav.draw_options_window(pygame.display, window, options_button)
 
 
             if game_over:
@@ -222,7 +224,8 @@ while running:
                 if place.is_valid_position(mouse_pos, path, towers):
                     if player_money >= current_tower_type.price:
                         towers.append(current_tower_type(position=mouse_pos))
-                        snd_place.play()
+                        #snd_place.play()
+                        sounds.play('place')
                         player_money -= current_tower_type.price
                         # I did not used to do this - is it better
                         current_tower_type = None  # This deselects tower when put down

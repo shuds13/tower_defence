@@ -1,8 +1,13 @@
+import pygame_widgets
 import pygame
+#from pygame_widgets.slider import Slider
+#pygame.init()  #for slider?
+import sounds
+
 from tower import Tower, tower_types
 
 pygame.mixer.init()
-snd_sell = pygame.mixer.Sound('sell.wav')
+#snd_sell = pygame.mixer.Sound('sell.wav')
 
 cross_img = pygame.image.load('cross.png')
 cross_img = pygame.transform.scale(cross_img, (50, 50))
@@ -97,37 +102,78 @@ def draw_options_cog(surface):
     return image_rect
 
 
-def draw_options_window(display, surface):
+def draw_options_window(display, surface, options_button):
     x, y, width, height = 100, 100, 500, 400
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
 
     # Draw the window background
     pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
+    #opts_window = pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
+    # try use opts_window to update only this window - a bit more efficent (and remove offsets!) - need more work
 
     font_title = pygame.font.SysFont('Arial', 16, bold=True)  # Choose a font and size
     font = pygame.font.SysFont(None, 24)
 
     #done_text = font_title.render("Done", True, (0, 0, 0))  # Black text
     #should it be drawn onto new surface rather than old one
-    done_button = draw_button(surface, "Done", (x + width // 2 - 40, y+height-60), (80, 40))
+
+    mute_pos = (x + width // 2 - 40, y+height/2)
+    if sounds.get_volume() == 0:
+        mute_text = "Unmute"
+        mute = True
+    else:
+        mute_text = "Mute"
+        mute = False
+    mute_button = draw_button(surface, mute_text, mute_pos, (80, 40), color=(0,200,0))
+
+
+
+    done_pos =  (x + width // 2 - 40, y+height-60)
+    done_button = draw_button(surface, "Done",done_pos, (80, 40))
 
     #done_rect = done_text.get_rect(center=(x + width // 2, y + 20))
     #surface.blit(done_text, done_rect.topleft)
 
+    # slide leaves old visuals unless fill surface - which wipes out everything else.
+    # another try - make a surface around the slider.
+    #surf = pygame.Surface((300, 30))
+    #update_rect = pygame.Rect(200, 200, 200, 20)
+
+    #slider = Slider(surface, 200, 200, 200, 20, min=0, max=1, step=0.1)
+    #slider = Slider(surf, 0, 0, 200, 20, min=0, max=1, step=0.1)
+
+
     display.flip()
 
     print("in draw_options_window")
-    noclicks = True
-    while noclicks:
-        for event in pygame.event.get():
+    not_done = True
+    while not_done:
+        display.flip()
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:   # what to do here
-                noclicks = False
+                not_done = False
                 return None
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if done_button.collidepoint(mouse_pos):
-                    noclicks = False
+                if done_button.collidepoint(mouse_pos) or options_button.collidepoint(mouse_pos):
+                    not_done = False
                     break
+                elif mute_button.collidepoint(mouse_pos):
+                    if not mute:
+                        sounds.set_volume(0)
+                        mute = True
+                        mute_text = "Unmute"
+                    else:
+                        sounds.set_volume(1)
+                        mute = False
+                        mute_text = "Mute"
+                    mute_button = draw_button(surface, mute_text, mute_pos, (80, 40), color=(0,200,0))
+
+        ##surface.fill((255, 255, 255))
+        #pygame.draw.rect(surface, (245, 245, 220), (200, 200, 200, 20))  # over old slider
+        #pygame_widgets.update(events)
+        #display.update()
 
 
 def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
@@ -227,7 +273,8 @@ def process_inset_window(mouse_pos, towers, inset_window, upgrade_button,
     elif sell_button.collidepoint(mouse_pos) and not game_over:
         sell_val = int(tower.cost * 0.8)
         player_money += sell_val
-        snd_sell.play()
+        #snd_sell.play()
+        sounds.play('sell')
         alert_message = f"Sold! (${sell_val})"
         alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
 

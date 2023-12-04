@@ -1,8 +1,11 @@
 import pygame
-pygame.mixer.init()
+import sounds
 
-snd_blop = pygame.mixer.Sound('blop.wav')
-snd_ting = pygame.mixer.Sound('ting.wav')
+#pygame.mixer.init()
+
+#snd_blop = pygame.mixer.Sound('blop.wav')
+#snd_ting = pygame.mixer.Sound('ting.wav')
+
 ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 troll_img = pygame.image.load('troll.png')
@@ -68,9 +71,9 @@ class Enemy:
         self.health -= damage
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
-            snd_ting.play()
+            sounds.play('ting')
         else:
-            snd_blop.play()
+            sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
         return damage
@@ -194,7 +197,7 @@ class Ghost(Enemy):
     def take_damage(self, damage):
         self.health -= damage
         self.value = self.health
-        snd_blop.play()
+        sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
         return damage
@@ -216,7 +219,7 @@ class Troll(Enemy):
     def take_damage(self, damage):
         self.health -= damage
         self.value = self.health
-        snd_blop.play()
+        sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
 
@@ -249,7 +252,7 @@ class Heart(Enemy):
     def take_damage(self, damage):
         self.health -= damage
         #self.value = self.health
-        snd_blop.play()
+        sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
             return self.value  # but will be lives
