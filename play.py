@@ -10,13 +10,8 @@ import levels as lev
 from maps import map_window
 import sounds
 
-pygame.mixer.init()
+#pygame.mixer.init()
 pygame.font.init()  # Initialize font module
-
-#snd_place = pygame.mixer.Sound('place.wav')
-
-
-#sounds.set_volume(0)
 
 # Current defaults: 30 / 100 / 1
 
@@ -66,9 +61,6 @@ def reset_game():
     money_per_hit = 1.0
 
 
-    #spawned_enemies = 0
-    #enemy_spawn_interval = 40
-
 def reset_level():
     global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type
     enemies = []
@@ -98,30 +90,17 @@ def select_map():
         return
     set_map(gmap)
 
-
-# Define a simple path as a list of (x, y) tuples - will be under map.py
-# map 1
-# map object needed and map menu - and put map name up.
-#map_name = "Staircase"
-#path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
-#background_color = (50, 25, 0)
-#path_thickness = 15
-#path_color = (0, 211, 211)
-
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
 
-#current_tower_type = tower_types[0]  # Will be selected
-#current_tower_type = None # Will be selected
 alert_message = ""
 alert_timer = 0
-#restart_timer = 20000
 round_bonus = 20
+#restart_timer = 20000
 
 reset_game()
 select_map()
 options_button = nav.draw_options_cog(window)
-
 
 def select_tower_type(tower_types):
     for i in range(len(tower_types)):
@@ -163,20 +142,14 @@ money_per_hit = get_money_per_hit(level_num)
 # Game loop
 while running:
 
-    # do here rather than on upgrade as I don't want to be sequence sensitive
-    # maybe dont need here - every loop - before loop and level upgrades should work
-    #money_per_hit = get_money_per_hit(level_num)
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
 
-
             if options_button.collidepoint(mouse_pos):
                 nav.draw_options_window(pygame.display, window, options_button)
-
 
             if game_over:
                 if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
@@ -246,7 +219,6 @@ while running:
         #if restart_timer <=0:
             #running = False
         active = False
-        #print(f"{active=}")
         #continue
 
     if active:
@@ -279,19 +251,16 @@ while running:
             # Pause for a few seconds to display the win message
             pygame.time.wait(2000)
             if level_num == lev.max_level:
-                #print(f"{lev.max_level=} {level_num=}")
                 game_over = True
                 current_tower_type = None
             else:
                 level_num += 1
                 money_per_hit = get_money_per_hit(level_num)
                 level = lev.levels[level_num]()
-                #print(f"{level.level_id=}")
                 reset_level()
                 continue
 
         if lives <= 0:
-            #running = False  # Stop the game if the lives is 0 or less
             game_over = True
 
         # Remove enemies that have reached the end of the path
@@ -299,7 +268,6 @@ while running:
 
 
     # Render game state ------------------------------------------------------
-    #window.fill((0, 0, 0))  # Clear screen
     window.fill(background_color)  # Clear screen
 
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, current_tower_type)
@@ -314,15 +282,8 @@ while running:
 
     for tower in towers:
         tower.draw(window)
-        #rotated_image, new_rect = tower.rotate()
-        #window.blit(rotated_image, new_rect.topleft)
-
-        #money_per_hit = 0.9  # this would go down with rounds.
         if active:
             player_money += tower.update(enemies) * money_per_hit
-
-        #pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
-        #pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # To show range
 
     if active:
         for enemy in enemies:
@@ -339,7 +300,6 @@ while running:
 
     # In your game loop, within the rendering section
     font = pygame.font.SysFont(None, 36)
-    #money_text = font.render(f"Money: ${player_money}", True, (255, 255, 255))
     money_text = font.render(f"Money: ${int(player_money)}", True, (255, 255, 255))
     window.blit(money_text, (10, 50))  # Adjust position as needed
 
@@ -354,14 +314,6 @@ while running:
     # Draw enemies
     for enemy in enemies:
         enemy.draw(window)
-        # This should be in an enemy draw function
-        #if enemy.image is None:
-            #pygame.draw.circle(window, enemy.color, (int(enemy.position[0]), int(enemy.position[1])), 10)
-            #pygame.draw.circle(window, (150, 121, 105), (int(enemy.position[0]), int(enemy.position[1])), 10, 4)
-            ##pygame.draw.circle(window, (150, 121, 105), (int(enemy.position[0]), int(enemy.position[1])), 14)
-        #else:
-            #image_rect = enemy.image.get_rect(center=enemy.position)
-            #window.blit(enemy.image, image_rect.topleft)
 
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
@@ -371,14 +323,11 @@ while running:
             tower.show_viz_persist(window)
         if tower.is_attacking and tower.target:
             tower.attack_animate(window)
-            #pygame.draw.line(window, (255, 0, 0), tower.position, tower.target.position, 5)  # should be in tower
 
     if current_tower_type is not None:
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        # This doesn't work as well as I want - not sure if to use
         use_ghost_image = True
-
         if use_ghost_image:
             # This line ensures image has alpha channel (some do, some dont)
             current_tower_type_mod = current_tower_type.image.convert_alpha()
@@ -395,7 +344,6 @@ while running:
     nav.draw_inset_window(window, inset_window, player_money)
 
     if game_over:  # Game over condition
-        #game_over = True
         font = pygame.font.SysFont(None, 72)
         game_over_text = font.render("Game Over", True, (255, 0, 0))
         text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))

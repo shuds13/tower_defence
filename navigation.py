@@ -6,7 +6,7 @@ import sounds
 
 from tower import Tower, tower_types
 
-pygame.mixer.init()
+#pygame.mixer.init()
 #snd_sell = pygame.mixer.Sound('sell.wav')
 
 cross_img = pygame.image.load('cross.png')
@@ -14,7 +14,6 @@ cross_img = pygame.transform.scale(cross_img, (50, 50))
 
 cog_img = pygame.image.load('options.png')
 cog_img = pygame.transform.scale(cog_img, (40, 40))
-
 
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255)):
@@ -102,7 +101,6 @@ def draw_options_cog(surface):
     return image_rect
 
 
-
 def draw_sound_buttons(surface, x, y, width, height):
 
     mute_pos = (x + width // 2 - 120, y+height/2)
@@ -127,78 +125,25 @@ def draw_sound_buttons(surface, x, y, width, height):
     normal_button = draw_button(surface, "Normal", normal_pos, (80, 40), color=normal_color)
     return mute_button, quiet_button, normal_button
 
+
 def draw_options_window(display, surface, options_button):
     x, y, width, height = 100, 100, 500, 400
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
 
     # Draw the window background
     pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
-    #opts_window = pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
-    # try use opts_window to update only this window - a bit more efficent (and remove offsets!) - need more work
 
     font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
-    #font = pygame.font.SysFont(None, 24)
-
-    #done_text = font_title.render("Done", True, (0, 0, 0))  # Black text
-    #should it be drawn onto new surface rather than old one
-
-
     sound_text = font_title.render("Sound", True, (0, 0, 0))  # Black text
     sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height/2 - 40))
     surface.blit(sound_text, sound_rect.topleft)
 
-
-
-    #mute_pos = (x + width // 2 - 40, y+height/2)
-    #if sounds.get_volume() == 0:
-        #mute_text = "Unmute"
-        #mute = True
-    #else:
-        #mute_text = "Mute"
-        #mute = False
-    #mute_button = draw_button(surface, mute_text, mute_pos, (80, 40), color=(0,200,0))
-
-    #mute_pos = (x + width // 2 - 120, y+height/2)
-    #quiet_pos = (x + width // 2 - 40, y+height/2)
-    #normal_pos = (x + width // 2 +40, y+height/2)
-    #col_off = (132, 136, 132)
-    #col_on = (0,200,0)
-
-    #mute_color = col_off
-    #quiet_color = col_off
-    #normal_color = col_off
-
-    #draw_sound_buttons()
-
-    #if sounds.get_volume() == 0:
-        #mute_color = col_on
-    #elif sounds.get_volume() == 1:
-        #normal_color = col_on
-    #else:
-        #quite_color = col_on
-
-    #mute_button = draw_button(surface, "Mute", mute_pos, (80, 40), color=mute_color)
-    #quiet_button = draw_button(surface, "Quiet", quiet_pos, (80, 40), color=quiet_color)
-    #normal_button = draw_button(surface, "Normal", normal_pos, (80, 40), color=normal_color)
-
     done_pos =  (x + width // 2 - 40, y+height-60)
     done_button = draw_button(surface, "Done",done_pos, (80, 40))
-
-    #done_rect = done_text.get_rect(center=(x + width // 2, y + 20))
-    #surface.blit(done_text, done_rect.topleft)
-
-    # slide leaves old visuals unless fill surface - which wipes out everything else.
-    # another try - make a surface around the slider.
-    #surf = pygame.Surface((300, 30))
-    #update_rect = pygame.Rect(200, 200, 200, 20)
 
     #slider = Slider(surface, 200, 200, 200, 20, min=0, max=1, step=0.1)
     #slider = Slider(surf, 0, 0, 200, 20, min=0, max=1, step=0.1)
 
-
-    #display.flip()
-
-    print("in draw_options_window")
     not_done = True
     while not_done:
         mute_b, quiet_b, normal_b = draw_sound_buttons(surface, x, y, width, height)
@@ -221,13 +166,6 @@ def draw_options_window(display, surface, options_button):
                 elif normal_b.collidepoint(mouse_pos):
                     sounds.set_volume(1)
         display.flip()
-
-
-
-        ##surface.fill((255, 255, 255))
-        #pygame.draw.rect(surface, (245, 245, 220), (200, 200, 200, 20))  # over old slider
-        #pygame_widgets.update(events)
-        #display.update()
 
 
 def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):

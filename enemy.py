@@ -1,16 +1,10 @@
 import pygame
 import sounds
 
-#pygame.mixer.init()
-
-#snd_blop = pygame.mixer.Sound('blop.wav')
-#snd_ting = pygame.mixer.Sound('ting.wav')
-
 ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 troll_img = pygame.image.load('troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
-
 
 # TODO may not need value and health - will they always be the same?
 # may make enemy0 as way of making a gap - inivisible no value etc...
@@ -29,7 +23,6 @@ class Enemy:
         self.invis = False
         self.fortified = False
         self.spawn_on_die = False  # not used for regular colors - those change attributes.
-
         self.position = position or self.path[0]
 
     def draw(self, window):
