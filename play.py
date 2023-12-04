@@ -245,7 +245,9 @@ while running:
         #restart_timer -= 1
         #if restart_timer <=0:
             #running = False
-        continue
+        active = False
+        #print(f"{active=}")
+        #continue
 
     if active:
         # Spawn a new enemy at intervals if the max number has not been reached
@@ -316,18 +318,20 @@ while running:
         #window.blit(rotated_image, new_rect.topleft)
 
         #money_per_hit = 0.9  # this would go down with rounds.
-        player_money += tower.update(enemies) * money_per_hit
+        if active:
+            player_money += tower.update(enemies) * money_per_hit
 
         #pygame.draw.circle(window, (0, 0, 255), tower.position, 10)  # Tower
         #pygame.draw.circle(window, (0, 255, 255), tower.position, tower.range, 1)  # To show range
 
-    for enemy in enemies:
-        if enemy.health <= 0 and enemy.spawn_on_die:
-            enemy.spawn_func(path, enemies)
+    if active:
+        for enemy in enemies:
+            if enemy.health <= 0 and enemy.spawn_on_die:
+                enemy.spawn_func(path, enemies)
 
 
-    # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
-    enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
+        # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
+        enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
 
     font = pygame.font.SysFont(None, 36)
     lives_text = font.render(f"Lives: {lives}", True, (255, 255, 255))
