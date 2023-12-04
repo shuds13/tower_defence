@@ -293,9 +293,11 @@ while running:
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, current_tower_type)
     #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_img_1)
 
+    nav.draw_options_cog(window)
+
     if alert_timer > 0:
         alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color
-        window.blit(alert_text, (450, 10))
+        window.blit(alert_text, (350, 10))
         alert_timer -= 1
 
     for tower in towers:

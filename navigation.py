@@ -4,8 +4,12 @@ from tower import Tower, tower_types
 pygame.mixer.init()
 snd_sell = pygame.mixer.Sound('sell.wav')
 
-cross_img = pygame.image.load('cross.png')  # Load your tower image
+cross_img = pygame.image.load('cross.png')
 cross_img = pygame.transform.scale(cross_img, (50, 50))
+
+cog_img = pygame.image.load('options.png')
+cog_img = pygame.transform.scale(cog_img, (40, 40))
+
 
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255)):
@@ -82,6 +86,14 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
         pygame.draw.rect(surface, (255, 255, 0), rect, 3)  # Yellow border
 
     return tower_rects
+
+
+def draw_options_cog(surface):
+    # Draw the tower image
+    pos = (650, 10)
+    #cog_image = pygame.transform.scale(cog_image, (50, 50))
+    image_rect = cog_img.get_rect(topleft=pos)
+    surface.blit(cog_img, image_rect)
 
 
 def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
