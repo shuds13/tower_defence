@@ -1,4 +1,4 @@
-import pygame_widgets
+#import pygame_widgets
 import pygame
 #from pygame_widgets.slider import Slider
 #pygame.init()  #for slider?
