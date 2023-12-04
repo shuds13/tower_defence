@@ -118,6 +118,7 @@ round_bonus = 20
 
 reset_game()
 select_map()
+options_button = nav.draw_options_cog(window)
 
 
 def select_tower_type(tower_types):
@@ -169,6 +170,12 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
+
+
+            if options_button.collidepoint(mouse_pos):
+                nav.draw_options_window(pygame.display, window)
+
+
             if game_over:
                 if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
                     reset_game()
@@ -293,7 +300,7 @@ while running:
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, current_tower_type)
     #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_img_1)
 
-    nav.draw_options_cog(window)
+    options_button = nav.draw_options_cog(window)
 
     if alert_timer > 0:
         alert_text = font.render(alert_message, True, (255, 0, 0))  # Red color

@@ -20,6 +20,9 @@ def create_thumbnail(level_surface, thumbnail_size):
     return pygame.transform.scale(level_surface, thumbnail_size)
 
 
+def options_window(display, surface, window_size):
+    pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
+
 
 def map_window(display, surface, window_size):
     #window_size = (900, 600)

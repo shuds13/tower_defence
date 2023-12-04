@@ -94,6 +94,40 @@ def draw_options_cog(surface):
     #cog_image = pygame.transform.scale(cog_image, (50, 50))
     image_rect = cog_img.get_rect(topleft=pos)
     surface.blit(cog_img, image_rect)
+    return image_rect
+
+
+def draw_options_window(display, surface):
+    x, y, width, height = 100, 100, 500, 400
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
+
+    # Draw the window background
+    pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
+
+    font_title = pygame.font.SysFont('Arial', 16, bold=True)  # Choose a font and size
+    font = pygame.font.SysFont(None, 24)
+
+    #done_text = font_title.render("Done", True, (0, 0, 0))  # Black text
+    #should it be drawn onto new surface rather than old one
+    done_button = draw_button(surface, "Done", (x + width // 2 - 40, y+height-60), (80, 40))
+
+    #done_rect = done_text.get_rect(center=(x + width // 2, y + 20))
+    #surface.blit(done_text, done_rect.topleft)
+
+    display.flip()
+
+    print("in draw_options_window")
+    noclicks = True
+    while noclicks:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:   # what to do here
+                noclicks = False
+                return None
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if done_button.collidepoint(mouse_pos):
+                    noclicks = False
+                    break
 
 
 def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
