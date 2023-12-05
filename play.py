@@ -252,7 +252,7 @@ while running:
             player_money += round_bonus
 
             # Pause for a few seconds to display the win message
-            pygame.time.wait(2000)
+            pygame.time.wait(1000)
             if level_num == lev.max_level:
                 game_over = True
                 current_tower_type = None

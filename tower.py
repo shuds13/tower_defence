@@ -185,7 +185,7 @@ class Burger(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range = Burger.range
-        self.attack_speed = 72
+        self.attack_speed = 75
         self.damage = 1
         self.cost = Burger.price
         self.image = Burger.image
@@ -205,7 +205,7 @@ class Burger(Tower):
             self.cost += self.upgrade_costs[0]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         if self.level == 3:
-            self.attack_speed = 28  # lower is better currently
+            self.attack_speed = 26  # lower is better currently
             self.range = 75
             self.image = burger3_img
             #self.image = pygame.transform.scale(burger_img, (55, 55))
@@ -213,7 +213,7 @@ class Burger(Tower):
             self.cost += self.upgrade_costs[1]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         if self.level == 4:
-            self.attack_speed = 18  # lower is better currently
+            self.attack_speed = 16  # lower is better currently
             self.range = 80
             self.image = burger4_img
             self.max_attacks = 12
@@ -231,7 +231,11 @@ class Burger(Tower):
             if type(self.target) is list:
                 for target in self.target:
                     # Do more damage to big enemies to simulate multiple projectiles hitting
-                    multiplier = target.size - 1
+                    #multiplier = target.size  # maybe too strong?
+                    if target.size >=3:
+                        multiplier = 2
+                    else:
+                        multiplier = 1
                     #print(multiplier)
                     score += target.take_damage(self.damage * multiplier)
             else:
