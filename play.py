@@ -19,8 +19,6 @@ initial_lives = 30
 initial_money = 100
 initial_level = 1
 
-#frames_per_second = 60
-#frames_per_second = 120  # For testing - this may be added as an option
 
 # Initialize Pygame
 pygame.init()

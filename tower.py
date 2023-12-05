@@ -129,6 +129,21 @@ class Tower:
     def attack_animate(self, window):
         pygame.draw.line(window, (255, 0, 0), self.position, self.target.position, self.beam_width)
 
+    def create_sublist(self,input_list, N):
+        """
+        Create a sublist of N equally spaced elements from the input list.
+        If the input list has N or fewer elements, the sublist is a copy of the input list.
+        """
+        if len(input_list) <= N:
+            # If the input list is smaller than or equal to N, return a copy of the input list
+            return input_list.copy()
+        else:
+            # Calculate the step size for equally spaced elements
+            step = len(input_list) / N
+            # Create the sublist using list comprehension
+            return [input_list[int(i * step)] for i in range(N)]
+
+
 class Fighter(Tower):
 
     price = 50
@@ -250,19 +265,6 @@ class Burger(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score
 
-    def create_sublist(self,input_list, N):
-        """
-        Create a sublist of N equally spaced elements from the input list.
-        If the input list has N or fewer elements, the sublist is a copy of the input list.
-        """
-        if len(input_list) <= N:
-            # If the input list is smaller than or equal to N, return a copy of the input list
-            return input_list.copy()
-        else:
-            # Calculate the step size for equally spaced elements
-            step = len(input_list) / N
-            # Create the sublist using list comprehension
-            return [input_list[int(i * step)] for i in range(N)]
 
     def draw(self, window):
         """Dont rotate burger"""
@@ -318,9 +320,10 @@ class Wizard(Tower):
         self.attack_count = 0
         self.cloud_attack = False
         self.upgrade_costs = [200, 600]  # [200]
-        self.beam_width = 8
+        self.beam_width = 7
         self.see_ghosts = True
-
+        self.max_attacks = 2
+        self.max_cloud_attacks = 8
 
     def draw(self, window):
         """Dont rotate burger"""
@@ -342,7 +345,9 @@ class Wizard(Tower):
             self.image = wizard2_img
             self.cloud_freq = 5  # ironially i think this needs to be less as attack speed is faster
             self.cost += self.upgrade_costs[0]
-            self.beam_width = 10
+            self.beam_width = 8
+            self.max_attacks = 3
+            self.max_cloud_attacks = 14
         if self.level == 3:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 15  # lower is better currently
@@ -350,7 +355,9 @@ class Wizard(Tower):
             self.image = wizard3_img
             self.cloud_freq = 6  # less freq
             self.cost += self.upgrade_costs[1]
-            self.beam_width = 12
+            self.beam_width = 10
+            self.max_attacks = 4
+            self.max_cloud_attacks = 25
 
     def _is_cloud_attack(self):
         # The slow but elegant way - can do one line also x=y=z
@@ -418,15 +425,44 @@ class Wizard(Tower):
             else:
                 pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
 
+
+    #def find_target(self, enemies):
+        ## Only place to call function - after just check self.cloud_attack
+        #tmp_target = []
+        #self.target = []
+        #for enemy in enemies:
+            #if self.in_range(enemy) and self.is_visible(enemy):
+                #tmp_target.append(enemy)
+        #if tmp_target:
+            #self.target = self.create_sublist(tmp_target, self.max_attacks)
+
+
+    #new tired..- need test new one - and prob improve efficiency - cloud ad multi-attack basically same but for N
+    #also calls find_enemies even when not attacking - attack_timer test in attack() - why not only
+    #do find_target when attack timer is on!!!! Will fix this inefficiency also
     def find_target(self, enemies):
         # Only place to call function - after just check self.cloud_attack
         if self._is_cloud_attack():
+            tmp_target = []
             self.target = []
+
             for enemy in enemies:
                 if self.in_range(enemy):
-                    self.target.append(enemy)
+                    tmp_target.append(enemy)
+                    #self.target.append(enemy)
+            if tmp_target:
+
+                #compare as before all
+                #self.target = tmp_target
+
+                self.target = self.create_sublist(tmp_target, self.max_cloud_attacks)
+                #print(f"cloud {len(self.target)}")
+
+            # why this - dont remember - not there for burger - could now set to None before
+            # but why needed here and not for burger!
             if not self.target:
                 self.target = None
+
         elif self._is_multi_attack():
             tmp_target = []
             self.target = []
@@ -434,12 +470,41 @@ class Wizard(Tower):
                 if self.in_range(enemy):
                     tmp_target.append(enemy)
             if tmp_target:
-                self.target.append(tmp_target[0])
-                if len(tmp_target) > 1:
-                    #could be strongest (if not same as first) - but try last
-                    self.target.append(tmp_target[-1])
+                self.target = self.create_sublist(tmp_target, self.max_attacks)
+                #print(f"Multi {len(self.target)}")
+
+                #self.target.append(tmp_target[0])
+                #if len(tmp_target) > 1:
+                    ##could be strongest (if not same as first) - but try last
+                    #self.target.append(tmp_target[-1])
         else:
             super().find_target(enemies)
+
+
+
+    #old - need test new one - and prob improve efficiency - cloud ad multi-attack basically same but for N
+    #def find_target(self, enemies):
+        ## Only place to call function - after just check self.cloud_attack
+        #if self._is_cloud_attack():
+            #self.target = []
+            #for enemy in enemies:
+                #if self.in_range(enemy):
+                    #self.target.append(enemy)
+            #if not self.target:
+                #self.target = None
+        #elif self._is_multi_attack():
+            #tmp_target = []
+            #self.target = []
+            #for enemy in enemies:
+                #if self.in_range(enemy):
+                    #tmp_target.append(enemy)
+            #if tmp_target:
+                #self.target.append(tmp_target[0])
+                #if len(tmp_target) > 1:
+                    ##could be strongest (if not same as first) - but try last
+                    #self.target.append(tmp_target[-1])
+        #else:
+            #super().find_target(enemies)
 
     # Could be generic to deal with lists
     def attack(self):
