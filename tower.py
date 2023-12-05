@@ -185,7 +185,7 @@ class Burger(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range = Burger.range
-        self.attack_speed = 80
+        self.attack_speed = 72
         self.damage = 1
         self.cost = Burger.price
         self.image = Burger.image
@@ -197,7 +197,7 @@ class Burger(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 60  # lower is better currently
+            self.attack_speed = 55  # lower is better currently
             self.range = 70
             self.image = burger2_img
             #self.image = pygame.transform.scale(burger_img, (55, 55))
