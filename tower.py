@@ -230,9 +230,15 @@ class Burger(Tower):
             self.attack_count += 1
             if type(self.target) is list:
                 for target in self.target:
-                    score += target.take_damage(self.damage)
+                    # Do more damage to big enemies to simulate multiple projectiles hitting
+                    multiplier = target.size - 1
+                    #print(multiplier)
+                    score += target.take_damage(self.damage * multiplier)
             else:
-                score = self.target.take_damage(self.damage)
+                # is burger ever here? Nope
+                multiplier = self.target.size  # Do more damage to big enemies to simulate multiple projectiles hitting
+                #print('single', multiplier)
+                score = self.target.take_damage(self.damage * multiplier)
             #print(f"{score=}")
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
@@ -439,7 +445,11 @@ class Wizard(Tower):
             self.attack_count += 1
             if type(self.target) is list:
                 for target in self.target:
-                    score += target.take_damage(self.damage)
+                    if target.size >=3:
+                        multiplier = 2
+                    else:
+                        multiplier = 1
+                    score += target.take_damage(self.damage * multiplier)
             else:
                 score = self.target.take_damage(self.damage)
             self.attack_timer = self.attack_speed

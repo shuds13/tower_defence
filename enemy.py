@@ -28,6 +28,7 @@ class Enemy:
         self.fortified = False
         self.spawn_on_die = False  # not used for regular colors - those change attributes.
         self.position = position or self.path[0]
+        self.size = 1
 
     def draw(self, window):
         if self.image is not None:
@@ -219,6 +220,7 @@ class Troll(Enemy):
         self.spawn_on_die = True
         self.spawn_type = Enemy3
         self.spawn_count = 3
+        self.size = 2
 
 
     # TODO - is this needed - check difference to original function
@@ -243,6 +245,7 @@ class KingBlob(Enemy):
         self.spawn_type = Enemy2
         #self.spawn_count = 20
         self.spawn_count = 100
+        self.size = 3
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
