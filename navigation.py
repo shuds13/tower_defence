@@ -15,6 +15,7 @@ cross_img = pygame.transform.scale(cross_img, (50, 50))
 cog_img = pygame.image.load('options.png')
 cog_img = pygame.transform.scale(cog_img, (40, 40))
 
+frames_per_second = 60
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255)):
     #font = pygame.font.SysFont(None, 36)
@@ -101,11 +102,40 @@ def draw_options_cog(surface):
     return image_rect
 
 
+def draw_speed_buttons(surface, x, y, width, height):
+
+    global frames_per_second
+
+    y_from_centre = -60
+    s1_pos = (x + width // 2 - 120, y+height/2 + y_from_centre)
+    s15_pos = (x + width // 2 - 40, y+height/2 + y_from_centre)
+    s2_pos = (x + width // 2 +40, y+height/2 + y_from_centre)
+    col_off = (132, 136, 132)
+    col_on = (0,200,0)
+
+    s1_color = col_off
+    s15_color = col_off
+    s2_color = col_off
+
+    if frames_per_second == 60:
+        s1_color = col_on
+    elif frames_per_second == 90:
+        s15_color = col_on
+    elif frames_per_second == 120:
+        s2_color = col_on
+
+    s1_button = draw_button(surface, "1x", s1_pos, (80, 40), color=s1_color)
+    s15_button = draw_button(surface, "1.5x", s15_pos, (80, 40), color=s15_color)
+    s2_button = draw_button(surface, "2x", s2_pos, (80, 40), color=s2_color)
+    return s1_button, s15_button, s2_button
+
+
 def draw_sound_buttons(surface, x, y, width, height):
 
-    mute_pos = (x + width // 2 - 120, y+height/2)
-    quiet_pos = (x + width // 2 - 40, y+height/2)
-    normal_pos = (x + width // 2 +40, y+height/2)
+    y_from_centre = 40
+    mute_pos = (x + width // 2 - 120, y+height/2 + y_from_centre)
+    quiet_pos = (x + width // 2 - 40, y+height/2 + y_from_centre)
+    normal_pos = (x + width // 2 +40, y+height/2 + y_from_centre)
     col_off = (132, 136, 132)
     col_on = (0,200,0)
 
@@ -127,6 +157,8 @@ def draw_sound_buttons(surface, x, y, width, height):
 
 
 def draw_options_window(display, surface, options_button):
+    global frames_per_second
+
     x, y, width, height = 100, 100, 500, 400
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
 
@@ -134,8 +166,13 @@ def draw_options_window(display, surface, options_button):
     pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
 
     font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
+
+    speed_text = font_title.render("Speed", True, (0, 0, 0))  # Black text
+    speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+height/2 - 100))
+    surface.blit(speed_text, speed_rect.topleft)
+
     sound_text = font_title.render("Sound", True, (0, 0, 0))  # Black text
-    sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height/2 - 40))
+    sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height/2))
     surface.blit(sound_text, sound_rect.topleft)
 
     done_pos =  (x + width // 2 - 40, y+height-60)
@@ -146,6 +183,7 @@ def draw_options_window(display, surface, options_button):
 
     not_done = True
     while not_done:
+        s1_b, s15_b, s2_b = draw_speed_buttons(surface, x, y, width, height)
         mute_b, quiet_b, normal_b = draw_sound_buttons(surface, x, y, width, height)
         display.flip()
         events = pygame.event.get()
@@ -158,6 +196,12 @@ def draw_options_window(display, surface, options_button):
                 if done_button.collidepoint(mouse_pos) or options_button.collidepoint(mouse_pos):
                     not_done = False
                     break
+                elif s1_b.collidepoint(mouse_pos):
+                    frames_per_second = 60
+                elif s15_b.collidepoint(mouse_pos):
+                    frames_per_second = 90
+                elif s2_b.collidepoint(mouse_pos):
+                    frames_per_second = 120
                 elif mute_b.collidepoint(mouse_pos):
                     sounds.set_volume(0)
                 elif quiet_b.collidepoint(mouse_pos):

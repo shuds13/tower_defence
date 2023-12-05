@@ -19,6 +19,9 @@ initial_lives = 30
 initial_money = 100
 initial_level = 1
 
+#frames_per_second = 60
+#frames_per_second = 120  # For testing - this may be added as an option
+
 # Initialize Pygame
 pygame.init()
 
@@ -67,7 +70,7 @@ def reset_level():
     running = True
     enemy_spawn_timer = 0
     active = False
-    current_tower_type = None
+    #current_tower_type = None
     #spawned_enemies = 0
 
 # Use gmap atributes inline but for now
@@ -356,7 +359,7 @@ while running:
             start_level_button = nav.start_level_button(window, window_size)
 
     pygame.display.flip()  # Update the full display Surface to the screen
-    clock.tick(60)  # Maintain 60 frames per second
+    clock.tick(nav.frames_per_second)  # Maintain 60 frames per second
 
 #pygame.display.flip()  # Update the full display Surface to the screen
 
