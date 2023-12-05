@@ -5,6 +5,7 @@ snd_blop = pygame.mixer.Sound('blop.wav')
 snd_ting = pygame.mixer.Sound('ting.wav')
 snd_place = pygame.mixer.Sound('place.wav')
 snd_sell = pygame.mixer.Sound('sell.wav')
+snd_pop = pygame.mixer.Sound('pop.wav')
 
 
 sounds = {
@@ -12,6 +13,7 @@ sounds = {
     'ting':snd_ting,
     'place':snd_place,
     'sell':snd_sell,
+    'pop':snd_pop,
     }
 
 #print("volume", pygame.mixer.Sound.get_volume())

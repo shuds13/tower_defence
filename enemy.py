@@ -1,10 +1,14 @@
 import pygame
 import sounds
+import random
 
 ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 troll_img = pygame.image.load('troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
+king_img = pygame.image.load('kingblob.png')
+king_img = pygame.transform.scale(king_img, (100, 100))
+
 
 # TODO may not need value and health - will they always be the same?
 # may make enemy0 as way of making a gap - inivisible no value etc...
@@ -45,7 +49,9 @@ class Enemy:
     def move(self):
         # Move towards the next point in the path
         if self.path_index < len(self.path) - 1:
-            target_pos = self.path[self.path_index + 1]
+            #target_pos = target or self.path[self.path_index + 1]  # for backwards move just make -1
+            target_pos = self.path[self.path_index + 1]  # for backwards move just make -1
+
             dx, dy = target_pos[0] - self.position[0], target_pos[1] - self.position[1]
             distance = (dx**2 + dy**2)**0.5
             if distance > self.speed:
@@ -80,6 +86,13 @@ class Enemy:
             for j in range(i*2):
                 enemy.move()
             enemies.append(enemy)
+
+    ## create a cloud like he burst that then move to the track
+    #def cloud_spawn(self):
+        ## Move towards the next point in the path
+        #if self.path_index < len(self.path) - 1:
+            #target_pos = self.position
+            #self.move(target_pos)
 
 
 class Enemy2(Enemy):
@@ -215,11 +228,60 @@ class Troll(Enemy):
         sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
-
-            #enemy_id = self.enemy_types[self.phase]
-            #enemy_class = enemy_types[enemy_id]
-            #enemies.append(Enem(path))
         return damage
+
+
+class KingBlob(Enemy):
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.health = 100 #200
+        self.value = 100 #200
+        self.speed = 1
+        self.image = king_img
+        self.spawn_on_die = True
+        #self.spawn_type = Enemy102
+        self.spawn_type = Enemy2
+        #self.spawn_count = 20
+        self.spawn_count = 100
+
+    # TODO - is this needed - check difference to original function
+    def take_damage(self, damage):
+        self.health -= damage
+        self.value = self.health
+        sounds.play('blop')
+        if self.health <= 0:
+            sounds.play('pop')
+            self.reached_end = True
+        return damage
+
+
+    def generate_point_cloud(self, central_point, n_points, spread=1.0):
+        """
+        Generates a cloud of 2D points around a central point.
+
+        :param central_point: A tuple (x, y) representing the central point.
+        :param n_points: Number of points to generate.
+        :param spread: The range around the central point for generating points.
+        :return: A list of tuples, each representing a point (x, y).
+        """
+        x_center, y_center = central_point
+        return [(x_center + random.uniform(-spread, spread),
+                y_center + random.uniform(-spread, spread)) for _ in range(n_points)]
+
+    def spawn_func(self, path, enemies):
+        points = self.generate_point_cloud(self.position, self.spawn_count, spread=100)
+
+        for point in points:
+            #print(self.path_index)
+            enemy = self.spawn_type(path, point, self.path_index)
+            # Spread out slightly
+            # not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
+            #for j in range(i*2):
+                ##enemy.move(self.position)  #may not need this function
+                #enemy.move()
+                ##enemy.cloud_spawn()
+            enemies.append(enemy)
+
 
 #class Ghost2(Enemy):
     #def __init__(self, path, position=None, path_index=0):
@@ -252,4 +314,4 @@ class Heart(Enemy):
         return 0
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost, 11: Troll,
-               101: Enemy101, 102: Enemy102, 103: Enemy103}
+               101: Enemy101, 102: Enemy102, 103: Enemy103, 201: KingBlob}
