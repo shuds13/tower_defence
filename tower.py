@@ -53,6 +53,7 @@ class Tower:
         self.viz_persist = 0
         self.level = 1
         self.total_score = 0
+        #self.start_round_score = 0
         self.see_ghosts = False
         self.beam_width = 5
 
@@ -61,6 +62,17 @@ class Tower:
 
     def show_viz_persis(self, window):
         pass
+
+    #def set_start_hits(self):
+        #self.start_round_score = self.total_score
+
+    #def reset_tower(self):
+        #self.total_score = self.start_round_score
+        #self.viz_persist = 0
+        ##reset level
+
+    #def get_start_hits(self):
+        #return self.start_round_score
 
     def is_visible(self, enemy):
         return not enemy.invis or self.see_ghosts

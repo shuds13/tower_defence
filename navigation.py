@@ -16,6 +16,7 @@ cog_img = pygame.image.load('options.png')
 cog_img = pygame.transform.scale(cog_img, (40, 40))
 
 frames_per_second = 60
+frames_per_second = 180 # tmp
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255)):
     #font = pygame.font.SysFont(None, 36)
@@ -34,17 +35,23 @@ def is_click_inside_rect(click_pos, rect):
     return clicked
 
 
-def play_button(window, window_size):
+def play_button(window, window_size, last_round_restarts):
     x = window_size[0] - 190
-    y = window_size[1] - 100
+    #y = window_size[1] - 100
+    y = window_size[1] - 160
     width = 80
     height = 50
     #draw_border(window, x, y, width, height, 3)
+    if last_round_restarts > 0:
+        restart_round = draw_button(window, "Restart round", (x+15, y), (150, 40), (210, 125, 45))
+    else:
+        restart_round = None
+    y += 60
     replay_button = draw_button(window, "Replay", (x, y), (width, height))
     x += 100
     #draw_border(window, x, y, width, height, 3)
     maps_button = draw_button(window, "Maps", (x, y), (width, height), (233, 116, 81))
-    return replay_button, maps_button
+    return replay_button, maps_button, restart_round
 
 
 def start_level_button(window, window_size):

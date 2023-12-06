@@ -1,4 +1,5 @@
 import os
+import copy
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
@@ -19,6 +20,9 @@ initial_lives = 30
 initial_money = 100
 initial_level = 1
 
+
+init_last_round_restarts = 2
+#init_last_round_restarts = 20
 
 # Initialize Pygame
 pygame.init()
@@ -47,6 +51,7 @@ inset_window = {
 def reset_game():
     global player_money, level_num, level, towers, enemies, lives, money_per_hit
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
+    global start_round_money, start_round_lives, start_round_towers, last_round_restarts
     player_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
@@ -60,6 +65,11 @@ def reset_game():
     current_tower_type = None
     inset_window['active'] = False
     money_per_hit = 1.0
+    # should be obj
+    start_round_money = initial_money
+    start_round_lives = initial_lives
+    start_round_towers = []
+    last_round_restarts = init_last_round_restarts
 
 
 def reset_level():
@@ -70,6 +80,26 @@ def reset_level():
     active = False
     #current_tower_type = None
     #spawned_enemies = 0
+
+
+def restart_round():
+    global player_money, lives, towers
+    global start_round_money, start_round_lives, start_round_towers, last_round_restarts, game_over
+    global level_num, level, lev
+    player_money = start_round_money
+    lives = start_round_lives
+
+    # dont work - says TypeError: cannot pickle 'pygame.surface.Surface' object
+    #towers = copy.deepcopy(start_round_towers)
+    towers = []
+    for tower in start_round_towers:
+        towers.append(copy.copy(tower))
+    #for tower in towers:
+        #tower.get_start_hits()
+    last_round_restarts -= 1
+    game_over = False
+    level = lev.levels[level_num]()  # reset this level (phase num / num_spawned)
+
 
 # Use gmap atributes inline but for now
 def set_map(gmap):
@@ -86,13 +116,14 @@ def select_map():
     global pygame, window, window_size, running
     gmap = map_window(pygame.display, window, window_size)
     if gmap is None:
-        print('Exiting from map window')
+        #print('Exiting from map window')
         running = False
         return
     set_map(gmap)
 
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
+restart_round_button = None
 
 alert_message = ""
 alert_timer = 0
@@ -155,6 +186,9 @@ while running:
                 nav.draw_options_window(pygame.display, window, options_button)
 
             if game_over:
+                if restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
+                    restart_round()
+                    reset_level()
                 if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
                     reset_game()
                 if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
@@ -257,6 +291,19 @@ while running:
                 game_over = True
                 current_tower_type = None
             else:
+                start_round_money = player_money
+                start_round_lives = lives
+                #start_round_towers = towers
+                #for tower in towers:
+                    #tower.set_start_hits()  # not enough - reset all attributes of tower
+
+                # dont work - says TypeError: cannot pickle 'pygame.surface.Surface' object
+                # though surface appears in tower function - I dont see it stored in attribute
+                #start_round_towers = copy.deepcopy(towers)
+                start_round_towers = []
+                for tower in towers:
+                    start_round_towers.append(copy.copy(tower))
+
                 level_num += 1
                 money_per_hit = get_money_per_hit(level_num)
                 level = lev.levels[level_num]()
@@ -352,8 +399,13 @@ while running:
         text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
         window.blit(game_over_text, text_rect)
 
+
+        # TODO thinking about this right now - buttons are not none after start - even if not drawn - can you click!!!!
+        # oh but click only looked for if game_over!!!!! - you could reset button to None at that point!!!
         # Draw the play again button
-        play_again_button, maps_button = nav.play_button(window, window_size)
+        play_again_button, maps_button, restart_round_button = nav.play_button(
+            window, window_size, last_round_restarts
+        )
     else:
         if not active:
             start_level_button = nav.start_level_button(window, window_size)
