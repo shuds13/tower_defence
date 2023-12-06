@@ -295,7 +295,74 @@ class Level31(Level):
         self.phase_counts = [30, 60, 90]
         self.enemy_types = [4,4,4]
 
+
 class Level32(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 40
+        self.spawn_intervals = [12]
+        self.phase_counts = [40]
+        self.enemy_types = [5]
+
+class Level33(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 75
+        self.spawn_intervals = [1, 10, 20]
+        self.phase_counts = [25, 50, 75]
+        self.enemy_types = [2, 102, 104]
+
+class Level34(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 50
+        self.spawn_intervals = [2, 3, 10]
+        self.phase_counts = [22, 35, 50]
+        self.enemy_types = [3,2,4]
+
+class Level35(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 50
+        self.spawn_intervals = [14,14]
+        self.phase_counts = [20, 50]
+        self.enemy_types = [2, 10]
+
+# Test dense reds or blues
+class Level36(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 80
+        self.spawn_intervals = [3]
+        self.phase_counts = [80]
+        self.enemy_types = [102]
+
+class Level37(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 150
+        self.spawn_intervals = [2,2,3,3,4]
+        self.phase_counts = [40, 70, 100, 125, 150]
+        self.enemy_types = [1,2,3,4,5]
+
+class Level38(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 47
+        self.spawn_intervals = [8, 10, 10, 10, 10]
+        self.phase_counts = [25, 35, 36, 46, 47]
+        self.enemy_types = [3, 11, 12, 11, 12]
+
+class Level39(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 125
+        self.spawn_intervals = [10, 8, 1, 1, 10]
+        self.phase_counts = [25, 55, 80, 100, 125]
+        self.enemy_types = [5, 3, 1, 3, 102]
+
+
+class Level40(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 1
@@ -303,8 +370,24 @@ class Level32(Level):
         self.phase_counts = [1]
         self.enemy_types = [201]
 
+# tests only
+#class Level41(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 4
+        #self.spawn_intervals = [50] # Irrelevant
+        #self.phase_counts = [4]
+        #self.enemy_types = [201]
 
-max_level = 32  # TODO get this from last key in levels
+#class Level42(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 100
+        #self.spawn_intervals = [10, 8, 2] # Irrelevant
+        #self.phase_counts = [6, 50, 100]
+        #self.enemy_types = [201, 11, 10]
+
+max_level = 40  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
 

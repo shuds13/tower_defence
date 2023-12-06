@@ -6,6 +6,7 @@ ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 troll_img = pygame.image.load('troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
+giant_troll_img = pygame.transform.scale(troll_img, (80, 80))
 king_img = pygame.image.load('kingblob.png')
 king_img = pygame.transform.scale(king_img, (100, 100))
 
@@ -190,6 +191,13 @@ class Enemy103(Enemy3):
         self.health += self.fort_health
         self.value = self.health
 
+class Enemy104(Enemy4):
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.fortified = True
+        self.fort_health = 6
+        self.health += self.fort_health
+        self.value = self.health
 
 class Ghost(Enemy):
     def __init__(self, path, position=None, path_index=0):
@@ -233,6 +241,31 @@ class Troll(Enemy):
         return damage
 
 
+class GiantTroll(Enemy):
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.health = 60
+        self.value = 60
+        self.speed = 2
+        self.image = giant_troll_img
+        self.spawn_on_die = True
+        self.spawn_type = Enemy103
+        self.spawn_count = 6
+        self.size = 3
+
+
+    # TODO - is this needed - check difference to original function
+    def take_damage(self, damage):
+        self.health -= damage
+        self.value = self.health
+        sounds.play('blop')
+        if self.health <= 0:
+            self.reached_end = True
+        return damage
+
+
+
+
 class KingBlob(Enemy):
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
@@ -242,7 +275,8 @@ class KingBlob(Enemy):
         self.image = king_img
         self.spawn_on_die = True
         #self.spawn_type = Enemy102
-        self.spawn_type = Enemy2
+        self.spawn_type = Enemy2 #proper one
+        #self.spawn_type = Ghost
         #self.spawn_count = 20
         self.spawn_count = 100
         self.size = 3
@@ -316,5 +350,5 @@ class Heart(Enemy):
             return self.value  # but will be lives
         return 0
 
-enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost, 11: Troll,
-               101: Enemy101, 102: Enemy102, 103: Enemy103, 201: KingBlob}
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost, 11: Troll, 12: GiantTroll,
+               101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 201: KingBlob}
