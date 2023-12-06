@@ -6,7 +6,7 @@ ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 troll_img = pygame.image.load('troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
-giant_troll_img = pygame.transform.scale(troll_img, (80, 80))
+giant_troll_img = pygame.transform.scale(troll_img, (90, 90))
 king_img = pygame.image.load('kingblob.png')
 king_img = pygame.transform.scale(king_img, (100, 100))
 

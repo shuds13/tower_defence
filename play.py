@@ -125,15 +125,17 @@ def show_tower_info(inset_window):
             return True
     return False
 
+# If keep tower prices as is need to reduce more.
+# proper version should increase tower price though
 def get_money_per_hit(level_num):
     if level_num < 10:
         money_per_hit = 1.0
     elif level_num < 20:
-        money_per_hit = 0.8
+        money_per_hit = 0.7 # 0.8
     elif level_num < 30:
-        money_per_hit = 0.6
+        money_per_hit = 0.5 # 0.6
     else:
-        money_per_hit = 0.4
+        money_per_hit = 0.3 # 0.4
     #print(f"{money_per_hit=}")
     return money_per_hit
 

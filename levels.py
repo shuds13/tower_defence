@@ -109,8 +109,8 @@ class Level10(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 12
-        self.spawn_intervals = [15]
-        self.phase_counts = [12]
+        self.spawn_intervals = [15, 25]
+        self.phase_counts = [12, 13]
         self.enemy_types = [4]
 
 class Level11(Level):
@@ -345,19 +345,28 @@ class Level37(Level):
         self.phase_counts = [40, 70, 100, 125, 150]
         self.enemy_types = [1,2,3,4,5]
 
+# before money per hit reduction
+#class Level38(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 47
+        #self.spawn_intervals = [8, 10, 10, 10, 10]
+        #self.phase_counts = [25, 35, 36, 46, 47]
+        #self.enemy_types = [3, 11, 12, 11, 12]
+
 class Level38(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 47
-        self.spawn_intervals = [8, 10, 10, 10, 10]
-        self.phase_counts = [25, 35, 36, 46, 47]
-        self.enemy_types = [3, 11, 12, 11, 12]
+        self.spawn_intervals = [8, 15, 32, 32, 14, 32]
+        self.phase_counts = [25, 35, 36, 37, 46, 47]
+        self.enemy_types = [3, 11, 12, 11, 11, 12]
 
 class Level39(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 125
-        self.spawn_intervals = [10, 8, 1, 1, 10]
+        self.spawn_intervals = [6, 3, 1, 1, 10]
         self.phase_counts = [25, 55, 80, 100, 125]
         self.enemy_types = [5, 3, 1, 3, 102]
 
