@@ -16,7 +16,7 @@ cog_img = pygame.image.load('options.png')
 cog_img = pygame.transform.scale(cog_img, (40, 40))
 
 frames_per_second = 60
-frames_per_second = 180 # tmp
+#frames_per_second = 180 # tmp
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255)):
     #font = pygame.font.SysFont(None, 36)
