@@ -457,7 +457,7 @@ class Wizard(Tower):
         #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
         #pygame.draw.circle(cloud, (color, 0, color, color), (radius, radius), radius)
 
-        print(f"{self.cloud_attack=}")
+        #print(f"{self.cloud_attack=}")
         c1, c2, c3 = self.get_color(self.cloud_type)
         #c_alpha = 128
         c_alpha = max(128 - 5*self.viz_persist, 0)

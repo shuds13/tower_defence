@@ -368,11 +368,13 @@ while running:
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
     # Though I dont notice it - I should prob update enemy list inside loop to prevent double(multiple) targeting
-    for tower in towers:
-        if tower.viz_persist:
-            tower.show_viz_persist(window)
-        if tower.is_attacking and tower.target:
-            tower.attack_animate(window)
+    keep_animate = False
+    if keep_animate or active:
+        for tower in towers:
+            if tower.viz_persist:
+                tower.show_viz_persist(window)
+            if tower.is_attacking and tower.target:
+                tower.attack_animate(window)
 
     if current_tower_type is not None:
         mouse_x, mouse_y = pygame.mouse.get_pos()
