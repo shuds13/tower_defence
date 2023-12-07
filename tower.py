@@ -1,5 +1,6 @@
 import math
 import pygame
+import random
 #pygame.init()
 #screen = pygame.display.set_mode((800, 600))
 
@@ -334,7 +335,7 @@ class Wizard(Tower):
         self.attack_count = 0
         self.cloud_attack = False
         self.upgrade_costs = [200, 600, 1400]  # [200]  4th level prob 1800 or 2000 -but for now less
-        self.beam_width = 7
+        self.beam_width = 6
         self.see_ghosts = True
         self.max_attacks = 2
         self.max_cloud_attacks = 8
@@ -360,7 +361,7 @@ class Wizard(Tower):
             self.image = wizard2_img
             self.cloud_freq = 5  # ironially i think this needs to be less as attack speed is faster
             self.cost += self.upgrade_costs[0]
-            self.beam_width = 8
+            self.beam_width = 7
             self.max_attacks = 3
             self.max_cloud_attacks = 14
         if self.level == 3:
@@ -370,7 +371,7 @@ class Wizard(Tower):
             self.image = wizard3_img
             self.cloud_freq = 6  # less freq
             self.cost += self.upgrade_costs[1]
-            self.beam_width = 9
+            self.beam_width = 8
             self.max_attacks = 4
             self.max_cloud_attacks = 25
         if self.level == 4:
@@ -380,7 +381,7 @@ class Wizard(Tower):
             self.image = wizard4_img
             self.cloud_freq = 7  # less freq
             self.cost += self.upgrade_costs[2]
-            self.beam_width = 10
+            self.beam_width = 9
             self.max_attacks = 5
             self.max_cloud_attacks = 45
 
@@ -426,6 +427,18 @@ class Wizard(Tower):
         #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
         #pygame.draw.circle(cloud, (255, 192, 0, 128), (radius, radius), radius)
         #return cloud
+
+
+    def draw_lightning(self, screen, start_pos, end_pos, divisions, color):
+        if divisions == 0:
+            pygame.draw.line(screen, color, start_pos, end_pos, self.beam_width)
+        else:
+            mid_x = (start_pos[0] + end_pos[0]) // 2 + random.randint(-20, 20)
+            mid_y = (start_pos[1] + end_pos[1]) // 2 + random.randint(-20, 20)
+            mid_pos = (mid_x, mid_y)
+
+            self.draw_lightning(screen, start_pos, mid_pos, divisions - 1, color)
+            self.draw_lightning(screen, mid_pos, end_pos, divisions - 1, color)
 
 
     def show_viz_persist(self, window):
@@ -488,9 +501,13 @@ class Wizard(Tower):
             #pygame.draw.line(window, (255,0,255), self.position, self.target.position, self.beam_width)
             if type(self.target) is list:
                 for target in self.target:
-                    pygame.draw.line(window, (255,0,255), staff_position, target.position, self.beam_width)
+                    #pygame.draw.line(window, (255,0,255), staff_position, target.position, self.beam_width)
+                    self.draw_lightning(window, staff_position, target.position, 3, (255,0,255))
+
             else:
-                pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
+                #pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
+                #testing lightning strike animation instead of straight line
+                self.draw_lightning(window, staff_position, self.target.position, 3, (255,0,255))
 
 
     #def find_target(self, enemies):
