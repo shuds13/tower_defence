@@ -507,7 +507,11 @@ class Wizard(Tower):
             else:
                 #pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
                 #testing lightning strike animation instead of straight line
-                self.draw_lightning(window, staff_position, self.target.position, 3, (255,0,255))
+                if self.level >= 4 and self.target.size > 1:
+                    for nn in range(self.target.size):
+                        self.draw_lightning(window, staff_position, self.target.position, 3, (255, 192, 0))
+                else:
+                    self.draw_lightning(window, staff_position, self.target.position, 3, (255,0,255))
 
 
     #def find_target(self, enemies):
@@ -606,7 +610,16 @@ class Wizard(Tower):
                         multiplier += 1
                     score += target.take_damage(self.damage * multiplier)
             else:
-                score = self.target.take_damage(self.damage)
+                #For lev 4 I may make special power attack against size 2/3 enemies.
+                #Animattin diff color - maybe multiple lightning strikes to same target
+                #or slightly displaced at end but I should see if I can make animate
+                #combined with attack - why called separately? If combined
+                #dont need to store things like attack type....
+                #for now may make every 'single' attack so dont need to store - testing
+                multiplier = 1
+                if self.level >= 4:
+                    multiplier = self.target.size
+                score = self.target.take_damage(self.damage*multiplier)
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
         else:
