@@ -366,7 +366,7 @@ class Wizard(Tower):
         if self.level == 3:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 15  # lower is better currently
-            self.range = 140
+            self.range = 150
             self.image = wizard3_img
             self.cloud_freq = 6  # less freq
             self.cost += self.upgrade_costs[1]
@@ -376,7 +376,7 @@ class Wizard(Tower):
         if self.level == 4:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 8  # lower is better currently
-            self.range = 160
+            self.range = 170
             self.image = wizard4_img
             self.cloud_freq = 7  # less freq
             self.cost += self.upgrade_costs[2]
@@ -585,6 +585,8 @@ class Wizard(Tower):
                         multiplier = 2
                     else:
                         multiplier = 1
+                    if self.cloud_type == 2:
+                        multiplier += 1
                     score += target.take_damage(self.damage * multiplier)
             else:
                 score = self.target.take_damage(self.damage)
