@@ -27,6 +27,8 @@ wizard2_img = pygame.image.load('wizard2.png')  # Load your tower image
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
 wizard3_img = pygame.image.load('wizard3.png')  # Load your tower image
 wizard3_img = pygame.transform.scale(wizard3_img, (58, 58))
+wizard4_img = pygame.image.load('wizard4.png')  # Load your tower image
+wizard4_img = pygame.transform.scale(wizard4_img, (58, 60))
 
 splat_img = pygame.image.load('splat.png')
 #splat_img = pygame.transform.scale(splat_img, (120, 120))
@@ -318,7 +320,7 @@ class Wizard(Tower):
     name = 'Wizard'
     image = wizard_img
     range = 120
-    max_level = 3
+    max_level = 4
 
     def __init__(self, position):
         super().__init__(position)
@@ -331,11 +333,12 @@ class Wizard(Tower):
         self.cloud_freq = 4
         self.attack_count = 0
         self.cloud_attack = False
-        self.upgrade_costs = [200, 600]  # [200]
+        self.upgrade_costs = [200, 600, 1400]  # [200]  4th level prob 1800 or 2000 -but for now less
         self.beam_width = 7
         self.see_ghosts = True
         self.max_attacks = 2
         self.max_cloud_attacks = 8
+        self.cloud_type = 1
 
     def draw(self, window):
         """Dont rotate burger"""
@@ -363,19 +366,35 @@ class Wizard(Tower):
         if self.level == 3:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 15  # lower is better currently
-            self.range = 150
+            self.range = 140
             self.image = wizard3_img
             self.cloud_freq = 6  # less freq
             self.cost += self.upgrade_costs[1]
-            self.beam_width = 10
+            self.beam_width = 9
             self.max_attacks = 4
             self.max_cloud_attacks = 25
+        if self.level == 4:
+            # I really want to introduce a new spell - maybe blow enemies back or something else.
+            self.attack_speed = 8  # lower is better currently
+            self.range = 160
+            self.image = wizard4_img
+            self.cloud_freq = 7  # less freq
+            self.cost += self.upgrade_costs[2]
+            self.beam_width = 10
+            self.max_attacks = 5
+            self.max_cloud_attacks = 45
 
     def _is_cloud_attack(self):
         # The slow but elegant way - can do one line also x=y=z
         if self.attack_count % self.cloud_freq == 0:
+            #self.cloud_attack = True
             self.cloud_attack = True
+            self.cloud_type = 1
+            if self.level >= 4:
+                if self.attack_count % (2*self.cloud_freq) == 0:
+                    self.cloud_type = 2
         else:
+            #self.cloud_attack = False
             self.cloud_attack = False
         return self.cloud_attack
 
@@ -388,10 +407,26 @@ class Wizard(Tower):
         return self.multi_attack
 
 
+    def get_color(self, cloud_type):
+        if cloud_type == 1:
+            return 128, 0, 128
+        elif cloud_type == 2:
+            #return 63, 0, 255
+            return 0, 255, 255
+
+
     def create_cloud(self, radius):
+        c1, c2, c3 = self.get_color(self.cloud_type)
+        c_alpha = 128
         cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-        pygame.draw.circle(cloud, (128, 0, 128, 128), (radius, radius), radius)
+        pygame.draw.circle(cloud, (c1, c2, c3, c_alpha), (radius, radius), radius)
         return cloud
+
+    #def create_cloud2(self, radius):
+        #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        #pygame.draw.circle(cloud, (255, 192, 0, 128), (radius, radius), radius)
+        #return cloud
+
 
     def show_viz_persist(self, window):
         # Currently only cloud persists - could also change in size/color etc
@@ -401,9 +436,22 @@ class Wizard(Tower):
         # try changing somwhow
         radius = max(0, self.range - 100//self.viz_persist)
         #color = 128
-        color = max(128 - 5*self.viz_persist, 0)
+        #color = max(128 - 5*self.viz_persist, 0)
+        #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        #pygame.draw.circle(cloud, (color, 0, color, color), (radius, radius), radius)
+
+        #color = max(128 - 5*self.viz_persist, 0)
+        #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        #pygame.draw.circle(cloud, (color, 0, color, color), (radius, radius), radius)
+
+        print(f"{self.cloud_attack=}")
+        c1, c2, c3 = self.get_color(self.cloud_type)
+        #c_alpha = 128
+        c_alpha = max(128 - 5*self.viz_persist, 0)
         cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-        pygame.draw.circle(cloud, (color, 0, color, color), (radius, radius), radius)
+        pygame.draw.circle(cloud, (c1, c2, c3, c_alpha), (radius, radius), radius)
+
+
 
         cloud_rect = cloud.get_rect(center=self.position)
         window.blit(cloud, cloud_rect)
@@ -418,6 +466,8 @@ class Wizard(Tower):
             return (self.position[0]-17, self.position[1]-15)
         elif self.level == 3:
             return (self.position[0]+15, self.position[1]-16)
+        elif self.level == 4:
+            return (self.position[0]-18, self.position[1]-21)  #update
 
     # To be every so many attacks but for now replace
     def attack_animate(self, window):
@@ -427,6 +477,11 @@ class Wizard(Tower):
             cloud = self.create_cloud(self.range)
             cloud_rect = cloud.get_rect(center=self.position)
             window.blit(cloud, cloud_rect)
+
+            #cloud = self.create_cloud2(self.range)
+            #cloud_rect = cloud.get_rect(center=self.position)
+            #window.blit(cloud, cloud_rect)
+
             pygame.draw.circle(window, (255, 0, 0), staff_position, 15)  # Tower
             self.viz_persist = 5
         else:
