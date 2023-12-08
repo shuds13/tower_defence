@@ -4,6 +4,9 @@ import random
 
 ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
+devil_img = pygame.image.load('devil.png')
+devil_img = pygame.transform.scale(devil_img, (50, 50))
+
 troll_img = pygame.image.load('troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
 giant_troll_img = pygame.transform.scale(troll_img, (90, 90))
@@ -218,6 +221,15 @@ class Ghost(Enemy):
         return damage
 
 
+class Devil(Ghost):
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.health = 8
+        self.value = 8
+        self.speed = 4
+        self.image = devil_img
+
+
 class Troll(Enemy):
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
@@ -350,5 +362,7 @@ class Heart(Enemy):
             return self.value  # but will be lives
         return 0
 
-enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5, 10: Ghost, 11: Troll, 12: GiantTroll,
-               101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 201: KingBlob}
+enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
+               10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil,
+               101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104,
+               201: KingBlob}
