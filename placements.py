@@ -31,8 +31,8 @@ def point_line_distance(point, line_start, line_end):
 
 def is_valid_position(pos, path, towers):
     """Check if the position is not on the path and not too close to other towers."""
-    min_distance_to_path = 20  # Minimum allowed distance from the path
-    some_minimum_distance_between_towers = 25
+    min_distance_to_path = 25 # 20  # Minimum allowed distance from the path
+    some_minimum_distance_between_towers = 30 #25
 
 
     #TODO use collide to see if in side panel
