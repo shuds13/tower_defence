@@ -230,6 +230,9 @@ def draw_inset_window(surface, window_info, player_money):
     x, y, width, height = window_info['x'], window_info['y'], window_info['width'], window_info['height']
     tower = window_info['tower']
 
+    # Show radius of tower
+    pygame.draw.circle(surface, (0, 255, 255), tower.position, tower.range, 1)
+
     # Draw the border
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
 
