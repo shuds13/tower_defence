@@ -130,9 +130,9 @@ class Valley(Map):
     def __init__(self):
         self.name = "Valley"
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (53, 94, 59)  # (0, 158, 96)
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
-        self.path_color = (178, 190, 181)
+        self.path_color = (96, 130, 182) # (178, 190, 181)
 
         path1 = [(0, 100), (300, 260), (400, 260), (700, 100)]
         path2 = [(0, 500), (300, 340), (400, 340), (700, 500)]
