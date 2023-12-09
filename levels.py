@@ -354,7 +354,7 @@ class Level37(Level):
         #self.phase_counts = [25, 35, 36, 46, 47]
         #self.enemy_types = [3, 11, 12, 11, 12]
 
-# oroginal - currently too hard - but may reinstate if tower like bomb shooter helps
+# oroginal - currently too hard - but may reinstate if tower like bomb shooter helps or money maker tower.
 #class Level38(Level):
     #def __init__(self):
         #Level.__init__(self)
@@ -363,13 +363,14 @@ class Level37(Level):
         #self.phase_counts = [25, 35, 36, 37, 46, 47]
         #self.enemy_types = [3, 11, 12, 11, 11, 12]
 
+
 class Level38(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 47
-        self.spawn_intervals = [8, 18, 40, 40, 16, 40]
-        self.phase_counts = [25, 35, 36, 37, 46, 47]
-        self.enemy_types = [3, 11, 12, 11, 11, 12]
+        self.num_enemies = 64
+        self.spawn_intervals = [8, 22, 10, 30, 20]
+        self.phase_counts = [25, 35, 46, 55, 64]
+        self.enemy_types = [3, 11, 10, 13, 11]
 
 
 class Level39(Level):
@@ -425,6 +426,25 @@ class Level44(Level):
         self.phase_counts = [15]
         self.enemy_types =  [13]
 
+# old level 38 - still too hard here.
+#class Level45(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 47
+        #self.spawn_intervals = [8, 15, 32, 32, 14, 32]
+        #self.phase_counts = [25, 35, 36, 37, 46, 47]
+        #self.enemy_types = [3, 11, 12, 11, 11, 12]
+
+class Level45(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 47
+        self.spawn_intervals = [8, 20, 40, 40, 18, 40]
+        self.phase_counts = [25, 35, 36, 37, 46, 47]
+        self.enemy_types = [3, 11, 12, 11, 11, 12]
+
+
+
 # tests only
 #class Level41(Level):
     #def __init__(self):
@@ -442,7 +462,7 @@ class Level44(Level):
         #self.phase_counts = [6, 50, 100]
         #self.enemy_types = [201, 11, 10]
 
-max_level = 44  # TODO get this from last key in levels
+max_level = 45  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
 

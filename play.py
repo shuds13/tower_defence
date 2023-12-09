@@ -52,6 +52,7 @@ def reset_game():
     global player_money, level_num, level, towers, enemies, lives, money_per_hit
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
+    global total_hits, total_money, start_round_total_hits, start_round_total_money
     player_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
@@ -71,6 +72,11 @@ def reset_game():
     start_round_towers = []
     last_round_restarts = init_last_round_restarts
     path_id = 0
+    #more should be player obj attributes - for stats
+    total_hits = 0
+    total_money = 0
+    start_round_total_hits = 0
+    start_round_total_money = initial_money
 
 
 def reset_level():
@@ -88,8 +94,21 @@ def restart_round():
     global player_money, lives, towers
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, game_over
     global level_num, level, lev
+    global total_hits, total_money
+
     player_money = start_round_money
     lives = start_round_lives
+
+    # Will be in stats option in options window.
+    #print(f"B4 Restart level: {total_hits=}")
+    #print(f"B4 Restart level: {total_money=:.2f}")
+
+    total_hits = start_round_total_hits
+    total_money = start_round_total_money
+
+    # Will be in stats option in options window.
+    #print(f"Restart level: {total_hits=}")
+    #print(f"Restart level: {total_money=:.2f}")
 
     # dont work - says TypeError: cannot pickle 'pygame.surface.Surface' object
     #towers = copy.deepcopy(start_round_towers)
@@ -111,7 +130,7 @@ def set_map(gmap):
     background_color = gmap.background_color
     path_thickness = gmap.path_thickness
     path_color = gmap.path_color
-    pygame.display.set_caption("Tower Defense Game" + f" (Map {gmap.name})")
+    pygame.display.set_caption("Tower Defense Game" + f" ({gmap.name})")
 
 
 def select_map():
@@ -304,6 +323,8 @@ while running:
             else:
                 start_round_money = player_money
                 start_round_lives = lives
+                start_round_total_hits = total_hits
+                start_round_total_money = total_money
                 #start_round_towers = towers
                 #for tower in towers:
                     #tower.set_start_hits()  # not enough - reset all attributes of tower
@@ -319,10 +340,17 @@ while running:
                 money_per_hit = get_money_per_hit(level_num)
                 level = lev.levels[level_num]()
                 reset_level()
+                # Will be in stats option in options window.
+                #print(f"{total_hits=}")
+                #print(f"{total_money=:.2f}")
                 continue
 
         if lives <= 0:
             game_over = True
+
+            # Will be in stats option in options window.
+            #print(f"{total_hits=}")
+            #print(f"{total_money=}")
 
         # Remove enemies that have reached the end of the path
         enemies = [enemy for enemy in enemies if not enemy.reached_end]
@@ -344,7 +372,11 @@ while running:
     for tower in towers:
         tower.draw(window)
         if active:
-            player_money += tower.update(enemies) * money_per_hit
+            hits = tower.update(enemies)
+            total_hits += hits
+            #player_money += tower.update(enemies) * money_per_hit
+            player_money += hits * money_per_hit
+            total_money += hits * money_per_hit
 
     if active:
         for enemy in enemies:
