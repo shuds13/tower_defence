@@ -354,13 +354,23 @@ class Level37(Level):
         #self.phase_counts = [25, 35, 36, 46, 47]
         #self.enemy_types = [3, 11, 12, 11, 12]
 
+# oroginal - currently too hard - but may reinstate if tower like bomb shooter helps
+#class Level38(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 47
+        #self.spawn_intervals = [8, 15, 32, 32, 14, 32]
+        #self.phase_counts = [25, 35, 36, 37, 46, 47]
+        #self.enemy_types = [3, 11, 12, 11, 11, 12]
+
 class Level38(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 47
-        self.spawn_intervals = [8, 15, 32, 32, 14, 32]
+        self.spawn_intervals = [8, 18, 40, 40, 16, 40]
         self.phase_counts = [25, 35, 36, 37, 46, 47]
         self.enemy_types = [3, 11, 12, 11, 11, 12]
+
 
 class Level39(Level):
     def __init__(self):
