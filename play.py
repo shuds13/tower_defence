@@ -265,17 +265,19 @@ while running:
         if not level.done():
             enemy_spawn_timer += 1
             if enemy_spawn_timer >= level.interval():
+
+                #path = paths[0]
+                path = paths[path_id]
+                #enemies.append(Enemy(path))  # Type will be determined also by level
+                level.spawn_enemy(enemies, path)  # Type will be determined also by level
+                enemy_spawn_timer = 0
+                level.update()
+
                 if len(paths) > 1:
                     if path_id == len(paths) - 1:
                         path_id = 0
                     else:
                         path_id += 1
-
-                path = paths[0]
-                #enemies.append(Enemy(path))  # Type will be determined also by level
-                level.spawn_enemy(enemies, path)  # Type will be determined also by level
-                enemy_spawn_timer = 0
-                level.update()
 
         # Update positions of all enemies
         for enemy in enemies:

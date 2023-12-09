@@ -129,10 +129,14 @@ class Staircase(Map):
 class Valley(Map):
     def __init__(self):
         self.name = "Valley"
-        self.paths = [[(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]]
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
         self.path_color = (178, 190, 181)
 
+        path1 = [(0, 100), (300, 260), (400, 260), (700, 100)]
+        path2 = [(0, 500), (300, 340), (400, 340), (700, 500)]
+        self.paths = [path1, path2]
 
-map_classes  = {1: PicnicPlace, 2: Staircase}
+
+map_classes  = {1: PicnicPlace, 2: Staircase, 3: Valley}

@@ -29,7 +29,7 @@ def point_line_distance(point, line_start, line_end):
 
     return (dx ** 2 + dy ** 2) ** 0.5
 
-def is_valid_position(pos, path, towers):
+def is_valid_position(pos, paths, towers):
     """Check if the position is not on the path and not too close to other towers."""
     min_distance_to_path = 25 # 20  # Minimum allowed distance from the path
     some_minimum_distance_between_towers = 30 #25
@@ -40,9 +40,10 @@ def is_valid_position(pos, path, towers):
         return False
 
     # Check distance from the path
-    for i in range(len(path) - 1):
-        if point_line_distance(pos, path[i], path[i + 1]) < min_distance_to_path:
-            return False
+    for path in paths:
+        for i in range(len(path) - 1):
+            if point_line_distance(pos, path[i], path[i + 1]) < min_distance_to_path:
+                return False
 
     # Check distance from other towers
     for tower in towers:
