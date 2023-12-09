@@ -82,10 +82,10 @@ class Enemy:
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
         return damage
 
-    def spawn_func(self, path, enemies):
+    def spawn_func(self, enemies):
         for i in range(self.spawn_count):
             #print(self.path_index)
-            enemy = self.spawn_type(path, self.position, self.path_index)
+            enemy = self.spawn_type(self.path, self.position, self.path_index)
             # Spread out slightly
             # not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
             for j in range(i*2):
@@ -317,12 +317,12 @@ class KingBlob(Enemy):
         return [(x_center + random.uniform(-spread, spread),
                 y_center + random.uniform(-spread, spread)) for _ in range(n_points)]
 
-    def spawn_func(self, path, enemies):
+    def spawn_func(self, enemies):
         points = self.generate_point_cloud(self.position, self.spawn_count, spread=100)
 
         for point in points:
             #print(self.path_index)
-            enemy = self.spawn_type(path, point, self.path_index)
+            enemy = self.spawn_type(self.path, point, self.path_index)
             # Spread out slightly
             # not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
             #for j in range(i*2):

@@ -11,8 +11,9 @@ def render_level_to_surface(gmap, size):
     #level_surface.blit(background_image, (0, 0))
 
     # Draw the path
-    for i in range(len(gmap.path) - 1):
-        pygame.draw.line(level_surface, gmap.path_color, gmap.path[i], gmap.path[i + 1], 5)
+    for path in gmap.paths:
+        for i in range(len(path) - 1):
+            pygame.draw.line(level_surface, gmap.path_color, path[i], path[i + 1], 5)
 
     return level_surface
 
@@ -107,21 +108,31 @@ class Map():
         pass
 
 
+class PicnicPlace(Map):
+    def __init__(self):
+        self.name = "Picnic Place"
+        self.paths = [[(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]]
+        self.background_color = (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (178, 190, 181)
+
+
 class Staircase(Map):
     def __init__(self):
         self.name = "Staircase"
-        self.path = [(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]
+        self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
         self.background_color = (50, 25, 0)
         self.path_thickness = 15
         self.path_color = (0, 211, 211)
 
 
-class PicnicPlace(Map):
+class Valley(Map):
     def __init__(self):
-        self.name = "Picnic Place"
-        self.path = [(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]
+        self.name = "Valley"
+        self.paths = [[(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]]
         self.background_color = (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
         self.path_color = (178, 190, 181)
+
 
 map_classes  = {1: PicnicPlace, 2: Staircase}

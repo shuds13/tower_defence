@@ -51,7 +51,7 @@ inset_window = {
 def reset_game():
     global player_money, level_num, level, towers, enemies, lives, money_per_hit
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
-    global start_round_money, start_round_lives, start_round_towers, last_round_restarts
+    global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
     player_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
@@ -70,14 +70,16 @@ def reset_game():
     start_round_lives = initial_lives
     start_round_towers = []
     last_round_restarts = init_last_round_restarts
+    path_id = 0
 
 
 def reset_level():
-    global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type
+    global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type, path_id
     enemies = []
     running = True
     enemy_spawn_timer = 0
     active = False
+    path_id = 0
     #current_tower_type = None
     #spawned_enemies = 0
 
@@ -103,9 +105,9 @@ def restart_round():
 
 # Use gmap atributes inline but for now
 def set_map(gmap):
-    global pygame, map_name, path, background_color, path_thickness, path_color
+    global pygame, map_name, paths, background_color, path_thickness, path_color
     map_name = gmap.name
-    path = gmap.path
+    paths = gmap.paths
     background_color = gmap.background_color
     path_thickness = gmap.path_thickness
     path_color = gmap.path_color
@@ -231,7 +233,7 @@ while running:
             # Place a tower
             else:
             #elif current_tower_type is not None:
-                if place.is_valid_position(mouse_pos, path, towers):
+                if place.is_valid_position(mouse_pos, paths, towers):
                     if player_money >= current_tower_type.price:
                         towers.append(current_tower_type(position=mouse_pos))
                         #snd_place.play()
@@ -263,6 +265,13 @@ while running:
         if not level.done():
             enemy_spawn_timer += 1
             if enemy_spawn_timer >= level.interval():
+                if len(paths) > 1:
+                    if path_id == len(paths) - 1:
+                        path_id = 0
+                    else:
+                        path_id += 1
+
+                path = paths[0]
                 #enemies.append(Enemy(path))  # Type will be determined also by level
                 level.spawn_enemy(enemies, path)  # Type will be determined also by level
                 enemy_spawn_timer = 0
@@ -338,7 +347,8 @@ while running:
     if active:
         for enemy in enemies:
             if enemy.health <= 0 and enemy.spawn_on_die:
-                enemy.spawn_func(path, enemies)
+                #enemy.spawn_func(path, enemies)  # to do with multiple path -
+                enemy.spawn_func(enemies)  # to do with multiple path -
 
 
         # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
@@ -357,9 +367,10 @@ while running:
     lives_text = font.render(f"Level: {level_num}", True, (255, 255, 255))
     window.blit(lives_text, (200, 10))
 
-    # Draw the path
-    for i in range(len(path) - 1):
-        pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
+    # Draw the paths
+    for path in paths:
+        for i in range(len(path) - 1):
+            pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
 
     # Draw enemies
     for enemy in enemies:
