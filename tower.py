@@ -1,6 +1,7 @@
 import math
 import pygame
 import random
+import sounds
 #pygame.init()
 #screen = pygame.display.set_mode((800, 600))
 
@@ -760,6 +761,7 @@ class GlueGunner(Tower):
         score = 0
         if self.target and self.attack_timer <= 0:
             self.attack_count += 1
+            sounds.play('glue')
             #score = self.target.take_damage(self.damage)
             self.target.slow_factor = self.slow_factor[self.target.size-1]
             self.target.speed = self.target.base_speed * self.target.slow_factor
