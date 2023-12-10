@@ -35,6 +35,7 @@ class Level1(Level):
         # This means 10 bloons at spawn interval of 40 and another 10 at interval of 15
         self.num_enemies = 20
         self.spawn_intervals = [40, 15]
+        #self.spawn_intervals = [40, 18]  # test glue for test
         self.phase_counts = [10, 20]  # How many in each phase - no currently accum at end of each phase
         self.enemy_types = [1, 1, 1]
 

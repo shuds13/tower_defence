@@ -22,8 +22,14 @@ class Enemy:
         self.path = path
         self.path_index = path_index
         #self.position = self.path[0]
+
+
         self.base_speed = 2  # help with things like gluing from a stronger glue gunner
         self.speed = 2
+        #self.base_speed = 1  # TESTING
+        #self.speed = 1
+
+
         self.reached_end = False  # Indicates if the enemy has reached the end of the path
         self.health = 1
         self.value = 1
@@ -35,13 +41,16 @@ class Enemy:
         self.position = position or self.path[0]
         self.size = 1
         self.slowable = True
+        self.glue_reset()
+
+    def glue_reset(self):
         self.slow_factor = 1
         self.glued = 0
-        self.glue_color = (244, 187, 68)
+        self.glue_color = None
         self.toxic_glued = False
         self.toxic_glued_by = None
         self.toxic_timer = None
-        self.toxic_time = None  # having to add a lot of attributes for this - is it worth it?
+        self.toxic_time = None
 
     def draw(self, window):
         x = self.position[0]
@@ -90,7 +99,9 @@ class Enemy:
             sounds.play('ting')
         else:
             sounds.play('blop')
+        #print('eememy hit')
         if self.health <= 0:
+            #print('en reached end')
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
         return damage
 
@@ -113,10 +124,12 @@ class Enemy:
 
     def toxic_damage(self):
         if self.glued <= 0:
-            self.toxic_glued = False
-            self.toxic_glued_by = None
-            self.toxic_timer = None
-            self.toxic_time = None
+            self.glue_reset()
+            #self.toxic_glued = False
+            #self.toxic_glued_by = None
+            #self.toxic_timer = None
+            #self.toxic_time = None
+            #print('glued < 0')
             return 0
         score = 0
         if self.toxic_timer > 0:
@@ -133,8 +146,12 @@ class Enemy2(Enemy):
         super().__init__(path, position, path_index)
         self.health = 2
         self.value = 2
+
         self.base_speed = 3
         self.speed = 3
+        #self.base_speed = 1.5  # TESTING
+        #self.speed = 1.5
+
         self.color = (0, 0, 255)
 
     def take_damage(self, damage):
@@ -147,6 +164,8 @@ class Enemy2(Enemy):
             if self.glued > 0:
                 self.speed *= self.slow_factor
                 self.glued -= 1
+            else:
+                self.glue_reset()
         return val
 
 class Enemy3(Enemy2):
@@ -168,6 +187,8 @@ class Enemy3(Enemy2):
             if self.glued > 0:
                 self.speed *= self.slow_factor
                 self.glued -= 1
+            else:
+                self.glue_reset()
         return val
 
 
@@ -190,6 +211,8 @@ class Enemy4(Enemy3):
             if self.glued > 0:
                 self.speed *= self.slow_factor
                 self.glued -= 1
+            else:
+                self.glue_reset()
         return val
 
 
@@ -212,6 +235,8 @@ class Enemy5(Enemy4):
             if self.glued > 0:
                 self.speed *= self.slow_factor
                 self.glued -= 1
+            else:
+                self.glue_reset()
         return val
 
 # next put circle round outside to be fortified...

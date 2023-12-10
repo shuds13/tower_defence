@@ -24,6 +24,9 @@ initial_level = 1
 init_last_round_restarts = 2
 #init_last_round_restarts = 20
 
+restart_testing = False
+
+
 # Initialize Pygame
 pygame.init()
 
@@ -197,6 +200,12 @@ money_per_hit = get_money_per_hit(level_num)
 # Game loop
 while running:
 
+    #if restart_testing:
+        #play_again_button, maps_button, restart_round_button = nav.play_button(
+            #window, window_size, last_round_restarts
+        #)
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -206,10 +215,17 @@ while running:
             if options_button.collidepoint(mouse_pos):
                 nav.draw_options_window(pygame.display, window, options_button)
 
-            if game_over:
+            if game_over or restart_testing:
+
+                #play_again_button, maps_button, restart_round_button = nav.play_button(
+                    #window, window_size, last_round_restarts
+                #)
+
                 if restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
                     restart_round()
                     reset_level()
+
+            if game_over:
                 if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
                     reset_game()
                 if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
@@ -306,6 +322,7 @@ while running:
             if enemy.reached_end:
                 lives -= enemy.value  # Decrease the lives
             elif enemy.toxic_glued:
+                #print('hhhhhhhhhhhhhhhhhhere')
                 hits = enemy.toxic_damage()
                 total_hits += hits
                 player_money += hits * money_per_hit
@@ -395,9 +412,26 @@ while running:
                 #enemy.spawn_func(path, enemies)  # to do with multiple path -
                 enemy.spawn_func(enemies)  # to do with multiple path -
 
-
+        # careful of thse between tower.update and animate - could be why sometimes dont see attach
+        # SH TODO  bring attack and animate together.
         # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
+
+        ##testing
+        #pr = False
+        #for en in enemies:
+            #if en.reached_end:
+                #pr = True
+                #break
+
+        #if pr:
+            #print(f"b4: {len(enemies)}  {enemies}", flush=True)
+
         enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
+
+        #if pr:
+            #print(f"aft {len(enemies)} {enemies}", flush=True)
+
+        #print(len(enemies))
 
     font = pygame.font.SysFont(None, 36)
     lives_text = font.render(f"Lives: {lives}", True, (255, 255, 255))

@@ -132,8 +132,13 @@ class Tower:
     def get_target_angle(self):
         if not self.target:
             return 0
-        dx = self.target.position[0] - self.position[0]
-        dy = self.target.position[1] - self.position[1]
+        if type(self.target) is list:
+            #for now point at first target
+            target = self.target[0]
+        else:
+            target = self.target
+        dx = target.position[0] - self.position[0]
+        dy = target.position[1] - self.position[1]
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
     def draw(self, window):
@@ -693,7 +698,7 @@ class GlueGunner(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range = GlueGunner.range
-        self.attack_speed = 30
+        self.attack_speed = 40 # 30
         self.damage = 1
         self.cost = GlueGunner.price
         self.image = GlueGunner.image
@@ -701,41 +706,79 @@ class GlueGunner(Tower):
         self.upgrade_costs = [120, 280]
         self.beam_width = 7
         self.slow_factor = [0.5, 0.8, 0.9]
+        #self.slow_factor = [0.1, 0.8, 0.9] # tmp test -------------------------------------------- UNDO
         self.glue_layers = 2
         self.image_angle_offset = 130
         self.glue_color = (244, 187, 68)
+        self.max_attacks = 2
 
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 18  # lower is better currently
+            self.attack_speed = 35
             self.range = 110
             self.image = gluegun2_img
             self.cost += self.upgrade_costs[0]
             self.glue_layers = 3
             self.beam_width = 9
+            self.max_attacks = 3
+
         if self.level == 3:
-            self.attack_speed = 15  # lower is better currently
+            self.attack_speed = 30
             #self.range = 110
             self.image = gluegun3_img
             self.cost += self.upgrade_costs[0]
-            self.glue_layers = 4
             self.slow_factor = [0.4, 0.7, 0.8]
             self.beam_width = 10
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
-            self.toxic_time = 100
+            self.toxic_time = 150
+            #self.glue_layers = 4
+            #self.glue_layers = 1  # testing for regluding
 
+
+
+    #def find_target(self, enemies):
+        #for enemy in enemies:
+            #if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.toxic_glued:
+                #self.target = enemy
+                #break
+            #elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
+                #self.target = enemy
+                #break
+        #else:
+            #self.target = None
+
+    # test shoot slower hit multiple targets - closest - not spread
+    # could avoid some duplication here
     def find_target(self, enemies):
-        for enemy in enemies:
-            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.toxic_glued:
-                self.target = enemy
-                break
-            elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
-                self.target = enemy
-                break
-        else:
+        self.target = []
+        count = 0
+
+        #print('in find target')
+
+        if not enemies:
             self.target = None
+
+        for enemy in enemies:
+
+            #tesitng
+            #if enemy.toxic_glued:
+                #print('Nope - hes toxic')
+
+            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.toxic_glued:
+                count += 1
+                self.target.append(enemy)
+                if count >= self.max_attacks:
+                    break
+            elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
+                count += 1
+                self.target.append(enemy)
+                if count >= self.max_attacks:
+                    break
+        #else:
+            #self.target = None
+
 
     # Needs to take account of rotation
     #def get_nozzle_pos(self):
@@ -748,11 +791,15 @@ class GlueGunner(Tower):
             #return (self.position[0]+15, self.position[1]-16)
 
 
+
+
+
     def attack_animate(self, window):
         #nozzle = self.get_nozzle_pos()
         #print("In animate")
         nozzle = self.position
-        pygame.draw.line(window, self.glue_color, nozzle, self.target.position, self.beam_width)
+        for target in self.target:
+            pygame.draw.line(window, self.glue_color, nozzle, target.position, self.beam_width)
 
     # Very weird bug - when only tower - does not animate!!!!!
 
@@ -763,15 +810,16 @@ class GlueGunner(Tower):
             self.attack_count += 1
             sounds.play('glue')
             #score = self.target.take_damage(self.damage)
-            self.target.slow_factor = self.slow_factor[self.target.size-1]
-            self.target.speed = self.target.base_speed * self.target.slow_factor
-            self.target.glued = self.glue_layers
-            self.target.glue_color = self.glue_color
-            if self.level >= 3:
-                self.target.toxic_glued = True
-                self.target.toxic_glued_by = self
-                self.target.toxic_timer = self.toxic_time
-                self.target.toxic_time = self.toxic_time  # do another pass on this - very tired - dont want to set two values here.
+            for target in self.target:
+                target.slow_factor = self.slow_factor[target.size-1]
+                target.speed = target.base_speed * target.slow_factor
+                target.glued = self.glue_layers
+                target.glue_color = self.glue_color
+                if self.level >= 3:
+                    target.toxic_glued = True
+                    target.toxic_glued_by = self
+                    target.toxic_timer = self.toxic_time
+                    target.toxic_time = self.toxic_time  # do another pass on this - very tired - dont want to set two values here.
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
         else:
