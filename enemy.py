@@ -22,6 +22,7 @@ class Enemy:
         self.path = path
         self.path_index = path_index
         #self.position = self.path[0]
+        self.base_speed = 2  # help with things like gluing from a stronger glue gunner
         self.speed = 2
         self.reached_end = False  # Indicates if the enemy has reached the end of the path
         self.health = 1
@@ -34,6 +35,7 @@ class Enemy:
         self.position = position or self.path[0]
         self.size = 1
         self.slowable = True
+        self.slow_factor = 1
         self.glued = 0
         self.glue_color = (244, 187, 68)
         self.toxic_glued = False
@@ -131,6 +133,7 @@ class Enemy2(Enemy):
         super().__init__(path, position, path_index)
         self.health = 2
         self.value = 2
+        self.base_speed = 3
         self.speed = 3
         self.color = (0, 0, 255)
 
@@ -138,9 +141,11 @@ class Enemy2(Enemy):
         val = super().take_damage(damage)
         if self.health == 1:
             self.color = (255, 0, 0)
+            self.base_speed = 2
             self.speed = 2
             self.value = 1
             if self.glued > 0:
+                self.speed *= self.slow_factor
                 self.glued -= 1
         return val
 
@@ -149,6 +154,7 @@ class Enemy3(Enemy2):
         super().__init__(path, position, path_index)
         self.health = 3
         self.value = 3
+        self.base_speed = 4
         self.speed = 4
         self.color = (0, 255, 0)
 
@@ -156,9 +162,11 @@ class Enemy3(Enemy2):
         val = super().take_damage(damage)
         if self.health == 2:
             self.color = (0, 0, 255)
+            self.base_speed = 3
             self.speed = 3
             self.value = 2
             if self.glued > 0:
+                self.speed *= self.slow_factor
                 self.glued -= 1
         return val
 
@@ -168,6 +176,7 @@ class Enemy4(Enemy3):
         super().__init__(path, position, path_index)
         self.health = 4
         self.value = 4
+        self.base_speed = 5
         self.speed = 5
         self.color = (255, 255, 0)
 
@@ -175,9 +184,11 @@ class Enemy4(Enemy3):
         val = super().take_damage(damage)
         if self.health == 3:
             self.color = (0, 255, 0)
+            self.base_speed = 4
             self.speed = 4
             self.value = 3
             if self.glued > 0:
+                self.speed *= self.slow_factor
                 self.glued -= 1
         return val
 
@@ -187,6 +198,7 @@ class Enemy5(Enemy4):
         super().__init__(path, position, path_index)
         self.health = 5
         self.value = 5
+        self.base_speed = 6
         self.speed = 6
         self.color = (127, 0, 255)
 
@@ -194,9 +206,11 @@ class Enemy5(Enemy4):
         val = super().take_damage(damage)
         if self.health == 4:
             self.color = (255, 255, 0)
+            self.base_speed = 5
             self.speed = 5
             self.value = 4
             if self.glued > 0:
+                self.speed *= self.slow_factor
                 self.glued -= 1
         return val
 
@@ -241,6 +255,7 @@ class Ghost(Enemy):
         super().__init__(path, position, path_index)
         self.health = 2
         self.value = 2
+        self.base_speed = 3
         self.speed = 3
         self.image = ghost_img
         self.invis = True
@@ -260,6 +275,7 @@ class Devil(Ghost):
         super().__init__(path, position, path_index)
         self.health = 8
         self.value = 8
+        self.base_speed = 4
         self.speed = 4
         self.image = devil_img
 
@@ -269,6 +285,7 @@ class Troll(Enemy):
         super().__init__(path, position, path_index)
         self.health = 20
         self.value = 20
+        self.base_speed = 2
         self.speed = 2
         self.image = troll_img
         self.spawn_on_die = True
@@ -292,6 +309,7 @@ class GiantTroll(Enemy):
         super().__init__(path, position, path_index)
         self.health = 60
         self.value = 60
+        self.base_speed = 2
         self.speed = 2
         self.image = giant_troll_img
         self.spawn_on_die = True
@@ -318,6 +336,7 @@ class KingBlob(Enemy):
         super().__init__(path, position, path_index)
         self.health = 100 #200
         self.value = 100 #200
+        self.base_speed = 1
         self.speed = 1
         self.image = king_img
         self.spawn_on_die = True
@@ -373,6 +392,7 @@ class KingBlob(Enemy):
         #super().__init__(path, position, path_index)
         #self.health = 6
         #self.value = 6
+        #self.base_speed = 3
         #self.speed = 3
         #self.image = ghost_img2
         #self.invis = True
@@ -386,6 +406,7 @@ class Heart(Enemy):
         super().__init__(path, position, path_index)
         self.health = 5
         self.value = 10  #testing a diff value
+        self.base_speed = 4
         self.speed = 4
         #self.color = (127, 0, 255)
 

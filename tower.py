@@ -727,7 +727,10 @@ class GlueGunner(Tower):
 
     def find_target(self, enemies):
         for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
+            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.toxic_glued:
+                self.target = enemy
+                break
+            elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
                 self.target = enemy
                 break
         else:
@@ -758,7 +761,8 @@ class GlueGunner(Tower):
         if self.target and self.attack_timer <= 0:
             self.attack_count += 1
             #score = self.target.take_damage(self.damage)
-            self.target.speed *= self.slow_factor[self.target.size-1]
+            self.target.slow_factor = self.slow_factor[self.target.size-1]
+            self.target.speed = self.target.base_speed * self.target.slow_factor
             self.target.glued = self.glue_layers
             self.target.glue_color = self.glue_color
             if self.level >= 3:
