@@ -307,9 +307,9 @@ while running:
                 lives -= enemy.value  # Decrease the lives
             elif enemy.toxic_glued:
                 hits = enemy.toxic_damage()
-            total_hits += hits
-            player_money += hits * money_per_hit
-            total_money += hits * money_per_hit
+                total_hits += hits
+                player_money += hits * money_per_hit
+                total_money += hits * money_per_hit
 
         enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
 
