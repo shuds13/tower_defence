@@ -307,7 +307,6 @@ while running:
                 lives -= enemy.value  # Decrease the lives
             elif enemy.toxic_glued:
                 hits = enemy.toxic_damage()
-            hits = tower.update(enemies)
             total_hits += hits
             player_money += hits * money_per_hit
             total_money += hits * money_per_hit
