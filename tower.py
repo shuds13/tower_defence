@@ -692,12 +692,12 @@ class GlueGunner(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range = GlueGunner.range
-        self.attack_speed = 20
+        self.attack_speed = 30
         self.damage = 1
         self.cost = GlueGunner.price
         self.image = GlueGunner.image
         self.level = 1
-        self.upgrade_costs = [55, 210]
+        self.upgrade_costs = [75, 280]
         self.beam_width = 7
         self.slow_factor = [0.5, 0.8, 0.9]
         self.glue_layers = 2
@@ -707,14 +707,14 @@ class GlueGunner(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 12  # lower is better currently
-            #self.range = 110
+            self.attack_speed = 18  # lower is better currently
+            self.range = 110
             self.image = gluegun2_img
             self.cost += self.upgrade_costs[0]
             self.glue_layers = 3
             self.beam_width = 9
         if self.level == 3:
-            self.attack_speed = 8  # lower is better currently
+            self.attack_speed = 15  # lower is better currently
             #self.range = 110
             self.image = gluegun3_img
             self.cost += self.upgrade_costs[0]
