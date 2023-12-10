@@ -723,6 +723,7 @@ class GlueGunner(Tower):
             self.beam_width = 10
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
+            self.toxic_time = 100
 
     def find_target(self, enemies):
         for enemy in enemies:
@@ -745,9 +746,11 @@ class GlueGunner(Tower):
 
     def attack_animate(self, window):
         #nozzle = self.get_nozzle_pos()
+        print("In animate")
         nozzle = self.position
         pygame.draw.line(window, self.glue_color, nozzle, self.target.position, self.beam_width)
 
+    # Very weird bug - when only tower - does not animate!!!!!
 
     # slow
     def attack(self):
@@ -758,6 +761,11 @@ class GlueGunner(Tower):
             self.target.speed *= self.slow_factor[self.target.size-1]
             self.target.glued = self.glue_layers
             self.target.glue_color = self.glue_color
+            if self.level >= 3:
+                self.target.toxic_glued = True
+                self.target.toxic_glued_by = self
+                self.target.toxic_timer = self.toxic_time
+                self.target.toxic_time = self.toxic_time  # do another pass on this - very tired - dont want to set two values here.
             self.attack_timer = self.attack_speed
             self.is_attacking = True  # Set to True when attacking
         else:

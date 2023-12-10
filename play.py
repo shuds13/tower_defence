@@ -16,9 +16,9 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 100 / 1
 
-initial_lives = 30
-initial_money = 100
-initial_level = 1
+initial_lives = 3000
+initial_money = 10000
+initial_level = 10
 
 
 init_last_round_restarts = 2
@@ -305,6 +305,15 @@ while running:
             # Check if the enemy has reached the end of the path
             if enemy.reached_end:
                 lives -= enemy.value  # Decrease the lives
+            elif enemy.toxic_glued:
+                hits = enemy.toxic_damage()
+            hits = tower.update(enemies)
+            total_hits += hits
+            player_money += hits * money_per_hit
+            total_money += hits * money_per_hit
+
+        enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
+
 
         # Check win condition
         if not enemies and lives > 0 and level.done():
@@ -421,7 +430,11 @@ while running:
         for tower in towers:
             if tower.viz_persist:
                 tower.show_viz_persist(window)
+            if tower.name == "Glue Gunner":
+                print(f'here1 {tower.is_attacking=} {tower.target=}')
             if tower.is_attacking and tower.target:
+                if tower.name == "Glue Gunner":
+                    print('here2')
                 tower.attack_animate(window)
 
     if current_tower_type is not None:

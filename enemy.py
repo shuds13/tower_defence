@@ -36,6 +36,10 @@ class Enemy:
         self.slowable = True
         self.glued = 0
         self.glue_color = (244, 187, 68)
+        self.toxic_glued = False
+        self.toxic_glued_by = None
+        self.toxic_timer = None
+        self.toxic_time = None  # having to add a lot of attributes for this - is it worth it?
 
     def draw(self, window):
         x = self.position[0]
@@ -104,6 +108,22 @@ class Enemy:
         #if self.path_index < len(self.path) - 1:
             #target_pos = self.position
             #self.move(target_pos)
+
+    def toxic_damage(self):
+        if self.glued <= 0:
+            self.toxic_glued = False
+            self.toxic_glued_by = None
+            self.toxic_timer = None
+            self.toxic_time = None
+            return 0
+        score = 0
+        if self.toxic_timer > 0:
+            self.toxic_timer -= 1
+        else:
+           score = self.take_damage(1)  # damage could be variable also
+           self.toxic_glued_by.total_score += score  # what if tower is sold - guess obj still exists but not in tower list
+           self.toxic_timer = self.toxic_time
+        return score
 
 
 class Enemy2(Enemy):
