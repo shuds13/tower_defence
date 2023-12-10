@@ -683,7 +683,7 @@ class Wizard(Tower):
 
 class GlueGunner(Tower):
 
-    price = 50
+    price = 80
     name = 'Glue Gunner'
     image = gluegun_img
     range = 100
@@ -697,7 +697,7 @@ class GlueGunner(Tower):
         self.cost = GlueGunner.price
         self.image = GlueGunner.image
         self.level = 1
-        self.upgrade_costs = [75, 280]
+        self.upgrade_costs = [120, 280]
         self.beam_width = 7
         self.slow_factor = [0.5, 0.8, 0.9]
         self.glue_layers = 2
