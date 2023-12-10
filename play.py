@@ -429,11 +429,7 @@ while running:
         for tower in towers:
             if tower.viz_persist:
                 tower.show_viz_persist(window)
-            if tower.name == "Glue Gunner":
-                print(f'here1 {tower.is_attacking=} {tower.target=}')
             if tower.is_attacking and tower.target:
-                if tower.name == "Glue Gunner":
-                    print('here2')
                 tower.attack_animate(window)
 
     if current_tower_type is not None:

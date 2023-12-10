@@ -749,7 +749,7 @@ class GlueGunner(Tower):
 
     def attack_animate(self, window):
         #nozzle = self.get_nozzle_pos()
-        print("In animate")
+        #print("In animate")
         nozzle = self.position
         pygame.draw.line(window, self.glue_color, nozzle, self.target.position, self.beam_width)
 
@@ -776,7 +776,7 @@ class GlueGunner(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score
 
-    # return to previous path index
+    # return to previous path index - blower
     #def attack(self):
         #score = 0
         #if self.target and self.attack_timer <= 0:
@@ -789,5 +789,4 @@ class GlueGunner(Tower):
             #self.is_attacking = False  # Set to False otherwise
         #return score
 
-#tower_types = [Fighter, Burger, Wizard]
 tower_types = [Fighter, Burger, Wizard, GlueGunner]
