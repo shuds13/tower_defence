@@ -22,6 +22,9 @@ burger3_img = pygame.transform.scale(burger3_img, (55, 55))
 burger4_img = pygame.image.load('burger4.png')  # Load your tower image
 burger4_img = pygame.transform.scale(burger4_img, (60, 60))
 
+#burger5_img = pygame.image.load('burger5.png')  # Load your tower image
+#burger5_img = pygame.transform.scale(burger5_img, (60, 60))
+
 wizard_img = pygame.image.load('wizard.png')  # Load your tower image
 wizard_img = pygame.transform.scale(wizard_img, (50, 50))
 wizard2_img = pygame.image.load('wizard2.png')  # Load your tower image
@@ -33,6 +36,16 @@ wizard4_img = pygame.transform.scale(wizard4_img, (58, 60))
 
 splat_img = pygame.image.load('splat.png')
 #splat_img = pygame.transform.scale(splat_img, (120, 120))
+
+# I would rather use original oriented images and rotate when put down - without rotatig rectangle.
+# For now use pre-rotated images.
+gluegun_img = pygame.image.load('glue_gun.png')
+gluegun_img = pygame.transform.scale(gluegun_img, (50, 50))
+gluegun2_img = pygame.image.load('glue_gun2.png')
+gluegun2_img = pygame.transform.scale(gluegun2_img, (50, 50))
+gluegun3_img = pygame.image.load('glue_gun3.png')
+gluegun3_img = pygame.transform.scale(gluegun3_img, (50, 50))
+
 
 class Tower:
 
@@ -59,6 +72,7 @@ class Tower:
         #self.start_round_score = 0
         self.see_ghosts = False
         self.beam_width = 5
+        self.image_angle_offset = 0
 
     def level_up(self):
         pass
@@ -81,6 +95,7 @@ class Tower:
         return not enemy.invis or self.see_ghosts
 
     # Goes through enemies - finds first (could find strongest etc...)
+    # Note that enemy order if order came on to screen but may not be at the front at any point in time!
     def find_target(self, enemies):
         for enemy in enemies:
             if self.in_range(enemy) and self.is_visible(enemy):
@@ -210,7 +225,7 @@ class Burger(Tower):
     name = 'Burger'
     image = burger_img
     range = 60
-    max_level = 4
+    max_level = 4 #5
 
     def __init__(self, position):
         super().__init__(position)
@@ -221,7 +236,7 @@ class Burger(Tower):
         self.image = Burger.image
         self.level = 1
         self.max_attacks = 4
-        self.upgrade_costs = [95, 220, 680]
+        self.upgrade_costs = [95, 220, 680] # , 1200]
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
 
     def level_up(self):
@@ -251,6 +266,15 @@ class Burger(Tower):
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             #either slower attack_speed (~20) and damage 2 or faster <15 and damage 1
             self.damage = 2 # not sure - with damage 2 and other stats nothing got past
+        #if self.level == 5:
+            #self.attack_speed = 8  # lower is better currently
+            #self.range = 100
+            #self.image = burger5_img
+            #self.max_attacks = 20
+            #self.cost += self.upgrade_costs[3]
+            #self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+            ##either slower attack_speed (~20) and damage 2 or faster <15 and damage 1
+            #self.damage = 3 # not sure - with damage 2 and other stats nothing got past
 
     # Splat attack!
     def attack(self):
@@ -657,4 +681,101 @@ class Wizard(Tower):
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
 
-tower_types = [Fighter, Burger, Wizard]
+class GlueGunner(Tower):
+
+    price = 50
+    name = 'Glue Gunner'
+    image = gluegun_img
+    range = 100
+    max_level = 3
+
+    def __init__(self, position):
+        super().__init__(position)
+        self.range = GlueGunner.range
+        self.attack_speed = 20
+        self.damage = 1
+        self.cost = GlueGunner.price
+        self.image = GlueGunner.image
+        self.level = 1
+        self.upgrade_costs = [55, 210]
+        self.beam_width = 7
+        self.slow_factor = [0.5, 0.8, 0.9]
+        self.glue_layers = 2
+        self.image_angle_offset = 130
+        self.glue_color = (244, 187, 68)
+
+    def level_up(self):
+        self.level +=1
+        if self.level == 2:
+            self.attack_speed = 12  # lower is better currently
+            #self.range = 110
+            self.image = gluegun2_img
+            self.cost += self.upgrade_costs[0]
+            self.glue_layers = 3
+            self.beam_width = 9
+        if self.level == 3:
+            self.attack_speed = 8  # lower is better currently
+            #self.range = 110
+            self.image = gluegun3_img
+            self.cost += self.upgrade_costs[0]
+            self.glue_layers = 4
+            self.slow_factor = [0.4, 0.7, 0.8]
+            self.beam_width = 10
+            # try colors - want to show up on green enemies
+            self.glue_color = (124, 252, 0) # (15, 255, 80)
+
+    def find_target(self, enemies):
+        for enemy in enemies:
+            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
+                self.target = enemy
+                break
+        else:
+            self.target = None
+
+    # Needs to take account of rotation
+    #def get_nozzle_pos(self):
+        #if self.level == 1:
+            #return self.position
+            #return (self.position[0]+20, self.position[1]-10)
+        #elif self.level == 2:
+            #return (self.position[0]-17, self.position[1]-15)
+        #elif self.level == 3:
+            #return (self.position[0]+15, self.position[1]-16)
+
+
+    def attack_animate(self, window):
+        #nozzle = self.get_nozzle_pos()
+        nozzle = self.position
+        pygame.draw.line(window, self.glue_color, nozzle, self.target.position, self.beam_width)
+
+
+    # slow
+    def attack(self):
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            self.attack_count += 1
+            #score = self.target.take_damage(self.damage)
+            self.target.speed *= self.slow_factor[self.target.size-1]
+            self.target.glued = self.glue_layers
+            self.target.glue_color = self.glue_color
+            self.attack_timer = self.attack_speed
+            self.is_attacking = True  # Set to True when attacking
+        else:
+            self.is_attacking = False  # Set to False otherwise
+        return score
+
+    # return to previous path index
+    #def attack(self):
+        #score = 0
+        #if self.target and self.attack_timer <= 0:
+            #self.attack_count += 1
+            ##score = self.target.take_damage(self.damage)
+            #self.target.path_index -= 1
+            #self.attack_timer = self.attack_speed
+            #self.is_attacking = True  # Set to True when attacking
+        #else:
+            #self.is_attacking = False  # Set to False otherwise
+        #return score
+
+#tower_types = [Fighter, Burger, Wizard]
+tower_types = [Fighter, Burger, Wizard, GlueGunner]

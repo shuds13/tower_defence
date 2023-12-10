@@ -33,15 +33,18 @@ class Enemy:
         self.spawn_on_die = False  # not used for regular colors - those change attributes.
         self.position = position or self.path[0]
         self.size = 1
+        self.slowable = True
+        self.glued = 0
+        self.glue_color = (244, 187, 68)
 
     def draw(self, window):
+        x = self.position[0]
+        y = self.position[1]
         if self.image is not None:
             image_rect = self.image.get_rect(center=self.position)
             window.blit(self.image, image_rect.topleft)
         else:
             # TODO - check cant you use self.position - isn't it already int.
-            x = self.position[0]
-            y = self.position[1]
             pygame.draw.circle(window, self.color, (int(x), int(y)), 10)
             if self.fortified and self.fort_health > 0:
                 w = self.fort_health
@@ -49,6 +52,9 @@ class Enemy:
                 pygame.draw.circle(window, (150, 121, 105), (int(x), int(y)), 10+w, w)
             else:
                 pygame.draw.circle(window, (0, 0, 0), (int(x), int(y)), 11, 1)
+        if self.glued:
+            pygame.draw.circle(window, self.glue_color, (int(x)-2, int(y)-3), 5)
+            pygame.draw.circle(window, self.glue_color, (int(x)+2, int(y)+4), 5)
 
 
     def move(self):
@@ -114,6 +120,8 @@ class Enemy2(Enemy):
             self.color = (255, 0, 0)
             self.speed = 2
             self.value = 1
+            if self.glued > 0:
+                self.glued -= 1
         return val
 
 class Enemy3(Enemy2):
@@ -130,6 +138,8 @@ class Enemy3(Enemy2):
             self.color = (0, 0, 255)
             self.speed = 3
             self.value = 2
+            if self.glued > 0:
+                self.glued -= 1
         return val
 
 
@@ -147,6 +157,8 @@ class Enemy4(Enemy3):
             self.color = (0, 255, 0)
             self.speed = 4
             self.value = 3
+            if self.glued > 0:
+                self.glued -= 1
         return val
 
 
@@ -164,6 +176,8 @@ class Enemy5(Enemy4):
             self.color = (255, 255, 0)
             self.speed = 5
             self.value = 4
+            if self.glued > 0:
+                self.glued -= 1
         return val
 
 # next put circle round outside to be fortified...
@@ -264,6 +278,7 @@ class GiantTroll(Enemy):
         self.spawn_type = Enemy103
         self.spawn_count = 6
         self.size = 3
+        #self.slowable = False
 
 
     # TODO - is this needed - check difference to original function
@@ -292,6 +307,7 @@ class KingBlob(Enemy):
         #self.spawn_count = 20
         self.spawn_count = 100
         self.size = 3
+        #self.slowable = False
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):

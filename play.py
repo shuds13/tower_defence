@@ -370,13 +370,16 @@ while running:
         alert_timer -= 1
 
     for tower in towers:
-        tower.draw(window)
+        tower.draw(window)  # test replacing this with commented lines (dedicated commit) - I think corrects funny angle - but does it 'wobble' more
         if active:
             hits = tower.update(enemies)
+            #tower.draw(window)
             total_hits += hits
             #player_money += tower.update(enemies) * money_per_hit
             player_money += hits * money_per_hit
             total_money += hits * money_per_hit
+        #else:
+            #tower.draw(window)
 
     if active:
         for enemy in enemies:
