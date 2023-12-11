@@ -755,7 +755,7 @@ class GlueGunner(Tower):
             self.toxic_time = 80
             self.glue_layers = 4
             self.max_attacks = 4
-            self.max_toxic_reattacks = 4
+            self.max_toxic_reattacks = 6
             # TODO At level 4 more toxic damage to big opponents and show more glue on them (and others)
             # also in general green glue needs to show up more on green enemies.
 
@@ -778,7 +778,7 @@ class GlueGunner(Tower):
         if self.level == 3:
             return False  # already glued return False
         if self.level >= 4:
-            if enemy.toxic_attacks <= self.max_toxic_reattacks:
+            if enemy.size > 1 and enemy.toxic_attacks <= self.max_toxic_reattacks:
                 print(f"{enemy.toxic_attacks=}")
                 return True
         return False

@@ -82,13 +82,19 @@ class Enemy:
                 if self.toxic_attacks > 1:
                     #import pdb;pdb.set_trace()
                     #print('yes attacks more tha ne')
+                    # check if effects other things -like wizard lightning.
+                    random.seed(1)
                     for splat in range(1, self.toxic_attacks+1):
-                        if splat % 2 == 0:
-                            factor = -1
-                        else:
-                            factor = 1
-                        x += splat * 5 * factor
-                        y += splat * 5 * factor
+                        #if splat == 3:
+
+                        #if splat % 2 == 0:
+                            #factor = -1
+                        #else:
+                            #factor = 1
+                        x += random.randint(-12, 12)
+                        y += random.randint(-12, 12)
+                        #x += splat * 5 * factor
+                        #y += splat * 5 * factor
                         self.draw_glue_splat(window, self.glue_color, x, y)
                         # or make it grow bigger?
                     #TODO STILL got to do correct damage
