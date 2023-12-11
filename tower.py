@@ -744,7 +744,7 @@ class GlueGunner(Tower):
             #self.glue_layers = 1  # testing for regluding
 
         if self.level == 4:
-            self.attack_speed = 26
+            self.attack_speed = 22
             self.range = 120
             self.image = gluegun4_img
             self.cost += self.upgrade_costs[0]
@@ -756,6 +756,7 @@ class GlueGunner(Tower):
             self.glue_layers = 4
             self.max_attacks = 4
             self.max_toxic_reattacks = 6
+            #self.max_toxic_reattacks = 20  # TESTING
             # TODO At level 4 more toxic damage to big opponents and show more glue on them (and others)
             # also in general green glue needs to show up more on green enemies.
 

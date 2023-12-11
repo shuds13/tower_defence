@@ -55,7 +55,7 @@ class Enemy:
 
 
     def draw_glue_splat(self, window, color, x, y):
-        print(f'drawing splat at {x} {y}')
+        #print(f'drawing splat at {x} {y}')
         pygame.draw.circle(window, color, (int(x)-2, int(y)-3), 5)
         pygame.draw.circle(window, color, (int(x)+2, int(y)+4), 5)
 
@@ -78,7 +78,7 @@ class Enemy:
             self.draw_glue_splat(window, self.glue_color, x, y)
             if self.toxic_glued:
                 #print('yes toxic glued')
-                print(f"{self.toxic_attacks=}")
+                #print(f"{self.toxic_attacks=}")
                 if self.toxic_attacks > 1:
                     #import pdb;pdb.set_trace()
                     #print('yes attacks more tha ne')

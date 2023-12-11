@@ -327,6 +327,9 @@ while running:
                 total_hits += hits
                 player_money += hits * money_per_hit
                 total_money += hits * money_per_hit
+                if enemy.health <= 0 and enemy.spawn_on_die:
+                    #enemy.spawn_func(path, enemies)  # to do with multiple path -
+                    enemy.spawn_func(enemies)  # to do with multiple path -
 
         enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
 
