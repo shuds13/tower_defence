@@ -816,6 +816,8 @@ class GlueGunner(Tower):
                 target.glued = self.glue_layers
                 target.glue_color = self.glue_color
                 if self.level >= 3:
+                    # Do one damage straight away
+                    score += target.take_damage(1)
                     target.toxic_glued = True
                     target.toxic_glued_by = self
                     target.toxic_timer = self.toxic_time
