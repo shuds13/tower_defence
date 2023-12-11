@@ -124,12 +124,16 @@ class Tower:
         return score
 
     def update(self, enemies):
+        score = 0
         self.attack_timer -= 1
         #if not self.target or not self.in_range(self.target):
             #self.find_target(enemies)
-        self.find_target(enemies)
-        score = self.attack()
-        self.total_score += score
+        if self.attack_timer <= 0:  # not havingt this is why multi-toxic glue agaist big enenmy is not working
+            self.find_target(enemies)
+            score = self.attack()
+            self.total_score += score
+        else:
+            self.is_attacking = False
         return score
 
     def get_target_angle(self):
@@ -751,6 +755,7 @@ class GlueGunner(Tower):
             self.toxic_time = 80
             self.glue_layers = 4
             self.max_attacks = 4
+            self.max_toxic_reattacks = 4
             # TODO At level 4 more toxic damage to big opponents and show more glue on them (and others)
             # also in general green glue needs to show up more on green enemies.
 
@@ -765,6 +770,19 @@ class GlueGunner(Tower):
                 #break
         #else:
             #self.target = None
+
+
+    def can_I_reglue(self, enemy):
+        if not enemy.toxic_glued:
+            return True
+        if self.level == 3:
+            return False  # already glued return False
+        if self.level >= 4:
+            if enemy.toxic_attacks <= self.max_toxic_reattacks:
+                print(f"{enemy.toxic_attacks=}")
+                return True
+        return False
+
 
     # test shoot slower hit multiple targets - closest - not spread
     # could avoid some duplication here
@@ -783,9 +801,10 @@ class GlueGunner(Tower):
             #if enemy.toxic_glued:
                 #print('Nope - hes toxic')
 
-            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.toxic_glued:
-                count += 1
+            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and self.can_I_reglue(enemy):
+                count += 1  # TODO this updates whether same enemy or different...
                 self.target.append(enemy)
+                enemy.toxic_attacks += 1
                 if count >= self.max_attacks:
                     break
             elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
