@@ -46,6 +46,9 @@ gluegun2_img = pygame.image.load('glue_gun2.png')
 gluegun2_img = pygame.transform.scale(gluegun2_img, (50, 50))
 gluegun3_img = pygame.image.load('glue_gun3.png')
 gluegun3_img = pygame.transform.scale(gluegun3_img, (50, 50))
+gluegun4_img = pygame.image.load('glue_gun4.png')
+gluegun4_img = pygame.transform.scale(gluegun4_img, (55, 55))
+
 
 
 class Tower:
@@ -693,7 +696,7 @@ class GlueGunner(Tower):
     name = 'Glue Gunner'
     image = gluegun_img
     range = 100
-    max_level = 3
+    max_level = 4
 
     def __init__(self, position):
         super().__init__(position)
@@ -703,7 +706,7 @@ class GlueGunner(Tower):
         self.cost = GlueGunner.price
         self.image = GlueGunner.image
         self.level = 1
-        self.upgrade_costs = [120, 280]
+        self.upgrade_costs = [120, 280, 900]
         self.beam_width = 7
         self.slow_factor = [0.5, 0.8, 0.9]
         #self.slow_factor = [0.1, 0.8, 0.9] # tmp test -------------------------------------------- UNDO
@@ -736,6 +739,20 @@ class GlueGunner(Tower):
             #self.glue_layers = 4
             #self.glue_layers = 1  # testing for regluding
 
+        if self.level == 4:
+            self.attack_speed = 26
+            self.range = 120
+            self.image = gluegun4_img
+            self.cost += self.upgrade_costs[0]
+            self.slow_factor = [0.4, 0.6, 0.7]
+            self.beam_width = 12
+            # try colors - want to show up on green enemies
+            self.glue_color = (124, 252, 0) # (15, 255, 80)
+            self.toxic_time = 80
+            self.glue_layers = 4
+            self.max_attacks = 4
+            # TODO At level 4 more toxic damage to big opponents and show more glue on them (and others)
+            # also in general green glue needs to show up more on green enemies.
 
 
     #def find_target(self, enemies):
