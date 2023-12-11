@@ -54,10 +54,11 @@ class Enemy:
         self.toxic_attacks = 0
 
 
-    def draw_glue_splat(self, window, color, x, y):
+    def draw_glue_splat(self, window, color, x, y, esize):
         #print(f'drawing splat at {x} {y}')
-        pygame.draw.circle(window, color, (int(x)-2, int(y)-3), 5)
-        pygame.draw.circle(window, color, (int(x)+2, int(y)+4), 5)
+        pygame.draw.circle(window, color, (int(x)-2, int(y)-3), 4+esize)
+        pygame.draw.circle(window, color, (int(x)+2, int(y)+4), 4+esize)
+        pygame.draw.circle(window, color, (int(x)+2, int(y)-3), 4+esize)
 
     def draw(self, window):
         x = self.position[0]
@@ -75,7 +76,7 @@ class Enemy:
             else:
                 pygame.draw.circle(window, (0, 0, 0), (int(x), int(y)), 11, 1)
         if self.glued:
-            self.draw_glue_splat(window, self.glue_color, x, y)
+            self.draw_glue_splat(window, self.glue_color, x, y, self.size)
             if self.toxic_glued:
                 #print('yes toxic glued')
                 #print(f"{self.toxic_attacks=}")
@@ -85,17 +86,18 @@ class Enemy:
                     # check if effects other things -like wizard lightning.
                     random.seed(1)
                     for splat in range(1, self.toxic_attacks+1):
-                        #if splat == 3:
 
-                        #if splat % 2 == 0:
-                            #factor = -1
-                        #else:
-                            #factor = 1
-                        x += random.randint(-12, 12)
-                        y += random.randint(-12, 12)
+                        # Hack try make king blob look better
+                        if isinstance(self, KingBlob):
+                            xn = x + random.randint(-25, 25)
+                            yn = y + random.randint(-5, 30)
+                        else:
+                            xn = x + random.randint(-15, 15)
+                            yn = y + random.randint(-15, 15)
+
                         #x += splat * 5 * factor
                         #y += splat * 5 * factor
-                        self.draw_glue_splat(window, self.glue_color, x, y)
+                        self.draw_glue_splat(window, self.glue_color, xn, yn, self.size)
                         # or make it grow bigger?
                     #TODO STILL got to do correct damage
                 #self.toxic_attacks += 1

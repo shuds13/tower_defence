@@ -742,6 +742,8 @@ class GlueGunner(Tower):
             self.toxic_time = 150
             #self.glue_layers = 4
             #self.glue_layers = 1  # testing for regluding
+            self.max_toxic_big_reattacks = 1
+            self.max_toxic_giant_reattacks = 2
 
         if self.level == 4:
             self.attack_speed = 22
@@ -752,10 +754,12 @@ class GlueGunner(Tower):
             self.beam_width = 12
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
-            self.toxic_time = 80
+            self.toxic_time = 75
             self.glue_layers = 4
             self.max_attacks = 4
-            self.max_toxic_reattacks = 6
+            #self.max_toxic_reattacks = 5
+            self.max_toxic_big_reattacks = 2
+            self.max_toxic_giant_reattacks = 5
             #self.max_toxic_reattacks = 20  # TESTING
             # TODO At level 4 more toxic damage to big opponents and show more glue on them (and others)
             # also in general green glue needs to show up more on green enemies.
@@ -776,11 +780,11 @@ class GlueGunner(Tower):
     def can_I_reglue(self, enemy):
         if not enemy.toxic_glued:
             return True
-        if self.level == 3:
-            return False  # already glued return False
-        if self.level >= 4:
-            if enemy.size > 1 and enemy.toxic_attacks <= self.max_toxic_reattacks:
-                print(f"{enemy.toxic_attacks=}")
+        if self.level >= 3:
+            if enemy.size > 2 and enemy.toxic_attacks <= self.max_toxic_giant_reattacks:
+                return True
+            elif enemy.size > 1 and enemy.toxic_attacks <= self.max_toxic_big_reattacks:
+                #print(f"{enemy.toxic_attacks=}")
                 return True
         return False
 
@@ -838,9 +842,12 @@ class GlueGunner(Tower):
         for target in self.target:
             pygame.draw.line(window, self.glue_color, nozzle, target.position, self.beam_width)
 
-    # Very weird bug - when only tower - does not animate!!!!!
-
-    # slow
+    # TODO - work out how more than one lev 4 toxic glue gunner combine - can they both attack
+    # prob should be so they can both attack either no. times or until so many glue strikes on big target...
+    # slow - currently not quite right - they both attack but only one claims the toxic hits!!!!
+    # cos enemy has only one attribute toxic_glued_by - but really needs one for each hit!
+    # prob need an obj or list of dictionaries to do this. Not sorting this out right now.
+    # For each tower hit - record damage per toxic drain.
     def attack(self):
         score = 0
         if self.target and self.attack_timer <= 0:

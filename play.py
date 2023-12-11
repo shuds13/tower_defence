@@ -16,9 +16,9 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 100 / 1
 
-initial_lives = 30
-initial_money = 100
-initial_level = 1
+initial_lives = 300
+initial_money = 10000
+initial_level = 40
 
 
 init_last_round_restarts = 2
