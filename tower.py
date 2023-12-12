@@ -735,7 +735,7 @@ class GlueGunner(Tower):
             self.attack_speed = 30
             #self.range = 110
             self.image = gluegun3_img
-            self.cost += self.upgrade_costs[0]
+            self.cost += self.upgrade_costs[1]
             self.slow_factor = [0.4, 0.75, 0.8]
             self.beam_width = 10
             # try colors - want to show up on green enemies
@@ -750,7 +750,7 @@ class GlueGunner(Tower):
             self.attack_speed = 22
             self.range = 120
             self.image = gluegun4_img
-            self.cost += self.upgrade_costs[0]
+            self.cost += self.upgrade_costs[2]
             self.slow_factor = [0.4, 0.6, 0.7]
             self.beam_width = 12
             # try colors - want to show up on green enemies
