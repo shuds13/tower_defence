@@ -901,7 +901,7 @@ class Totem(Tower):
     name = 'Totem'
     image = totem_img
     in_game_image = totem_img_ingame
-    range = 90
+    range = 100
     max_level = 1
 
     def __init__(self, position):
