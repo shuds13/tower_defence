@@ -49,6 +49,9 @@ gluegun3_img = pygame.transform.scale(gluegun3_img, (50, 50))
 gluegun4_img = pygame.image.load('glue_gun4.png')
 gluegun4_img = pygame.transform.scale(gluegun4_img, (55, 55))
 
+totem_img = pygame.image.load('totem.png')
+totem_img = pygame.transform.scale(totem_img, (50, 50))
+totem_img_ingame = pygame.transform.scale(totem_img, (70, 70))
 
 
 class Tower:
@@ -57,6 +60,7 @@ class Tower:
     name = 'Tower'
     image = None
     range = 100
+    see_ghosts = False
     max_level = 1
 
     def __init__(self, position):
@@ -194,6 +198,8 @@ class Fighter(Tower):
     image = fighter_img
     range = 100
     max_level = 4
+    see_ghosts = False
+
 
     def __init__(self, position):
         super().__init__(position)
@@ -359,6 +365,8 @@ class Wizard(Tower):
     image = wizard_img
     range = 120
     max_level = 4
+    see_ghosts = True
+
 
     def __init__(self, position):
         super().__init__(position)
@@ -886,4 +894,37 @@ class GlueGunner(Tower):
             #self.is_attacking = False  # Set to False otherwise
         #return score
 
-tower_types = [Fighter, Burger, Wizard, GlueGunner]
+
+class Totem(Tower):
+
+    price = 300  # Prob first level energizes towers - 2nd level see ghosts - but need to make few more easy levels early on.
+    name = 'Totem'
+    image = totem_img
+    in_game_image = totem_img_ingame
+    range = 90
+    max_level = 1
+
+    def __init__(self, position):
+        super().__init__(position)
+        self.range = Totem.range
+        #self.attack_speed = 40 # 30
+        #self.damage = 1
+        self.cost = Totem.price
+        self.image = Totem.in_game_image
+        self.level = 1
+        #self.upgrade_costs = [120, 280, 900]
+
+    def update(self, enemies):
+        return 0
+
+    def draw(self, window):
+        """Dont rotate"""
+        new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
+        window.blit(self.image, new_rect.topleft)
+
+    def tower_in_range(self, tower):
+        distance = ((self.position[0] - tower.position[0])**2 + (self.position[1] - tower.position[1])**2)**0.5
+        return distance <= self.range
+
+tower_types = [Fighter, Burger, Wizard, GlueGunner, Totem]
+

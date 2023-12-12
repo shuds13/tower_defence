@@ -4,7 +4,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower, tower_types
+from tower import Tower, tower_types, Totem
 import placements as place
 import navigation as nav
 import levels as lev
@@ -21,8 +21,8 @@ initial_money = 100
 initial_level = 1
 
 
-init_last_round_restarts = 2
-#init_last_round_restarts = 20
+#init_last_round_restarts = 2
+init_last_round_restarts = 20
 
 restart_testing = False
 
@@ -55,8 +55,8 @@ def reset_game():
     global player_money, level_num, level, towers, enemies, lives, money_per_hit
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
-    global total_hits, total_money, start_round_total_hits, start_round_total_money
-    global lives_highlight
+    global total_hits, total_money, start_round_total_hits, start_round_total_money #, start_round_totems
+    global lives_highlight, totems
     player_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
@@ -74,6 +74,7 @@ def reset_game():
     start_round_money = initial_money
     start_round_lives = initial_lives
     start_round_towers = []
+    #start_round_totems = []
     last_round_restarts = init_last_round_restarts
     path_id = 0
     #more should be player obj attributes - for stats
@@ -82,7 +83,7 @@ def reset_game():
     start_round_total_hits = 0
     start_round_total_money = initial_money
     lives_highlight = 0
-
+    totems = []
 
 def reset_level():
     global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type, path_id
@@ -96,11 +97,12 @@ def reset_level():
 
 
 def restart_round():
-    global player_money, lives, towers
+    global player_money, lives, towers, totems
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, game_over
     global level_num, level, lev
     global total_hits, total_money
     global lives_highlight
+    #global start_round_totems
 
     player_money = start_round_money
     lives = start_round_lives
@@ -119,8 +121,14 @@ def restart_round():
     # dont work - says TypeError: cannot pickle 'pygame.surface.Surface' object
     #towers = copy.deepcopy(start_round_towers)
     towers = []
+    totems = []
     for tower in start_round_towers:
-        towers.append(copy.copy(tower))
+        ctower = copy.copy(tower)
+        towers.append(ctower)
+        if isinstance(ctower, Totem):
+            totems.append(ctower)
+    #for totem in start_round_totems:
+        #totems.append(copy.copy(totem))
     #for tower in towers:
         #tower.get_start_hits()
     last_round_restarts -= 1
@@ -169,13 +177,15 @@ def select_tower_type(tower_types):
             return i
     return None
 
-def sell_tower(mouse_pos):
-    for tower in towers:
-        if tower.is_clicked(mouse_pos):
-            towers.remove(tower)
-            return int(tower.cost * 0.8)
-            break  # Exit the loop after selling one tower
-    return 0
+#def sell_tower(mouse_pos):
+    #for tower in towers:
+        #if tower.is_clicked(mouse_pos):
+            #cost = int(tower.cost * 0.8)
+            #towers.remove(tower)
+            ##del tower
+            #return cost
+            ##break  # Exit the loop after selling one tower
+    #return 0
 
 def show_tower_info(inset_window):
     for tower in towers:
@@ -266,7 +276,7 @@ while running:
                 elif inset_window['active']:
                     # should use object for inset window parameters
                     player_money, alert_message, alert_timer = nav.process_inset_window(
-                        mouse_pos, towers, inset_window, upgrade_button, sell_button, player_money,
+                        mouse_pos, towers, totems, inset_window, upgrade_button, sell_button, player_money,
                         alert_message, alert_timer, game_over
                     )
 
@@ -275,7 +285,10 @@ while running:
             #elif current_tower_type is not None:
                 if place.is_valid_position(mouse_pos, paths, towers):
                     if player_money >= current_tower_type.price:
-                        towers.append(current_tower_type(position=mouse_pos))
+                        newtower = current_tower_type(position=mouse_pos)
+                        towers.append(newtower)
+                        if isinstance(newtower, Totem):
+                            totems.append(newtower)
                         #snd_place.play()
                         sounds.play('place')
                         player_money -= current_tower_type.price
@@ -299,6 +312,18 @@ while running:
             #running = False
         active = False
         #continue
+
+
+    # If not too slow - work this out every time then okay with buying selling etc...
+    for tower in towers:
+        tower.see_ghosts = tower.__class__.see_ghosts
+        #print(f"Tower: {tower} {tower.__class__.see_ghosts} {tower.see_ghosts}")
+
+    for totem in totems:
+        for tower in towers:
+            if totem.tower_in_range(tower):
+                tower.see_ghosts = True
+
 
     if active:
         # Spawn a new enemy at intervals if the max number has not been reached
@@ -371,6 +396,10 @@ while running:
                 start_round_towers = []
                 for tower in towers:
                     start_round_towers.append(copy.copy(tower))
+                #start_round_totems = []
+                #for totem in totems:
+                    #start_round_totems.append(copy.copy(totem))
+                #print(f"{start_round_totems}")
 
                 level_num += 1
                 money_per_hit = get_money_per_hit(level_num)
@@ -489,7 +518,12 @@ while running:
         use_ghost_image = True
         if use_ghost_image:
             # This line ensures image has alpha channel (some do, some dont)
-            current_tower_type_mod = current_tower_type.image.convert_alpha()
+
+            #try/except lazy way for now
+            try:
+                current_tower_type_mod = current_tower_type.in_game_image.convert_alpha()
+            except AttributeError:
+                current_tower_type_mod = current_tower_type.image.convert_alpha()
             ghost_tower_image = place.create_ghost_image(current_tower_type_mod, alpha=128)
         else:
             ghost_tower_image = current_tower_type.image

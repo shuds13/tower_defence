@@ -304,7 +304,7 @@ def draw_inset_window(surface, window_info, player_money):
     return upgrade_button, sell_button
 
 
-def process_inset_window(mouse_pos, towers, inset_window, upgrade_button,
+def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button,
                          sell_button, player_money, alert_message, alert_timer, game_over):
     # Upgrade tower
     tower = inset_window['tower']
@@ -322,8 +322,9 @@ def process_inset_window(mouse_pos, towers, inset_window, upgrade_button,
         sounds.play('sell')
         alert_message = f"Sold! (${sell_val})"
         alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
-
         towers.remove(tower)
+        if tower.__class__.name == "Totem":
+            totems.remove(tower)
         inset_window['active'] = False
     else:
         # Close if click anywhere else

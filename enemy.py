@@ -335,6 +335,7 @@ class Devil(Ghost):
         self.base_speed = 4
         self.speed = 4
         self.image = devil_img
+        self.size = 2
 
 
 class Troll(Enemy):
