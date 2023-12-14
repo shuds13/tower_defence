@@ -434,6 +434,13 @@ while running:
         window.blit(alert_text, (350, 10))
         alert_timer -= 1
 
+
+    # Draw the paths - try drawing before towers how does it look
+    for path in paths:
+        for i in range(len(path) - 1):
+            pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
+
+
     for tower in towers:
         tower.draw(window)  # test replacing this with commented lines (dedicated commit) - I think corrects funny angle - but does it 'wobble' more
         if active:
@@ -492,10 +499,10 @@ while running:
     lives_text = font.render(f"Level: {level_num}", True, (255, 255, 255))
     window.blit(lives_text, (200, 10))
 
-    # Draw the paths
-    for path in paths:
-        for i in range(len(path) - 1):
-            pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
+    ## Draw the paths
+    #for path in paths:
+        #for i in range(len(path) - 1):
+            #pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
 
     # Draw enemies
     for enemy in enemies:
