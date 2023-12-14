@@ -200,7 +200,11 @@ class Tower:
             # Create the sublist using list comprehension
             return [input_list[int(i * step)] for i in range(N)]
 
-
+# Poss names for upgrades - add when got all
+# Fast Firing ??? Not sure with this tower. Descriptive (e.g Rapid firing) or name (e.g. Raptor)
+# Blaze  Doomship, Rapid Fire, Assault Ship, Gold Knight, Destroyer, Annihilator, Warship
+# Raptor
+# Maybe Rapid Fire (green), Destroyer (Red), Raptor (Gold)
 class Fighter(Tower):
 
     price = 50
@@ -248,6 +252,8 @@ class Fighter(Tower):
             self.damage = 2  # compare
             self.beam_width = 7
 
+# Poss names for upgrades - add when got all
+# 'Extra Spicy' 'With Cheese' 'Spicy Deluxe' 'Whopper'  Maybe the last 3?
 class Burger(Tower):
 
     price = 65
@@ -367,7 +373,8 @@ class Burger(Tower):
         #import time
         #time.sleep(2)
 
-
+# Need to fit
+# Top: Arch Mage, Enchanter, Sorceror, Mage
 class Wizard(Tower):
 
     price = 125
@@ -711,7 +718,7 @@ class Wizard(Tower):
         dy = target.position[1] - self.position[1]
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
-
+# Big Blobs, Toxic, Toxic Storm (or Toxic Deluge)
 class GlueGunner(Tower):
 
     price = 80
@@ -904,7 +911,8 @@ class GlueGunner(Tower):
             #self.is_attacking = False  # Set to False otherwise
         #return score
 
-
+# Maybe the Demons need more than ghost sight - 3rd level wizard or 3rd level totem.
+# Top level can blast from peak - lot of damage to big enemies.
 class Totem(Tower):
 
     price = 200  # Prob first level energizes towers - 2nd level see ghosts - but need to make few more easy levels early on.
@@ -922,7 +930,7 @@ class Totem(Tower):
         self.cost = Totem.price
         self.image = Totem.in_game_image
         self.level = 1
-        self.upgrade_costs = [100]
+        self.upgrade_costs = [250]
         self.upgrade_name = "Ghost Sight"
 
     def level_up(self):
