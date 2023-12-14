@@ -976,5 +976,5 @@ class Totem(Tower):
             tower.see_ghosts = True
 
 
-tower_types = [Fighter, Burger, Wizard, GlueGunner, Totem]
+tower_types = [Fighter, Burger, GlueGunner, Wizard, Totem]
 
