@@ -96,7 +96,7 @@ class Tower:
 
     def reset_attack_timer(self):
         self.attack_timer = max(int(self.attack_speed * self.speed_mod), 1)
-        print(f"{self.attack_timer=}")
+        #print(f"{self.attack_timer=}")
 
     #def set_start_hits(self):
         #self.start_round_score = self.total_score
@@ -225,6 +225,8 @@ class Fighter(Tower):
         self.level = 1
         self.upgrade_costs = [40, 150, 400]
         self.beam_width = 5
+        self.upgrade_name = "Rapid Fire"
+
         #self.max_level = Fighter.max_level  # try using __class__ and if works do same for other attributes
 
     def level_up(self):
@@ -238,12 +240,17 @@ class Fighter(Tower):
             self.attack_speed = 25  # lower is better currently
             self.range = 110
             self.image = fighter2_img
-            self.cost += self.upgrade_costs[0]  # used in sell price calc - sell price should prob be returned from this obj
+            self.cost += self.upgrade_costs[0]
+            # TODO does not curently give level name at top of inset. For that maybe want it to be on
+            # level rather than one before - and upgrade will see level - or do list upgrade_costs
+            # or level_name and a function that gets it for upgrade.
+            self.upgrade_name = "Destroyer"
         if self.level == 3:
             self.attack_speed = 10  # lower is better currently
             self.range = 120
             self.image = fighter3_img
             self.cost += self.upgrade_costs[1]
+            self.upgrade_name = "Raptor"
         if self.level == 4:
             self.attack_speed = 6  # lower is better currently - if dam 1 make faster
             self.range = 140
@@ -273,6 +280,7 @@ class Burger(Tower):
         self.max_attacks = 4
         self.upgrade_costs = [95, 220, 680] # , 1200]
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+        self.upgrade_name = "With cheese"
 
     def level_up(self):
         self.level +=1
@@ -284,6 +292,7 @@ class Burger(Tower):
             self.max_attacks = 6
             self.cost += self.upgrade_costs[0]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+            self.upgrade_name = "Extra Spicy" # "Spicy Deluxe" too long currently
         if self.level == 3:
             self.attack_speed = 26  # lower is better currently
             self.range = 75
@@ -292,6 +301,7 @@ class Burger(Tower):
             self.max_attacks = 8
             self.cost += self.upgrade_costs[1]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+            self.upgrade_name = "Whopper"
         if self.level == 4:
             self.attack_speed = 16  # lower is better currently
             self.range = 80
@@ -374,7 +384,7 @@ class Burger(Tower):
         #time.sleep(2)
 
 # Need to fit
-# Top: Arch Mage, Enchanter, Sorceror, Mage
+# Top: Arch Mage, Enchanter, Sorceror, Mage (Sorceror sounds evil to me)
 class Wizard(Tower):
 
     price = 125
@@ -402,6 +412,7 @@ class Wizard(Tower):
         self.max_attacks = 2
         self.max_cloud_attacks = 8
         self.cloud_type = 1
+        self.upgrade_name = "Enchanter"
 
     def draw(self, window):
         """Dont rotate burger"""
@@ -426,6 +437,7 @@ class Wizard(Tower):
             self.beam_width = 7
             self.max_attacks = 3
             self.max_cloud_attacks = 14
+            self.upgrade_name = "Mage"
         if self.level == 3:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 15  # lower is better currently
@@ -436,6 +448,7 @@ class Wizard(Tower):
             self.beam_width = 8
             self.max_attacks = 4
             self.max_cloud_attacks = 25
+            self.upgrade_name = "Arch Mage"
         if self.level == 4:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 8  # lower is better currently
@@ -718,7 +731,8 @@ class Wizard(Tower):
         dy = target.position[1] - self.position[1]
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
-# Big Blobs, Toxic, Toxic Storm (or Toxic Deluge)
+# TODO - PROB PUT glue gunner before wizard in side panel
+# Big Blobs (or Splatter), Toxic, Toxic Storm (or Toxic Deluge/Tsunami/drench/barrage or similar)
 class GlueGunner(Tower):
 
     price = 80
@@ -738,11 +752,11 @@ class GlueGunner(Tower):
         self.upgrade_costs = [120, 280, 900]
         self.beam_width = 7
         self.slow_factor = [0.5, 0.8, 0.9]
-        #self.slow_factor = [0.1, 0.8, 0.9] # tmp test -------------------------------------------- UNDO
         self.glue_layers = 2
         self.image_angle_offset = 130
         self.glue_color = (244, 187, 68)
         self.max_attacks = 2
+        self.upgrade_name = "Big Blobs"  # could do better!
 
     def level_up(self):
         self.level +=1
@@ -755,6 +769,7 @@ class GlueGunner(Tower):
             self.beam_width = 9
             self.max_attacks = 3
             self.slow_factor = [0.4, 0.8, 0.9]
+            self.upgrade_name = "Toxic Glue"
 
         if self.level == 3:
             self.attack_speed = 30
@@ -770,6 +785,7 @@ class GlueGunner(Tower):
             #self.glue_layers = 1  # testing for regluding
             self.max_toxic_big_reattacks = 1
             self.max_toxic_giant_reattacks = 2
+            self.upgrade_name = "Toxic Storm"
 
         if self.level == 4:
             self.attack_speed = 22

@@ -21,8 +21,8 @@ initial_money = 150
 initial_level = 1
 
 
-#init_last_round_restarts = 2
-init_last_round_restarts = 20
+init_last_round_restarts = 3
+#init_last_round_restarts = 20
 
 restart_testing = False
 
