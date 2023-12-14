@@ -17,7 +17,7 @@ pygame.font.init()  # Initialize font module
 # Current defaults: 30 / 100 / 1
 
 initial_lives = 30
-initial_money = 11150
+initial_money = 150
 initial_level = 1
 
 
@@ -316,14 +316,14 @@ while running:
 
     # If not too slow - work this out every time then okay with buying selling etc...
     for tower in towers:
+        tower.speed_mod = 1
         tower.see_ghosts = tower.__class__.see_ghosts
         #print(f"Tower: {tower} {tower.__class__.see_ghosts} {tower.see_ghosts}")
 
     for totem in totems:
         for tower in towers:
             if totem.tower_in_range(tower):
-                tower.see_ghosts = True
-
+                totem.boost(tower)
 
     if active:
         # Spawn a new enemy at intervals if the max number has not been reached

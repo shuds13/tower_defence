@@ -86,12 +86,17 @@ class Tower:
         self.beam_width = 5
         self.image_angle_offset = 0
         self.upgrade_name = "Upgrade"
+        self.speed_mod = 1
 
     def level_up(self):
         pass
 
     def show_viz_persis(self, window):
         pass
+
+    def reset_attack_timer(self):
+        self.attack_timer = max(int(self.attack_speed * self.speed_mod), 1)
+        print(f"{self.attack_timer=}")
 
     #def set_start_hits(self):
         #self.start_round_score = self.total_score
@@ -126,7 +131,7 @@ class Tower:
         if self.target and self.attack_timer <= 0:
             self.attack_count += 1
             score = self.target.take_damage(self.damage)
-            self.attack_timer = self.attack_speed
+            self.reset_attack_timer()
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
@@ -322,7 +327,7 @@ class Burger(Tower):
                 #print('single', multiplier)
                 score = self.target.take_damage(self.damage * multiplier)
             #print(f"{score=}")
-            self.attack_timer = self.attack_speed
+            self.reset_attack_timer()
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
@@ -670,7 +675,7 @@ class Wizard(Tower):
                 if self.level >= 4:
                     multiplier = self.target.size
                 score = self.target.take_damage(self.damage*multiplier)
-            self.attack_timer = self.attack_speed
+            self.reset_attack_timer()
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
@@ -688,7 +693,7 @@ class Wizard(Tower):
                     score += target.take_damage(self.damage)
             else:
                 score = self.target.take_damage(self.damage)
-            self.attack_timer = self.attack_speed
+            self.reset_attack_timer()
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
@@ -880,7 +885,7 @@ class GlueGunner(Tower):
                     target.toxic_glued_by = self
                     target.toxic_timer = self.toxic_time
                     target.toxic_time = self.toxic_time  # do another pass on this - very tired - dont want to set two values here.
-            self.attack_timer = self.attack_speed
+            self.reset_attack_timer()
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
@@ -893,7 +898,7 @@ class GlueGunner(Tower):
             #self.attack_count += 1
             ##score = self.target.take_damage(self.damage)
             #self.target.path_index -= 1
-            #self.attack_timer = self.attack_speed
+            #self.reset_attack_timer()
             #self.is_attacking = True  # Set to True when attacking
         #else:
             #self.is_attacking = False  # Set to False otherwise
@@ -937,6 +942,15 @@ class Totem(Tower):
     def tower_in_range(self, tower):
         distance = ((self.position[0] - tower.position[0])**2 + (self.position[1] - tower.position[1])**2)**0.5
         return distance <= self.range
+
+    def boost(self, tower):
+        # Not changing range for now.
+        if self.level >= 1:
+            # careful not to conflict with others as speed_mod currently = not adjust.
+            tower.speed_mod = 0.9
+        if self.level >= 2:
+            tower.see_ghosts = True
+
 
 tower_types = [Fighter, Burger, Wizard, GlueGunner, Totem]
 
