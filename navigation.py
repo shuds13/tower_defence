@@ -260,8 +260,9 @@ def draw_inset_window(surface, window_info, player_money):
 
     # Draw buttons for upgrade and sell
     upgrade_y_pos = y + 175  # was 160
-    upgrade_button = pygame.Rect(x + 40, upgrade_y_pos, 120, 40)
-    draw_border(surface, x+40, upgrade_y_pos, 120, 40, 2)
+    upgrade_button = pygame.Rect(x + 30, upgrade_y_pos, 140, 40)
+    draw_border(surface, x+30, upgrade_y_pos, 140, 40, 2)
+    # DONT really like bigger button - looked better before - TODO might adjust size if needed
 
     #at_max_level = tower.level == tower.__class__.max_level
     if tower.level == tower.__class__.max_level:
@@ -285,14 +286,14 @@ def draw_inset_window(surface, window_info, player_money):
     else:
         #TODO Instead of word "Upgrade" say name of upgrade tower.upgrade_name (will update with tower level)
         #burger upgrade - "extra spicy"?
-        upgrade_text = font.render(f"Upgrade ${upgrade_cost}", True, (255, 255, 255))  # White text
+        upgrade_text = font.render(f"{tower.upgrade_name} ${upgrade_cost}", True, (255, 255, 255))  # White text
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
     surface.blit(upgrade_text, upgrade_text_rect)
 
     sell_y_pos = y + 240  # was 230
 
-    sell_button = pygame.Rect(x + 40, sell_y_pos, 120, 40)
-    draw_border(surface, x+40, sell_y_pos, 120, 40, 2)
+    sell_button = pygame.Rect(x + 30, sell_y_pos, 140, 40)
+    draw_border(surface, x+30, sell_y_pos, 140, 40, 2)
 
     pygame.draw.rect(surface, (196, 30, 58), sell_button)  # Dark grey button
     # Render and draw "Sell" text and amount

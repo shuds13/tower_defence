@@ -53,6 +53,10 @@ totem_img = pygame.image.load('totem.png')
 totem_img = pygame.transform.scale(totem_img, (50, 50))
 totem_img_ingame = pygame.transform.scale(totem_img, (70, 70))
 
+totem2_img = pygame.image.load('totem2.png')
+totem2_img = pygame.transform.scale(totem2_img, (73, 73))
+#totem2_img_ingame = pygame.transform.scale(totem2_img, (70, 70))
+
 
 class Tower:
 
@@ -81,6 +85,7 @@ class Tower:
         self.see_ghosts = False
         self.beam_width = 5
         self.image_angle_offset = 0
+        self.upgrade_name = "Upgrade"
 
     def level_up(self):
         pass
@@ -897,12 +902,12 @@ class GlueGunner(Tower):
 
 class Totem(Tower):
 
-    price = 300  # Prob first level energizes towers - 2nd level see ghosts - but need to make few more easy levels early on.
+    price = 200  # Prob first level energizes towers - 2nd level see ghosts - but need to make few more easy levels early on.
     name = 'Totem'
     image = totem_img
     in_game_image = totem_img_ingame
     range = 100
-    max_level = 1
+    max_level = 2
 
     def __init__(self, position):
         super().__init__(position)
@@ -912,7 +917,14 @@ class Totem(Tower):
         self.cost = Totem.price
         self.image = Totem.in_game_image
         self.level = 1
-        #self.upgrade_costs = [120, 280, 900]
+        self.upgrade_costs = [100]
+        self.upgrade_name = "Ghost Sight"
+
+    def level_up(self):
+        self.level +=1
+        if self.level == 2:
+            self.image = totem2_img
+            self.cost += self.upgrade_costs[0]
 
     def update(self, enemies):
         return 0
