@@ -255,9 +255,10 @@ def draw_inset_window(surface, window_info, player_money):
     surface.blit(tower_name_text, tower_name_rect.topleft)
 
     # Tower pops
-    tower_pops_text = font.render(str(tower.total_score), True, (0, 0, 0))  # Black text
-    tower_pops_rect = tower_pops_text.get_rect(center=(x + width // 2, y + 40))
-    surface.blit(tower_pops_text, tower_pops_rect.topleft)
+    if tower.attack_tower:
+        tower_pops_text = font.render(str(tower.total_score), True, (0, 0, 0))  # Black text
+        tower_pops_rect = tower_pops_text.get_rect(center=(x + width // 2, y + 40))
+        surface.blit(tower_pops_text, tower_pops_rect.topleft)
 
     # Draw the tower image
     image_y_pos = y + 105  # was 80

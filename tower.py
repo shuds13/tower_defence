@@ -94,6 +94,7 @@ class Tower:
         self.upgrade_name = "Upgrade"
         self.speed_mod = 1
         self.highlight = False
+        self.attack_tower = True
 
     def level_up(self):
         pass
@@ -174,7 +175,7 @@ class Tower:
             pygame.draw.rect(window, (0,160,0), rect, 3)
         window.blit(image, rect.topleft)
 
-    def draw(self, window, enemies):
+    def draw(self, window, enemies=None):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
 
@@ -369,7 +370,7 @@ class Burger(Tower):
         return score
 
 
-    def draw(self, window, enemies):
+    def draw(self, window, enemies=None):
         """Dont rotate burger"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -432,7 +433,7 @@ class Wizard(Tower):
         self.cloud_type = 1
         self.upgrade_name = "Enchanter"
 
-    def draw(self, window, enemies):
+    def draw(self, window, enemies=None):
         """Dont rotate wizard"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -768,6 +769,7 @@ class GlueGunner(Tower):
         self.glue_color = (244, 187, 68)
         self.max_attacks = 2
         self.upgrade_name = "Big Blobs"  # could do better!
+        self.attack_tower = False
 
     def level_up(self):
         self.level +=1
@@ -797,6 +799,7 @@ class GlueGunner(Tower):
             self.max_toxic_big_reattacks = 1
             self.max_toxic_giant_reattacks = 2
             self.upgrade_name = "Toxic Storm"
+            self.attack_tower = True
 
         if self.level == 4:
             self.attack_speed = 22
@@ -816,7 +819,7 @@ class GlueGunner(Tower):
             #self.max_toxic_reattacks = 20  # TESTING
             # TODO At level 4 more toxic damage to big opponents and show more glue on them (and others)
             # also in general green glue needs to show up more on green enemies.
-
+            self.attack_tower = True
 
     #def find_target(self, enemies):
         #for enemy in enemies:
@@ -967,6 +970,8 @@ class Totem(Tower):
         self.level = 1
         self.upgrade_costs = [250, 500, 1000]
         self.upgrade_name = "Ghost Sight"
+        self.attack_tower = False
+
 
     def level_up(self):
         self.level +=1
