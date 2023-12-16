@@ -1,6 +1,6 @@
 #Maybe this should be maps - and path be part of this module
 
-def point_line_distance(point, line_start, line_end):
+def point_line_distance(point, line_start, line_end, w, h):
     """Calculate the minimum distance between a point and a line segment."""
     # Line segment start and end points
     x1, y1 = line_start
@@ -26,8 +26,12 @@ def point_line_distance(point, line_start, line_end):
     # Distance from point to nearest point on the line segment
     dx = px - nearest_point[0]
     dy = py - nearest_point[1]
+    #return (dx ** 2 + dy ** 2) ** 0.5
 
-    return (dx ** 2 + dy ** 2) ** 0.5
+    # this is where could add path_thickness//2 - overlap but for now distance to centre of path.
+    return abs(dx) < w//2 and abs(dy) < h//2
+
+
 
 def is_valid_position(newtowertype, pos, paths, towers):
     """Check if the position is not on the path and not too close to other towers."""
@@ -39,15 +43,19 @@ def is_valid_position(newtowertype, pos, paths, towers):
     if pos[0] > 675:  # so no part in side panel
         return False
 
+    w1 = newtowertype.footprint[0]
+    h1 = newtowertype.footprint[1]
+
+    # TODO tower footprint should matter here also.
     # Check distance from the path
     for path in paths:
         for i in range(len(path) - 1):
-            if point_line_distance(pos, path[i], path[i + 1]) < min_distance_to_path:
+            #if point_line_distance(pos, path[i], path[i + 1], w1, h1) < min_distance_to_path:
+            if point_line_distance(pos, path[i], path[i + 1], w1, h1):
                 return False
 
     # Check distance from other towers
-    w1 = newtowertype.footprint[0]
-    h1 = newtowertype.footprint[1]
+
     # Compare x and y - should not need pythagoras
     for tower in towers:
         w2 = tower.__class__.footprint[0]
