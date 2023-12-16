@@ -174,7 +174,7 @@ class Tower:
             pygame.draw.rect(window, (0,160,0), rect, 3)
         window.blit(image, rect.topleft)
 
-    def draw(self, window):
+    def draw(self, window, enemies):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
 
@@ -369,7 +369,7 @@ class Burger(Tower):
         return score
 
 
-    def draw(self, window):
+    def draw(self, window, enemies):
         """Dont rotate burger"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -432,7 +432,7 @@ class Wizard(Tower):
         self.cloud_type = 1
         self.upgrade_name = "Enchanter"
 
-    def draw(self, window):
+    def draw(self, window, enemies):
         """Dont rotate wizard"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -943,6 +943,10 @@ class GlueGunner(Tower):
 # More ambitious some sort of summoning ability or time limited power - glows during that.
 # Or something like prince of darkness power to harvest enemies and send back along track - but
 # that would suddenly require being in range of track!
+# another idea eyes glow (translucent cirles over eyes) when ghosts are present (from level 2)
+# level 3 and/or 4 - eyes glow and blow blobs back to entrance (path_index=0) - from whatever
+# is nearest point on track (regardless of range) - can use code in placements to find nearest point on track.
+#   - maybe call level something like "Mystic Breath" or something similar or "Divine Breath" or "Divine Wind" (ummm)
 class Totem(Tower):
 
     price = 200  # Prob first level energizes towers - 2nd level see ghosts - but need to make few more easy levels early on.
@@ -979,10 +983,33 @@ class Totem(Tower):
     def update(self, enemies):
         return 0
 
-    def draw(self, window):
+    def _get_eye_pos(self):
+        if self.level == 2:
+            return (self.position[0]-2, self.position[1]-24), (self.position[0]+8, self.position[1]-24)
+        elif self.level == 3:
+            return (self.position[0]-6, self.position[1]-25), (self.position[0]+9, self.position[1]-25)
+        elif self.level == 4:
+            return (self.position[0]-9, self.position[1]-18), (self.position[0]+11, self.position[1]-18)
+
+    def _make_eye_glow(self, window, glow_radius, c_alpha, eye_pos):
+        eyeglow = pygame.Surface((glow_radius*2, glow_radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(eyeglow, (250, 250, 51, c_alpha), (glow_radius,glow_radius), glow_radius)
+        glow_rect = eyeglow.get_rect(center=eye_pos)
+        window.blit(eyeglow, glow_rect)
+
+    def draw(self, window, enemies):
         """Dont rotate toetem"""
+
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
+
+        # If ghosts/spirits on screen eyes glow - oh will have to change position based on level.
+        if self.level >= 2 and any(enemy.invis for enemy in enemies):
+            c_alpha = 128 + 15*self.level
+            glow_radius = self.level + 3
+            eye_pos = self._get_eye_pos()
+            self._make_eye_glow(window, glow_radius, c_alpha, eye_pos[0])
+            self._make_eye_glow(window, glow_radius, c_alpha, eye_pos[1])
 
     def tower_in_range(self, tower):
         distance = ((self.position[0] - tower.position[0])**2 + (self.position[1] - tower.position[1])**2)**0.5

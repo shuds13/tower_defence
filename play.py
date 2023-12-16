@@ -466,16 +466,16 @@ while running:
 
 
     for tower in towers:
-        tower.draw(window)  # test replacing this with commented lines (dedicated commit) - I think corrects funny angle - but does it 'wobble' more
+        tower.draw(window, enemies)  # test replacing this with commented lines (dedicated commit) - I think corrects funny angle - but does it 'wobble' more
         if active:
             hits = tower.update(enemies)
-            #tower.draw(window)
+            #tower.draw(window, enemies)
             total_hits += hits
             #player_money += tower.update(enemies) * money_per_hit
             player_money += hits * money_per_hit
             total_money += hits * money_per_hit
         #else:
-            #tower.draw(window)
+            #tower.draw(window, enemies)
         tower.highlight = False
 
     if active:
