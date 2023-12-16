@@ -304,7 +304,7 @@ while running:
             # Place a tower
             else:
             #elif current_tower_type is not None:
-                if place.is_valid_position(mouse_pos, paths, towers):
+                if place.is_valid_position(current_tower_type, mouse_pos, paths, towers):
                     if player_money >= current_tower_type.price:
                         newtower = current_tower_type(position=mouse_pos)
                         towers.append(newtower)

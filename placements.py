@@ -29,11 +29,11 @@ def point_line_distance(point, line_start, line_end):
 
     return (dx ** 2 + dy ** 2) ** 0.5
 
-def is_valid_position(pos, paths, towers):
+def is_valid_position(newtowertype, pos, paths, towers):
     """Check if the position is not on the path and not too close to other towers."""
-    min_distance_to_path = 25 # 20  # Minimum allowed distance from the path
-    some_minimum_distance_between_towers = 30 #25
-
+    min_distance_to_path = 25 # 20  # Minimum allowed distance from the path TODO should include path thickness
+    #base_min_dist_between_towers = 30 #25
+    overlap = 15 # 20
 
     #TODO use collide to see if in side panel
     if pos[0] > 675:  # so no part in side panel
@@ -46,9 +46,21 @@ def is_valid_position(pos, paths, towers):
                 return False
 
     # Check distance from other towers
+    w1 = newtowertype.footprint[0]
+    h1 = newtowertype.footprint[1]
+    # Compare x and y - should not need pythagoras
     for tower in towers:
-        if (pos[0] - tower.position[0])**2 + (pos[1] - tower.position[1])**2 < some_minimum_distance_between_towers**2:
+        w2 = tower.__class__.footprint[0]
+        h2 = tower.__class__.footprint[1]
+        min_x = (w1+w2)//2 - overlap
+        min_y = (h1+h2)//2 - overlap
+        if abs(pos[0] - tower.position[0]) < min_x and abs(pos[1] - tower.position[1]) < min_y:
             return False
+
+    # original code
+    #for tower in towers:
+        #if (pos[0] - tower.position[0])**2 + (pos[1] - tower.position[1])**2 < base_min_dist_between_towers**2:
+            #return False
 
     return True
 

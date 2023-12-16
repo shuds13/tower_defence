@@ -71,6 +71,7 @@ class Tower:
     range = 100
     see_ghosts = False
     max_level = 1
+    footprint = (50,50)  # for distance to place towers - this should not change for a tower (image size may)
 
     def __init__(self, position):
         self.position = position
@@ -941,6 +942,7 @@ class Totem(Tower):
     in_game_image = totem_img_ingame
     range = 100
     max_level = 4
+    footprint = (60,70)
 
     def __init__(self, position):
         super().__init__(position)
