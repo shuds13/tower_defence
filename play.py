@@ -327,6 +327,8 @@ while running:
         break
 
     if game_over:
+        if active:  # so shows once
+            print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
         pygame.display.flip()  # Update the full display Surface to the screen
         #restart_timer -= 1
         #if restart_timer <=0:
@@ -398,6 +400,7 @@ while running:
                 lives_highlight = highlight_time
 
             # Pause for a few seconds to display the win message
+            print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
             pygame.time.wait(1000)
             if level_num == lev.max_level:
                 game_over = True

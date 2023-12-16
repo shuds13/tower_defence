@@ -981,6 +981,7 @@ class Totem(Tower):
 
     #prob remove hit count for inset window for towers that cant attack.
     #currently totems mods dont stack - but more powerful one in radius should take effect.
+    #add range range_mod and at least at highest level increase range on totem itself.
     def boost(self, tower):
         # Not changing range for now.
         if self.level >= 1:
@@ -989,10 +990,12 @@ class Totem(Tower):
             tower.see_ghosts = True
         #below here experimenting late at night. Also range wld need a mod.
         if self.level >= 3:
-            tower.speed_mod = 0.8 # may add demon sight here
+            #tower.speed_mod = 0.8 # may add demon sight here
+            tower.speed_mod = 0.75 # while addin nothing else - boost a bit
         if self.level >= 4:
             # maybe laser eyes that attack and/or some long-range attack:
-            tower.speed_mod = 0.7 # may add demon sight here
+            #tower.speed_mod = 0.7 # may add demon sight here
+            tower.speed_mod = 0.6 # while addin nothing else - boost a bit
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Totem]
 
