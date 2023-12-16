@@ -199,6 +199,7 @@ def select_tower_type(tower_types):
 def update_inset_totems(inset_window):
     my_totem = None
     tower = inset_window['tower']
+    inset_window['totem'] = None
     if tower.__class__.name != "Totem":
         for totem in totems:
             if totem.tower_in_range(tower):
