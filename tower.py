@@ -190,8 +190,17 @@ class Tower:
 
     def is_clicked(self, point):
         # Assuming the tower is drawn as a circle with a certain radius
-        radius = 20  # or whatever your tower's radius is
-        return (self.position[0] - point[0]) ** 2 + (self.position[1] - point[1]) ** 2 <= radius ** 2
+        #radius = 20  # or whatever your tower's radius is
+        #return (self.position[0] - point[0]) ** 2 + (self.position[1] - point[1]) ** 2 <= radius ** 2
+
+        # Take account of tower footprint
+        # Due to overlap (see navigation.py) in tower placement could clash and will get first placed.
+        # For that reason minus some overlap (margin) here.
+        margin = 5
+        w1 = (self.__class__.footprint[0] // 2) - margin
+        h1 = (self.__class__.footprint[1] // 2) - margin
+        return abs(self.position[0] - point[0]) < w1 and abs(self.position[1] - point[1]) < h1
+
 
     def attack_animate(self, window):
         pygame.draw.line(window, (255, 0, 0), self.position, self.target.position, self.beam_width)
