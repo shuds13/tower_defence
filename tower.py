@@ -972,21 +972,55 @@ class Totem(Tower):
         self.upgrade_name = "Ghost Sight"
         self.attack_tower = False
 
-
     def level_up(self):
         self.level +=1
         if self.level == 2:
             self.image = totem2_img
             self.cost += self.upgrade_costs[0]
+            # Divine Breath if do blow ability - but I don't like that its position dependent (though I want it in game)
+            self.upgrade_name = "Arcane Energy"  # For now.
         if self.level == 3:
             self.image = totem3_img
             self.cost += self.upgrade_costs[1]
+            self.upgrade_name = "Eye of Moloch"
         if self.level == 4:
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
+            self.attack_tower = True
+            self.attack_speed = 10  # maybe constant
+
+    def find_target(self, enemies):
+        self.target = None
+        for enemy in enemies:
+            if enemy.size >= 3:
+                self.target = enemy
+                break
+        if self.target is None:
+            self.is_attacking = False
+
+    def attack(self):
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            self.attack_count += 1
+            score = self.target.take_damage(self.damage)
+            self.reset_attack_timer()
+            self.is_attacking = True  # Set to True when attacking
+        #else:
+            #self.is_attacking = False  # Set to False otherwise
+        return score
 
     def update(self, enemies):
-        return 0
+        if self.level < 4:
+            return 0
+        score = 0
+        self.attack_timer -= 1
+        #if self.attack_timer <= 0:  # not havingt this is why multi-toxic glue agaist big enenmy is not working
+        self.find_target(enemies)
+        score = self.attack()
+        self.total_score += score
+        #else:
+            #self.is_attacking = False
+        return score
 
     def _get_eye_pos(self):
         if self.level == 2:
@@ -996,15 +1030,30 @@ class Totem(Tower):
         elif self.level == 4:
             return (self.position[0]-9, self.position[1]-18), (self.position[0]+11, self.position[1]-18)
 
-    def _make_eye_glow(self, window, glow_radius, c_alpha, eye_pos):
+    def attack_animate(self, window):
+        eye_pos = self._get_eye_pos()
+        glow_color = (220, 20, 60)
+        glow_radius = 9
+        c_alpha = 150  # higher is more opaque
+        self._make_eye_glow(window, glow_radius, glow_color, c_alpha, eye_pos[0])
+        self._make_eye_glow(window, glow_radius, glow_color, c_alpha, eye_pos[1])
+        pygame.draw.line(window, glow_color, eye_pos[0], self.target.position, 8)
+        pygame.draw.line(window, glow_color, eye_pos[1], self.target.position, 8)
+        # this is actually circle on target
+        # Animate target glow (an alt could be to use mini burger splat).
+        targx = self.target.position[0] + random.randint(-2, 2)
+        targy = self.target.position[1] + random.randint(-2, 2)
+        target_pos = (targx, targy)
+        self._make_eye_glow(window, glow_radius, glow_color, c_alpha, target_pos)
+
+    def _make_eye_glow(self, window, glow_radius, col, c_alpha, eye_pos):
         eyeglow = pygame.Surface((glow_radius*2, glow_radius*2), pygame.SRCALPHA)
-        pygame.draw.circle(eyeglow, (250, 250, 51, c_alpha), (glow_radius,glow_radius), glow_radius)
+        pygame.draw.circle(eyeglow, (col[0], col[1], col[2], c_alpha), (glow_radius,glow_radius), glow_radius)
         glow_rect = eyeglow.get_rect(center=eye_pos)
         window.blit(eyeglow, glow_rect)
 
     def draw(self, window, enemies):
         """Dont rotate toetem"""
-
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
@@ -1013,8 +1062,9 @@ class Totem(Tower):
             c_alpha = 128 + 15*self.level
             glow_radius = self.level + 3
             eye_pos = self._get_eye_pos()
-            self._make_eye_glow(window, glow_radius, c_alpha, eye_pos[0])
-            self._make_eye_glow(window, glow_radius, c_alpha, eye_pos[1])
+            glow_color = (250, 250, 51)
+            self._make_eye_glow(window, glow_radius, glow_color, c_alpha, eye_pos[0])
+            self._make_eye_glow(window, glow_radius, glow_color, c_alpha, eye_pos[1])
 
     def tower_in_range(self, tower):
         distance = ((self.position[0] - tower.position[0])**2 + (self.position[1] - tower.position[1])**2)**0.5

@@ -472,10 +472,10 @@ class Level48(Level):
 class Level49(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 20
-        self.spawn_intervals = [15,15]
-        self.phase_counts = [10,20]
-        self.enemy_types = [10, 13]
+        self.num_enemies = 35
+        self.spawn_intervals = [15,15,30, 15]
+        self.phase_counts = [10,20,21, 35]
+        self.enemy_types = [10, 13, 201, 13]
 
 class Level50(Level):
     def __init__(self):
