@@ -978,10 +978,10 @@ class Totem(Tower):
         return distance <= self.range
 
     #prob remove hit count for inset window for towers that cant attack.
+    #currently totems mods dont stack - but more powerful one in radius should take effect.
     def boost(self, tower):
         # Not changing range for now.
         if self.level >= 1:
-            # careful not to conflict with others as speed_mod currently = not adjust.
             tower.speed_mod = 0.9
         if self.level >= 2:
             tower.see_ghosts = True

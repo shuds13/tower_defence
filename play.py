@@ -48,7 +48,8 @@ inset_window = {
     'y': window_size[1] - 304,  # Y position of the window
     'width': 200,
     'height': 300,
-    'tower': None  # The tower that is currently selected
+    'tower': None,
+    'totem': None
 }
 
 def reset_game():
@@ -195,11 +196,22 @@ def select_tower_type(tower_types):
             ##break  # Exit the loop after selling one tower
     #return 0
 
+def update_inset_totems(inset_window):
+    my_totem = None
+    tower = inset_window['tower']
+    if tower.__class__.name != "Totem":
+        for totem in totems:
+            if totem.tower_in_range(tower):
+                if my_totem is None or totem.level > my_totem.level:
+                    my_totem = totem
+        inset_window['totem'] = my_totem
+
 def show_tower_info(inset_window):
     for tower in towers:
         if tower.is_clicked(mouse_pos):
             inset_window['active'] = True
             inset_window['tower'] = tower
+            update_inset_totems(inset_window)
             return True
     return False
 
@@ -563,6 +575,8 @@ while running:
                         totem.highlight = True
                         #if my_totem is None or totem.level > my_totem.level:
 
+    if inset_window['active']:
+        update_inset_totems(inset_window)
     nav.draw_inset_window(window, inset_window, player_money)
 
     if game_over:  # Game over condition

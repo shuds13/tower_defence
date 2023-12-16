@@ -229,6 +229,7 @@ def draw_inset_window(surface, window_info, player_money):
     # Coordinates and dimensions for the window
     x, y, width, height = window_info['x'], window_info['y'], window_info['width'], window_info['height']
     tower = window_info['tower']
+    totem = window_info['totem']
 
     # Show radius of tower
     pygame.draw.circle(surface, (0, 255, 255), tower.position, tower.range, 1)
@@ -241,6 +242,12 @@ def draw_inset_window(surface, window_info, player_money):
 
     font_title = pygame.font.SysFont('Arial', 16, bold=True)  # Choose a font and size
     font = pygame.font.SysFont(None, 24)
+
+    if totem is not None:
+        #import pdb;pdb.set_trace()
+        totem_image = pygame.transform.scale(totem.image, (50, 50))
+        image_rect = totem_image.get_rect(topleft=(x+width-55, y+30))
+        surface.blit(totem_image, image_rect)
 
     # Tower name
     tower_name_text = font_title.render(tower.name.upper(), True, (0, 0, 0))  # Black text
