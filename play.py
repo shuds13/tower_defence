@@ -327,8 +327,8 @@ while running:
         break
 
     if game_over:
-        if active:  # so shows once
-            print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
+        #if active:  # so shows once
+            #print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
         pygame.display.flip()  # Update the full display Surface to the screen
         #restart_timer -= 1
         #if restart_timer <=0:
@@ -400,7 +400,7 @@ while running:
                 lives_highlight = highlight_time
 
             # Pause for a few seconds to display the win message
-            print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
+            #print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
             pygame.time.wait(1000)
             if level_num == lev.max_level:
                 game_over = True
@@ -565,7 +565,17 @@ while running:
         if mouse_x < 675:
             ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
-            pygame.draw.circle(window, (0, 255, 255), (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
+
+            range_color = (255,0,0)
+            if place.is_valid_position(current_tower_type, (mouse_x, mouse_y), paths, towers):
+                if player_money >= current_tower_type.price:
+                    range_color = (0,255,0)
+                else:
+                    range_color = (255, 165, 0)  # orange
+
+            #pygame.draw.circle(window, (0, 255, 255), (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
+            pygame.draw.circle(window, range_color, (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
+
             if current_tower_type.name == "Totem":
                 for tower in towers:
                     if in_range(current_tower_type.range, mouse_x, mouse_y, tower):
