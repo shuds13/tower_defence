@@ -57,6 +57,11 @@ totem2_img = pygame.image.load('totem2.png')
 totem2_img = pygame.transform.scale(totem2_img, (73, 73))
 #totem2_img_ingame = pygame.transform.scale(totem2_img, (70, 70))
 
+totem3_img = pygame.image.load('totem3.png')
+totem3_img = pygame.transform.scale(totem3_img, (80, 80))
+totem4_img = pygame.image.load('totem4.png')
+totem4_img = pygame.transform.scale(totem4_img, (90, 90))
+
 
 class Tower:
 
@@ -87,6 +92,7 @@ class Tower:
         self.image_angle_offset = 0
         self.upgrade_name = "Upgrade"
         self.speed_mod = 1
+        self.highlight = False
 
     def level_up(self):
         pass
@@ -162,6 +168,12 @@ class Tower:
         dy = target.position[1] - self.position[1]
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
+    def general_draw(self, window, image, rect):
+        if self.highlight:
+            pygame.draw.rect(window, (0,160,0), rect, 3)
+        #new_rect = image.get_rect(center=image.get_rect(center=self.position).center)
+        window.blit(image, rect.topleft)
+
     def draw(self, window):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
@@ -174,9 +186,7 @@ class Tower:
 
         rotated_image = pygame.transform.rotate(self.image, angle)
         new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
-
-        window.blit(rotated_image, new_rect.topleft)
-        #return rotated_image, new_rect
+        self.general_draw(window, rotated_image, new_rect)
 
     def is_clicked(self, point):
         # Assuming the tower is drawn as a circle with a certain radius
@@ -352,10 +362,9 @@ class Burger(Tower):
 
     def draw(self, window):
         """Dont rotate burger"""
-        #rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
-        window.blit(self.image, new_rect.topleft)
-        #return rotated_image, new_rect
+        self.general_draw(window, self.image, new_rect)
+
 
     def find_target(self, enemies):
         # Only place to call function - after just check self.cloud_attack
@@ -415,16 +424,9 @@ class Wizard(Tower):
         self.upgrade_name = "Enchanter"
 
     def draw(self, window):
-        """Dont rotate burger"""
-        #rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
+        """Dont rotate wizard"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
-        window.blit(self.image, new_rect.topleft)
-
-    #def rotate(self):
-        #"""Dont rotate wizard"""
-        #rotated_image = self.image  # pygame.transform.rotate(self.image, angle)
-        #new_rect = rotated_image.get_rect(center=self.image.get_rect(center=self.position).center)
-        #return rotated_image, new_rect
+        self.general_draw(window, self.image, new_rect)
 
     def level_up(self):
         self.level +=1
@@ -936,7 +938,7 @@ class Totem(Tower):
     image = totem_img
     in_game_image = totem_img_ingame
     range = 100
-    max_level = 2
+    max_level = 4
 
     def __init__(self, position):
         super().__init__(position)
@@ -946,7 +948,7 @@ class Totem(Tower):
         self.cost = Totem.price
         self.image = Totem.in_game_image
         self.level = 1
-        self.upgrade_costs = [250]
+        self.upgrade_costs = [250, 500, 1000]
         self.upgrade_name = "Ghost Sight"
 
     def level_up(self):
@@ -954,19 +956,26 @@ class Totem(Tower):
         if self.level == 2:
             self.image = totem2_img
             self.cost += self.upgrade_costs[0]
+        if self.level == 3:
+            self.image = totem3_img
+            self.cost += self.upgrade_costs[1]
+        if self.level == 4:
+            self.image = totem4_img
+            self.cost += self.upgrade_costs[2]
 
     def update(self, enemies):
         return 0
 
     def draw(self, window):
-        """Dont rotate"""
+        """Dont rotate toetem"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
-        window.blit(self.image, new_rect.topleft)
+        self.general_draw(window, self.image, new_rect)
 
     def tower_in_range(self, tower):
         distance = ((self.position[0] - tower.position[0])**2 + (self.position[1] - tower.position[1])**2)**0.5
         return distance <= self.range
 
+    #prob remove hit count for inset window for towers that cant attack.
     def boost(self, tower):
         # Not changing range for now.
         if self.level >= 1:
@@ -974,7 +983,12 @@ class Totem(Tower):
             tower.speed_mod = 0.9
         if self.level >= 2:
             tower.see_ghosts = True
-
+        #below here experimenting late at night. Also range wld need a mod.
+        if self.level >= 3:
+            tower.speed_mod = 0.8 # may add demon sight here
+        if self.level >= 4:
+            # maybe laser eyes that attack and/or some long-range attack:
+            tower.speed_mod = 0.7 # may add demon sight here
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Totem]
 

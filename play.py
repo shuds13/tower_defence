@@ -137,6 +137,11 @@ def restart_round():
     lives_highlight = 0
 
 
+def in_range(my_range, mouse_x, mouse_y, obj):
+    distance = ((mouse_x - obj.position[0])**2 + (mouse_y - obj.position[1])**2)**0.5
+    return distance <= my_range
+
+
 # Use gmap atributes inline but for now
 def set_map(gmap):
     global pygame, map_name, paths, background_color, path_thickness, path_color
@@ -452,6 +457,7 @@ while running:
             total_money += hits * money_per_hit
         #else:
             #tower.draw(window)
+        tower.highlight = False
 
     if active:
         for enemy in enemies:
@@ -536,10 +542,15 @@ while running:
             ghost_tower_image = current_tower_type.image
 
         # Show ghost image if not in side panel
+
         if mouse_x < 675:
             ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
             pygame.draw.circle(window, (0, 255, 255), (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
+            if current_tower_type.name == "Totem":
+                for tower in towers:
+                    if in_range(current_tower_type.range, mouse_x, mouse_y, tower):
+                         tower.highlight = True
 
     nav.draw_inset_window(window, inset_window, player_money)
 
