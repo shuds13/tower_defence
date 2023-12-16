@@ -171,7 +171,6 @@ class Tower:
     def general_draw(self, window, image, rect):
         if self.highlight:
             pygame.draw.rect(window, (0,160,0), rect, 3)
-        #new_rect = image.get_rect(center=image.get_rect(center=self.position).center)
         window.blit(image, rect.topleft)
 
     def draw(self, window):
@@ -930,7 +929,10 @@ class GlueGunner(Tower):
         #return score
 
 # Maybe the Demons need more than ghost sight - 3rd level wizard or 3rd level totem.
-# Top level can blast from peak - lot of damage to big enemies.
+# Top level can blast from peak - lot of damage to big enemies - or some laser
+# More ambitious some sort of summoning ability or time limited power - glows during that.
+# Or something like prince of darkness power to harvest enemies and send back along track - but
+# that would suddenly require being in range of track!
 class Totem(Tower):
 
     price = 200  # Prob first level energizes towers - 2nd level see ghosts - but need to make few more easy levels early on.

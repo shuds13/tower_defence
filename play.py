@@ -141,6 +141,9 @@ def in_range(my_range, mouse_x, mouse_y, obj):
     distance = ((mouse_x - obj.position[0])**2 + (mouse_y - obj.position[1])**2)**0.5
     return distance <= my_range
 
+def in_range2(my_range, mouse_x, mouse_y, obj):
+    distance = ((obj.position[0] - mouse_x)**2 + (obj.position[1] - mouse_y)**2)**0.5
+    return distance <= my_range
 
 # Use gmap atributes inline but for now
 def set_map(gmap):
@@ -550,7 +553,15 @@ while running:
             if current_tower_type.name == "Totem":
                 for tower in towers:
                     if in_range(current_tower_type.range, mouse_x, mouse_y, tower):
-                         tower.highlight = True
+                        if tower.__class__.name != "Totem":  # dont highlight totem here
+                            tower.highlight = True
+            else:
+                #my_totem = None # Make totems glow gives more info - but little pic might be nice!
+                for totem in totems:
+                    totem.highlight = False
+                    if in_range2(totem.range, mouse_x, mouse_y, totem):
+                        totem.highlight = True
+                        #if my_totem is None or totem.level > my_totem.level:
 
     nav.draw_inset_window(window, inset_window, player_money)
 
