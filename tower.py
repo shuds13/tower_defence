@@ -1086,7 +1086,7 @@ class Totem(Tower):
         if self.level >= 4:
             # maybe laser eyes that attack and/or some long-range attack:
             #tower.speed_mod = 0.7 # may add demon sight here
-            tower.speed_mod = 0.6 # while addin nothing else - boost a bit
+            tower.speed_mod = 0.65 # while addin nothing else - boost a bit
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Totem]
 

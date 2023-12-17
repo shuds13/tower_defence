@@ -444,22 +444,38 @@ class Level45(Level):
         self.phase_counts = [25, 35, 36, 37, 46, 47]
         self.enemy_types = [3, 11, 12, 11, 11, 12]
 
-# test levels
 class Level46(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 4
-        self.spawn_intervals = [100, 100, 200]
-        self.phase_counts = [2,3,4]
-        self.enemy_types = [11, 12, 201]
+        self.num_enemies = 40
+        self.spawn_intervals = [3, 20]
+        self.phase_counts = [30, 40]
+        self.enemy_types = [10, 14]
 
 class Level47(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 15
-        self.spawn_intervals = [15,15]
-        self.phase_counts = [10,15]
-        self.enemy_types = [10, 13]
+        self.num_enemies = 350
+        self.spawn_intervals = [1,3,1,2,2,3]
+        self.phase_counts = [100, 150, 200, 250, 300, 350]
+        self.enemy_types = [2, 102, 3, 103, 4, 104]
+
+# test levels
+#class Level46(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 4
+        #self.spawn_intervals = [100, 100, 200]
+        #self.phase_counts = [2,3,4]
+        #self.enemy_types = [11, 12, 201]
+
+#class Level47(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 15
+        #self.spawn_intervals = [15,15]
+        #self.phase_counts = [10,15]
+        #self.enemy_types = [10, 13]
 
 class Level48(Level):
     def __init__(self):
@@ -480,25 +496,33 @@ class Level49(Level):
 class Level50(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 20
-        self.spawn_intervals = [8,15]
-        self.phase_counts = [10,20]
-        self.enemy_types = [2, 10]
+        self.num_enemies = 2
+        self.spawn_intervals = [30]
+        self.phase_counts = [3]
+        self.enemy_types = [201]
+
+#class Level50(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 20
+        #self.spawn_intervals = [8,15]
+        #self.phase_counts = [10,20]
+        #self.enemy_types = [2, 10]
 
 class Level51(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 20
-        self.spawn_intervals = [15]
-        self.phase_counts = [20]
-        self.enemy_types = [10]
+        self.num_enemies = 200
+        self.spawn_intervals = [2]
+        self.phase_counts = [200]
+        self.enemy_types = [5]
 
 class Level52(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 47
-        self.spawn_intervals = [8, 15, 30, 30, 12, 30, 30]
-        self.phase_counts = [25, 35, 36, 37, 46, 47, 49]
+        self.num_enemies = 51
+        self.spawn_intervals = [8, 15, 30, 30, 12, 20, 25]
+        self.phase_counts = [25, 35, 36, 37, 46, 50, 51]
         self.enemy_types = [103, 11, 12, 11, 11, 12, 201]
 
 # tests only

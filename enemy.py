@@ -4,6 +4,8 @@ import random
 
 ghost_img = pygame.image.load('ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
+big_ghost_img = pygame.transform.scale(ghost_img, (70, 70))
+
 devil_img = pygame.image.load('devil.png')
 devil_img = pygame.transform.scale(devil_img, (50, 50))
 
@@ -326,6 +328,17 @@ class Ghost(Enemy):
             self.reached_end = True
         return damage
 
+class BigGhost(Ghost):
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.health = 20
+        self.value = 20
+        self.base_speed = 3
+        self.speed = 3
+        self.image = big_ghost_img
+        self.spawn_on_die = True
+        self.spawn_type = Ghost
+        self.spawn_count = 8
 
 class Devil(Ghost):
     def __init__(self, path, position=None, path_index=0):
@@ -478,6 +491,6 @@ class Heart(Enemy):
         return 0
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
-               10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil,
+               10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104,
                201: KingBlob}
