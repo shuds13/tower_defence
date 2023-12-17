@@ -243,7 +243,8 @@ class Fighter(Tower):
         self.cost = Fighter.price
         self.image = Fighter.image
         self.level = 1
-        self.upgrade_costs = [40, 150, 400]
+        #self.upgrade_costs = [40, 150, 400]
+        self.upgrade_costs = [40, 180, 400]
         self.beam_width = 5
         self.upgrade_name = "Rapid Fire"
 
