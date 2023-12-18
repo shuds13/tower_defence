@@ -75,7 +75,8 @@ class Tower:
 
     def __init__(self, position):
         self.position = position
-        self.range = Tower.range
+        self.range_mod = 1
+        self.range = self.range_mod * Tower.range
         self.attack_speed = 40
         self.attack_timer = 0
         self.target = None
@@ -237,7 +238,7 @@ class Fighter(Tower):
 
     def __init__(self, position):
         super().__init__(position)
-        self.range = Fighter.range
+        self.range = self.range_mod * Fighter.range
         self.attack_speed = 40
         self.damage = 1
         self.cost = Fighter.price
@@ -259,7 +260,7 @@ class Fighter(Tower):
         self.level +=1
         if self.level == 2:
             self.attack_speed = 25  # lower is better currently
-            self.range = 110
+            self.range = self.range_mod * 110
             self.image = fighter2_img
             self.cost += self.upgrade_costs[0]
             # TODO does not curently give level name at top of inset. For that maybe want it to be on
@@ -268,13 +269,13 @@ class Fighter(Tower):
             self.upgrade_name = "Destroyer"
         if self.level == 3:
             self.attack_speed = 10  # lower is better currently
-            self.range = 120
+            self.range = self.range_mod * 120
             self.image = fighter3_img
             self.cost += self.upgrade_costs[1]
             self.upgrade_name = "Raptor"
         if self.level == 4:
             self.attack_speed = 6  # lower is better currently - if dam 1 make faster
-            self.range = 140
+            self.range = self.range_mod * 140
             self.image = fighter4_img
             self.cost += self.upgrade_costs[2]
             self.damage = 2  # compare
@@ -292,7 +293,7 @@ class Burger(Tower):
 
     def __init__(self, position):
         super().__init__(position)
-        self.range = Burger.range
+        self.range = self.range_mod * Burger.range
         self.attack_speed = 75
         self.damage = 1
         self.cost = Burger.price
@@ -307,7 +308,7 @@ class Burger(Tower):
         self.level +=1
         if self.level == 2:
             self.attack_speed = 55  # lower is better currently
-            self.range = 70
+            self.range = self.range_mod * 70
             self.image = burger2_img
             #self.image = pygame.transform.scale(burger_img, (55, 55))
             self.max_attacks = 6
@@ -316,7 +317,7 @@ class Burger(Tower):
             self.upgrade_name = "Extra Spicy" # "Spicy Deluxe" too long currently
         if self.level == 3:
             self.attack_speed = 26  # lower is better currently
-            self.range = 75
+            self.range = self.range_mod * 75
             self.image = burger3_img
             #self.image = pygame.transform.scale(burger_img, (55, 55))
             self.max_attacks = 8
@@ -325,7 +326,7 @@ class Burger(Tower):
             self.upgrade_name = "Whopper"
         if self.level == 4:
             self.attack_speed = 12 # 16 (dam 2)  # lower is better currently
-            self.range = 80
+            self.range = self.range_mod * 80
             self.image = burger4_img
             self.max_attacks = 15  # 12 (dam 2)
             self.cost += self.upgrade_costs[2]
@@ -334,7 +335,7 @@ class Burger(Tower):
             self.damage = 1 # 2 # not sure - with damage 2 and other stats nothing got past
         #if self.level == 5:
             #self.attack_speed = 8  # lower is better currently
-            #self.range = 100
+            #self.range = self.range_mod * 100
             #self.image = burger5_img
             #self.max_attacks = 20
             #self.cost += self.upgrade_costs[3]
@@ -417,7 +418,7 @@ class Wizard(Tower):
 
     def __init__(self, position):
         super().__init__(position)
-        self.range = Wizard.range
+        self.range = self.range_mod * Wizard.range
         self.attack_speed = 60
         self.damage = 2
         self.cost = Wizard.price
@@ -443,7 +444,7 @@ class Wizard(Tower):
         self.level +=1
         if self.level == 2:
             self.attack_speed = 30  # lower is better currently
-            self.range = 130
+            self.range = self.range_mod * 130
             self.image = wizard2_img
             self.cloud_freq = 5  # ironially i think this needs to be less as attack speed is faster
             self.cost += self.upgrade_costs[0]
@@ -454,7 +455,7 @@ class Wizard(Tower):
         if self.level == 3:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 15  # lower is better currently
-            self.range = 150
+            self.range = self.range_mod * 150
             self.image = wizard3_img
             self.cloud_freq = 6  # less freq
             self.cost += self.upgrade_costs[1]
@@ -465,7 +466,7 @@ class Wizard(Tower):
         if self.level == 4:
             # I really want to introduce a new spell - maybe blow enemies back or something else.
             self.attack_speed = 8  # lower is better currently
-            self.range = 170
+            self.range = self.range_mod * 170
             self.image = wizard4_img
             self.cloud_freq = 7  # less freq
             self.cost += self.upgrade_costs[2]
@@ -756,7 +757,7 @@ class GlueGunner(Tower):
 
     def __init__(self, position):
         super().__init__(position)
-        self.range = GlueGunner.range
+        self.range = self.range_mod * GlueGunner.range
         self.attack_speed = 40 # 30
         self.damage = 1
         self.cost = GlueGunner.price
@@ -776,7 +777,7 @@ class GlueGunner(Tower):
         self.level +=1
         if self.level == 2:
             self.attack_speed = 35
-            self.range = 110
+            self.range = self.range_mod * 110
             self.image = gluegun2_img
             self.cost += self.upgrade_costs[0]
             self.glue_layers = 3
@@ -787,7 +788,7 @@ class GlueGunner(Tower):
 
         if self.level == 3:
             self.attack_speed = 30
-            #self.range = 110
+            #self.range = self.range_mod * 110
             self.image = gluegun3_img
             self.cost += self.upgrade_costs[1]
             self.slow_factor = [0.4, 0.75, 0.8]
@@ -804,7 +805,7 @@ class GlueGunner(Tower):
 
         if self.level == 4:
             self.attack_speed = 22
-            self.range = 120
+            self.range = self.range_mod * 120
             self.image = gluegun4_img
             self.cost += self.upgrade_costs[2]
             self.slow_factor = [0.4, 0.6, 0.7]
@@ -963,7 +964,7 @@ class Totem(Tower):
 
     def __init__(self, position):
         super().__init__(position)
-        self.range = Totem.range
+        self.range = self.range_mod * Totem.range
         #self.attack_speed = 40 # 30
         #self.damage = 1
         self.cost = Totem.price
@@ -978,7 +979,7 @@ class Totem(Tower):
         if self.level == 2:
             self.image = totem2_img
             self.cost += self.upgrade_costs[0]
-            self.range = 110
+            self.range = self.range_mod * 110
             # Divine Breath if do blow ability - but I don't like that its position dependent (though I want it in game)
             self.upgrade_name = "Arcane Energy"  # For now.
         if self.level == 3:
@@ -986,7 +987,7 @@ class Totem(Tower):
             self.cost += self.upgrade_costs[1]
             self.upgrade_name = "Eye of Moloch"
         if self.level == 4:
-            self.range = 120
+            self.range = self.range_mod * 120
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
@@ -1080,6 +1081,7 @@ class Totem(Tower):
         # Not changing range for now.
         if self.level >= 1:
             tower.speed_mod = 0.9
+            tower.range_mod = 1.1
         if self.level >= 2:
             tower.see_ghosts = True
         #below here experimenting late at night. Also range wld need a mod.

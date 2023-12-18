@@ -17,7 +17,7 @@ pygame.font.init()  # Initialize font module
 # Current defaults: 30 / 100 / 1
 
 initial_lives = 30
-initial_money = 150
+initial_money = 15000
 initial_level = 1
 
 
@@ -573,21 +573,30 @@ while running:
                 else:
                     range_color = (255, 165, 0)  # orange
 
-            #pygame.draw.circle(window, (0, 255, 255), (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
-            pygame.draw.circle(window, range_color, (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
+            #pygame.draw.circle(window, range_color, (mouse_x, mouse_y), current_tower_type.range, 1)  # Range
 
+            show_range = current_tower_type.range
             if current_tower_type.name == "Totem":
                 for tower in towers:
                     if in_range(current_tower_type.range, mouse_x, mouse_y, tower):
                         if tower.__class__.name != "Totem":  # dont highlight totem here
                             tower.highlight = True
             else:
-                #my_totem = None # Make totems glow gives more info - but little pic might be nice!
+                # Make totems glow gives more info - but little pic might be nice!
+                # also if adjust range need most powerful totem
+                my_totem = None
+                # if totem adjusts tower ranges - need to show here - maybe draw range line
+                # down here rather than above
                 for totem in totems:
                     totem.highlight = False
                     if in_range2(totem.range, mouse_x, mouse_y, totem):
                         totem.highlight = True
-                        #if my_totem is None or totem.level > my_totem.level:
+                        if my_totem is None or totem.level > my_totem.level:
+                            my_totem = totem
+                            show_range = (current_tower_type.range * totem.range_mod)
+
+            pygame.draw.circle(window, range_color, (mouse_x, mouse_y), show_range, 1)
+
 
     if inset_window['active']:
         update_inset_totems(inset_window)
