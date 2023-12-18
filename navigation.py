@@ -232,14 +232,8 @@ def draw_inset_window(surface, window_info, player_money):
     totem = window_info['totem']
 
     # Show radius of tower
-    trange = tower.range
-
-    #  may not do this here - as may change tower.range in tower!
-    #if totem is None:
-        #trange = tower.range
-    #else:
-        #trange = tower.range * totem.range_mod
-
+    trange = tower.current_range()
+    #print(tower.range, tower.current_range())
     pygame.draw.circle(surface, (0, 255, 255), tower.position, trange, 1)
 
     # Draw the border

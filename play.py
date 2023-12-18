@@ -340,6 +340,7 @@ while running:
     # If not too slow - work this out every time then okay with buying selling etc...
     for tower in towers:
         tower.speed_mod = 1
+        tower.range_mod = 1
         tower.see_ghosts = tower.__class__.see_ghosts
         #print(f"Tower: {tower} {tower.__class__.see_ghosts} {tower.see_ghosts}")
 
@@ -592,8 +593,9 @@ while running:
                     if in_range2(totem.range, mouse_x, mouse_y, totem):
                         totem.highlight = True
                         if my_totem is None or totem.level > my_totem.level:
+                            #print('in range')
                             my_totem = totem
-                            show_range = (current_tower_type.range * totem.range_mod)
+                            show_range = (current_tower_type.range * totem.range_boost)
 
             pygame.draw.circle(window, range_color, (mouse_x, mouse_y), show_range, 1)
 
