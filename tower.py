@@ -1037,7 +1037,7 @@ class Totem(Tower):
         if self.level == 2:
             return (self.position[0]-2, self.position[1]-24), (self.position[0]+8, self.position[1]-24)
         elif self.level == 3:
-            return (self.position[0]-6, self.position[1]-25), (self.position[0]+9, self.position[1]-25)
+            return (self.position[0]-6, self.position[1]-25), (self.position[0]+8, self.position[1]-25)
         elif self.level == 4:
             return (self.position[0]-9, self.position[1]-18), (self.position[0]+11, self.position[1]-18)
 
