@@ -324,14 +324,14 @@ class Burger(Tower):
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             self.upgrade_name = "Whopper"
         if self.level == 4:
-            self.attack_speed = 16  # lower is better currently
+            self.attack_speed = 12 # 16 (dam 2)  # lower is better currently
             self.range = 80
             self.image = burger4_img
-            self.max_attacks = 12
+            self.max_attacks = 15  # 12 (dam 2)
             self.cost += self.upgrade_costs[2]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             #either slower attack_speed (~20) and damage 2 or faster <15 and damage 1
-            self.damage = 2 # not sure - with damage 2 and other stats nothing got past
+            self.damage = 1 # 2 # not sure - with damage 2 and other stats nothing got past
         #if self.level == 5:
             #self.attack_speed = 8  # lower is better currently
             #self.range = 100
@@ -978,6 +978,7 @@ class Totem(Tower):
         if self.level == 2:
             self.image = totem2_img
             self.cost += self.upgrade_costs[0]
+            self.range = 110
             # Divine Breath if do blow ability - but I don't like that its position dependent (though I want it in game)
             self.upgrade_name = "Arcane Energy"  # For now.
         if self.level == 3:
@@ -985,10 +986,11 @@ class Totem(Tower):
             self.cost += self.upgrade_costs[1]
             self.upgrade_name = "Eye of Moloch"
         if self.level == 4:
+            self.range = 120
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
-            self.attack_speed = 10  # maybe constant
+            self.attack_speed = 8  # maybe constant
 
     def find_target(self, enemies):
         self.target = None
