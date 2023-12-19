@@ -2,6 +2,7 @@ import math
 import pygame
 import random
 import sounds
+from placements import create_ghost_image
 #pygame.init()
 #screen = pygame.display.set_mode((800, 600))
 
@@ -989,6 +990,7 @@ class Totem(Tower):
             self.upgrade_name = "Arcane Energy"  # For now.
             self.range_boost = 1.15
         if self.level == 3:
+            self.banish_mana = 50
             self.image = totem3_img
             self.cost += self.upgrade_costs[1]
             self.upgrade_name = "Eye of Moloch"
@@ -1041,6 +1043,37 @@ class Totem(Tower):
             return (self.position[0]-6, self.position[1]-25), (self.position[0]+8, self.position[1]-25)
         elif self.level == 4:
             return (self.position[0]-9, self.position[1]-18), (self.position[0]+11, self.position[1]-18)
+
+
+    def show_viz_persist(self, window):
+        self.animate_breath(window)
+        self.viz_persist -= 1
+
+
+    def animate_breath(self, window, paths=None):
+        #print('here - need to work on blue eye glow - dont look good')
+        eye_pos = self._get_eye_pos()
+        glow_color = (10, 20, 250)
+        glow_radius = 15
+        c_alpha = 130  # higher is more opaque
+        self._make_eye_glow(window, glow_radius, glow_color, c_alpha, eye_pos[0])
+        self._make_eye_glow(window, glow_radius, glow_color, c_alpha, eye_pos[1])
+
+        if paths is None:
+            paths = self.paths
+        else:
+            self.paths = paths
+        end_paths=[]
+        for i, path in enumerate(paths):
+            print(path[-1])
+            end_paths.append(path[-1])
+
+        # For now just appear at end of each path.
+        ghost_img = create_ghost_image(self.image, alpha=128)
+        for pos in end_paths:
+            ghost_tower_rect = ghost_img.get_rect(center=pos)
+            window.blit(ghost_img, ghost_tower_rect.topleft)
+
 
     def attack_animate(self, window):
         eye_pos = self._get_eye_pos()

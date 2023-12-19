@@ -20,6 +20,9 @@ king_img = pygame.transform.scale(king_img, (100, 100))
 # may make enemy0 as way of making a gap - inivisible no value etc...
 
 class Enemy:
+
+    banish_count = 0
+
     def __init__(self, path, position=None, path_index=0):
         self.path = path
         self.path_index = path_index
@@ -43,6 +46,7 @@ class Enemy:
         self.position = position or self.path[0]
         self.size = 1
         self.slowable = True
+        self.banished = False
         self.glue_reset()
 
     def glue_reset(self):
@@ -124,6 +128,7 @@ class Enemy:
         # Check if the enemy has reached the end of the path
         if self.path_index >= len(self.path) - 1:
             self.reached_end = True
+
 
     def take_damage(self, damage):
         self.health -= damage

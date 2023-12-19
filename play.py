@@ -16,9 +16,9 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 100 / 1
 
-initial_lives = 30
-initial_money = 150
-initial_level = 1
+initial_lives = 300
+initial_money = 15000
+initial_level = 6
 
 
 #init_last_round_restarts = 3
@@ -57,7 +57,7 @@ def reset_game():
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
     global total_hits, total_money, start_round_total_hits, start_round_total_money #, start_round_totems
-    global lives_highlight, totems
+    global lives_highlight, totems, banished_count
     player_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
@@ -85,6 +85,7 @@ def reset_game():
     start_round_total_money = initial_money
     lives_highlight = 0
     totems = []
+    banished_count = 0
 
 def reset_level():
     global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type, path_id
@@ -344,7 +345,22 @@ while running:
         tower.see_ghosts = tower.__class__.see_ghosts
         #print(f"Tower: {tower} {tower.__class__.see_ghosts} {tower.see_ghosts}")
 
+
+    # banishing still not right - as each totem has to lose banish mana - so how to do that
+    # and even how to decide which is doing the banishing.
+    max_banish = 0
     for totem in totems:
+
+        # try hoisting on here
+        if totem.level >=3:
+            # A detail - is which totem ghost images appear at end - shld only be ones using mana
+            max_banish += totem.banish_mana
+
+            # weird but this is for a cycle on - as i'm making use of same loop!
+            if Enemy.banish_count > banished_count:
+                totem.animate_breath(window, paths)
+                totem.viz_persist = 10
+
         for tower in towers:
             if totem.tower_in_range(tower):
                 totem.boost(tower)
@@ -369,11 +385,20 @@ while running:
                         path_id += 1
 
         # Update positions of all enemies
+        banished_count = Enemy.banish_count
         for enemy in enemies:
             enemy.move()
 
             # Check if the enemy has reached the end of the path
             if enemy.reached_end:
+                if max_banish > 0:
+                    if not enemy.banished and enemy.size < 2:
+                        enemy.reached_end = False
+                        enemy.path_index = -1
+                        enemy.banished = True
+                        Enemy.banish_count += 1
+                        max_banish -= 1
+
                 lives -= enemy.value  # Decrease the lives
             elif enemy.toxic_glued:
                 #print('hhhhhhhhhhhhhhhhhhere')
