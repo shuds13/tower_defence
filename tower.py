@@ -977,7 +977,7 @@ class Totem(Tower):
         self.upgrade_costs = [250, 500, 1000]
         self.upgrade_name = "Ghost Sight"
         self.attack_tower = False
-        self.range_boost = 1.05
+        self.range_boost = 1.10
 
     def level_up(self):
         self.level +=1
@@ -987,7 +987,7 @@ class Totem(Tower):
             self.range =  110
             # Divine Breath if do blow ability - but I don't like that its position dependent (though I want it in game)
             self.upgrade_name = "Arcane Energy"  # For now.
-            self.range_boost = 1.10
+            self.range_boost = 1.15
         if self.level == 3:
             self.image = totem3_img
             self.cost += self.upgrade_costs[1]
@@ -999,6 +999,7 @@ class Totem(Tower):
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
             self.attack_speed = 8  # maybe constant
+            self.range_boost = 1.20
 
     def find_target(self, enemies):
         self.target = None
