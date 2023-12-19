@@ -1,6 +1,4 @@
-#Maybe this should be maps - and path be part of this module
-
-def point_line_distance(point, line_start, line_end, w, h):
+def get_nearest_point_on_path(point, line_start, line_end):
     """Calculate the minimum distance between a point and a line segment."""
     # Line segment start and end points
     x1, y1 = line_start
@@ -23,21 +21,27 @@ def point_line_distance(point, line_start, line_end, w, h):
     else:
         nearest_point = (x1 + u * (x2 - x1), y1 + u * (y2 - y1))
 
+    return nearest_point
+
+
+def too_close_to_path(point, line_start, line_end, w, h):
     # Distance from point to nearest point on the line segment
+
+    nearest_point = get_nearest_point_on_path(point, line_start, line_end)
+    px, py = point
     dx = px - nearest_point[0]
     dy = py - nearest_point[1]
-    #return (dx ** 2 + dy ** 2) ** 0.5
-
+    # return (dx ** 2 + dy ** 2) ** 0.5  # old - equal width/height towers
     # this is where could add path_thickness//2 - overlap but for now distance to centre of path.
     return abs(dx) < w//2 and abs(dy) < h//2
 
 
-
 def is_valid_position(newtowertype, pos, paths, towers):
     """Check if the position is not on the path and not too close to other towers."""
-    min_distance_to_path = 25 # 20  # Minimum allowed distance from the path TODO should include path thickness
-    #base_min_dist_between_towers = 30 #25
-    overlap = 15 # 20
+
+    # TODO should include path thickness
+    min_distance_to_path = 25 # Minimum allowed distance from the path
+    overlap = 15
 
     #TODO use collide to see if in side panel
     if pos[0] > 675:  # so no part in side panel
@@ -50,13 +54,10 @@ def is_valid_position(newtowertype, pos, paths, towers):
     # Check distance from the path
     for path in paths:
         for i in range(len(path) - 1):
-            #if point_line_distance(pos, path[i], path[i + 1], w1, h1) < min_distance_to_path:
-            if point_line_distance(pos, path[i], path[i + 1], w1, h1):
+            if too_close_to_path(pos, path[i], path[i + 1], w1, h1):
                 return False
 
     # Check distance from other towers
-
-    # Compare x and y - should not need pythagoras
     for tower in towers:
         w2 = tower.__class__.footprint[0]
         h2 = tower.__class__.footprint[1]
@@ -64,18 +65,10 @@ def is_valid_position(newtowertype, pos, paths, towers):
         min_y = (h1+h2)//2 - overlap
         if abs(pos[0] - tower.position[0]) < min_x and abs(pos[1] - tower.position[1]) < min_y:
             return False
-
-    # original code
-    #for tower in towers:
-        #if (pos[0] - tower.position[0])**2 + (pos[1] - tower.position[1])**2 < base_min_dist_between_towers**2:
-            #return False
-
     return True
 
-# This works on fighter image but not burger - also makes transparent background black
 def create_ghost_image(original_image, alpha=128):
     """Create a semi-transparent version of the given image."""
-    # Copy the original image
     ghost_image = original_image.copy()
 
     # Modify the alpha value of every pixel
@@ -83,5 +76,4 @@ def create_ghost_image(original_image, alpha=128):
         for y in range(ghost_image.get_height()):
             color = ghost_image.get_at((x, y))
             ghost_image.set_at((x, y), (color.r, color.g, color.b, alpha))
-
     return ghost_image

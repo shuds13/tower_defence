@@ -452,11 +452,13 @@ class Level46(Level):
         self.phase_counts = [30, 40]
         self.enemy_types = [10, 14]
 
+# This is hard - may make easier - or keep as one of those levels - not proven on Valley
+# but may be able to do it with the 4th tier wizard.
 class Level47(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 350
-        self.spawn_intervals = [1,3,1,2,2,3]
+        self.spawn_intervals = [1,3,1,2,2,3]  # may slow down last phase - interval or number.
         self.phase_counts = [100, 150, 200, 250, 300, 350]
         self.enemy_types = [2, 102, 3, 103, 4, 104]
 
