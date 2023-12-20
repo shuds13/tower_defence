@@ -139,4 +139,17 @@ class Valley(Map):
         self.paths = [path1, path2]
 
 
-map_classes  = {1: PicnicPlace, 2: Staircase, 3: Valley}
+class Madeup(Map):
+    def __init__(self):
+        self.name = "Diamond"
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (192, 64, 0) #(242, 140, 40) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (244, 187, 68) # (201, 169, 166)
+
+        path1 = [(100, 0), (360, 360), (600, 0)]
+        path2 = [(100, 700), (360, 200), (600, 700)]
+        self.paths = [path1, path2]
+
+
+map_classes  = {1: PicnicPlace, 2: Staircase, 3: Madeup, 4:Valley}

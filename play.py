@@ -432,7 +432,7 @@ while running:
                 reset_level()
                 # Will be in stats option in options window.
                 #print(f"{total_hits=}")
-                #print(f"{total_money=:.2f}")
+                print(f"{total_money=:.2f}")
                 continue
 
         if lives <= 0:
