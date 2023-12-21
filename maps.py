@@ -44,14 +44,18 @@ def map_window(display, surface, window_size):
     width = 180
     height = 120
 
-    x = window_width//2 - width//2
-    y = 20
+    start_y = 80
+    #x = window_width//2 - width//2
+    x = 60  # 200 works with col_size 4
+    y = start_y  # 10 works with col_size 4
+    #col_size = 4  # max is 4
+    col_size = 3  # max is 4
 
     map_rects = []
     maps = []
     gmap = None
     # map is keyword - so gmap = game map
-    for map_class in map_classes.values():
+    for count, map_class in enumerate(map_classes.values()):
         #create? Well if I want to eventually to show thumbnails of maps will need create something
         gmap = map_class()
 
@@ -72,6 +76,9 @@ def map_window(display, surface, window_size):
         y+=150
         map_rects.append(map_image_rect)
         maps.append(gmap)
+        if (count+1) % col_size == 0:
+            y = start_y
+            x += width+20
 
     display.flip()
     # loop to detect clicks
@@ -126,6 +133,19 @@ class Staircase(Map):
         self.path_color = (0, 211, 211)
 
 
+class Diamond(Map):
+    def __init__(self):
+        self.name = "Diamond"
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (192, 64, 0) #(242, 140, 40) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (244, 187, 68) # (201, 169, 166)
+
+        path1 = [(100, 0), (360, 360), (600, 0)]
+        path2 = [(100, 600), (360, 200), (600, 600)]
+        self.paths = [path1, path2]
+
+
 class Valley(Map):
     def __init__(self):
         self.name = "Valley"
@@ -139,17 +159,18 @@ class Valley(Map):
         self.paths = [path1, path2]
 
 
-class Madeup(Map):
+class Square(Map):
     def __init__(self):
-        self.name = "Diamond"
-        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (192, 64, 0) #(242, 140, 40) # (53, 94, 59)  # (0, 158, 96)
+        self.name = "Square"
+        self.background_color = (0, 71, 171)
         self.path_thickness = 20
-        self.path_color = (244, 187, 68) # (201, 169, 166)
+        self.path_color = (0, 163, 108)
 
-        path1 = [(100, 0), (360, 360), (600, 0)]
-        path2 = [(100, 700), (360, 200), (600, 700)]
-        self.paths = [path1, path2]
+        path1 = [(250, 0), (250, 600)]
+        path2 = [(450, 0), (450, 600)]
+        path3 = [(0, 200), (700, 200)]
+        path4 = [(0, 400), (700, 400)]
+        self.paths = [path1, path2, path3, path4]
 
 
-map_classes  = {1: PicnicPlace, 2: Staircase, 3: Madeup, 4:Valley}
+map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4:Valley, 5:Square}
