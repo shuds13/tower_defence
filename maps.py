@@ -179,5 +179,15 @@ class Square(Map):
         self.paths = [path1, path2, path3, path4]
 
 
-map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square}
+class What(Map):
+    def __init__(self):
+        self.name = "What"
+        self.difficulty = 1
+        self.background_color = (0, 71, 171)
+        self.path_thickness = 20
+        self.path_color = (0, 163, 108)
+        self.paths = [[(80.0, 480.0), (240.0, 120.0), (400.0, 420.0), (560.0, 180.0), (720.0, 360.0)]]
+
+
+map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square, 6: What}
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}

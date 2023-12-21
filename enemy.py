@@ -70,7 +70,7 @@ class Enemy:
             window.blit(self.image, image_rect.topleft)
         else:
             # TODO - check cant you use self.position - isn't it already int.
-            pygame.draw.circle(window, self.color, (int(x), int(y)), 10)
+            pygame.draw.circle(window, self.color, (int(x), int(y)), 10*self.size)
             if self.fortified and self.fort_health > 0:
                 w = self.fort_health
                 # could be same size or bigger to go round outside
@@ -400,6 +400,29 @@ class GiantTroll(Enemy):
         return damage
 
 
+class Meteor(Enemy):
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.health = 10
+        self.value = 10
+        self.base_speed = 8
+        self.speed = 7
+        self.spawn_on_die = True
+        self.spawn_type = Enemy4
+        self.spawn_count = 3
+        self.size = 2
+        self.color = (150, 121, 105)
+
+
+    # TODO - is this needed - check difference to original function
+    def take_damage(self, damage):
+        self.health -= damage
+        self.value = self.health
+        sounds.play('blop')
+        if self.health <= 0:
+            self.reached_end = True
+        return damage
+
 
 
 class KingBlob(Enemy):
@@ -491,6 +514,6 @@ class Heart(Enemy):
         return 0
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
-               10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost,
+               10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104,
                201: KingBlob}

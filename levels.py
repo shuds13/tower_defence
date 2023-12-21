@@ -527,6 +527,16 @@ class Level52(Level):
         self.phase_counts = [25, 35, 36, 37, 46, 50, 51]
         self.enemy_types = [103, 11, 12, 11, 11, 12, 201]
 
+# I want to introduc metors earlier like cermics - but they are very fast.
+class Level53(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 2
+        self.spawn_intervals = [15]
+        self.phase_counts = [2]
+        self.enemy_types = [15]
+
+
 # tests only
 #class Level41(Level):
     #def __init__(self):
@@ -544,7 +554,7 @@ class Level52(Level):
         #self.phase_counts = [6, 50, 100]
         #self.enemy_types = [201, 11, 10]
 
-max_level = 52  # TODO get this from last key in levels
+max_level = 53  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
 
