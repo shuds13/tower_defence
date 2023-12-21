@@ -998,7 +998,7 @@ class Totem(Tower):
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
-            self.attack_speed = 8  # maybe constant
+            self.attack_speed = 5  # maybe constant
             self.range_boost = 1.20
 
     def find_target(self, enemies):
