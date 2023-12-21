@@ -406,13 +406,13 @@ class Meteor(Enemy):
         self.health = 10
         self.value = 10
 
-        self.base_speed = 7
+        self.base_speed = 8
         #self.base_speed = 2 # tmp for testing
         self.speed = self.base_speed
 
         self.spawn_on_die = True
         self.spawn_type = Enemy4
-        self.spawn_count = 4
+        self.spawn_count = 5
         self.size = 2
         self.color =  (193, 154, 107) #(150, 121, 105)
         self.fortified = True

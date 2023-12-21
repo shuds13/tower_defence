@@ -16,9 +16,12 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 100 / 1
 
+
+# IMPORTANT need to remember to update money_per_hit - < round 40 etc as it will affect difficulty of rounds which
+# i'm trying to get right - i'll have to get it right all over again!
 initial_lives = 30
-initial_money = 150
-initial_level = 1
+initial_money = 5000
+initial_level = 50
 
 
 #init_last_round_restarts = 3
@@ -225,8 +228,13 @@ def get_money_per_hit(level_num):
         money_per_hit = 0.7 # 0.8
     elif level_num < 30:
         money_per_hit = 0.5 # 0.6
+    elif level_num < 40:
+        #money_per_hit = 0.3 # 0.6  #testing
+        money_per_hit = 0.4 # 0.6
+    elif level_num < 50:
+        money_per_hit = 0.3 # 0.6
     else:
-        money_per_hit = 0.3 # 0.4
+        money_per_hit = 0.2 # 0.4
     #print(f"{money_per_hit=}")
     return money_per_hit
 
@@ -432,7 +440,7 @@ while running:
                 reset_level()
                 # Will be in stats option in options window.
                 #print(f"{total_hits=}")
-                print(f"{total_money=:.2f}")
+                print(f"Before level {level_num} {total_money=:.2f}")
                 continue
 
         if lives <= 0:
