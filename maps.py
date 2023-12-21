@@ -36,9 +36,9 @@ def map_window(display, surface, window_size):
     font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
     font = pygame.font.SysFont(None, 24)
 
-    map_name_text = font_title.render("Choose a map", True, (0, 0, 0))  # Black text
-    map_name_rect = map_name_text.get_rect(midleft=(10, 10))
-    surface.blit(map_name_text, map_name_rect.topleft)
+    map_menu_text = font_title.render("Choose a map", True, (0, 0, 0))  # Black text
+    map_menu_rect = map_menu_text.get_rect(midleft=(10, 10))
+    surface.blit(map_menu_text, map_menu_rect.topleft)
 
     #loop and call
     width = 180
@@ -68,7 +68,8 @@ def map_window(display, surface, window_size):
         surface.blit(thumbnail, (x,y))
         map_image_rect = thumbnail.get_rect(topleft=(x,y))
 
-        map_name_text = font.render(gmap.name.upper(), True, (0, 0, 0))  # Black text
+        maptxt = gmap.name.upper() + " (" + difficulty[gmap.difficulty] + ")"
+        map_name_text = font.render(maptxt, True, (0, 0, 0))  # Black text
         map_name_rect = map_name_text.get_rect(topleft=(x, y+120))
         surface.blit(map_name_text, map_name_rect.topleft)
 
@@ -118,6 +119,7 @@ class Map():
 class PicnicPlace(Map):
     def __init__(self):
         self.name = "Picnic Place"
+        self.difficulty = 1
         self.paths = [[(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]]
         self.background_color = (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
@@ -127,6 +129,7 @@ class PicnicPlace(Map):
 class Staircase(Map):
     def __init__(self):
         self.name = "Staircase"
+        self.difficulty = 2
         self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
         self.background_color = (50, 25, 0)
         self.path_thickness = 15
@@ -136,6 +139,7 @@ class Staircase(Map):
 class Diamond(Map):
     def __init__(self):
         self.name = "Diamond"
+        self.difficulty = 2
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (192, 64, 0) #(242, 140, 40) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
@@ -149,6 +153,7 @@ class Diamond(Map):
 class Valley(Map):
     def __init__(self):
         self.name = "Valley"
+        self.difficulty = 3
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
@@ -162,6 +167,7 @@ class Valley(Map):
 class Square(Map):
     def __init__(self):
         self.name = "Square"
+        self.difficulty = 4
         self.background_color = (0, 71, 171)
         self.path_thickness = 20
         self.path_color = (0, 163, 108)
@@ -173,4 +179,5 @@ class Square(Map):
         self.paths = [path1, path2, path3, path4]
 
 
-map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4:Valley, 5:Square}
+map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square}
+difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
