@@ -1,6 +1,6 @@
 import pygame
 import navigation as nav
-
+import time
 
 def render_level_to_surface(gmap, size):
     # Create a new surface
@@ -13,7 +13,8 @@ def render_level_to_surface(gmap, size):
     # Draw the path
     for path in gmap.paths:
         for i in range(len(path) - 1):
-            pygame.draw.line(level_surface, gmap.path_color, path[i], path[i + 1], 5)
+            # Increased thickness from 5 to 10, looks better in thumbnails
+            pygame.draw.line(level_surface, gmap.path_color, path[i], path[i + 1], 10)
 
     return level_surface
 
@@ -44,12 +45,25 @@ def map_window(display, surface, window_size):
     width = 180
     height = 120
 
-    start_y = 80
+    start_x = 60  # 200 works with col_size 4
+    start_y = 80  # 10 works with col_size 4
     #x = window_width//2 - width//2
-    x = 60  # 200 works with col_size 4
-    y = start_y  # 10 works with col_size 4
-    #col_size = 4  # max is 4
-    col_size = 3  # max is 4
+
+    x_offset = width+20
+    y_offset = 150
+
+    # max col_size is 4
+    if len(map_classes) <= 6:
+        start_x = 100
+        col_size = 2
+        x_offset = width+60
+        y_offset = 200
+    else:
+        col_size = 3
+
+
+    x = start_x
+    y = start_y
 
     map_rects = []
     maps = []
@@ -74,18 +88,19 @@ def map_window(display, surface, window_size):
         surface.blit(map_name_text, map_name_rect.topleft)
 
 
-        y+=150
+        y+=y_offset
         map_rects.append(map_image_rect)
         maps.append(gmap)
         if (count+1) % col_size == 0:
             y = start_y
-            x += width+20
+            x += x_offset
 
     display.flip()
     # loop to detect clicks
     noclicks = True
     map_id = None
     while noclicks:
+        time.sleep(0.1)  # Reduce idle CPU usage
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 noclicks = False
