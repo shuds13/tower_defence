@@ -39,7 +39,8 @@ def map_window(display, surface, window_size):
     font = pygame.font.SysFont(None, 24)
 
     map_menu_text = font_title.render("Choose a map", True, (0, 0, 0))  # Black text
-    map_menu_rect = map_menu_text.get_rect(midleft=(10, 10))
+    #map_menu_rect = map_menu_text.get_rect(midleft=(10, 10))
+    map_menu_rect = map_menu_text.get_rect(center=(window_width//2, 20))
     surface.blit(map_menu_text, map_menu_rect.topleft)
 
     #loop and call
