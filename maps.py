@@ -1,6 +1,7 @@
 import pygame
 import navigation as nav
 import time
+import spiral
 
 def render_level_to_surface(gmap, size):
     # Create a new surface
@@ -183,9 +184,9 @@ class Square(Map):
     def __init__(self):
         self.name = "Square"
         self.difficulty = 4
-        self.background_color = (0, 71, 171)
+        self.background_color = (54, 69, 79) # (0, 71, 171)
         self.path_thickness = 20
-        self.path_color = (0, 163, 108)
+        self.path_color = (233, 220, 201) #(255, 255, 240) # (255,255,255) # (0, 163, 108)
 
         path1 = [(250, 0), (250, 600)]
         path2 = [(450, 0), (450, 600)]
@@ -194,30 +195,34 @@ class Square(Map):
         self.paths = [path1, path2, path3, path4]
 
 
-class What(Map):
+class Spiral(Map):
     def __init__(self):
-        self.name = "What"
+        self.name = "Spiral"
         self.difficulty = 1
         self.background_color = (0, 71, 171)
         self.path_thickness = 20
         self.path_color = (0, 163, 108)
 
-        simplified_path = [
-            (400, 300),
-            (550, 300),
-            (550, 450),
-            (400, 450),
-            (400, 300),
-            (700, 300),
-            (700, 600),
-            (400, 600),
-            (400, 300)
-        ]
+        #simplified_path = [
+            #(400, 300),
+            #(550, 300),
+            #(550, 450),
+            #(400, 450),
+            #(400, 300),
+            #(700, 300),
+            #(700, 600),
+            #(400, 600),
+            #(400, 300)
+        #]
 
-        self.paths = [simplified_path]
+        #spiral_path
+
+        #self.paths = [simplified_path]
+        self.paths = [spiral.spiral_path]
 
 
 
-#map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square, 6: What}
-map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square}
+#map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square, 6: Spiral}
+map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
+#map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square}
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
