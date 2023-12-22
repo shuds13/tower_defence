@@ -486,7 +486,7 @@ class KingBlob2(KingBlob):
         self.image = king2_img
         self.spawn_on_die = True
         self.spawn_type = Enemy3
-        self.spawn_count = 100
+        self.spawn_count = 150
         self.size = 3
 
 #class Ghost2(Enemy):
