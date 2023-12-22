@@ -10,6 +10,7 @@ import navigation as nav
 import levels as lev
 from maps import map_window
 import sounds
+import hints
 
 #pygame.mixer.init()
 pygame.font.init()  # Initialize font module
@@ -240,6 +241,7 @@ def get_money_per_hit(level_num):
 
 money_per_hit = get_money_per_hit(level_num)
 
+#hints.generate_hint(window, level_num)
 
 # Game loop
 while running:
@@ -343,7 +345,6 @@ while running:
             #running = False
         active = False
         #continue
-
 
     # If not too slow - work this out every time then okay with buying selling etc...
     for tower in towers:
@@ -607,6 +608,9 @@ while running:
 
             pygame.draw.circle(window, range_color, (mouse_x, mouse_y), show_range, 1)
 
+
+    if not active:
+        hints.generate_hint(window, level_num)
 
     if inset_window['active']:
         update_inset_totems(inset_window)
