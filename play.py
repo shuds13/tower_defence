@@ -20,8 +20,8 @@ pygame.font.init()  # Initialize font module
 # IMPORTANT need to remember to update money_per_hit - < round 40 etc as it will affect difficulty of rounds which
 # i'm trying to get right - i'll have to get it right all over again!
 initial_lives = 30
-initial_money = 5000
-initial_level = 50
+initial_money = 150
+initial_level = 1
 
 
 #init_last_round_restarts = 3
