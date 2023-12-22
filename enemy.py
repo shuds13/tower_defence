@@ -14,7 +14,8 @@ troll_img = pygame.transform.scale(troll_img, (50, 50))
 giant_troll_img = pygame.transform.scale(troll_img, (90, 90))
 king_img = pygame.image.load('kingblob.png')
 king_img = pygame.transform.scale(king_img, (100, 100))
-
+king2_img = pygame.image.load('kingblob_green.png')
+king2_img = pygame.transform.scale(king2_img, (110, 110))
 
 # TODO may not need value and health - will they always be the same?
 # may make enemy0 as way of making a gap - inivisible no value etc...
@@ -475,6 +476,19 @@ class KingBlob(Enemy):
             enemies.append(enemy)
 
 
+class KingBlob2(KingBlob):
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.health = 200
+        self.value = 200
+        self.base_speed = 1
+        self.speed = 1
+        self.image = king2_img
+        self.spawn_on_die = True
+        self.spawn_type = Enemy3
+        self.spawn_count = 100
+        self.size = 3
+
 #class Ghost2(Enemy):
     #def __init__(self, path, position=None, path_index=0):
         #super().__init__(path, position, path_index)
@@ -510,4 +524,4 @@ class Heart(Enemy):
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104,
-               201: KingBlob}
+               201: KingBlob, 301: KingBlob2}

@@ -186,8 +186,23 @@ class What(Map):
         self.background_color = (0, 71, 171)
         self.path_thickness = 20
         self.path_color = (0, 163, 108)
-        self.paths = [[(80.0, 480.0), (240.0, 120.0), (400.0, 420.0), (560.0, 180.0), (720.0, 360.0)]]
+
+        simplified_path = [
+            (400, 300),
+            (550, 300),
+            (550, 450),
+            (400, 450),
+            (400, 300),
+            (700, 300),
+            (700, 600),
+            (400, 600),
+            (400, 300)
+        ]
+
+        self.paths = [simplified_path]
 
 
-map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square, 6: What}
+
+#map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square, 6: What}
+map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square}
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}

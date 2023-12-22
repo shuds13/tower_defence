@@ -566,11 +566,56 @@ class Level54(Level):
 class Level55(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 3
+        self.num_enemies = 4
         self.spawn_intervals = [30]
-        self.phase_counts = [3]
+        self.phase_counts = [4]
         self.enemy_types = [201]
 
+class Level56(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 150
+        self.spawn_intervals = [3, 3, 1, 1, 5]
+        self.phase_counts = [25, 55, 80, 100, 150]
+        self.enemy_types = [5, 3, 1, 3, 102]
+
+class Level57(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 55
+        self.spawn_intervals = [8, 18, 30, 12, 20, 18]
+        self.phase_counts = [35, 38, 39, 46, 48, 55]
+        self.enemy_types = [11, 12, 11, 11, 12, 15]
+
+class Level58(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 350
+        self.spawn_intervals = [1,3,1,2,2,1]  # may slow down last phase - interval or number.
+        self.phase_counts = [100, 150, 200, 250, 300, 350]
+        self.enemy_types = [2, 102, 3, 103, 4, 102]
+
+
+class Level59(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 40
+        self.spawn_intervals = [5,5,4]
+        self.phase_counts = [10, 20, 40]
+        self.enemy_types = [15, 14, 13]
+
+
+# Plan is make this round 60
+class Level60(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 1
+        self.spawn_intervals = [1]
+        self.phase_counts = [1]
+        self.enemy_types = [301]
+
+
+# 58 giant ghosts.
 
 # tests only
 #class Level41(Level):
@@ -589,7 +634,7 @@ class Level55(Level):
         #self.phase_counts = [6, 50, 100]
         #self.enemy_types = [201, 11, 10]
 
-max_level = 55  # TODO get this from last key in levels
+max_level = 60  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
 
