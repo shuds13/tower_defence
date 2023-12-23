@@ -128,7 +128,8 @@ class Tower:
     # Note that enemy order if order came on to screen but may not be at the front at any point in time!
     def find_target(self, enemies):
         for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy):
+            #if self.in_range(enemy) and self.is_visible(enemy):
+            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:  # trying dec 23 2023
                 self.target = enemy
                 break
         else:
@@ -387,7 +388,7 @@ class Burger(Tower):
         tmp_target = []
         self.target = []
         for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy):
+            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
                 tmp_target.append(enemy)
         if tmp_target:
             self.target = self.create_sublist(tmp_target, self.max_attacks)
@@ -628,7 +629,7 @@ class Wizard(Tower):
             self.target = []
 
             for enemy in enemies:
-                if self.in_range(enemy):
+                if self.in_range(enemy) and not enemy.reached_end:
                     tmp_target.append(enemy)
                     #self.target.append(enemy)
             if tmp_target:
@@ -648,7 +649,7 @@ class Wizard(Tower):
             tmp_target = []
             self.target = []
             for enemy in enemies:
-                if self.in_range(enemy):
+                if self.in_range(enemy) and not enemy.reached_end:
                     tmp_target.append(enemy)
             if tmp_target:
                 self.target = self.create_sublist(tmp_target, self.max_attacks)
@@ -868,13 +869,13 @@ class GlueGunner(Tower):
             #if enemy.toxic_glued:
                 #print('Nope - hes toxic')
 
-            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and self.can_I_reglue(enemy):
+            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end and self.can_I_reglue(enemy):
                 count += 1  # TODO this updates whether same enemy or different...
                 self.target.append(enemy)
                 enemy.toxic_attacks += 1
                 if count >= self.max_attacks:
                     break
-            elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
+            elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end and not enemy.glued:
                 count += 1
                 self.target.append(enemy)
                 if count >= self.max_attacks:
@@ -1004,7 +1005,7 @@ class Totem(Tower):
     def find_target(self, enemies):
         self.target = None
         for enemy in enemies:
-            if enemy.size >= 3:
+            if enemy.size >= 3 and not enemy.reached_end:
                 self.target = enemy
                 break
         if self.target is None:

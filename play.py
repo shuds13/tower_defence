@@ -110,6 +110,7 @@ def restart_round():
 
     # TODO: Priority - i THINK a bug remains - MUST update enemy list after each tower.
     # an alt could be when do find_target - to check if enemy has "reached_end"
+    # THINK i've fixed that - though want more testing and should put enemy targeting condition in own function.
     # also sort out the tower animate late thing - test the commented out code.
     player_money = start_round_money
     total_money = start_round_money  # TODO Update player_money/total_money in function
