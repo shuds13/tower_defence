@@ -108,7 +108,11 @@ def restart_round():
     global lives_highlight
     #global start_round_totems
 
+    # TODO: Priority - i THINK a bug remains - MUST update enemy list after each tower.
+    # an alt could be when do find_target - to check if enemy has "reached_end"
+
     player_money = start_round_money
+    total_money = start_round_money  # TODO Update player_money/total_money in function
     lives = start_round_lives
 
     # Will be in stats option in options window.
@@ -408,6 +412,7 @@ while running:
             window.blit(win_text, text_rect)
             pygame.display.flip()  # Update the full display Surface to the screen
             player_money += round_bonus
+            total_money += round_bonus
             if level_num % 10 == 0:
                 lives += 10
                 lives_highlight = highlight_time
