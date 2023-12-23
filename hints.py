@@ -33,11 +33,11 @@ def _render_text_box(screen, text, font, max_line_width, box_bottom, text_color,
 
     # Calculate the top and left of the box
     box_top = box_bottom - box_height - 10
-    box_left = 220
+    box_left = 240
 
     # Draw the background rectangle
     pygame.draw.rect(screen, (0,0,0), (box_left-2, box_top-2, max_line_width+24, box_height + 14))
-    pygame.draw.rect(screen, bg_color, (box_left, box_top, max_line_width+20, box_height+10))
+    hint_button = pygame.draw.rect(screen, bg_color, (box_left, box_top, max_line_width+20, box_height+10))
 
     # Render the text line by line
     y = box_top
@@ -46,19 +46,14 @@ def _render_text_box(screen, text, font, max_line_width, box_bottom, text_color,
         screen.blit(text_surface, (box_left+10, y+5))
         y += line_height
 
+    return hint_button
+
 
 def generate_hint(window, round_num):
     hint = hints.get(round_num)
     if hint is None:
         return
-
-    #font = pygame.font.SysFont(None, 24)
     font = pygame.font.SysFont('Arial', 20)
+    hint_button = _render_text_box(window, hint, font, 400, 580, (0,0,0), (182, 208, 226))
+    return hint_button
 
-    _render_text_box(window, hint, font, 400, 580, (0,0,0), (182, 208, 226))
-
-    #hint_text = font.render(hint, True, (0, 0, 0))  # Black text
-    ##hint_rect = hint_text.get_rect(bottomleft=(5, window.get_height()))
-    #hint_rect = hint_text.get_rect(topleft=(220, window.get_height()-50))
-    #print('here',hint)
-    #window.blit(hint_text, hint_rect.bottomleft)

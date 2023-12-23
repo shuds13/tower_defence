@@ -15,11 +15,8 @@ import hints
 #pygame.mixer.init()
 pygame.font.init()  # Initialize font module
 
-# Current defaults: 30 / 100 / 1
+# Current defaults: 30 / 150 / 1
 
-
-# IMPORTANT need to remember to update money_per_hit - < round 40 etc as it will affect difficulty of rounds which
-# i'm trying to get right - i'll have to get it right all over again!
 initial_lives = 30
 initial_money = 150
 initial_level = 1
@@ -61,7 +58,7 @@ def reset_game():
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
     global total_hits, total_money, start_round_total_hits, start_round_total_money #, start_round_totems
-    global lives_highlight, totems
+    global lives_highlight, totems, shown_hint
     player_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
@@ -89,9 +86,11 @@ def reset_game():
     start_round_total_money = initial_money
     lives_highlight = 0
     totems = []
+    shown_hint = False
 
 def reset_level():
-    global enemies, running, spawned_enemies, enemy_spawn_timer, active, current_tower_type, path_id
+    global enemies, running, spawned_enemies, enemy_spawn_timer
+    global active, current_tower_type, path_id, shown_hint
     enemies = []
     running = True
     enemy_spawn_timer = 0
@@ -99,7 +98,7 @@ def reset_level():
     path_id = 0
     #current_tower_type = None
     #spawned_enemies = 0
-
+    shown_hint = False
 
 def restart_round():
     global player_money, lives, towers, totems
@@ -173,6 +172,7 @@ def select_map():
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
 restart_round_button = None
+hint_button = None
 
 alert_message = ""
 alert_timer = 0
@@ -285,7 +285,10 @@ while running:
                         active = True
                         start_level_button = None
                         continue
-
+                    if hint_button and nav.is_click_inside_rect(mouse_pos, hint_button):
+                        hint_button = None
+                        shown_hint = True
+                        continue
                 # Is cross clicked to deselect a tower
                 if tower_option_rects[-1].collidepoint(mouse_pos):
                     current_tower_type = None
@@ -609,8 +612,8 @@ while running:
             pygame.draw.circle(window, range_color, (mouse_x, mouse_y), show_range, 1)
 
 
-    if not active:
-        hints.generate_hint(window, level_num)
+    if not active and not shown_hint:
+        hint_button = hints.generate_hint(window, level_num)
 
     if inset_window['active']:
         update_inset_totems(inset_window)
