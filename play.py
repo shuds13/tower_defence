@@ -60,6 +60,7 @@ def reset_game():
     global total_hits, total_money, start_round_total_hits, start_round_total_money #, start_round_totems
     global lives_highlight, totems, shown_hint
     player_money = initial_money
+    total_money = initial_money
     level_num = initial_level
     level = lev.levels[level_num]()
     towers = []
@@ -81,7 +82,6 @@ def reset_game():
     path_id = 0
     #more should be player obj attributes - for stats
     total_hits = 0
-    total_money = 0
     start_round_total_hits = 0
     start_round_total_money = initial_money
     lives_highlight = 0
@@ -110,7 +110,7 @@ def restart_round():
 
     # TODO: Priority - i THINK a bug remains - MUST update enemy list after each tower.
     # an alt could be when do find_target - to check if enemy has "reached_end"
-
+    # also sort out the tower animate late thing - test the commented out code.
     player_money = start_round_money
     total_money = start_round_money  # TODO Update player_money/total_money in function
     lives = start_round_lives
