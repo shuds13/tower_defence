@@ -148,7 +148,7 @@ class Enemy:
             # not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
             for j in range(i*2):
                 enemy.move()
-            enemies.append(enemy)
+            enemies.append(enemy)  # Also puts on end - so will not attack first!
 
     ## create a cloud like he burst that then move to the track
     #def cloud_spawn(self):
@@ -157,6 +157,7 @@ class Enemy:
             #target_pos = self.position
             #self.move(target_pos)
 
+    # TODO - NEED TO MAKE SAME CHANGE FOR MIN
     def toxic_damage(self):
         if self.glued <= 0:
             self.glue_reset()
@@ -323,12 +324,13 @@ class Ghost(Enemy):
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
+        score = min(self.health, damage)
         self.health -= damage
         self.value = self.health
         sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
-        return damage
+        return score
 
 class BigGhost(Ghost):
     def __init__(self, path, position=None, path_index=0):
@@ -366,18 +368,18 @@ class Troll(Enemy):
         self.spawn_count = 3
         self.size = 2
 
-
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
+        score = min(self.health, damage)
         self.health -= damage
         self.value = self.health
         sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
-        return damage
+        return score
 
 
-class GiantTroll(Enemy):
+class GiantTroll(Troll):
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.health = 60
@@ -390,16 +392,6 @@ class GiantTroll(Enemy):
         self.spawn_count = 6
         self.size = 3
         #self.slowable = False
-
-
-    # TODO - is this needed - check difference to original function
-    def take_damage(self, damage):
-        self.health -= damage
-        self.value = self.health
-        sounds.play('blop')
-        if self.health <= 0:
-            self.reached_end = True
-        return damage
 
 
 class Meteor(Enemy):
@@ -440,14 +432,14 @@ class KingBlob(Enemy):
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
+        score = min(self.health, damage)
         self.health -= damage
         self.value = self.health
         sounds.play('blop')
         if self.health <= 0:
             sounds.play('pop')
             self.reached_end = True
-        return damage
-
+        return score
 
     def generate_point_cloud(self, central_point, n_points, spread=1.0):
         """
