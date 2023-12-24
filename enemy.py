@@ -127,6 +127,7 @@ class Enemy:
             self.reached_end = True
 
     def take_damage(self, damage):
+        score = min(self.health, damage)  # Make sure don't score more than remaining health
         self.health -= damage
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
@@ -137,7 +138,7 @@ class Enemy:
         if self.health <= 0:
             #print('en reached end')
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
-        return damage
+        return score
 
     def spawn_func(self, enemies):
         for i in range(self.spawn_count):
