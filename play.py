@@ -21,6 +21,7 @@ initial_lives = 30
 initial_money = 150
 initial_level = 1
 
+print_total_money = False
 
 init_last_round_restarts = 3
 #init_last_round_restarts = 20
@@ -450,7 +451,8 @@ while running:
                 reset_level()
                 # Will be in stats option in options window.
                 #print(f"{total_hits=}")
-                print(f"Before level {level_num} {total_money=:.2f}")
+                if print_total_money:
+                    print(f"Before level {level_num} {total_money=:.2f}")
                 continue
 
         if lives <= 0:
@@ -485,16 +487,16 @@ while running:
 
 
     for tower in towers:
-        tower.draw(window, enemies)  # test replacing this with commented lines (dedicated commit) - I think corrects funny angle - but does it 'wobble' more
+        #tower.draw(window, enemies)  # test replacing this with commented lines (dedicated commit) - I think corrects funny angle - but does it 'wobble' more
         if active:
             hits = tower.update(enemies)
-            #tower.draw(window, enemies)
+            tower.draw(window, enemies)
             total_hits += hits
             #player_money += tower.update(enemies) * money_per_hit
             player_money += hits * money_per_hit
             total_money += hits * money_per_hit
-        #else:
-            #tower.draw(window, enemies)
+        else:
+            tower.draw(window, enemies)
         tower.highlight = False
 
     if active:
@@ -555,6 +557,7 @@ while running:
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
     # Though I dont notice it - I should prob update enemy list inside loop to prevent double(multiple) targeting
+    # Instead I check enemy is not reached_end inside for each tower targetting.
     keep_animate = False
     if keep_animate or active:
         for tower in towers:

@@ -184,7 +184,7 @@ class Valley(Map):
 class Square(Map):
     def __init__(self):
         self.name = "Square"
-        self.difficulty = 4
+        self.difficulty = 3
         self.background_color = (54, 69, 79) # (0, 71, 171)
         self.path_thickness = 20
         self.path_color = (233, 220, 201) #(255, 255, 240) # (255,255,255) # (0, 163, 108)
