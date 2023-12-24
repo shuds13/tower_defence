@@ -109,9 +109,9 @@ class Level9(Level):
 class Level10(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 13
-        self.spawn_intervals = [15, 25]
-        self.phase_counts = [12, 13]
+        self.num_enemies = 12
+        self.spawn_intervals = [15]
+        self.phase_counts = [12]
         self.enemy_types = [4]
 
 class Level11(Level):
