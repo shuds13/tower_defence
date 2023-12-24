@@ -85,7 +85,7 @@ class Level6(Level):
 class Level7(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 20
+        self.num_enemies = 35  # did not match - should not use num_enemies - use self.phase_counts[-1]
         self.spawn_intervals = [12, 15, 9]
         self.phase_counts = [12, 25, 35]
         self.enemy_types = [2,1,1]
@@ -93,7 +93,7 @@ class Level7(Level):
 class Level8(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 20
+        self.num_enemies = 30
         self.spawn_intervals = [16, 6]
         self.phase_counts = [15, 30]
         self.enemy_types = [2,1]
@@ -109,7 +109,7 @@ class Level9(Level):
 class Level10(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 12
+        self.num_enemies = 13
         self.spawn_intervals = [15, 25]
         self.phase_counts = [12, 13]
         self.enemy_types = [4]
