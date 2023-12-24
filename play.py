@@ -21,7 +21,7 @@ initial_lives = 30
 initial_money = 150
 initial_level = 1
 
-print_total_money = False
+print_total_money = False # True
 
 init_last_round_restarts = 3
 #init_last_round_restarts = 20
@@ -59,7 +59,7 @@ def reset_game():
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
     global total_hits, total_money, start_round_total_hits, start_round_total_money #, start_round_totems
-    global lives_highlight, totems, shown_hint
+    global lives_highlight, totems, shown_hint, lives_lost, lives_lost_round
     player_money = initial_money
     total_money = initial_money
     level_num = initial_level
@@ -88,6 +88,8 @@ def reset_game():
     lives_highlight = 0
     totems = []
     shown_hint = False
+    lives_lost = 0
+    lives_lost_round = 0
 
 def reset_level():
     global enemies, running, spawned_enemies, enemy_spawn_timer
@@ -106,7 +108,7 @@ def restart_round():
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, game_over
     global level_num, level, lev
     global total_hits, total_money
-    global lives_highlight
+    global lives_highlight, lives_lost
     #global start_round_totems
 
     # TODO: Priority - i THINK a bug remains - MUST update enemy list after each tower.
@@ -145,6 +147,8 @@ def restart_round():
     game_over = False
     level = lev.levels[level_num]()  # reset this level (phase num / num_spawned)
     lives_highlight = 0
+    #lives_lost -= lives_lost_round  # no cos if died was not done - so this will be needed if restart when not dead
+    #or calc lives lost even when die and then always do it.
 
 
 def in_range(my_range, mouse_x, mouse_y, obj):
@@ -403,6 +407,7 @@ while running:
                     #enemy.spawn_func(path, enemies)  # to do with multiple path -
                     enemy.spawn_func(enemies)  # to do with multiple path -
 
+        # May not need both conditions as reached_end is set to True when killed
         enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
 
 
@@ -415,6 +420,12 @@ while running:
             pygame.display.flip()  # Update the full display Surface to the screen
             player_money += round_bonus
             total_money += round_bonus
+
+            # for stats
+            lives_lost_round = start_round_lives - lives
+            lives_lost += lives_lost_round
+
+
             if level_num % 10 == 0:
                 lives += 10
                 lives_highlight = highlight_time
@@ -422,9 +433,13 @@ while running:
             # Pause for a few seconds to display the win message
             #print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
             pygame.time.wait(1000)
+
             if level_num == lev.max_level:
                 game_over = True
                 current_tower_type = None
+                if print_total_money:
+                    rbe = total_hits + lives_lost
+                    print(f"At finish: level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")
             else:
                 start_round_money = player_money
                 start_round_lives = lives
@@ -452,7 +467,8 @@ while running:
                 # Will be in stats option in options window.
                 #print(f"{total_hits=}")
                 if print_total_money:
-                    print(f"Before level {level_num} {total_money=:.2f}")
+                    rbe = total_hits + lives_lost
+                    print(f"Before level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")
                 continue
 
         if lives <= 0:
