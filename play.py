@@ -21,7 +21,7 @@ initial_lives = 30
 initial_money = 150
 initial_level = 1
 
-print_total_money = False # True
+print_total_money = True # True
 
 init_last_round_restarts = 3
 #init_last_round_restarts = 20
@@ -384,6 +384,7 @@ while running:
                 enemy_spawn_timer = 0
                 level.update()
 
+                # Distribute enemies evenly over paths
                 if len(paths) > 1:
                     if path_id == len(paths) - 1:
                         path_id = 0
@@ -394,7 +395,7 @@ while running:
         for enemy in enemies:
             enemy.move()
 
-            # Check if the enemy has reached the end of the path
+            # Check if the enemy has reached the end of the path (should stop the double use of reached_end !)
             if enemy.reached_end:
                 lives -= enemy.value  # Decrease the lives
             elif enemy.toxic_glued:
@@ -405,7 +406,7 @@ while running:
                 total_money += hits * money_per_hit
                 if enemy.health <= 0 and enemy.spawn_on_die:
                     #enemy.spawn_func(path, enemies)  # to do with multiple path -
-                    enemy.spawn_func(enemies)  # to do with multiple path -
+                    enemy.spawn_func(enemies)
 
         # May not need both conditions as reached_end is set to True when killed
         enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
@@ -439,8 +440,11 @@ while running:
                 current_tower_type = None
                 if print_total_money:
                     rbe = total_hits + lives_lost
-                    print(f"At finish: level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")
+                    round_money = total_money - start_round_total_money
+                    print(f"At finish: level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=} {round_money=}")
             else:
+                round_money = total_money - start_round_total_money
+
                 start_round_money = player_money
                 start_round_lives = lives
                 start_round_total_hits = total_hits
@@ -462,13 +466,15 @@ while running:
 
                 level_num += 1
                 money_per_hit = get_money_per_hit(level_num)
+                print(f"{money_per_hit=}")
                 level = lev.levels[level_num]()
                 reset_level()
                 # Will be in stats option in options window.
                 #print(f"{total_hits=}")
                 if print_total_money:
                     rbe = total_hits + lives_lost
-                    print(f"Before level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")
+                    #print(f"Before level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")
+                    print(f"At finish: level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=} {round_money=}")
                 continue
 
         if lives <= 0:
