@@ -11,6 +11,7 @@ import levels as lev
 from maps import map_window
 import sounds
 import hints
+from accounts import Account
 
 #pygame.mixer.init()
 pygame.font.init()  # Initialize font module
@@ -42,6 +43,15 @@ window = pygame.display.set_mode(window_size)
 side_panel_width = 200
 side_panel_height = window_size[1]  # same as the game window height
 side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
+
+
+# For now when start just temporarily make account.
+account = Account()
+
+# testing
+#from maps import PicnicPlace
+#account.complete_map(PicnicPlace, aced=True)
+#print(f"{account.maps_complete=}")
 
 # navigation
 inset_window = {
@@ -168,16 +178,18 @@ def set_map(gmap):
     path_thickness = gmap.path_thickness
     path_color = gmap.path_color
     pygame.display.set_caption("Tower Defense Game" + f" ({gmap.name})")
+    return gmap
 
 
 def select_map():
     global pygame, window, window_size, running
-    gmap = map_window(pygame.display, window, window_size)
+    gmap = map_window(pygame.display, window, window_size, account)
     if gmap is None:
         #print('Exiting from map window')
         running = False
         return
-    set_map(gmap)
+    gmap = set_map(gmap)
+    return gmap
 
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
@@ -191,7 +203,7 @@ highlight_time = 20
 #restart_timer = 20000
 
 reset_game()
-select_map()
+gmap = select_map()
 options_button = nav.draw_options_cog(window)
 
 def select_tower_type(tower_types):
@@ -286,7 +298,7 @@ while running:
                     reset_game()
                 if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
                     reset_game()
-                    select_map()
+                    gmap = select_map()
                     continue
             else:
                 # If GO button is clicked then start level
@@ -438,6 +450,11 @@ while running:
             if level_num == lev.max_level:
                 game_over = True
                 current_tower_type = None
+                if last_round_restarts == init_last_round_restarts and lives_lost == 0:
+                    aced = True
+                else:
+                    aced = False
+                account.complete_map(gmap.__class__, aced)
                 if print_total_money:
                     rbe = total_hits + lives_lost
                     round_money = total_money - start_round_total_money

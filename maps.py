@@ -2,6 +2,12 @@ import pygame
 import navigation as nav
 import time
 import spiral
+#from accounts import Account
+
+crown_img = pygame.image.load('crown.png')
+crown_img = pygame.transform.scale(crown_img, (50, 50))
+crownace_img = pygame.image.load('crown_ace.png')
+crownace_img = pygame.transform.scale(crownace_img, (50, 50))
 
 def render_level_to_surface(gmap, size):
     # Create a new surface
@@ -27,7 +33,7 @@ def options_window(display, surface, window_size):
     pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
 
 
-def map_window(display, surface, window_size):
+def map_window(display, surface, window_size, account):
     #window_size = (900, 600)
     #pygame.draw.rect(surface, (159, 226, 191), (0, 0, window_size[0], window_size[1]))
     pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
@@ -89,6 +95,15 @@ def map_window(display, surface, window_size):
         map_name_rect = map_name_text.get_rect(topleft=(x, y+120))
         surface.blit(map_name_text, map_name_rect.topleft)
 
+        # This is the class
+        if type(gmap) in account.maps_complete:
+            if type(gmap) in account.maps_aced:
+                crown = crownace_img
+            else:
+                crown = crown_img
+            #crown_rect = crown.get_rect(topleft=(x, y+70))  # Appears over bottom left of map
+            crown_rect = crown.get_rect(center=(x+width//2, y))
+            surface.blit(crown, crown_rect.topleft)
 
         y+=y_offset
         map_rects.append(map_image_rect)
