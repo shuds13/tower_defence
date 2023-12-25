@@ -20,6 +20,7 @@ king2_img = pygame.transform.scale(king2_img, (110, 110))
 # TODO may not need value and health - will they always be the same?
 # may make enemy0 as way of making a gap - inivisible no value etc...
 
+
 class Enemy:
     def __init__(self, path, position=None, path_index=0):
         self.path = path
@@ -45,6 +46,7 @@ class Enemy:
         self.size = 1
         self.slowable = True
         self.glue_reset()
+
 
     def glue_reset(self):
         self.slow_factor = 1
@@ -129,6 +131,7 @@ class Enemy:
     def take_damage(self, damage):
         score = min(self.health, damage)  # Make sure don't score more than remaining health
         self.health -= damage
+        self.value = self.health  # dont think value has any use - same as health now
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
             sounds.play('ting')
@@ -496,23 +499,23 @@ class KingBlob2(KingBlob):
 # Idea is you kill heart you get lives.
 # but in play - would be to send in a player object, so can update lives instead of money.
 # ie. not yet usable - also need heart image.
-class Heart(Enemy):
-    def __init__(self, path, position=None, path_index=0):
-        super().__init__(path, position, path_index)
-        self.health = 5
-        self.value = 10  #testing a diff value
-        self.base_speed = 4
-        self.speed = 4
-        #self.color = (127, 0, 255)
+#class Heart(Enemy):
+    #def __init__(self, path, position=None, path_index=0):
+        #super().__init__(path, position, path_index)
+        #self.health = 5
+        #self.value = 10  #testing a diff value
+        #self.base_speed = 4
+        #self.speed = 4
+        ##self.color = (127, 0, 255)
 
-    def take_damage(self, damage):
-        self.health -= damage
-        #self.value = self.health
-        sounds.play('blop')
-        if self.health <= 0:
-            self.reached_end = True
-            return self.value  # but will be lives
-        return 0
+    #def take_damage(self, damage):
+        #self.health -= damage
+        ##self.value = self.health
+        #sounds.play('blop')
+        #if self.health <= 0:
+            #self.reached_end = True
+            #return self.value  # but will be lives
+        #return 0
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor,
