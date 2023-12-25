@@ -21,7 +21,7 @@ initial_lives = 30
 initial_money = 150
 initial_level = 1
 
-print_total_money = True # True
+print_total_money = False # True
 
 init_last_round_restarts = 3
 #init_last_round_restarts = 20
@@ -466,7 +466,7 @@ while running:
 
                 level_num += 1
                 money_per_hit = get_money_per_hit(level_num)
-                print(f"{money_per_hit=}")
+                #print(f"{money_per_hit=}")
                 level = lev.levels[level_num]()
                 reset_level()
                 # Will be in stats option in options window.
