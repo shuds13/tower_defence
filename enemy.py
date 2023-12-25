@@ -360,7 +360,6 @@ class Devil(Ghost):
         self.speed = 4
         self.image = devil_img
         self.size = 2
-        self.value = self.health + self.spawn_count*self.spawn_type.health
 
 class Troll(Enemy):
     health = 20
