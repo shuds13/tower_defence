@@ -133,7 +133,7 @@ class Enemy:
         score = min(self.health, damage)  # Make sure don't score more than remaining health
         self.health -= damage
         self.value -= damage
-        print(f"dam {self.value} {self.health}")
+        #print(f"dam {self.value} {self.health}")
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
             sounds.play('ting')
