@@ -817,9 +817,9 @@ class GlueGunner(Tower):
             self.beam_width = 12
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
-            self.toxic_time = 75
+            self.toxic_time = 60 # 75
             self.glue_layers = 4
-            self.max_attacks = 4
+            self.max_attacks = 6
             #self.max_toxic_reattacks = 5
             self.max_toxic_big_reattacks = 2
             self.max_toxic_giant_reattacks = 5
