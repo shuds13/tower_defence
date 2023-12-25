@@ -22,6 +22,7 @@ king2_img = pygame.transform.scale(king2_img, (110, 110))
 
 
 class Enemy:
+    health = 1
     def __init__(self, path, position=None, path_index=0):
         self.path = path
         self.path_index = path_index
@@ -35,8 +36,8 @@ class Enemy:
 
 
         self.reached_end = False  # Indicates if the enemy has reached the end of the path
-        self.health = 1
-        self.value = 1
+        self.health = self.__class__.health
+        self.value = self.__class__.health
         self.color = (255, 0, 0)
         self.image = None
         self.invis = False
@@ -131,7 +132,8 @@ class Enemy:
     def take_damage(self, damage):
         score = min(self.health, damage)  # Make sure don't score more than remaining health
         self.health -= damage
-        self.value = self.health  # dont think value has any use - same as health now
+        self.value -= damage
+        print(f"dam {self.value} {self.health}")
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
             sounds.play('ting')
@@ -182,11 +184,9 @@ class Enemy:
 
 
 class Enemy2(Enemy):
+    health = 2
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 2
-        self.value = 2
-
         self.base_speed = 3
         self.speed = 3
         #self.base_speed = 1.5  # TESTING
@@ -209,10 +209,9 @@ class Enemy2(Enemy):
         return val
 
 class Enemy3(Enemy2):
+    health = 3
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 3
-        self.value = 3
         self.base_speed = 4
         self.speed = 4
         self.color = (0, 255, 0)
@@ -233,10 +232,9 @@ class Enemy3(Enemy2):
 
 
 class Enemy4(Enemy3):
+    health = 4
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 4
-        self.value = 4
         self.base_speed = 5
         self.speed = 5
         self.color = (255, 255, 0)
@@ -257,10 +255,9 @@ class Enemy4(Enemy3):
 
 
 class Enemy5(Enemy4):
+    health = 5
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 5
-        self.value = 5
         self.base_speed = 6
         self.speed = 6
         self.color = (127, 0, 255)
@@ -284,42 +281,47 @@ class Enemy5(Enemy4):
 
 # maybe should be an option in Enemy1
 class Enemy101(Enemy):
+    health = 4
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 3
-        self.health += self.fort_health
-        self.value = self.health
+        #self.health += self.fort_health
+        #self.value = self.health
 
 class Enemy102(Enemy2):
+    health = 6
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 4
-        self.health += self.fort_health
-        self.value = self.health
+        #self.health += self.fort_health
+        #self.value = self.health
 
 class Enemy103(Enemy3):
+    health = 8
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 5
-        self.health += self.fort_health
-        self.value = self.health
+        #self.health += self.fort_health
+        #self.value = self.health
 
 class Enemy104(Enemy4):
+    health = 10
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 6
-        self.health += self.fort_health
-        self.value = self.health
+        #self.health += self.fort_health
+        #self.value = self.health
 
 class Ghost(Enemy):
+    health = 2
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 2
-        self.value = 2
+        #self.health = 2
+        #self.value = 2
         self.base_speed = 3
         self.speed = 3
         self.image = ghost_img
@@ -329,40 +331,43 @@ class Ghost(Enemy):
     def take_damage(self, damage):
         score = min(self.health, damage)
         self.health -= damage
-        self.value = self.health
+        self.value -= damage
         sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
         return score
 
 class BigGhost(Ghost):
+    health = 20
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 20
-        self.value = 20
+        self.health = self.__class__.health  # already should be
         self.base_speed = 3
         self.speed = 3
         self.image = big_ghost_img
         self.spawn_on_die = True
         self.spawn_type = Ghost
         self.spawn_count = 8
+        self.value = self.health + self.spawn_count*self.spawn_type.health  # what if that also spawns?
 
 class Devil(Ghost):
+    health = 8
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 8
-        self.value = 8
+        #self.health = 8
+        #self.value = 8
         self.base_speed = 4
         self.speed = 4
         self.image = devil_img
         self.size = 2
-
+        self.value = self.health + self.spawn_count*self.spawn_type.health
 
 class Troll(Enemy):
+    health = 20
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 20
-        self.value = 20
+        #self.health = 20
+        #self.value = 20
         self.base_speed = 2
         self.speed = 2
         self.image = troll_img
@@ -370,12 +375,14 @@ class Troll(Enemy):
         self.spawn_type = Enemy3
         self.spawn_count = 3
         self.size = 2
+        self.value = self.health + self.spawn_count*self.spawn_type.health
+
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
         score = min(self.health, damage)
         self.health -= damage
-        self.value = self.health
+        self.value -= damage
         sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
@@ -383,10 +390,11 @@ class Troll(Enemy):
 
 
 class GiantTroll(Troll):
+    health = 60
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 60
-        self.value = 60
+        #self.health = 60
+        #self.value = 60
         self.base_speed = 2
         self.speed = 2
         self.image = giant_troll_img
@@ -395,13 +403,15 @@ class GiantTroll(Troll):
         self.spawn_count = 6
         self.size = 3
         #self.slowable = False
+        self.value = self.health + self.spawn_count*self.spawn_type.health
 
 
 class Meteor(Enemy):
+    health = 10
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 10
-        self.value = 10
+        #self.health = 10
+        #self.value = 10
 
         self.base_speed = 8
         #self.base_speed = 2 # tmp for testing
@@ -414,13 +424,15 @@ class Meteor(Enemy):
         self.color =  (193, 154, 107) #(150, 121, 105)
         self.fortified = True
         self.fort_health = self.health
+        self.value = self.health + self.spawn_count*self.spawn_type.health
 
 
 class KingBlob(Enemy):
+    health = 100
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 100 #200
-        self.value = 100 #200
+        #self.health = 100 #200
+        #self.value = 100 #200
         self.base_speed = 1
         self.speed = 1
         self.image = king_img
@@ -432,12 +444,13 @@ class KingBlob(Enemy):
         self.spawn_count = 100
         self.size = 3
         #self.slowable = False
+        self.value = self.health + self.spawn_count*self.spawn_type.health
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
         score = min(self.health, damage)
         self.health -= damage
-        self.value = self.health
+        self.value -= damage
         sounds.play('blop')
         if self.health <= 0:
             sounds.play('pop')
@@ -473,10 +486,11 @@ class KingBlob(Enemy):
 
 
 class KingBlob2(KingBlob):
+    health = 200
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = 200
-        self.value = 200
+        #self.health = 200
+        #self.value = 200
         self.base_speed = 1
         self.speed = 1
         self.image = king2_img
@@ -484,6 +498,7 @@ class KingBlob2(KingBlob):
         self.spawn_type = Enemy3
         self.spawn_count = 150
         self.size = 3
+        self.value = self.health + self.spawn_count*self.spawn_type.health
 
 #class Ghost2(Enemy):
     #def __init__(self, path, position=None, path_index=0):
