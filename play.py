@@ -11,7 +11,7 @@ import levels as lev
 from maps import map_window
 import sounds
 import hints
-from accounts import Account
+from accounts import Account, load_profile
 
 #pygame.mixer.init()
 pygame.font.init()  # Initialize font module
@@ -180,7 +180,13 @@ def set_map(gmap):
     pygame.display.set_caption("Tower Defense Game" + f" ({gmap.name})")
     return gmap
 
-account = None # or load latest?
+try:
+    # or load latest
+    account = load_profile("default.pkl")
+except Exception:
+    print("Failed to load default profile - there should be a file profile/default.pkl")
+    print("Defaulting to no profile loaded")
+    account = None
 
 def select_map():
     global pygame, window, window_size, running, account

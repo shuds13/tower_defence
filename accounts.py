@@ -70,6 +70,11 @@ def save_profile(profile_name):
     return account, ''
 
 
+# Function to load a selected profile
+def load_profile(filename):
+    with open(f'profiles/{filename}', 'rb') as file:
+        return pickle.load(file)
+
 
 def profile_menu(screen):
     # Window settings
@@ -86,10 +91,10 @@ def profile_menu(screen):
     profile_files = [f for f in os.listdir('profiles') if f.endswith('.pkl')]
     profiles = []
 
-    # Function to load a selected profile
-    def load_profile(filename):
-        with open(f'profiles/{filename}', 'rb') as file:
-            return pickle.load(file)
+    ## Function to load a selected profile
+    #def load_profile(filename):
+        #with open(f'profiles/{filename}', 'rb') as file:
+            #return pickle.load(file)
 
     # Main loop
     running = True
