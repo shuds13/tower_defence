@@ -18,9 +18,9 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 
-initial_lives = 30
-initial_money = 150
-initial_level = 1
+initial_lives = 3000
+initial_money = 15000
+initial_level = 60
 
 print_total_money = False # True
 
@@ -46,7 +46,7 @@ side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_w
 
 
 # For now when start just temporarily make account.
-account = Account()
+#account = Account()
 
 # testing
 #from maps import PicnicPlace
@@ -180,10 +180,14 @@ def set_map(gmap):
     pygame.display.set_caption("Tower Defense Game" + f" ({gmap.name})")
     return gmap
 
+account = None # or load latest?
 
 def select_map():
-    global pygame, window, window_size, running
-    gmap = map_window(pygame.display, window, window_size, account)
+    global pygame, window, window_size, running, account
+    #gmap = map_window(pygame.display, window, window_size, account)
+    # Account returned form here
+    print(f"{account=}")
+    gmap, account = map_window(pygame.display, window, window_size, account)
     if gmap is None:
         #print('Exiting from map window')
         running = False
@@ -454,7 +458,13 @@ while running:
                     aced = True
                 else:
                     aced = False
+
+                if account is None:
+                    account = Account()
                 account.complete_map(gmap.__class__, aced)
+                account.save()
+                print(f"{account.maps_complete}")
+                print('account saved')
                 if print_total_money:
                     rbe = total_hits + lives_lost
                     round_money = total_money - start_round_total_money

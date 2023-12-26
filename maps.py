@@ -2,6 +2,7 @@ import pygame
 import navigation as nav
 import time
 import spiral
+from accounts import profile_menu
 #from accounts import Account
 
 crown_img = pygame.image.load('crown.png')
@@ -33,12 +34,13 @@ def options_window(display, surface, window_size):
     pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
 
 
-def map_window(display, surface, window_size, account):
+def draw_map_window(display, surface, window_size, account=None):
     #window_size = (900, 600)
     #pygame.draw.rect(surface, (159, 226, 191), (0, 0, window_size[0], window_size[1]))
     pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
     #window = pygame.display.set_mode(window_size)
     window_width = window_size[0]
+    window_height = window_size[1]
     chosen = False
 
     font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
@@ -62,7 +64,8 @@ def map_window(display, surface, window_size, account):
 
     # max col_size is 4
     if len(map_classes) <= 6:
-        start_x = 100
+        #start_x = 100
+        start_x = 125
         col_size = 2
         x_offset = width+60
         y_offset = 200
@@ -96,14 +99,18 @@ def map_window(display, surface, window_size, account):
         surface.blit(map_name_text, map_name_rect.topleft)
 
         # This is the class
-        if type(gmap) in account.maps_complete:
-            if type(gmap) in account.maps_aced:
-                crown = crownace_img
-            else:
-                crown = crown_img
-            #crown_rect = crown.get_rect(topleft=(x, y+70))  # Appears over bottom left of map
-            crown_rect = crown.get_rect(center=(x+width//2, y))
-            surface.blit(crown, crown_rect.topleft)
+        if account is not None:
+            pygame.display.set_caption("Menu selection (" + account.name + ")")
+            if type(gmap) in account.maps_complete:
+                if type(gmap) in account.maps_aced:
+                    crown = crownace_img
+                else:
+                    crown = crown_img
+                #crown_rect = crown.get_rect(topleft=(x, y+70))  # Appears over bottom left of map
+                crown_rect = crown.get_rect(center=(x+width//2, y))
+                surface.blit(crown, crown_rect.topleft)
+        else:
+            pygame.display.set_caption("Menu selection")
 
         y+=y_offset
         map_rects.append(map_image_rect)
@@ -112,7 +119,17 @@ def map_window(display, surface, window_size, account):
             y = start_y
             x += x_offset
 
+    # This wont work with the more than six maps version - should really be in diff window.
+    x = window_width//2 - 100
+    y = window_height - 100
+    load_account_rect = nav.draw_button(surface, "Load account", (x, y), (200, 60))
     display.flip()
+    return map_rects, load_account_rect, maps
+
+def map_window(display, surface, window_size, account=None):
+
+    map_rects, load_account_rect, maps = draw_map_window(display, surface, window_size, account)
+
     # loop to detect clicks
     noclicks = True
     map_id = None
@@ -124,12 +141,18 @@ def map_window(display, surface, window_size, account):
                 return None
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
+
+                if load_account_rect.collidepoint(mouse_pos):
+                    account = profile_menu(surface)
+                    draw_map_window(display, surface, window_size, account)
+                    #display.flip()
+
                 map_id = process_click(map_rects, mouse_pos)
                 if map_id is not None:
                     noclicks = False
                     break
     gmap = maps[map_id]
-    return gmap
+    return gmap, account
 
 
 def process_click(map_rects, mouse_pos):
