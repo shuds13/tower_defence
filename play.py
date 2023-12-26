@@ -69,7 +69,7 @@ def reset_game():
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
     global total_hits, total_money, start_round_total_hits, start_round_total_money #, start_round_totems
-    global lives_highlight, totems, shown_hint, lives_lost, lives_lost_round
+    global lives_highlight, totems, shown_hint, lives_lost, lives_lost_round, map_complete, aced
     player_money = initial_money
     total_money = initial_money
     level_num = initial_level
@@ -100,6 +100,8 @@ def reset_game():
     shown_hint = False
     lives_lost = 0
     lives_lost_round = 0
+    map_complete = False
+    aced = False
 
 def reset_level():
     global enemies, running, spawned_enemies, enemy_spawn_timer
@@ -118,7 +120,7 @@ def restart_round():
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, game_over
     global level_num, level, lev
     global total_hits, total_money
-    global lives_highlight, lives_lost
+    global lives_highlight, lives_lost, map_complete, aced
     #global start_round_totems
 
     # TODO: Priority - i THINK a bug remains - MUST update enemy list after each tower.
@@ -157,6 +159,8 @@ def restart_round():
     game_over = False
     level = lev.levels[level_num]()  # reset this level (phase num / num_spawned)
     lives_highlight = 0
+    map_complete = False
+    aced = False
     #lives_lost -= lives_lost_round  # no cos if died was not done - so this will be needed if restart when not dead
     #or calc lives lost even when die and then always do it.
 
@@ -462,6 +466,7 @@ while running:
 
             if level_num == lev.max_level:
                 game_over = True
+                map_complete = True
                 current_tower_type = None
                 if last_round_restarts == init_last_round_restarts and lives_lost == 0:
                     aced = True
@@ -688,7 +693,13 @@ while running:
 
     if game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)
-        game_over_text = font.render("Game Over", True, (255, 0, 0))
+        if map_complete:
+            complete_text = "Map Complete!"
+            if aced:
+                complete_text = "Map Complete (Aced)"
+            game_over_text = font.render(complete_text, True, (196, 180, 84))
+        else:
+            game_over_text = font.render("Game Over", True, (255, 0, 0))
         text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
         window.blit(game_over_text, text_rect)
 
