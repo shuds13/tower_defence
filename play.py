@@ -22,7 +22,7 @@ initial_lives = 30
 initial_money = 150
 initial_level = 1
 
-print_total_money = False # True
+print_total_money = False
 
 init_last_round_restarts = 3
 #init_last_round_restarts = 20
@@ -450,6 +450,7 @@ while running:
 
             if level_num == lev.max_level:
                 game_over = True
+                current_tower_type = None
                 map_complete = True
                 current_tower_type = None
                 # I'm thinking I may actually allow last round restarts for an ACE.
@@ -496,6 +497,7 @@ while running:
 
         if lives <= 0:
             game_over = True
+            current_tower_type = None
 
         # Remove enemies that have reached the end of the path
         enemies = [enemy for enemy in enemies if not enemy.reached_end]
