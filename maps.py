@@ -2,7 +2,7 @@ import pygame
 import navigation as nav
 import time
 import spiral
-from accounts import profile_menu
+from accounts import profile_menu, new_profile
 #from accounts import Account
 
 crown_img = pygame.image.load('crown.png')
@@ -100,7 +100,7 @@ def draw_map_window(display, surface, window_size, account=None):
 
         # This is the class
         if account is not None:
-            pygame.display.set_caption("Menu selection (" + account.name + ")")
+            pygame.display.set_caption("Menu selection (Profile: " + account.name + ")")
             if type(gmap) in account.maps_complete:
                 if type(gmap) in account.maps_aced:
                     crown = crownace_img
@@ -120,15 +120,17 @@ def draw_map_window(display, surface, window_size, account=None):
             x += x_offset
 
     # This wont work with the more than six maps version - should really be in diff window.
-    x = window_width//2 - 100
+    x = window_width//3 - 100
     y = window_height - 100
-    load_account_rect = nav.draw_button(surface, "Load account", (x, y), (200, 60))
+    load_account_rect = nav.draw_button(surface, "Load Profile", (x, y), (200, 60))
+    x = window_width*2//3 - 100
+    new_account_rect = nav.draw_button(surface, "New Profile", (x, y), (200, 60))
     display.flip()
-    return map_rects, load_account_rect, maps
+    return map_rects, load_account_rect, new_account_rect,  maps
 
 def map_window(display, surface, window_size, account=None):
 
-    map_rects, load_account_rect, maps = draw_map_window(display, surface, window_size, account)
+    map_rects, load_account_rect, new_account_rect, maps = draw_map_window(display, surface, window_size, account)
 
     # loop to detect clicks
     noclicks = True
@@ -138,9 +140,13 @@ def map_window(display, surface, window_size, account=None):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 noclicks = False
-                return None
+                return None, None
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
+
+                if new_account_rect.collidepoint(mouse_pos):
+                    account = new_profile(surface)
+                    draw_map_window(display, surface, window_size, account)
 
                 if load_account_rect.collidepoint(mouse_pos):
                     account = profile_menu(surface)

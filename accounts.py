@@ -12,6 +12,65 @@ import os
     #with Path(path / Path(filename + ".pickle")).open("r") as f:
         #pickle.load(self, f)
 
+def new_profile(screen):
+    screen_width, screen_height = 600, 150
+    #screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Create New Profile")
+    font = pygame.font.Font(None, 40)
+    clock = pygame.time.Clock()
+
+    input_active = True
+    user_text = ''
+    base_prompt = 'Enter Profile Name: '
+    error_message = ''
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.KEYDOWN:
+                if input_active:
+                    if event.key == pygame.K_RETURN:
+                        # Attempt to save profile
+                        account, message = save_profile(user_text)
+                        if account is not None:
+                            return account
+                        else:
+                            error_message = message
+                            user_text = ''  # Clear input for new entry
+                    elif event.key == pygame.K_BACKSPACE:
+                        user_text = user_text[:-1]
+                    else:
+                        user_text += event.unicode
+
+        screen.fill((255, 255, 255))
+        text_surface = font.render(base_prompt + user_text, True, (0, 0, 0))
+        error_surface = font.render(error_message, True, (255, 0, 0))
+        screen.blit(text_surface, (50, 50))
+        screen.blit(error_surface, (50, 100))
+        pygame.display.flip()
+        clock.tick(60)
+    #return account
+
+def save_profile(profile_name):
+    if not os.path.exists('profiles'):
+        os.makedirs('profiles')
+    file_path = f'profiles/{profile_name}.pkl'
+    if os.path.exists(file_path):
+        # Return False with an error message if the file already exists
+        return None, "Profile already exists. Please enter a different name."
+
+    #profile_data = {'name': profile_name}
+    account = Account(name=profile_name)
+    account.save()
+    #with open(file_path, 'wb') as file:
+        #pickle.dump(profile_data, file)
+    print(f"Profile '{profile_name}' saved.")
+    # Return True with an empty message when the save is successful
+    return account, ''
+
+
+
 def profile_menu(screen):
     # Window settings
     screen_width, screen_height = 600, 400
@@ -84,10 +143,10 @@ class Account():
                 self.maps_aced.append(gmap)
 
     def save(self):
-        filename = "me"
+        #filename = "me"
         path=Path.cwd() / Path("profiles")
-        with Path(path / Path(filename + ".pkl")).open("wb") as f:
-            print(f'Here {Path(path / Path(filename + ".pkl"))}')
+        with Path(path / Path(self.name + ".pkl")).open("wb") as f:
+            #print(f'Here {Path(path / Path(filename + ".pkl"))}')
             pickle.dump(self, f)
 
     #hmmm nope

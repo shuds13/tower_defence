@@ -186,8 +186,11 @@ def select_map():
     global pygame, window, window_size, running, account
     #gmap = map_window(pygame.display, window, window_size, account)
     # Account returned form here
-    print(f"{account=}")
+
     gmap, account = map_window(pygame.display, window, window_size, account)
+    print(f"{account=}")
+    if account is not None:
+        print(f"{account.name=}")
     if gmap is None:
         #print('Exiting from map window')
         running = False
@@ -464,7 +467,7 @@ while running:
                 account.complete_map(gmap.__class__, aced)
                 account.save()
                 print(f"{account.maps_complete}")
-                print('account saved')
+                print(f'{account.name} account saved')
                 if print_total_money:
                     rbe = total_hits + lives_lost
                     round_money = total_money - start_round_total_money
