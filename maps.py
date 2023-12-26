@@ -65,7 +65,7 @@ def draw_map_window(display, surface, window_size, account=None):
     # max col_size is 4
     if len(map_classes) <= 6:
         #start_x = 100
-        start_x = 125
+        start_x = 120
         col_size = 2
         x_offset = width+60
         y_offset = 200
