@@ -4,14 +4,6 @@ import pickle
 from pathlib import Path
 import os
 
-#pygame.init()
-
-#def load_account():
-    #filename = "me"
-    #path=Path.cwd()
-    #with Path(path / Path(filename + ".pickle")).open("r") as f:
-        #pickle.load(self, f)
-
 def new_profile(screen):
     screen_width, screen_height = 600, 150
     #screen = pygame.display.set_mode((screen_width, screen_height))
@@ -50,7 +42,6 @@ def new_profile(screen):
         screen.blit(error_surface, (50, 100))
         pygame.display.flip()
         clock.tick(60)
-    #return account
 
 def save_profile(profile_name):
     if not os.path.exists('profiles'):
@@ -63,9 +54,7 @@ def save_profile(profile_name):
     #profile_data = {'name': profile_name}
     account = Account(name=profile_name)
     account.save()
-    #with open(file_path, 'wb') as file:
-        #pickle.dump(profile_data, file)
-    print(f"Profile '{profile_name}' saved.")
+    #print(f"Profile '{profile_name}' saved.")
     # Return True with an empty message when the save is successful
     return account, ''
 
@@ -81,8 +70,6 @@ def profile_menu(screen):
     screen_width, screen_height = 600, 400
     #screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Account Loader")
-    #pygame.draw.rect(screen, (245, 245, 220), (0, 0, screen_width, screen_height))
-
     font = pygame.font.Font(None, 36)
 
     # TODO: Fow now I'm making profiles dir but will make if does not exist
@@ -90,11 +77,6 @@ def profile_menu(screen):
     # Load profile names from the 'profiles' directory
     profile_files = [f for f in os.listdir('profiles') if f.endswith('.pkl')]
     profiles = []
-
-    ## Function to load a selected profile
-    #def load_profile(filename):
-        #with open(f'profiles/{filename}', 'rb') as file:
-            #return pickle.load(file)
 
     # Main loop
     running = True
@@ -108,7 +90,7 @@ def profile_menu(screen):
                 for i, profile in enumerate(profiles):
                     if profile['rect'].collidepoint(mouse_x, mouse_y):
                         selected_profile = load_profile(profile_files[i])
-                        print(f"Loaded profile: {selected_profile}")
+                        #print(f"Loaded profile: {selected_profile}")
                         break
         if selected_profile is not None:
             break
@@ -127,7 +109,6 @@ def profile_menu(screen):
 
         pygame.display.flip()
 
-    #pygame.display.quit()
     return selected_profile
 
 
@@ -148,16 +129,6 @@ class Account():
                 self.maps_aced.append(gmap)
 
     def save(self):
-        #filename = "me"
         path=Path.cwd() / Path("profiles")
         with Path(path / Path(self.name + ".pkl")).open("wb") as f:
-            #print(f'Here {Path(path / Path(filename + ".pkl"))}')
             pickle.dump(self, f)
-
-    #hmmm nope
-    #def load_profile(self):
-        #filename = "me"
-        #path=Path.cwd()
-        #with Path(path / Path(filename + ".pickle")).open("r") as f:
-            #pickle.load(self, f)
-

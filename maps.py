@@ -151,7 +151,6 @@ def map_window(display, surface, window_size, account=None):
                 if load_account_rect.collidepoint(mouse_pos):
                     account = profile_menu(surface)
                     draw_map_window(display, surface, window_size, account)
-                    #display.flip()
 
                 map_id = process_click(map_rects, mouse_pos)
                 if map_id is not None:
@@ -249,27 +248,8 @@ class Spiral(Map):
         self.background_color = (0, 71, 171)
         self.path_thickness = 20
         self.path_color = (0, 163, 108)
-
-        #simplified_path = [
-            #(400, 300),
-            #(550, 300),
-            #(550, 450),
-            #(400, 450),
-            #(400, 300),
-            #(700, 300),
-            #(700, 600),
-            #(400, 600),
-            #(400, 300)
-        #]
-
-        #spiral_path
-
-        #self.paths = [simplified_path]
         self.paths = [spiral.spiral_path]
 
 
-
-#map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square, 6: Spiral}
 map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-#map_classes  = {1: PicnicPlace, 2: Staircase, 3: Diamond, 4: Valley, 5: Square}
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}

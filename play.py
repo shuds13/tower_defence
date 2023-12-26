@@ -18,9 +18,9 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 
-initial_lives = 3000
-initial_money = 15000
-initial_level = 60
+initial_lives = 30
+initial_money = 150
+initial_level = 1
 
 print_total_money = False # True
 
@@ -198,9 +198,9 @@ def select_map():
     # Account returned form here
 
     gmap, account = map_window(pygame.display, window, window_size, account)
-    print(f"{account=}")
-    if account is not None:
-        print(f"{account.name=}")
+    #print(f"{account=}")
+    #if account is not None:
+        #print(f"{account.name=}")
     if gmap is None:
         #print('Exiting from map window')
         running = False
@@ -228,16 +228,6 @@ def select_tower_type(tower_types):
         if tower_option_rects[i].collidepoint(mouse_pos):
             return i
     return None
-
-#def sell_tower(mouse_pos):
-    #for tower in towers:
-        #if tower.is_clicked(mouse_pos):
-            #cost = int(tower.cost * 0.8)
-            #towers.remove(tower)
-            ##del tower
-            #return cost
-            ##break  # Exit the loop after selling one tower
-    #return 0
 
 def update_inset_totems(inset_window):
     my_totem = None
@@ -280,16 +270,9 @@ def get_money_per_hit(level_num):
 
 money_per_hit = get_money_per_hit(level_num)
 
-#hints.generate_hint(window, level_num)
 
 # Game loop
 while running:
-
-    #if restart_testing:
-        #play_again_button, maps_button, restart_round_button = nav.play_button(
-            #window, window_size, last_round_restarts
-        #)
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -301,10 +284,6 @@ while running:
                 nav.draw_options_window(pygame.display, window, options_button)
 
             if game_over or restart_testing:
-
-                #play_again_button, maps_button, restart_round_button = nav.play_button(
-                    #window, window_size, last_round_restarts
-                #)
 
                 if restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
                     restart_round()
@@ -477,12 +456,12 @@ while running:
                     account = Account()
                 account.complete_map(gmap.__class__, aced)
                 account.save()
-                print(f"{account.maps_complete}")
-                print(f'{account.name} account saved')
+                #print(f"{account.maps_complete}")
+                #print(f'{account.name} account saved')
                 if print_total_money:
                     rbe = total_hits + lives_lost
                     round_money = total_money - start_round_total_money
-                    print(f"At finish: level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=} {round_money=}")
+                    #print(f"At finish: level {level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=} {round_money=}")
             else:
                 round_money = total_money - start_round_total_money
 
@@ -490,21 +469,9 @@ while running:
                 start_round_lives = lives
                 start_round_total_hits = total_hits
                 start_round_total_money = total_money
-                #start_round_towers = towers
-                #for tower in towers:
-                    #tower.set_start_hits()  # not enough - reset all attributes of tower
-
-                # dont work - says TypeError: cannot pickle 'pygame.surface.Surface' object
-                # though surface appears in tower function - I dont see it stored in attribute
-                #start_round_towers = copy.deepcopy(towers)
                 start_round_towers = []
                 for tower in towers:
                     start_round_towers.append(copy.copy(tower))
-                #start_round_totems = []
-                #for totem in totems:
-                    #start_round_totems.append(copy.copy(totem))
-                #print(f"{start_round_totems}")
-
                 level_num += 1
                 money_per_hit = get_money_per_hit(level_num)
                 #print(f"{money_per_hit=}")
@@ -520,10 +487,6 @@ while running:
 
         if lives <= 0:
             game_over = True
-
-            # Will be in stats option in options window.
-            #print(f"{total_hits=}")
-            #print(f"{total_money=}")
 
         # Remove enemies that have reached the end of the path
         enemies = [enemy for enemy in enemies if not enemy.reached_end]
@@ -571,16 +534,6 @@ while running:
         # careful of thse between tower.update and animate - could be why sometimes dont see attach
         # SH TODO  bring attack and animate together.
         # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
-
-        ##testing
-        #pr = False
-        #for en in enemies:
-            #if en.reached_end:
-                #pr = True
-                #break
-
-        #if pr:
-            #print(f"b4: {len(enemies)}  {enemies}", flush=True)
 
         enemies = [enemy for enemy in enemies if enemy.health > 0 and not enemy.reached_end]
 
