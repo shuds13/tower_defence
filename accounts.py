@@ -101,7 +101,7 @@ def profile_menu(screen):
         profiles = []
         y = 20
         for filename in profile_files:
-            text_surface = font.render(filename, True, (0, 0, 0))
+            text_surface = font.render(os.path.splitext(filename)[0], True, (0, 0, 0))
             text_rect = text_surface.get_rect(topleft=(20, y))
             screen.blit(text_surface, text_rect)
             profiles.append({'filename': filename, 'rect': text_rect})
