@@ -24,9 +24,7 @@ initial_level = 1
 
 print_total_money = False # True
 
-init_last_round_restarts = 0
-
-#init_last_round_restarts = 3
+init_last_round_restarts = 3
 #init_last_round_restarts = 20
 
 restart_testing = False
@@ -454,6 +452,8 @@ while running:
                 game_over = True
                 map_complete = True
                 current_tower_type = None
+                # I'm thinking I may actually allow last round restarts for an ACE.
+                # but if so prob want to have option to restart round even when dont die - for going for ace!
                 if last_round_restarts == init_last_round_restarts and lives_lost == 0:
                     aced = True
                 else:
