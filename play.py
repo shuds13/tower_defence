@@ -24,7 +24,9 @@ initial_level = 1
 
 print_total_money = False # True
 
-init_last_round_restarts = 3
+init_last_round_restarts = 0
+
+#init_last_round_restarts = 3
 #init_last_round_restarts = 20
 
 restart_testing = False
@@ -69,7 +71,7 @@ def reset_game():
     global running, enemy_spawn_timer, game_over, active, current_tower_type, inset_window
     global start_round_money, start_round_lives, start_round_towers, last_round_restarts, path_id
     global total_hits, total_money, start_round_total_hits, start_round_total_money #, start_round_totems
-    global lives_highlight, totems, shown_hint, lives_lost, lives_lost_round, map_complete, aced
+    global lives_highlight, totems, shown_hint, lives_lost, lives_lost_round, map_complete, aced, displayed_game_over
     player_money = initial_money
     total_money = initial_money
     level_num = initial_level
@@ -102,6 +104,7 @@ def reset_game():
     lives_lost_round = 0
     map_complete = False
     aced = False
+    displayed_game_over = False
 
 def reset_level():
     global enemies, running, spawned_enemies, enemy_spawn_timer
@@ -212,6 +215,7 @@ play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
 restart_round_button = None
 hint_button = None
+close_game_over = None
 
 alert_message = ""
 alert_timer = 0
@@ -290,6 +294,9 @@ while running:
                     reset_level()
 
             if game_over:
+                if close_game_over and  nav.is_click_inside_rect(mouse_pos, close_game_over):
+                    close_game_over = None
+                    displayed_game_over = True
                 if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
                     reset_game()
                 if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
@@ -458,6 +465,8 @@ while running:
                 account.save()
                 #print(f"{account.maps_complete}")
                 #print(f'{account.name} account saved')
+                sounds.play('victory')
+
                 if print_total_money:
                     rbe = total_hits + lives_lost
                     round_money = total_money - start_round_total_money
@@ -646,15 +655,24 @@ while running:
 
     if game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)
-        if map_complete:
-            complete_text = "Map Complete!"
-            if aced:
-                complete_text = "Map Complete (Aced)"
-            game_over_text = font.render(complete_text, True, (196, 180, 84))
+
+        # Do we want to always bring up window - not if have last round restarts for now
+        if not displayed_game_over and (map_complete or last_round_restarts <= 0):
+            close_game_over = nav.draw_game_over_window(pygame.display, window, map_complete, aced)
         else:
             game_over_text = font.render("Game Over", True, (255, 0, 0))
-        text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
-        window.blit(game_over_text, text_rect)
+            text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
+            window.blit(game_over_text, text_rect)
+
+        #if map_complete:
+            #complete_text = "Map Complete!"
+            #if aced:
+                #complete_text = "Map Complete (Aced)"
+            #game_over_text = font.render(complete_text, True, (196, 180, 84))
+        #else:
+            #game_over_text = font.render("Game Over", True, (255, 0, 0))
+        #text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
+        #window.blit(game_over_text, text_rect)
 
 
         # TODO thinking about this right now - buttons are not none after start - even if not drawn - can you click!!!!

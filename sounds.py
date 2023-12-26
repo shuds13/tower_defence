@@ -7,6 +7,7 @@ snd_place = pygame.mixer.Sound('place.wav')
 snd_sell = pygame.mixer.Sound('sell.wav')
 snd_pop = pygame.mixer.Sound('pop.wav')
 snd_glue = pygame.mixer.Sound('splat.wav')
+snd_victory = pygame.mixer.Sound('fanfare.wav')
 
 
 sounds = {
@@ -16,6 +17,7 @@ sounds = {
     'sell':snd_sell,
     'pop':snd_pop,
     'glue':snd_glue,
+    'victory':snd_victory,
     }
 
 #print("volume", pygame.mixer.Sound.get_volume())

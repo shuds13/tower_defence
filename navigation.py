@@ -15,6 +15,13 @@ cross_img = pygame.transform.scale(cross_img, (50, 50))
 cog_img = pygame.image.load('options.png')
 cog_img = pygame.transform.scale(cog_img, (40, 40))
 
+crown_img = pygame.image.load('crown.png')
+crown_img = pygame.transform.scale(crown_img, (100, 100))
+crownace_img = pygame.image.load('crown_ace.png')
+crownace_img = pygame.transform.scale(crownace_img, (100, 100))
+troll_img = pygame.image.load('troll.png')
+troll_img = pygame.transform.scale(troll_img, (100, 100))
+
 frames_per_second = 60
 #frames_per_second = 180 # tmp
 
@@ -161,6 +168,65 @@ def draw_sound_buttons(surface, x, y, width, height):
     quiet_button = draw_button(surface, "Quiet", quiet_pos, (80, 40), color=quiet_color)
     normal_button = draw_button(surface, "Normal", normal_pos, (80, 40), color=normal_color)
     return mute_button, quiet_button, normal_button
+
+
+# okay really need to collect stats / player data together for this
+def draw_game_over_window(display, surface, map_complete, aced):
+    #x, y, width, height = 100, 100, 500, 400
+    x, y, width, height = 100, 200, 500, 300
+
+    # turns out not just drawing a rectangle border - but filled in!!!
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
+    #draw_border(surface, x, y, width, height, 4)  # black
+
+    # Draw the window background
+    #color = (245, 245, 220)  # cream
+    #color = (0, 0, 0)  # black
+    #color = (2, 48, 32)  # dark green
+    #color = (25, 25, 112) # dark blue
+    #color = (48, 25, 52)  # purple
+    #pygame.draw.rect(surface, color, (x, y, width, height))
+
+    # alt translucent surface - if want border - need to fix that to be just border
+    #background = pygame.Surface((width,height), pygame.SRCALPHA)
+    #background.fill((245, 245, 220, 128))
+    #surface.blit(background, (x,y))
+
+    # Compare
+    font_title = pygame.font.SysFont('Arial', 42, bold=True)  # Choose a font and size
+    #font_title = pygame.font.SysFont(None, 72)
+
+
+    #tmp to test
+    #map_complete = True
+    #aced = True
+
+    if map_complete:
+        color = (25, 25, 112) # dark blue
+        if aced:
+            complete_text = "Map Complete (Aced)!"
+            image = crownace_img
+        else:
+            complete_text = "Map Complete!"
+            image = crown_img
+        game_over_text = font_title.render(complete_text, True, (196, 180, 84))
+    else:
+        color = (48, 25, 52)  # purple
+        image = troll_img
+        game_over_text = font_title.render("Game Over", True, (255, 0, 0))
+
+    pygame.draw.rect(surface, color, (x, y, width, height))
+
+    text_rect = game_over_text.get_rect(midtop=(x+width//2, y+10))
+    surface.blit(game_over_text, text_rect)
+
+    image_rect = image.get_rect(center=(x+width//2, y+120))
+    surface.blit(image, image_rect.topleft)
+
+    close_game_over = cross_img.get_rect(center=(x+width//2, y+height - 60))
+    surface.blit(cross_img, close_game_over.topleft)
+
+    return close_game_over
 
 
 def draw_options_window(display, surface, options_button):

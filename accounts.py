@@ -122,7 +122,7 @@ class Account():
     def complete_map(self, gmap, aced=False):
         if not gmap in self.maps_complete:
             self.maps_complete.append(gmap)
-            print(self.maps_complete)
+            #print(self.maps_complete)
 
         if aced:
             if not gmap in self.maps_aced:
