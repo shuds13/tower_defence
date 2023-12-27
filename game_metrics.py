@@ -115,7 +115,6 @@ class Game():
             self.lives_highlight = self.highlight_time
 
         # Pause for a few seconds to display the win message
-        #print(f"{total_hits=}")  # testing - will put somewhere sensible - maybe in options.
         pygame.time.wait(1000)
 
         if self.level_num == lev.max_level:
@@ -130,8 +129,6 @@ class Game():
             else:
                 self.aced = False
 
-            #if self.account is None:
-                #self.account = Account()
             account.complete_map(gmap.__class__, self.aced)
             account.save()
             sounds.play('victory')

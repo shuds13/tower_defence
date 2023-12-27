@@ -5,10 +5,8 @@ import random
 ghost_img = pygame.image.load('images/ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 big_ghost_img = pygame.transform.scale(ghost_img, (70, 70))
-
 devil_img = pygame.image.load('images/devil.png')
 devil_img = pygame.transform.scale(devil_img, (50, 50))
-
 troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
 giant_troll_img = pygame.transform.scale(troll_img, (90, 90))
@@ -17,24 +15,15 @@ king_img = pygame.transform.scale(king_img, (100, 100))
 king2_img = pygame.image.load('images/kingblob_green.png')
 king2_img = pygame.transform.scale(king2_img, (110, 110))
 
-# TODO may not need value and health - will they always be the same?
-# may make enemy0 as way of making a gap - inivisible no value etc...
-
+# TODO may make enemy0 as way of making a gap - inivisible no value etc...
 
 class Enemy:
     health = 1
     def __init__(self, path, position=None, path_index=0):
         self.path = path
         self.path_index = path_index
-        #self.position = self.path[0]
-
-
         self.base_speed = 2  # help with things like gluing from a stronger glue gunner
         self.speed = 2
-        #self.base_speed = 1  # TESTING
-        #self.speed = 1
-
-
         self.reached_end = False  # Indicates if the enemy has reached the end of the path
         self.health = self.__class__.health
         self.value = self.__class__.health
@@ -48,7 +37,6 @@ class Enemy:
         self.slowable = True
         self.glue_reset()
 
-
     def glue_reset(self):
         self.slow_factor = 1
         self.glued = 0
@@ -59,9 +47,7 @@ class Enemy:
         self.toxic_time = None
         self.toxic_attacks = 0
 
-
     def draw_glue_splat(self, window, color, x, y, esize):
-        #print(f'drawing splat at {x} {y}')
         pygame.draw.circle(window, color, (int(x)-2, int(y)-3), 4+esize)
         pygame.draw.circle(window, color, (int(x)+2, int(y)+4), 4+esize)
         pygame.draw.circle(window, color, (int(x)+2, int(y)-3), 4+esize)
@@ -84,12 +70,7 @@ class Enemy:
         if self.glued:
             self.draw_glue_splat(window, self.glue_color, x, y, self.size)
             if self.toxic_glued:
-                #print('yes toxic glued')
-                #print(f"{self.toxic_attacks=}")
                 if self.toxic_attacks > 1:
-                    #import pdb;pdb.set_trace()
-                    #print('yes attacks more tha ne')
-                    # check if effects other things -like wizard lightning.
                     random.seed(1)
                     for splat in range(1, self.toxic_attacks+1):
 
@@ -101,20 +82,12 @@ class Enemy:
                             xn = x + random.randint(-15, 15)
                             yn = y + random.randint(-15, 15)
 
-                        #x += splat * 5 * factor
-                        #y += splat * 5 * factor
                         self.draw_glue_splat(window, self.glue_color, xn, yn, self.size)
-                        # or make it grow bigger?
-                    #TODO STILL got to do correct damage
-                #self.toxic_attacks += 1
-
 
     def move(self):
         # Move towards the next point in the path
         if self.path_index < len(self.path) - 1:
-            #target_pos = target or self.path[self.path_index + 1]  # for backwards move just make -1
             target_pos = self.path[self.path_index + 1]  # for backwards move just make -1
-
             dx, dy = target_pos[0] - self.position[0], target_pos[1] - self.position[1]
             distance = (dx**2 + dy**2)**0.5
             if distance > self.speed:
@@ -133,52 +106,34 @@ class Enemy:
         score = min(self.health, damage)  # Make sure don't score more than remaining health
         self.health -= damage
         self.value -= damage
-        #print(f"dam {self.value} {self.health}")
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
             sounds.play('ting')
         else:
             sounds.play('blop')
-        #print('eememy hit')
         if self.health <= 0:
-            #print('en reached end')
             self.reached_end = True  # Treat the enemy as "dead" or "reached the end"
         return score
 
     def spawn_func(self, enemies):
         for i in range(self.spawn_count):
-            #print(self.path_index)
             enemy = self.spawn_type(self.path, self.position, self.path_index)
             # Spread out slightly
-            # not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
             for j in range(i*2):
                 enemy.move()
             enemies.append(enemy)  # Also puts on end - so will not attack first!
 
-    ## create a cloud like he burst that then move to the track
-    #def cloud_spawn(self):
-        ## Move towards the next point in the path
-        #if self.path_index < len(self.path) - 1:
-            #target_pos = self.position
-            #self.move(target_pos)
-
-    # TODO - NEED TO MAKE SAME CHANGE FOR MIN
     def toxic_damage(self):
         if self.glued <= 0:
             self.glue_reset()
-            #self.toxic_glued = False
-            #self.toxic_glued_by = None
-            #self.toxic_timer = None
-            #self.toxic_time = None
-            #print('glued < 0')
             return 0
         score = 0
         if self.toxic_timer > 0:
             self.toxic_timer -= 1
         else:
            #self.toxic_attacks += 1
-           score = self.take_damage(self.toxic_attacks)  # damage could be variable also
-           self.toxic_glued_by.total_score += score  # what if tower is sold - guess obj still exists but not in tower list
+           score = self.take_damage(self.toxic_attacks)
+           self.toxic_glued_by.total_score += score  # if tower is sold - obj still exists but not in tower list
            self.toxic_timer = self.toxic_time
         return score
 
@@ -189,9 +144,6 @@ class Enemy2(Enemy):
         super().__init__(path, position, path_index)
         self.base_speed = 3
         self.speed = 3
-        #self.base_speed = 1.5  # TESTING
-        #self.speed = 1.5
-
         self.color = (0, 0, 255)
 
     def take_damage(self, damage):
@@ -276,18 +228,14 @@ class Enemy5(Enemy4):
                 self.glue_reset()
         return val
 
-# next put circle round outside to be fortified...
-# or maybe whole thing fortified look - can crack
 
-# maybe should be an option in Enemy1
 class Enemy101(Enemy):
     health = 4
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 3
-        #self.health += self.fort_health
-        #self.value = self.health
+
 
 class Enemy102(Enemy2):
     health = 6
@@ -295,8 +243,7 @@ class Enemy102(Enemy2):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 4
-        #self.health += self.fort_health
-        #self.value = self.health
+
 
 class Enemy103(Enemy3):
     health = 8
@@ -304,8 +251,7 @@ class Enemy103(Enemy3):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 5
-        #self.health += self.fort_health
-        #self.value = self.health
+
 
 class Enemy104(Enemy4):
     health = 10
@@ -313,15 +259,12 @@ class Enemy104(Enemy4):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 6
-        #self.health += self.fort_health
-        #self.value = self.health
+
 
 class Ghost(Enemy):
     health = 2
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        #self.health = 2
-        #self.value = 2
         self.base_speed = 3
         self.speed = 3
         self.image = ghost_img
@@ -337,6 +280,7 @@ class Ghost(Enemy):
             self.reached_end = True
         return score
 
+
 class BigGhost(Ghost):
     health = 20
     def __init__(self, path, position=None, path_index=0):
@@ -350,6 +294,7 @@ class BigGhost(Ghost):
         self.spawn_count = 8
         self.value = self.health + self.spawn_count*self.spawn_type.health  # what if that also spawns?
 
+
 class Devil(Ghost):
     health = 8
     def __init__(self, path, position=None, path_index=0):
@@ -361,12 +306,11 @@ class Devil(Ghost):
         self.image = devil_img
         self.size = 2
 
+
 class Troll(Enemy):
     health = 20
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        #self.health = 20
-        #self.value = 20
         self.base_speed = 2
         self.speed = 2
         self.image = troll_img
@@ -375,7 +319,6 @@ class Troll(Enemy):
         self.spawn_count = 3
         self.size = 2
         self.value = self.health + self.spawn_count*self.spawn_type.health
-
 
     # TODO - is this needed - check difference to original function
     def take_damage(self, damage):
@@ -392,8 +335,6 @@ class GiantTroll(Troll):
     health = 60
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        #self.health = 60
-        #self.value = 60
         self.base_speed = 2
         self.speed = 2
         self.image = giant_troll_img
@@ -401,7 +342,6 @@ class GiantTroll(Troll):
         self.spawn_type = Enemy103
         self.spawn_count = 6
         self.size = 3
-        #self.slowable = False
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
 
@@ -409,18 +349,13 @@ class Meteor(Enemy):
     health = 10
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        #self.health = 10
-        #self.value = 10
-
         self.base_speed = 8
-        #self.base_speed = 2 # tmp for testing
         self.speed = self.base_speed
-
         self.spawn_on_die = True
         self.spawn_type = Enemy4
         self.spawn_count = 5
         self.size = 2
-        self.color =  (193, 154, 107) #(150, 121, 105)
+        self.color =  (193, 154, 107)
         self.fortified = True
         self.fort_health = self.health
         self.value = self.health + self.spawn_count*self.spawn_type.health
@@ -430,19 +365,13 @@ class KingBlob(Enemy):
     health = 100
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        #self.health = 100 #200
-        #self.value = 100 #200
         self.base_speed = 1
         self.speed = 1
         self.image = king_img
         self.spawn_on_die = True
-        #self.spawn_type = Enemy102
         self.spawn_type = Enemy2 #proper one
-        #self.spawn_type = Ghost
-        #self.spawn_count = 20
         self.spawn_count = 100
         self.size = 3
-        #self.slowable = False
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
     # TODO - is this needed - check difference to original function
@@ -473,14 +402,7 @@ class KingBlob(Enemy):
         points = self.generate_point_cloud(self.position, self.spawn_count, spread=100)
 
         for point in points:
-            #print(self.path_index)
             enemy = self.spawn_type(self.path, point, self.path_index)
-            # Spread out slightly
-            # not clear to see if just one apart - might help if I draw circle round them (as already do for fortified)
-            #for j in range(i*2):
-                ##enemy.move(self.position)  #may not need this function
-                #enemy.move()
-                ##enemy.cloud_spawn()
             enemies.append(enemy)
 
 
@@ -488,8 +410,6 @@ class KingBlob2(KingBlob):
     health = 200
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        #self.health = 200
-        #self.value = 200
         self.base_speed = 1
         self.speed = 1
         self.image = king2_img
@@ -499,37 +419,6 @@ class KingBlob2(KingBlob):
         self.size = 3
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
-#class Ghost2(Enemy):
-    #def __init__(self, path, position=None, path_index=0):
-        #super().__init__(path, position, path_index)
-        #self.health = 6
-        #self.value = 6
-        #self.base_speed = 3
-        #self.speed = 3
-        #self.image = ghost_img2
-        #self.invis = True
-
-
-# Idea is you kill heart you get lives.
-# but in play - would be to send in a player object, so can update lives instead of money.
-# ie. not yet usable - also need heart image.
-#class Heart(Enemy):
-    #def __init__(self, path, position=None, path_index=0):
-        #super().__init__(path, position, path_index)
-        #self.health = 5
-        #self.value = 10  #testing a diff value
-        #self.base_speed = 4
-        #self.speed = 4
-        ##self.color = (127, 0, 255)
-
-    #def take_damage(self, damage):
-        #self.health -= damage
-        ##self.value = self.health
-        #sounds.play('blop')
-        #if self.health <= 0:
-            #self.reached_end = True
-            #return self.value  # but will be lives
-        #return 0
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor,

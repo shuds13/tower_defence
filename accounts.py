@@ -4,9 +4,9 @@ import pickle
 from pathlib import Path
 import os
 
+
 def new_profile(screen):
     screen_width, screen_height = 600, 150
-    #screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Create New Profile")
     font = pygame.font.Font(None, 40)
     clock = pygame.time.Clock()
@@ -43,6 +43,7 @@ def new_profile(screen):
         pygame.display.flip()
         clock.tick(60)
 
+
 def save_profile(profile_name):
     if not os.path.exists('profiles'):
         os.makedirs('profiles')
@@ -50,12 +51,8 @@ def save_profile(profile_name):
     if os.path.exists(file_path):
         # Return False with an error message if the file already exists
         return None, "Profile already exists. Please enter a different name."
-
-    #profile_data = {'name': profile_name}
     account = Account(name=profile_name)
     account.save()
-    #print(f"Profile '{profile_name}' saved.")
-    # Return True with an empty message when the save is successful
     return account, ''
 
 
@@ -68,7 +65,6 @@ def load_profile(filename):
 def profile_menu(screen):
     # Window settings
     screen_width, screen_height = 600, 400
-    #screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Account Loader")
     font = pygame.font.Font(None, 36)
 
@@ -106,13 +102,12 @@ def profile_menu(screen):
             screen.blit(text_surface, text_rect)
             profiles.append({'filename': filename, 'rect': text_rect})
             y += 40
-
         pygame.display.flip()
-
     return selected_profile
 
 
 class Account():
+    """Class to handle user profiles"""
     def __init__(self, name='Guest'):
         self.name = name
         self.maps_complete = []
@@ -122,8 +117,6 @@ class Account():
     def complete_map(self, gmap, aced=False):
         if not gmap in self.maps_complete:
             self.maps_complete.append(gmap)
-            #print(self.maps_complete)
-
         if aced:
             if not gmap in self.maps_aced:
                 self.maps_aced.append(gmap)

@@ -388,7 +388,6 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
     elif sell_button.collidepoint(mouse_pos) and not game_over:
         sell_val = int(tower.cost * 0.8)
         player_money += sell_val
-        #snd_sell.play()
         sounds.play('sell')
         alert_message = f"Sold! (${sell_val})"
         alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
