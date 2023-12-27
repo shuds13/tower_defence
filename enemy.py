@@ -2,19 +2,19 @@ import pygame
 import sounds
 import random
 
-ghost_img = pygame.image.load('ghost.png')
+ghost_img = pygame.image.load('images/ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 big_ghost_img = pygame.transform.scale(ghost_img, (70, 70))
 
-devil_img = pygame.image.load('devil.png')
+devil_img = pygame.image.load('images/devil.png')
 devil_img = pygame.transform.scale(devil_img, (50, 50))
 
-troll_img = pygame.image.load('troll.png')
+troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
 giant_troll_img = pygame.transform.scale(troll_img, (90, 90))
-king_img = pygame.image.load('kingblob.png')
+king_img = pygame.image.load('images/kingblob.png')
 king_img = pygame.transform.scale(king_img, (100, 100))
-king2_img = pygame.image.load('kingblob_green.png')
+king2_img = pygame.image.load('images/kingblob_green.png')
 king2_img = pygame.transform.scale(king2_img, (110, 110))
 
 # TODO may not need value and health - will they always be the same?

@@ -1,25 +1,18 @@
-#import pygame_widgets
 import pygame
-#from pygame_widgets.slider import Slider
-#pygame.init()  #for slider?
 import sounds
-
 from tower import Tower, tower_types
 
-#pygame.mixer.init()
-#snd_sell = pygame.mixer.Sound('sell.wav')
-
-cross_img = pygame.image.load('cross.png')
+cross_img = pygame.image.load('images/cross.png')
 cross_img = pygame.transform.scale(cross_img, (50, 50))
 
-cog_img = pygame.image.load('options.png')
+cog_img = pygame.image.load('images/options.png')
 cog_img = pygame.transform.scale(cog_img, (40, 40))
 
-crown_img = pygame.image.load('crown.png')
+crown_img = pygame.image.load('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (100, 100))
-crownace_img = pygame.image.load('crown_ace.png')
+crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (100, 100))
-troll_img = pygame.image.load('troll.png')
+troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
 frames_per_second = 60

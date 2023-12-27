@@ -3,11 +3,10 @@ import navigation as nav
 import time
 import spiral
 from accounts import profile_menu, new_profile
-#from accounts import Account
 
-crown_img = pygame.image.load('crown.png')
+crown_img = pygame.image.load('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (50, 50))
-crownace_img = pygame.image.load('crown_ace.png')
+crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (50, 50))
 
 def render_level_to_surface(gmap, size):

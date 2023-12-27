@@ -2,64 +2,61 @@ import math
 import pygame
 import random
 import sounds
-#pygame.init()
-#screen = pygame.display.set_mode((800, 600))
 
-fighter_img = pygame.image.load('tower1.png')
+fighter_img = pygame.image.load('images/tower1.png')
 fighter_img = pygame.transform.scale(fighter_img, (50, 50))
-fighter2_img = pygame.image.load('tower1_lev2.png')
+fighter2_img = pygame.image.load('images/tower1_lev2.png')
 fighter2_img = pygame.transform.scale(fighter2_img, (50, 50))
-fighter3_img = pygame.image.load('tower1_lev3.png')
+fighter3_img = pygame.image.load('images/tower1_lev3.png')
 fighter3_img = pygame.transform.scale(fighter3_img, (55, 55))
-fighter4_img = pygame.image.load('tower1_lev4.png')
+fighter4_img = pygame.image.load('images/tower1_lev4.png')
 fighter4_img = pygame.transform.scale(fighter4_img, (60, 60))
 
-burger_img = pygame.image.load('burger.png')  # Load your tower image
+burger_img = pygame.image.load('images/burger.png')  # Load your tower image
 burger_img = pygame.transform.scale(burger_img, (50, 50))
-burger2_img = pygame.image.load('burger2.png')  # Load your tower image
+burger2_img = pygame.image.load('images/burger2.png')  # Load your tower image
 burger2_img = pygame.transform.scale(burger2_img, (52, 52))
-burger3_img = pygame.image.load('burger3.png')  # Load your tower image
+burger3_img = pygame.image.load('images/burger3.png')  # Load your tower image
 burger3_img = pygame.transform.scale(burger3_img, (55, 55))
-burger4_img = pygame.image.load('burger4.png')  # Load your tower image
+burger4_img = pygame.image.load('images/burger4.png')  # Load your tower image
 burger4_img = pygame.transform.scale(burger4_img, (60, 60))
-
-#burger5_img = pygame.image.load('burger5.png')  # Load your tower image
+#burger5_img = pygame.image.load('images/burger5.png')  # Load your tower image
 #burger5_img = pygame.transform.scale(burger5_img, (60, 60))
 
-wizard_img = pygame.image.load('wizard.png')  # Load your tower image
+wizard_img = pygame.image.load('images/wizard.png')  # Load your tower image
 wizard_img = pygame.transform.scale(wizard_img, (50, 50))
-wizard2_img = pygame.image.load('wizard2.png')  # Load your tower image
+wizard2_img = pygame.image.load('images/wizard2.png')  # Load your tower image
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
-wizard3_img = pygame.image.load('wizard3.png')  # Load your tower image
+wizard3_img = pygame.image.load('images/wizard3.png')  # Load your tower image
 wizard3_img = pygame.transform.scale(wizard3_img, (58, 58))
-wizard4_img = pygame.image.load('wizard4.png')  # Load your tower image
+wizard4_img = pygame.image.load('images/wizard4.png')  # Load your tower image
 wizard4_img = pygame.transform.scale(wizard4_img, (58, 60))
 
-splat_img = pygame.image.load('splat.png')
+splat_img = pygame.image.load('images/splat.png')
 #splat_img = pygame.transform.scale(splat_img, (120, 120))
 
 # I would rather use original oriented images and rotate when put down - without rotatig rectangle.
 # For now use pre-rotated images.
-gluegun_img = pygame.image.load('glue_gun.png')
+gluegun_img = pygame.image.load('images/glue_gun.png')
 gluegun_img = pygame.transform.scale(gluegun_img, (50, 50))
-gluegun2_img = pygame.image.load('glue_gun2.png')
+gluegun2_img = pygame.image.load('images/glue_gun2.png')
 gluegun2_img = pygame.transform.scale(gluegun2_img, (50, 50))
-gluegun3_img = pygame.image.load('glue_gun3.png')
+gluegun3_img = pygame.image.load('images/glue_gun3.png')
 gluegun3_img = pygame.transform.scale(gluegun3_img, (50, 50))
-gluegun4_img = pygame.image.load('glue_gun4.png')
+gluegun4_img = pygame.image.load('images/glue_gun4.png')
 gluegun4_img = pygame.transform.scale(gluegun4_img, (55, 55))
 
-totem_img = pygame.image.load('totem.png')
+totem_img = pygame.image.load('images/totem.png')
 totem_img = pygame.transform.scale(totem_img, (50, 50))
 totem_img_ingame = pygame.transform.scale(totem_img, (70, 70))
 
-totem2_img = pygame.image.load('totem2.png')
+totem2_img = pygame.image.load('images/totem2.png')
 totem2_img = pygame.transform.scale(totem2_img, (73, 73))
 #totem2_img_ingame = pygame.transform.scale(totem2_img, (70, 70))
 
-totem3_img = pygame.image.load('totem3.png')
+totem3_img = pygame.image.load('images/totem3.png')
 totem3_img = pygame.transform.scale(totem3_img, (80, 80))
-totem4_img = pygame.image.load('totem4.png')
+totem4_img = pygame.image.load('images/totem4.png')
 totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 
 
