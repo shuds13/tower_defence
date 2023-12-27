@@ -133,8 +133,6 @@ class Game():
                 #self.account = Account()
             account.complete_map(gmap.__class__, self.aced)
             account.save()
-            #print(f"{account.maps_complete}")
-            #print(f'{account.name} account saved')
             sounds.play('victory')
 
             if self.print_total_money:
@@ -153,11 +151,9 @@ class Game():
                 self.start_round_towers.append(copy.copy(tower))
             self.level_num += 1
             self.set_money_per_hit()
-            #print(f"{self.money_per_hit=}")
             self.level = lev.levels[self.level_num]()
             self.reset_level()
             # Will be in stats option in options window.
-            #print(f"{total_hits=}")
             if self.print_total_money:
                 rbe = self.total_hits + self.lives_lost
                 #print(f"Before level {self.level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")

@@ -18,17 +18,13 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 
-initial_lives = 3000
-initial_money = 15000
-initial_level = 61
+initial_lives = 30
+initial_money = 150
+initial_level = 1
 
 print_total_money = False
-
 init_last_round_restarts = 3
-#init_last_round_restarts = 20
-
 restart_testing = False
-
 
 # Initialize Pygame
 pygame.init()
@@ -65,13 +61,10 @@ except Exception:
 game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
             lev, print_total_money, inset_window)
 
-# Dont need these wrappers now.
 def reset_game():
     game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
                 lev, print_total_money, inset_window)
     return game
-
-#game = reset_game()
 
 def in_range(my_range, mouse_x, mouse_y, obj):
     distance = ((mouse_x - obj.position[0])**2 + (mouse_y - obj.position[1])**2)**0.5
@@ -110,11 +103,8 @@ close_game_over = None
 
 alert_message = ""
 alert_timer = 0
-#round_bonus = 20
-#highlight_time = 20
 # restart_timer = 20000
 
-#game = reset_game()
 gmap = select_map()
 options_button = nav.draw_options_cog(window)
 
@@ -160,7 +150,6 @@ while game.running:
                 nav.draw_options_window(pygame.display, window, options_button)
 
             if game.game_over or restart_testing:
-
                 if restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
                     game.restart_round(lev)
                     game.reset_level()
@@ -230,7 +219,7 @@ while game.running:
                     alert_message = "Cant place here"
                     alert_timer = 120  # Display message for 2 seconds (assuming 60 FPS)
 
-    #  prevent flash of level when close from map screen - is this okay here
+    # prevent flash of level when close from map screen
     if not game.running:
         break
 
@@ -246,7 +235,6 @@ while game.running:
         tower.speed_mod = 1
         tower.range_mod = 1
         tower.see_ghosts = tower.__class__.see_ghosts
-        #print(f"Tower: {tower} {tower.__class__.see_ghosts} {tower.see_ghosts}")
 
     for totem in game.totems:
         for tower in game.towers:
@@ -261,7 +249,6 @@ while game.running:
 
                 #path = paths[0]
                 path = paths[game.path_id]
-                #game.enemies.append(Enemy(path))  # Type will be determined also by level
                 game.level.spawn_enemy(game.enemies, path)  # Type will be determined also by level
                 game.enemy_spawn_timer = 0
                 game.level.update()
@@ -281,16 +268,13 @@ while game.running:
             if enemy.reached_end:
                 game.lives -= enemy.value  # Decrease the lives
             elif enemy.toxic_glued:
-                #print('hhhhhhhhhhhhhhhhhhere')
                 hits = enemy.toxic_damage()
                 game.process_hits(hits)
                 if enemy.health <= 0 and enemy.spawn_on_die:
-                    #enemy.spawn_func(path, game.enemies)  # to do with multiple path -
                     enemy.spawn_func(game.enemies)
 
         # May not need both conditions as reached_end is set to True when killed
         game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
-
 
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
@@ -309,8 +293,6 @@ while game.running:
     window.fill(background_color)  # Clear screen
 
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, game.current_tower_type)
-    #tower_option_rects = draw_side_panel(window, side_panel_rect, tower_img_1)
-
     options_button = nav.draw_options_cog(window)
 
     if alert_timer > 0:
@@ -318,15 +300,12 @@ while game.running:
         window.blit(alert_text, (350, 10))
         alert_timer -= 1
 
-
     # Draw the paths - try drawing before towers how does it look
     for path in paths:
         for i in range(len(path) - 1):
             pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
 
-
     for tower in game.towers:
-        #tower.draw(window, game.enemies)  # test replacing this with commented lines (dedicated commit) - I think corrects funny angle - but does it 'wobble' more
         if game.active:
             hits = tower.update(game.enemies)
             tower.draw(window, game.enemies)
@@ -365,11 +344,6 @@ while game.running:
     font = pygame.font.SysFont(None, 36)
     lives_text = font.render(f"Level: {game.level_num}", True, (255, 255, 255))
     window.blit(lives_text, (200, 10))
-
-    ## Draw the paths
-    #for path in paths:
-        #for i in range(len(path) - 1):
-            #pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
 
     # Draw enemies
     for enemy in game.enemies:
@@ -459,17 +433,6 @@ while game.running:
             game_over_text = font.render("Game Over", True, (255, 0, 0))
             text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
             window.blit(game_over_text, text_rect)
-
-        #if map_complete:
-            #complete_text = "Map Complete!"
-            #if aced:
-                #complete_text = "Map Complete (Aced)"
-            #game_over_text = font.render(complete_text, True, (196, 180, 84))
-        #else:
-            #game_over_text = font.render("Game Over", True, (255, 0, 0))
-        #text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
-        #window.blit(game_over_text, text_rect)
-
 
         # TODO thinking about this right now - buttons are not none after start - even if not drawn - can you click!!!!
         # oh but click only looked for if game_over!!!!! - you could reset button to None at that point!!!
