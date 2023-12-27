@@ -43,14 +43,6 @@ class Game():
         self.round_bonus = 20
         self.highlight_time = 20
 
-        try:
-            # or load latest
-            self.account = load_profile("default.pkl")
-        except Exception:
-            print("Failed to load default profile - there should be a file profile/default.pkl")
-            print("Defaulting to no profile loaded")
-            self.account = None
-
     def reset_level(self):
         self.enemies = []
         self.running = True
@@ -104,7 +96,7 @@ class Game():
         return self.money_per_hit
 
     # prob add account to this class also
-    def level_complete(self, display, window, window_size, lev, gmap, init_last_round_restarts):
+    def level_complete(self, display, window, window_size, lev, gmap, init_last_round_restarts, account):
         font = pygame.font.SysFont(None, 72)
         win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
         text_rect = win_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2))
@@ -137,10 +129,10 @@ class Game():
             else:
                 self.aced = False
 
-            if self.account is None:
-                self.account = Account()
-            self.account.complete_map(gmap.__class__, self.aced)
-            self.account.save()
+            #if self.account is None:
+                #self.account = Account()
+            account.complete_map(gmap.__class__, self.aced)
+            account.save()
             #print(f"{account.maps_complete}")
             #print(f'{account.name} account saved')
             sounds.play('victory')
@@ -170,5 +162,3 @@ class Game():
                 rbe = self.total_hits + self.lives_lost
                 #print(f"Before level {self.level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")
                 print(f"At finish: level {self.level_num} {self.total_hits=} {self.total_money=:.2f} {self.lives_lost=} {rbe=} {round_money=}")
-
-

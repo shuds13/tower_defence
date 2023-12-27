@@ -10,7 +10,7 @@ import levels as lev
 from maps import map_window
 import sounds
 import hints
-#from accounts import Account, load_profile
+from accounts import Account, load_profile
 from game_metrics import Game
 
 #pygame.mixer.init()
@@ -20,7 +20,7 @@ pygame.font.init()  # Initialize font module
 
 initial_lives = 3000
 initial_money = 15000
-initial_level = 60
+initial_level = 61
 
 print_total_money = False
 
@@ -53,13 +53,25 @@ inset_window = {
     'totem': None
 }
 
+try:
+    # or load latest
+    account = load_profile("default.pkl")
+except Exception:
+    print("Failed to load default profile - there should be a file profile/default.pkl")
+    print("Defaulting to no profile loaded")
+    account = None
+
+#print(f"{account=}")
+game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
+            lev, print_total_money, inset_window)
+
 # Dont need these wrappers now.
 def reset_game():
     game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
                 lev, print_total_money, inset_window)
     return game
 
-game = reset_game()
+#game = reset_game()
 
 def in_range(my_range, mouse_x, mouse_y, obj):
     distance = ((mouse_x - obj.position[0])**2 + (mouse_y - obj.position[1])**2)**0.5
@@ -80,17 +92,10 @@ def set_map(gmap):
     pygame.display.set_caption("Tower Defense Game" + f" ({gmap.name})")
     return gmap
 
-#try:
-    ## or load latest
-    #account = load_profile("default.pkl")
-#except Exception:
-    #print("Failed to load default profile - there should be a file profile/default.pkl")
-    #print("Defaulting to no profile loaded")
-    #account = None
-
 def select_map():
-    global pygame, window, window_size, game  # send to func
-    gmap, game.account = map_window(pygame.display, window, window_size, game.account)
+    global pygame, window, window_size, game, account  # send to func
+    #print(f"{game.account=}")
+    gmap, account = map_window(pygame.display, window, window_size, account)
     if gmap is None:
         game.running = False
         return
@@ -289,7 +294,7 @@ while game.running:
 
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
-            game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts)
+            game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
             continue # this was in if not at max level - does it matter being done either way
 
         if game.lives <= 0:
