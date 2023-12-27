@@ -13,11 +13,9 @@ import hints
 from accounts import Account, load_profile
 from game_metrics import Game
 
-#pygame.mixer.init()
 pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
-
 initial_lives = 30
 initial_money = 150
 initial_level = 1
@@ -57,7 +55,6 @@ except Exception:
     print("Defaulting to no profile loaded")
     account = None
 
-#print(f"{account=}")
 game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
             lev, print_total_money, inset_window)
 
@@ -87,7 +84,6 @@ def set_map(gmap):
 
 def select_map():
     global pygame, window, window_size, game, account  # send to func
-    #print(f"{game.account=}")
     gmap, account = map_window(pygame.display, window, window_size, account)
     if gmap is None:
         game.running = False
@@ -434,8 +430,8 @@ while game.running:
             text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
             window.blit(game_over_text, text_rect)
 
-        # TODO thinking about this right now - buttons are not none after start - even if not drawn - can you click!!!!
-        # oh but click only looked for if game_over!!!!! - you could reset button to None at that point!!!
+        # TODO Buttons are not none after start - even if not drawn
+        # click only looked for if game_over - you could reset button to None at that point!
         # Draw the play again button
         play_again_button, maps_button, restart_round_button = nav.play_button(
             window, window_size, game.last_round_restarts
@@ -446,8 +442,6 @@ while game.running:
 
     pygame.display.flip()  # Update the full display Surface to the screen
     clock.tick(nav.frames_per_second)  # Maintain 60 frames per second
-
-#pygame.display.flip()  # Update the full display Surface to the screen
 
 # Pause for a few seconds to display the game over message
 #pygame.time.wait(200)

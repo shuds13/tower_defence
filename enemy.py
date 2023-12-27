@@ -15,7 +15,6 @@ king_img = pygame.transform.scale(king_img, (100, 100))
 king2_img = pygame.image.load('images/kingblob_green.png')
 king2_img = pygame.transform.scale(king2_img, (110, 110))
 
-# TODO may make enemy0 as way of making a gap - inivisible no value etc...
 
 class Enemy:
     health = 1
@@ -24,14 +23,14 @@ class Enemy:
         self.path_index = path_index
         self.base_speed = 2  # help with things like gluing from a stronger glue gunner
         self.speed = 2
-        self.reached_end = False  # Indicates if the enemy has reached the end of the path
+        self.reached_end = False  # Indicates if the enemy has reached the end of the path (or dead)
         self.health = self.__class__.health
         self.value = self.__class__.health
         self.color = (255, 0, 0)
         self.image = None
         self.invis = False
         self.fortified = False
-        self.spawn_on_die = False  # not used for regular colors - those change attributes.
+        self.spawn_on_die = False  # not used for regular color enemies - those change attributes.
         self.position = position or self.path[0]
         self.size = 1
         self.slowable = True
@@ -160,6 +159,7 @@ class Enemy2(Enemy):
                 self.glue_reset()
         return val
 
+
 class Enemy3(Enemy2):
     health = 3
     def __init__(self, path, position=None, path_index=0):
@@ -285,7 +285,7 @@ class BigGhost(Ghost):
     health = 20
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.health = self.__class__.health  # already should be
+        self.health = self.__class__.health
         self.base_speed = 3
         self.speed = 3
         self.image = big_ghost_img
@@ -299,8 +299,6 @@ class Devil(Ghost):
     health = 8
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        #self.health = 8
-        #self.value = 8
         self.base_speed = 4
         self.speed = 4
         self.image = devil_img
@@ -386,14 +384,7 @@ class KingBlob(Enemy):
         return score
 
     def generate_point_cloud(self, central_point, n_points, spread=1.0):
-        """
-        Generates a cloud of 2D points around a central point.
-
-        :param central_point: A tuple (x, y) representing the central point.
-        :param n_points: Number of points to generate.
-        :param spread: The range around the central point for generating points.
-        :return: A list of tuples, each representing a point (x, y).
-        """
+        """ Generates a cloud of 2D points around a central point."""
         x_center, y_center = central_point
         return [(x_center + random.uniform(-spread, spread),
                 y_center + random.uniform(-spread, spread)) for _ in range(n_points)]

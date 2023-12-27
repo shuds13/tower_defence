@@ -12,31 +12,27 @@ fighter3_img = pygame.transform.scale(fighter3_img, (55, 55))
 fighter4_img = pygame.image.load('images/tower1_lev4.png')
 fighter4_img = pygame.transform.scale(fighter4_img, (60, 60))
 
-burger_img = pygame.image.load('images/burger.png')  # Load your tower image
+burger_img = pygame.image.load('images/burger.png')
 burger_img = pygame.transform.scale(burger_img, (50, 50))
-burger2_img = pygame.image.load('images/burger2.png')  # Load your tower image
+burger2_img = pygame.image.load('images/burger2.png')
 burger2_img = pygame.transform.scale(burger2_img, (52, 52))
-burger3_img = pygame.image.load('images/burger3.png')  # Load your tower image
+burger3_img = pygame.image.load('images/burger3.png')
 burger3_img = pygame.transform.scale(burger3_img, (55, 55))
-burger4_img = pygame.image.load('images/burger4.png')  # Load your tower image
+burger4_img = pygame.image.load('images/burger4.png')
 burger4_img = pygame.transform.scale(burger4_img, (60, 60))
-#burger5_img = pygame.image.load('images/burger5.png')  # Load your tower image
+#burger5_img = pygame.image.load('images/burger5.png')
 #burger5_img = pygame.transform.scale(burger5_img, (60, 60))
+splat_img = pygame.image.load('images/splat.png')
 
-wizard_img = pygame.image.load('images/wizard.png')  # Load your tower image
+wizard_img = pygame.image.load('images/wizard.png')
 wizard_img = pygame.transform.scale(wizard_img, (50, 50))
-wizard2_img = pygame.image.load('images/wizard2.png')  # Load your tower image
+wizard2_img = pygame.image.load('images/wizard2.png')
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
-wizard3_img = pygame.image.load('images/wizard3.png')  # Load your tower image
+wizard3_img = pygame.image.load('images/wizard3.png')
 wizard3_img = pygame.transform.scale(wizard3_img, (58, 58))
-wizard4_img = pygame.image.load('images/wizard4.png')  # Load your tower image
+wizard4_img = pygame.image.load('images/wizard4.png')
 wizard4_img = pygame.transform.scale(wizard4_img, (58, 60))
 
-splat_img = pygame.image.load('images/splat.png')
-#splat_img = pygame.transform.scale(splat_img, (120, 120))
-
-# I would rather use original oriented images and rotate when put down - without rotatig rectangle.
-# For now use pre-rotated images.
 gluegun_img = pygame.image.load('images/glue_gun.png')
 gluegun_img = pygame.transform.scale(gluegun_img, (50, 50))
 gluegun2_img = pygame.image.load('images/glue_gun2.png')
@@ -49,11 +45,8 @@ gluegun4_img = pygame.transform.scale(gluegun4_img, (55, 55))
 totem_img = pygame.image.load('images/totem.png')
 totem_img = pygame.transform.scale(totem_img, (50, 50))
 totem_img_ingame = pygame.transform.scale(totem_img, (70, 70))
-
 totem2_img = pygame.image.load('images/totem2.png')
 totem2_img = pygame.transform.scale(totem2_img, (73, 73))
-#totem2_img_ingame = pygame.transform.scale(totem2_img, (70, 70))
-
 totem3_img = pygame.image.load('images/totem3.png')
 totem3_img = pygame.transform.scale(totem3_img, (80, 80))
 totem4_img = pygame.image.load('images/totem4.png')
@@ -85,7 +78,6 @@ class Tower:
         self.viz_persist = 0
         self.level = 1
         self.total_score = 0
-        #self.start_round_score = 0
         self.see_ghosts = False
         self.beam_width = 5
         self.image_angle_offset = 0
@@ -285,7 +277,6 @@ class Burger(Tower):
             self.attack_speed = 26
             self.range =  75
             self.image = burger3_img
-            #self.image = pygame.transform.scale(burger_img, (55, 55))
             self.max_attacks = 8
             self.cost += self.upgrade_costs[1]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
@@ -297,8 +288,6 @@ class Burger(Tower):
             self.max_attacks = 15  # 12 (dam 2)
             self.cost += self.upgrade_costs[2]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
-            #either slower attack_speed (~20) and damage 2 or faster <15 and damage 1
-            self.damage = 1 # 2 # not sure - with damage 2 and other stats nothing got past
         #if self.level == 5:
             #self.attack_speed = 8  # lower is better currently
             #self.range =  100
@@ -306,7 +295,6 @@ class Burger(Tower):
             #self.max_attacks = 20
             #self.cost += self.upgrade_costs[3]
             #self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
-            ##either slower attack_speed (~20) and damage 2 or faster <15 and damage 1
             #self.damage = 3 # not sure - with damage 2 and other stats nothing got past
 
     # Splat attack!
@@ -358,8 +346,7 @@ class Burger(Tower):
         self.draw(window)
 
 
-# Need to fit
-# Top: Arch Mage, Enchanter, Sorceror, Mage (Sorceror sounds evil to me)
+# Possible level names Arch Mage, Enchanter, Sorceror, Mage (Sorceror sounds evil to me)
 class Wizard(Tower):
 
     price = 125
