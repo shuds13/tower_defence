@@ -108,28 +108,15 @@ class Tower:
 
     def reset_attack_timer(self):
         self.attack_timer = max(int(self.attack_speed * self.speed_mod), 1)
-        #print(f"{self.attack_timer=}")
-
-    #def set_start_hits(self):
-        #self.start_round_score = self.total_score
-
-    #def reset_tower(self):
-        #self.total_score = self.start_round_score
-        #self.viz_persist = 0
-        ##reset level
-
-    #def get_start_hits(self):
-        #return self.start_round_score
 
     def is_visible(self, enemy):
         return not enemy.invis or self.see_ghosts
 
     # Goes through enemies - finds first (could find strongest etc...)
-    # Note that enemy order if order came on to screen but may not be at the front at any point in time!
+    # Note that enemy order is order came on to screen but may not be at the front at any point in time!
     def find_target(self, enemies):
         for enemy in enemies:
-            #if self.in_range(enemy) and self.is_visible(enemy):
-            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:  # trying dec 23 2023
+            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
                 self.target = enemy
                 break
         else:
@@ -145,17 +132,15 @@ class Tower:
             self.attack_count += 1
             score = self.target.take_damage(self.damage)
             self.reset_attack_timer()
-            self.is_attacking = True  # Set to True when attacking
+            self.is_attacking = True
         else:
-            self.is_attacking = False  # Set to False otherwise
+            self.is_attacking = False
         return score
 
     def update(self, enemies):
         score = 0
         self.attack_timer -= 1
-        #if not self.target or not self.in_range(self.target):
-            #self.find_target(enemies)
-        if self.attack_timer <= 0:  # not havingt this is why multi-toxic glue agaist big enenmy is not working
+        if self.attack_timer <= 0:
             self.find_target(enemies)
             score = self.attack()
             self.total_score += score
@@ -167,7 +152,6 @@ class Tower:
         if not self.target:
             return 0
         if type(self.target) is list:
-            #for now point at first target
             target = self.target[0]
         else:
             target = self.target
@@ -184,7 +168,7 @@ class Tower:
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
 
-       # Keep from immediatly returning to upright.
+        # Keep from immediatly returning to upright.
         if angle == 0:
             angle = self.angle
         else:
@@ -195,10 +179,6 @@ class Tower:
         self.general_draw(window, rotated_image, new_rect)
 
     def is_clicked(self, point):
-        # Assuming the tower is drawn as a circle with a certain radius
-        #radius = 20  # or whatever your tower's radius is
-        #return (self.position[0] - point[0]) ** 2 + (self.position[1] - point[1]) ** 2 <= radius ** 2
-
         # Take account of tower footprint
         # Due to overlap (see navigation.py) in tower placement could clash and will get first placed.
         # For that reason minus some overlap (margin) here.
@@ -206,7 +186,6 @@ class Tower:
         w1 = (self.__class__.footprint[0] // 2) - margin
         h1 = (self.__class__.footprint[1] // 2) - margin
         return abs(self.position[0] - point[0]) < w1 and abs(self.position[1] - point[1]) < h1
-
 
     def attack_animate(self, window):
         pygame.draw.line(window, (255, 0, 0), self.position, self.target.position, self.beam_width)
@@ -225,11 +204,7 @@ class Tower:
             # Create the sublist using list comprehension
             return [input_list[int(i * step)] for i in range(N)]
 
-# Poss names for upgrades - add when got all
-# Fast Firing ??? Not sure with this tower. Descriptive (e.g Rapid firing) or name (e.g. Raptor)
-# Blaze  Doomship, Rapid Fire, Assault Ship, Gold Knight, Destroyer, Annihilator, Warship
-# Raptor
-# Maybe Rapid Fire (green), Destroyer (Red), Raptor (Gold)
+
 class Fighter(Tower):
 
     price = 50
@@ -239,7 +214,6 @@ class Fighter(Tower):
     max_level = 4
     see_ghosts = False
 
-
     def __init__(self, position):
         super().__init__(position)
         self.range =  Fighter.range
@@ -248,26 +222,18 @@ class Fighter(Tower):
         self.cost = Fighter.price
         self.image = Fighter.image
         self.level = 1
-        #self.upgrade_costs = [40, 150, 400]
         self.upgrade_costs = [40, 180, 400]
         self.beam_width = 5
         self.upgrade_name = "Rapid Fire"
 
-        #self.max_level = Fighter.max_level  # try using __class__ and if works do same for other attributes
-
     def level_up(self):
-        #should never happen - if have this condition - then return money to remove from player
-        #if self.level == self.__class__.max_level:
-            #return
-            #print('here3a')
-
         self.level +=1
         if self.level == 2:
             self.attack_speed = 25  # lower is better currently
             self.range =  110
             self.image = fighter2_img
             self.cost += self.upgrade_costs[0]
-            # TODO does not curently give level name at top of inset. For that maybe want it to be on
+            # TODO does not curently give level name in inset. For that maybe want it to be on
             # level rather than one before - and upgrade will see level - or do list upgrade_costs
             # or level_name and a function that gets it for upgrade.
             self.upgrade_name = "Destroyer"
@@ -278,15 +244,14 @@ class Fighter(Tower):
             self.cost += self.upgrade_costs[1]
             self.upgrade_name = "Raptor"
         if self.level == 4:
-            self.attack_speed = 6  # lower is better currently - if dam 1 make faster
+            self.attack_speed = 6  # (if dam 1 then make faster)
             self.range =  140
             self.image = fighter4_img
             self.cost += self.upgrade_costs[2]
-            self.damage = 2  # compare
+            self.damage = 2
             self.beam_width = 7
 
-# Poss names for upgrades - add when got all
-# 'Extra Spicy' 'With Cheese' 'Spicy Deluxe' 'Whopper'  Maybe the last 3?
+
 class Burger(Tower):
 
     price = 65
@@ -315,13 +280,12 @@ class Burger(Tower):
             self.attack_speed = 55  # lower is better currently
             self.range =  70
             self.image = burger2_img
-            #self.image = pygame.transform.scale(burger_img, (55, 55))
             self.max_attacks = 6
             self.cost += self.upgrade_costs[0]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
-            self.upgrade_name = "Extra Spicy" # "Spicy Deluxe" too long currently
+            self.upgrade_name = "Extra Spicy"
         if self.level == 3:
-            self.attack_speed = 26  # lower is better currently
+            self.attack_speed = 26
             self.range =  75
             self.image = burger3_img
             #self.image = pygame.transform.scale(burger_img, (55, 55))
@@ -330,7 +294,7 @@ class Burger(Tower):
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             self.upgrade_name = "Whopper"
         if self.level == 4:
-            self.attack_speed = 12 # 16 (dam 2)  # lower is better currently
+            self.attack_speed = 12 # 16 (dam 2)
             self.range =  80
             self.image = burger4_img
             self.max_attacks = 15  # 12 (dam 2)
@@ -362,26 +326,22 @@ class Burger(Tower):
                         multiplier = 2
                     else:
                         multiplier = 1
-                    #print(multiplier)
                     score += target.take_damage(self.damage * multiplier)
             else:
-                # is burger ever here? Nope
+                # dont think ever here
                 multiplier = self.target.size  # Do more damage to big enemies to simulate multiple projectiles hitting
                 #print('single', multiplier)
                 score = self.target.take_damage(self.damage * multiplier)
-            #print(f"{score=}")
             self.reset_attack_timer()
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
         return score
 
-
     def draw(self, window, enemies=None):
         """Dont rotate burger"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
-
 
     def find_target(self, enemies):
         # Only place to call function - after just check self.cloud_attack
@@ -393,21 +353,13 @@ class Burger(Tower):
         if tmp_target:
             self.target = self.create_sublist(tmp_target, self.max_attacks)
 
-
     # Could do retention of image like wizard cloud but its actually ok
     def attack_animate(self, window):
-        #for target in self.target:
-            #pygame.draw.line(window, (255,0,0), self.position, target.position, self.beam_width)
-            #image_rect = self.splat_img.get_rect(center=(x + width // 2, image_y_pos))
         image_rect = self.splat_img.get_rect(center=self.position)
         window.blit(self.splat_img, image_rect)
-        # draw burger back on top - normally dont notice but for end of levels etc.
+        # draw burger back on top of splat
         self.draw(window)
 
-
-        #pygame.display.flip()
-        #import time
-        #time.sleep(2)
 
 # Need to fit
 # Top: Arch Mage, Enchanter, Sorceror, Mage (Sorceror sounds evil to me)
@@ -419,7 +371,6 @@ class Wizard(Tower):
     range = 120
     max_level = 4
     see_ghosts = True
-
 
     def __init__(self, position):
         super().__init__(position)
@@ -458,49 +409,44 @@ class Wizard(Tower):
             self.max_cloud_attacks = 14
             self.upgrade_name = "Mage"
         if self.level == 3:
-            # I really want to introduce a new spell - maybe blow enemies back or something else.
-            self.attack_speed = 15  # lower is better currently
+            self.attack_speed = 15
             self.range =  150
             self.image = wizard3_img
-            self.cloud_freq = 6  # less freq
+            self.cloud_freq = 6  # less freq per regular attack (but more frequent in time)
             self.cost += self.upgrade_costs[1]
             self.beam_width = 8
             self.max_attacks = 4
             self.max_cloud_attacks = 25
             self.upgrade_name = "Arch Mage"
         if self.level == 4:
-            # I really want to introduce a new spell - maybe blow enemies back or something else.
-            self.attack_speed = 8  # lower is better currently
+            # I want to introduce a new spell - maybe blow enemies back or something else.
+            self.attack_speed = 8
             self.range =  170
             self.image = wizard4_img
-            self.cloud_freq = 7  # less freq
+            self.cloud_freq = 7
             self.cost += self.upgrade_costs[2]
             self.beam_width = 9
             self.max_attacks = 5
             self.max_cloud_attacks = 45
 
     def _is_cloud_attack(self):
-        # The slow but elegant way - can do one line also x=y=z
+        # The slow but elegant way
         if self.attack_count % self.cloud_freq == 0:
-            #self.cloud_attack = True
             self.cloud_attack = True
             self.cloud_type = 1
             if self.level >= 4:
                 if self.attack_count % (2*self.cloud_freq) == 0:
                     self.cloud_type = 2
         else:
-            #self.cloud_attack = False
             self.cloud_attack = False
         return self.cloud_attack
 
     def _is_multi_attack(self):
-        # The slow but elegant way - can do one line also x=y=z
         if self.attack_count % self.cloud_freq == 2:
             self.multi_attack = True
         else:
             self.multi_attack = False
         return self.multi_attack
-
 
     def get_color(self, cloud_type):
         if cloud_type == 1:
@@ -509,19 +455,12 @@ class Wizard(Tower):
             #return 63, 0, 255
             return 0, 255, 255
 
-
     def create_cloud(self, radius):
         c1, c2, c3 = self.get_color(self.cloud_type)
         c_alpha = 128
         cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
         pygame.draw.circle(cloud, (c1, c2, c3, c_alpha), (radius, radius), radius)
         return cloud
-
-    #def create_cloud2(self, radius):
-        #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-        #pygame.draw.circle(cloud, (255, 192, 0, 128), (radius, radius), radius)
-        #return cloud
-
 
     def draw_lightning(self, screen, start_pos, end_pos, divisions, color):
         if divisions == 0:
@@ -530,41 +469,21 @@ class Wizard(Tower):
             mid_x = (start_pos[0] + end_pos[0]) // 2 + random.randint(-20, 20)
             mid_y = (start_pos[1] + end_pos[1]) // 2 + random.randint(-20, 20)
             mid_pos = (mid_x, mid_y)
-
             self.draw_lightning(screen, start_pos, mid_pos, divisions - 1, color)
             self.draw_lightning(screen, mid_pos, end_pos, divisions - 1, color)
-
 
     def show_viz_persist(self, window):
         # Currently only cloud persists - could also change in size/color etc
         # TODO avoid duplication
-
-        #cloud = self.create_cloud(self.range)
-        # try changing somwhow
         radius = max(0, self.current_range() - 100//self.viz_persist)
-        #color = 128
-        #color = max(128 - 5*self.viz_persist, 0)
-        #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-        #pygame.draw.circle(cloud, (color, 0, color, color), (radius, radius), radius)
-
-        #color = max(128 - 5*self.viz_persist, 0)
-        #cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-        #pygame.draw.circle(cloud, (color, 0, color, color), (radius, radius), radius)
-
-        #print(f"{self.cloud_attack=}")
         c1, c2, c3 = self.get_color(self.cloud_type)
-        #c_alpha = 128
         c_alpha = max(128 - 5*self.viz_persist, 0)
         cloud = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
         pygame.draw.circle(cloud, (c1, c2, c3, c_alpha), (radius, radius), radius)
-
-
-
         cloud_rect = cloud.get_rect(center=self.position)
         window.blit(cloud, cloud_rect)
         if self.viz_persist > 0:
             self.viz_persist -= 1
-
 
     def get_staff_pos(self):
         if self.level == 1:
@@ -574,71 +493,42 @@ class Wizard(Tower):
         elif self.level == 3:
             return (self.position[0]+15, self.position[1]-16)
         elif self.level == 4:
-            return (self.position[0]-18, self.position[1]-21)  #update
+            return (self.position[0]-18, self.position[1]-21)
 
-    # To be every so many attacks but for now replace
     def attack_animate(self, window):
         staff_position = self.get_staff_pos()
         if self.cloud_attack:
-            #cloud = pygame.transform.scale(cloud_image, (tower.attack_radius*2, tower.attack_radius*2))
             cloud = self.create_cloud(self.current_range())
             cloud_rect = cloud.get_rect(center=self.position)
             window.blit(cloud, cloud_rect)
-
-            #cloud = self.create_cloud2(self.current_range())
-            #cloud_rect = cloud.get_rect(center=self.position)
-            #window.blit(cloud, cloud_rect)
-
             pygame.draw.circle(window, (255, 0, 0), staff_position, 15)  # Tower
             self.viz_persist = 5
         else:
             #pygame.draw.line(window, (255,0,255), self.position, self.target.position, self.beam_width)
             if type(self.target) is list:
                 for target in self.target:
-                    #pygame.draw.line(window, (255,0,255), staff_position, target.position, self.beam_width)
+                    # pygame.draw.line(window, (255,0,255), staff_position, target.position, self.beam_width)
                     self.draw_lightning(window, staff_position, target.position, 3, (255,0,255))
-
             else:
-                #pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
-                #testing lightning strike animation instead of straight line
+                # pygame.draw.line(window, (255,0,255), staff_position, self.target.position, self.beam_width)
+                # testing lightning strike animation instead of straight line
                 if self.level >= 4 and self.target.size > 1:
                     for nn in range(self.target.size):
                         self.draw_lightning(window, staff_position, self.target.position, 3, (255, 192, 0))
                 else:
                     self.draw_lightning(window, staff_position, self.target.position, 3, (255,0,255))
 
-
-    #def find_target(self, enemies):
-        ## Only place to call function - after just check self.cloud_attack
-        #tmp_target = []
-        #self.target = []
-        #for enemy in enemies:
-            #if self.in_range(enemy) and self.is_visible(enemy):
-                #tmp_target.append(enemy)
-        #if tmp_target:
-            #self.target = self.create_sublist(tmp_target, self.max_attacks)
-
-
-    #new tired..- need test new one - and prob improve efficiency - cloud ad multi-attack basically same but for N
-    #also calls find_enemies even when not attacking - attack_timer test in attack() - why not only
-    #do find_target when attack timer is on!!!! Will fix this inefficiency also
+    # Improve efficiency - cloud and multi-attack basically same
     def find_target(self, enemies):
-        # Only place to call function - after just check self.cloud_attack
+        # Only place to call function - elsewhere just check self.cloud_attack
         if self._is_cloud_attack():
             tmp_target = []
             self.target = []
-
             for enemy in enemies:
                 if self.in_range(enemy) and not enemy.reached_end:
                     tmp_target.append(enemy)
-                    #self.target.append(enemy)
             if tmp_target:
-
-                #compare as before all
-                #self.target = tmp_target
-
                 self.target = self.create_sublist(tmp_target, self.max_cloud_attacks)
-                #print(f"cloud {len(self.target)}")
 
             # why this - dont remember - not there for burger - could now set to None before
             # but why needed here and not for burger!
@@ -653,40 +543,8 @@ class Wizard(Tower):
                     tmp_target.append(enemy)
             if tmp_target:
                 self.target = self.create_sublist(tmp_target, self.max_attacks)
-                #print(f"Multi {len(self.target)}")
-
-                #self.target.append(tmp_target[0])
-                #if len(tmp_target) > 1:
-                    ##could be strongest (if not same as first) - but try last
-                    #self.target.append(tmp_target[-1])
         else:
             super().find_target(enemies)
-
-
-
-    #old - need test new one - and prob improve efficiency - cloud ad multi-attack basically same but for N
-    #def find_target(self, enemies):
-        ## Only place to call function - after just check self.cloud_attack
-        #if self._is_cloud_attack():
-            #self.target = []
-            #for enemy in enemies:
-                #if self.in_range(enemy):
-                    #self.target.append(enemy)
-            #if not self.target:
-                #self.target = None
-        #elif self._is_multi_attack():
-            #tmp_target = []
-            #self.target = []
-            #for enemy in enemies:
-                #if self.in_range(enemy):
-                    #tmp_target.append(enemy)
-            #if tmp_target:
-                #self.target.append(tmp_target[0])
-                #if len(tmp_target) > 1:
-                    ##could be strongest (if not same as first) - but try last
-                    #self.target.append(tmp_target[-1])
-        #else:
-            #super().find_target(enemies)
 
     # Could be generic to deal with lists
     def attack(self):
@@ -704,24 +562,19 @@ class Wizard(Tower):
                         multiplier += 1
                     score += target.take_damage(self.damage * multiplier)
             else:
-                #For lev 4 I may make special power attack against size 2/3 enemies.
-                #Animattin diff color - maybe multiple lightning strikes to same target
-                #or slightly displaced at end but I should see if I can make animate
-                #combined with attack - why called separately? If combined
-                #dont need to store things like attack type....
-                #for now may make every 'single' attack so dont need to store - testing
+                #For lev 4 special power attack against size 2/3 enemies.
                 multiplier = 1
                 if self.level >= 4:
                     multiplier = self.target.size
                 score = self.target.take_damage(self.damage*multiplier)
             self.reset_attack_timer()
-            self.is_attacking = True  # Set to True when attacking
+            self.is_attacking = True
         else:
-            self.is_attacking = False  # Set to False otherwise
+            self.is_attacking = False
         return score
 
-    # TODO can now use burger algorithm to attach >2 - act is this fumc diff from attack
-    # maybe can remove this - its find_target that has code for targeting multiple
+    # TODO can now use burger algorithm to attach >2 - check if this fumc is different
+    # And also may be same as cloud but for animation.
     def multi_attack(self):
         score = 0
         if self.target and self.attack_timer <= 0:
@@ -738,7 +591,7 @@ class Wizard(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score
 
-    # Also could be generic to deal with lists - or he does not rotate when uses cloud attack
+    # Also could be generic to deal with lists - is this used for wizard - check.
     def get_target_angle(self):
         if not self.target:
             return 0
@@ -750,8 +603,8 @@ class Wizard(Tower):
         dy = target.position[1] - self.position[1]
         return math.degrees(math.atan2(-dy, dx)) - 90  # Subtract 90 degrees if the image points up
 
-# TODO - PROB PUT glue gunner before wizard in side panel
-# Big Blobs (or Splatter), Toxic, Toxic Storm (or Toxic Deluge/Tsunami/drench/barrage or similar)
+
+# Level names: Big Blobs (or Splatter), Toxic, Toxic Storm (or Toxic Deluge/Tsunami/drench/barrage or similar)
 class GlueGunner(Tower):
 
     price = 80
@@ -763,7 +616,7 @@ class GlueGunner(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range =  GlueGunner.range
-        self.attack_speed = 40 # 30
+        self.attack_speed = 40
         self.damage = 1
         self.cost = GlueGunner.price
         self.image = GlueGunner.image
@@ -793,7 +646,6 @@ class GlueGunner(Tower):
 
         if self.level == 3:
             self.attack_speed = 30
-            #self.range =  110
             self.image = gluegun3_img
             self.cost += self.upgrade_costs[1]
             self.slow_factor = [0.4, 0.7, 0.8]
@@ -801,8 +653,6 @@ class GlueGunner(Tower):
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
             self.toxic_time = 150
-            #self.glue_layers = 4
-            #self.glue_layers = 1  # testing for regluding
             self.max_toxic_big_reattacks = 1
             self.max_toxic_giant_reattacks = 2
             self.upgrade_name = "Toxic Storm"
@@ -820,25 +670,9 @@ class GlueGunner(Tower):
             self.toxic_time = 60 # 75
             self.glue_layers = 4
             self.max_attacks = 6
-            #self.max_toxic_reattacks = 5
-            self.max_toxic_big_reattacks = 2
+            self.max_toxic_big_reattacks = 2  # Repeatedly attack same enemy - takes toxic damage for each
             self.max_toxic_giant_reattacks = 5
-            #self.max_toxic_reattacks = 20  # TESTING
-            # TODO At level 4 more toxic damage to big opponents and show more glue on them (and others)
-            # also in general green glue needs to show up more on green enemies.
             self.attack_tower = True
-
-    #def find_target(self, enemies):
-        #for enemy in enemies:
-            #if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.toxic_glued:
-                #self.target = enemy
-                #break
-            #elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.glued:
-                #self.target = enemy
-                #break
-        #else:
-            #self.target = None
-
 
     def can_I_reglue(self, enemy):
         if not enemy.toxic_glued:
@@ -852,23 +686,16 @@ class GlueGunner(Tower):
         return False
 
 
-    # test shoot slower hit multiple targets - closest - not spread
+    # Shoot slower and hit multiple targets - closest - not spread
     # could avoid some duplication here
     def find_target(self, enemies):
         self.target = []
         count = 0
 
-        #print('in find target')
-
         if not enemies:
             self.target = None
 
         for enemy in enemies:
-
-            #tesitng
-            #if enemy.toxic_glued:
-                #print('Nope - hes toxic')
-
             if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end and self.can_I_reglue(enemy):
                 count += 1  # TODO this updates whether same enemy or different...
                 self.target.append(enemy)
@@ -880,9 +707,6 @@ class GlueGunner(Tower):
                 self.target.append(enemy)
                 if count >= self.max_attacks:
                     break
-        #else:
-            #self.target = None
-
 
     # Needs to take account of rotation
     #def get_nozzle_pos(self):
@@ -894,13 +718,8 @@ class GlueGunner(Tower):
         #elif self.level == 3:
             #return (self.position[0]+15, self.position[1]-16)
 
-
-
-
-
     def attack_animate(self, window):
-        #nozzle = self.get_nozzle_pos()
-        #print("In animate")
+        # nozzle = self.get_nozzle_pos()
         nozzle = self.position
         for target in self.target:
             pygame.draw.line(window, self.glue_color, nozzle, target.position, self.beam_width)
@@ -909,7 +728,7 @@ class GlueGunner(Tower):
     # prob should be so they can both attack either no. times or until so many glue strikes on big target...
     # slow - currently not quite right - they both attack but only one claims the toxic hits!!!!
     # cos enemy has only one attribute toxic_glued_by - but really needs one for each hit!
-    # prob need an obj or list of dictionaries to do this. Not sorting this out right now.
+    # Need an obj or list of dictionaries to do this. Not sorting this out right now.
     # For each tower hit - record damage per toxic drain.
     def attack(self):
         score = 0
@@ -935,31 +754,10 @@ class GlueGunner(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score
 
-    # return to previous path index - blower
-    #def attack(self):
-        #score = 0
-        #if self.target and self.attack_timer <= 0:
-            #self.attack_count += 1
-            ##score = self.target.take_damage(self.damage)
-            #self.target.path_index -= 1
-            #self.reset_attack_timer()
-            #self.is_attacking = True  # Set to True when attacking
-        #else:
-            #self.is_attacking = False  # Set to False otherwise
-        #return score
-
 # Maybe the Demons need more than ghost sight - 3rd level wizard or 3rd level totem.
-# Top level can blast from peak - lot of damage to big enemies - or some laser
-# More ambitious some sort of summoning ability or time limited power - glows during that.
-# Or something like prince of darkness power to harvest enemies and send back along track - but
-# that would suddenly require being in range of track!
-# another idea eyes glow (translucent cirles over eyes) when ghosts are present (from level 2)
-# level 3 and/or 4 - eyes glow and blow blobs back to entrance (path_index=0) - from whatever
-# is nearest point on track (regardless of range) - can use code in placements to find nearest point on track.
-#   - maybe call level something like "Mystic Breath" or something similar or "Divine Breath" or "Divine Wind" (ummm)
 class Totem(Tower):
 
-    price = 200  # Prob first level energizes towers - 2nd level see ghosts - but need to make few more easy levels early on.
+    price = 200
     name = 'Totem'
     image = totem_img
     in_game_image = totem_img_ingame
@@ -970,8 +768,6 @@ class Totem(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range =  Totem.range
-        #self.attack_speed = 40 # 30
-        #self.damage = 1
         self.cost = Totem.price
         self.image = Totem.in_game_image
         self.level = 1
@@ -986,7 +782,6 @@ class Totem(Tower):
             self.image = totem2_img
             self.cost += self.upgrade_costs[0]
             self.range =  110
-            # Divine Breath if do blow ability - but I don't like that its position dependent (though I want it in game)
             self.upgrade_name = "Arcane Energy"  # For now.
             self.range_boost = 1.15
         if self.level == 3:
@@ -1017,9 +812,9 @@ class Totem(Tower):
             self.attack_count += 1
             score = self.target.take_damage(self.damage)
             self.reset_attack_timer()
-            self.is_attacking = True  # Set to True when attacking
+            self.is_attacking = True
         #else:
-            #self.is_attacking = False  # Set to False otherwise
+            #self.is_attacking = False
         return score
 
     def update(self, enemies):
@@ -1027,7 +822,6 @@ class Totem(Tower):
             return 0
         score = 0
         self.attack_timer -= 1
-        #if self.attack_timer <= 0:  # not havingt this is why multi-toxic glue agaist big enenmy is not working
         self.find_target(enemies)
         score = self.attack()
         self.total_score += score
@@ -1083,11 +877,8 @@ class Totem(Tower):
         distance = ((self.position[0] - tower.position[0])**2 + (self.position[1] - tower.position[1])**2)**0.5
         return distance <= self.current_range()
 
-    #prob remove hit count for inset window for towers that cant attack.
-    #currently totems mods dont stack - but more powerful one in radius should take effect.
-    #add range range_mod and at least at highest level increase range on totem itself.
+    # Currently totem mods dont stack - but more powerful one in radius should take effect.
     def boost(self, tower):
-        #print(f"towre is {tower}")
         if tower.__class__.name == "Totem":
             # dont boost totems - including self
             return
@@ -1095,19 +886,11 @@ class Totem(Tower):
         tower.range_mod = self.range_boost  # should do attack_boost in same way.
         if self.level >= 1:
             tower.speed_mod = 0.9
-            #tower.range_mod = 1.05  # weird - visible range of totem is changing with this!
         if self.level >= 2:
             tower.see_ghosts = True
-            #tower.range_mod = 1.15
-        #below here experimenting late at night. Also range wld need a mod.
         if self.level >= 3:
-            #tower.speed_mod = 0.8 # may add demon sight here
             tower.speed_mod = 0.75 # while addin nothing else - boost a bit
-            #tower.range_mod = 1.2
         if self.level >= 4:
-            # maybe laser eyes that attack and/or some long-range attack:
-            #tower.speed_mod = 0.7 # may add demon sight here
             tower.speed_mod = 0.65 # while addin nothing else - boost a bit
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Totem]
-
