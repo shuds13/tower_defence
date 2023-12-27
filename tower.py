@@ -618,7 +618,7 @@ class GlueGunner(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 35
+            self.attack_speed = 32
             self.range =  110
             self.image = gluegun2_img
             self.cost += self.upgrade_costs[0]
@@ -629,7 +629,7 @@ class GlueGunner(Tower):
             self.upgrade_name = "Toxic Glue"
 
         if self.level == 3:
-            self.attack_speed = 30
+            self.attack_speed = 28
             self.image = gluegun3_img
             self.cost += self.upgrade_costs[1]
             self.slow_factor = [0.4, 0.7, 0.8]
@@ -643,7 +643,7 @@ class GlueGunner(Tower):
             self.attack_tower = True
 
         if self.level == 4:
-            self.attack_speed = 22
+            self.attack_speed = 20
             self.range =  120
             self.image = gluegun4_img
             self.cost += self.upgrade_costs[2]
@@ -778,7 +778,7 @@ class Totem(Tower):
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
-            self.attack_speed = 4
+            self.attack_speed = 3
             self.range_boost = 1.20
 
     def find_target(self, enemies):
@@ -875,6 +875,6 @@ class Totem(Tower):
         if self.level >= 3:
             tower.speed_mod = 0.75 # while addin nothing else - boost a bit
         if self.level >= 4:
-            tower.speed_mod = 0.65 # while addin nothing else - boost a bit
+            tower.speed_mod = 0.60 # while addin nothing else - boost a bit
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Totem]
