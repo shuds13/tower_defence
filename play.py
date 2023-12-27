@@ -438,7 +438,7 @@ while game.running:
         # click only looked for if game_over - you could reset button to None at that point!
         # Draw the play again button
         play_again_button, maps_button, restart_round_button = nav.play_button(
-            window, window_size, game.last_round_restarts
+            window, window_size, game.last_round_restarts, game.map_complete
         )
     else:
         if not game.active:
