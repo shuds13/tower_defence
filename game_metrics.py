@@ -2,6 +2,7 @@ import copy
 import pygame
 import sounds
 from accounts import Account, load_profile
+from tower import Totem
 
 class Game():
     def __init__(self, initial_money, initial_level, initial_lives, init_last_round_restarts,
