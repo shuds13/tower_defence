@@ -231,12 +231,13 @@ class Square(Map):
         self.path_thickness = 20
         self.path_color = (233, 220, 201) #(255, 255, 240) # (255,255,255) # (0, 163, 108)
 
-        #path1 = [(250, 0), (250, 600)]
-        #test make path one have extra point - see if makes lev 40 easier!
-        path1 = [(250, 0), (250, 400), (250, 600)]  # makes diff - but can be done without
-        path2 = [(450, 0), (450, 600)]
-        path3 = [(0, 200), (700, 200)]
-        path4 = [(0, 400), (700, 400)]
+        # The middle point makes no diff to map,
+        # but makes diff when King's explode - blobs converge on next point.
+        # Perhaps should have both middle points
+        path1 = [(250, 0), (250, 400), (250, 600)]
+        path2 = [(450, 0), (450, 400), (450, 600)]
+        path3 = [(0, 200), (450, 200), (700, 200)]
+        path4 = [(0, 400), (450, 400), (700, 400)]
         self.paths = [path1, path2, path3, path4]
 
 
