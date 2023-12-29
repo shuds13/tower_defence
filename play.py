@@ -41,6 +41,9 @@ side_panel_width = 200
 side_panel_height = window_size[1]  # same as the game window height
 side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
 
+icon = pygame.image.load('images/icon.ico') #pygame.Surface()
+pygame.display.set_icon(icon)
+
 inset_window = {
     'active': False,
     'x': 4,  # X position of the window
