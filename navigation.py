@@ -35,15 +35,16 @@ def is_click_inside_rect(click_pos, rect):
     return clicked
 
 
-def play_button(window, window_size, last_round_restarts, map_complete):
+def play_button(window, window_size, game):
     x = window_size[0] - 190
     #y = window_size[1] - 100
     y = window_size[1] - 160
     width = 80
     height = 50
     #draw_border(window, x, y, width, height, 3)
-    if last_round_restarts > 0 and not map_complete:
-        restart_round = draw_button(window, "Restart round", (x+15, y), (150, 40), (210, 125, 45))
+    if game.last_round_restarts > 0 and not game.map_complete:
+        restart_text = "Restart round (" + str(game.last_round_restarts) + ")"
+        restart_round = draw_button(window, restart_text, (x+15, y), (150, 40), (210, 125, 45), 25)
     else:
         restart_round = None
     y += 60
