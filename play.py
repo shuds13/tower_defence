@@ -24,7 +24,7 @@ initial_lives = 30
 initial_money = 150
 initial_level = 1
 
-print_total_money = True
+print_total_money = False
 init_last_round_restarts = 3
 restart_testing = False
 
