@@ -158,9 +158,9 @@ def draw_sound_buttons(surface, x, y, width, height):
     else:
         quiet_color = col_on
 
-    mute_button = draw_button(surface, "Mute", mute_pos, (80, 40), color=mute_color)
-    quiet_button = draw_button(surface, "Quiet", quiet_pos, (80, 40), color=quiet_color)
-    normal_button = draw_button(surface, "Normal", normal_pos, (80, 40), color=normal_color)
+    mute_button = draw_button(surface, "Mute", mute_pos, (80, 40), color=mute_color, fontsize=27)
+    quiet_button = draw_button(surface, "Quiet", quiet_pos, (80, 40), color=quiet_color, fontsize=27)
+    normal_button = draw_button(surface, "Normal", normal_pos, (80, 40), color=normal_color, fontsize=27)
     return mute_button, quiet_button, normal_button
 
 
@@ -188,9 +188,10 @@ def draw_game_options(display, surface, game, x, y, width, height):
         restart_text = "Restart round"
 
     # Want to restructure this window now added these - positioning does not look good.
-    replay_button = draw_button(surface, "Replay", (x + width // 2 - 180, y+30), (80, 40), (70, 130, 180), 25)
-    maps_button = draw_button(surface, "Maps", (x + width // 2 - 80, y+30), (80, 40), (233, 116, 81), 25)
-    restart_round = draw_button(surface, restart_text, (x + width // 2 + 20, y+30), (150, 40), restart_color, 25)
+    #replay_button = draw_button(surface, "Replay", (x + width // 2 - 180, y+30), (80, 40), (70, 130, 180), 25)
+    #maps_button = draw_button(surface, "Maps", (x + width // 2 - 80, y+30), (80, 40), (233, 116, 81), 25)
+
+    restart_round = draw_button(surface, restart_text, (x + width // 2 - 75, y+35), (150, 40), restart_color, 25)
 
     speed_text = font_title.render("Speed", True, (0, 0, 0))  # Black text
     speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+height//2 - 100))
@@ -200,8 +201,15 @@ def draw_game_options(display, surface, game, x, y, width, height):
     sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height//2))
     surface.blit(sound_text, sound_rect.topleft)
 
-    done_pos =  (x + width // 2 - 40, y+height-60)
-    done_button = draw_button(surface, "Done",done_pos, (80, 40))
+    buttons_size = (90, 40)
+    buttons_y = y+height-80
+    replay_pos = (x + width//4 - buttons_size[0]//2, buttons_y)
+    replay_button = draw_button(surface, "Replay", replay_pos, buttons_size, (70, 130, 180), 27)
+    maps_pos = (x + width//2 - buttons_size[0]//2, buttons_y)
+    maps_button = draw_button(surface, "Maps", maps_pos, buttons_size, (233, 116, 81), 27)
+
+    done_pos =  (x + 3*width//4 - buttons_size[0]//2, buttons_y)
+    done_button = draw_button(surface, "Continue", done_pos, buttons_size, (0, 163, 108), 27)
 
     return can_restart, restart_round, replay_button, maps_button, done_button
 
