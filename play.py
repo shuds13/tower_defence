@@ -156,7 +156,8 @@ while game.running:
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
-                continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
+                # prevents restart round from working
+                #continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
 
             #if game.game_over or restart_testing:
             if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
@@ -215,7 +216,7 @@ while game.running:
             # Place a tower
             else:
             #elif game.current_tower_type is not None:
-                if place.is_valid_position(game.current_tower_type, mouse_pos, paths, game.towers):
+                if place.is_valid_position(game.current_tower_type, mouse_pos, paths, game.towers, options_button):
                     if game.player_money >= game.current_tower_type.price:
                         newtower = game.current_tower_type(position=mouse_pos)
                         game.towers.append(newtower)
@@ -396,7 +397,7 @@ while game.running:
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
 
             range_color = (255,0,0)
-            if place.is_valid_position(game.current_tower_type, (mouse_x, mouse_y), paths, game.towers):
+            if place.is_valid_position(game.current_tower_type, (mouse_x, mouse_y), paths, game.towers, options_button):
                 if game.player_money >= game.current_tower_type.price:
                     range_color = (0,255,0)
                 else:

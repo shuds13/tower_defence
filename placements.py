@@ -36,7 +36,7 @@ def too_close_to_path(point, line_start, line_end, w, h):
     return abs(dx) < w//2 and abs(dy) < h//2
 
 
-def is_valid_position(newtowertype, pos, paths, towers):
+def is_valid_position(newtowertype, pos, paths, towers, options_button):
     """Check if the position is not on the path and not too close to other towers."""
 
     # TODO should include path thickness
@@ -49,6 +49,9 @@ def is_valid_position(newtowertype, pos, paths, towers):
 
     w1 = newtowertype.footprint[0]
     h1 = newtowertype.footprint[1]
+
+    if options_button.collidepoint(pos):
+        return False
 
     # TODO tower footprint should matter here also.
     # Check distance from the path
