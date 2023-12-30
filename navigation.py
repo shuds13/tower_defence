@@ -18,10 +18,10 @@ troll_img = pygame.transform.scale(troll_img, (100, 100))
 frames_per_second = 60
 #frames_per_second = 180 # tmp
 
-def draw_button(surface, text, pos, size, color=(0, 0, 255)):
+def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
     #font = pygame.font.SysFont(None, 36)
     draw_border(surface, pos[0], pos[1], size[0], size[1], 3)
-    font = pygame.font.SysFont(None, 30)
+    font = pygame.font.SysFont(None, fontsize)
     button_rect = pygame.Rect(pos, size)
     pygame.draw.rect(surface, color, button_rect)  # Blue button
     text_surf = font.render(text, True, (255, 255, 255))  # White text
@@ -163,6 +163,138 @@ def draw_sound_buttons(surface, x, y, width, height):
     return mute_button, quiet_button, normal_button
 
 
+def draw_options_window(display, surface, options_button, game):
+    global frames_per_second
+
+    x, y, width, height = 100, 100, 500, 400
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
+
+    # Draw the window background
+    pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
+
+    font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
+
+    # Should this count during the round?
+    if game.active and game.last_round_restarts > 0:
+        restart_color = (210, 125, 45)
+        can_restart = True
+        restart_text = "Restart round (" + str(game.last_round_restarts) + ")"
+    elif game.last_round_restarts <= 0:
+        restart_color = (100, 100, 100)
+        can_restart = False
+        restart_text = "No more restarts"
+    else:
+        restart_color = (100, 100, 100)
+        can_restart = False
+        restart_text = "Restart round"
+
+    #replay_button = draw_button(surface, restart_text, (x + width // 2 - 80, y+30), (80, 50), restart_color, 25)
+
+    replay_button = draw_button(surface, "Replay", (x + width // 2 - 180, y+30), (80, 40), (70, 130, 180), 25)
+    maps_button = draw_button(surface, "Maps", (x + width // 2 - 80, y+30), (80, 40), (233, 116, 81), 25)
+    restart_round = draw_button(surface, restart_text, (x + width // 2 + 20, y+30), (150, 40), restart_color, 25)
+
+    #print(restart_round)
+    #print(type(restart_round))
+    #print(dirs(restart_round))
+    speed_text = font_title.render("Speed", True, (0, 0, 0))  # Black text
+    speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+height//2 - 100))
+    surface.blit(speed_text, speed_rect.topleft)
+
+    sound_text = font_title.render("Sound", True, (0, 0, 0))  # Black text
+    sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height//2))
+    surface.blit(sound_text, sound_rect.topleft)
+
+    done_pos =  (x + width // 2 - 40, y+height-60)
+    done_button = draw_button(surface, "Done",done_pos, (80, 40))
+
+    #slider = Slider(surface, 200, 200, 200, 20, min=0, max=1, step=0.1)
+    #slider = Slider(surf, 0, 0, 200, 20, min=0, max=1, step=0.1)
+
+    not_done = True
+    while not_done:
+        s1_b, s15_b, s2_b = draw_speed_buttons(surface, x, y, width, height)
+        mute_b, quiet_b, normal_b = draw_sound_buttons(surface, x, y, width, height)
+        display.flip()
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:   # what to do here
+                not_done = False
+                return None
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if done_button.collidepoint(mouse_pos) or options_button.collidepoint(mouse_pos):
+                    not_done = False
+                    break
+                elif can_restart and restart_round.collidepoint(mouse_pos):
+                    return False, False, True
+                elif replay_button.collidepoint(mouse_pos):
+                    if are_you_sure(display, surface):
+                        return True, False, False
+                elif maps_button.collidepoint(mouse_pos):
+                    if are_you_sure(display, surface):
+                        return False, True, False
+                elif s1_b.collidepoint(mouse_pos):
+                    frames_per_second = 60
+                elif s15_b.collidepoint(mouse_pos):
+                    frames_per_second = 90
+                elif s2_b.collidepoint(mouse_pos):
+                    frames_per_second = 120
+                elif mute_b.collidepoint(mouse_pos):
+                    sounds.set_volume(0)
+                elif quiet_b.collidepoint(mouse_pos):
+                    sounds.set_volume(0.4)
+                elif normal_b.collidepoint(mouse_pos):
+                    sounds.set_volume(1)
+        display.flip()
+
+    return False, False, False
+
+
+def are_you_sure(display, surface):
+    x, y, width, height = 200, 200, 300, 150
+
+    print('here')
+    # turns out not just drawing a rectangle border - but filled in!!!
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
+    #pygame.draw.rect(surface, (255, 127, 80), (x, y, width, height))
+    pygame.draw.rect(surface, (0, 0, 0), (x, y, width, height))
+
+    font_title = pygame.font.SysFont('Arial', 20, bold=True)  # Choose a font and size
+    sure_text1 = font_title.render("This will end current game", True, (255, 255, 255))
+    sure_text2 = font_title.render("Are you sure?", True, (255, 255, 255))
+    text_rect1 = sure_text1.get_rect(midtop=(x+width//2, y+10))
+    text_rect2 = sure_text2.get_rect(midtop=(x+width//2, y+30))
+    surface.blit(sure_text1, text_rect1)
+    surface.blit(sure_text2, text_rect2)
+
+    #yes_text = font_title.render("Yes", True, (255, 255, 255))
+    #yes_rect = yes_text.get_rect(topleft=(x + width // 2 - 20, y+height//2 - 80))
+    #surface.blit(yes_text, yes_rect.topleft)
+    pos = (x + width // 2 - 90, y + height//2)
+    yes_button = draw_button(surface, "Yes", pos, (80, 40), color=(250, 95, 85))
+
+    #no_text = font_title.render("No", True, (255, 255, 255))
+    #no_rect = no_text.get_rect(topleft=(x + width // 2 + 20, y+height//2 - 80))
+    #surface.blit(no_text, no_rect.topleft)
+    pos = (x + width // 2 +10, y + height//2)
+    no_button = draw_button(surface, "No", pos, (80, 40), color=(250, 95, 85))
+
+
+    while True:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if yes_button.collidepoint(mouse_pos):
+                    return True
+                elif no_button.collidepoint(mouse_pos):
+                    return False
+                #elif event.key == pygame.K_ESCAPE:
+                    #return False
+        display.flip()
+
+
 # okay really need to collect stats / player data together for this
 def draw_game_over_window(display, surface, map_complete, aced):
     #x, y, width, height = 100, 100, 500, 400
@@ -220,61 +352,6 @@ def draw_game_over_window(display, surface, map_complete, aced):
     surface.blit(cross_img, close_game_over.topleft)
 
     return close_game_over
-
-
-def draw_options_window(display, surface, options_button):
-    global frames_per_second
-
-    x, y, width, height = 100, 100, 500, 400
-    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
-
-    # Draw the window background
-    pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
-
-    font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
-
-    speed_text = font_title.render("Speed", True, (0, 0, 0))  # Black text
-    speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+height/2 - 100))
-    surface.blit(speed_text, speed_rect.topleft)
-
-    sound_text = font_title.render("Sound", True, (0, 0, 0))  # Black text
-    sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height/2))
-    surface.blit(sound_text, sound_rect.topleft)
-
-    done_pos =  (x + width // 2 - 40, y+height-60)
-    done_button = draw_button(surface, "Done",done_pos, (80, 40))
-
-    #slider = Slider(surface, 200, 200, 200, 20, min=0, max=1, step=0.1)
-    #slider = Slider(surf, 0, 0, 200, 20, min=0, max=1, step=0.1)
-
-    not_done = True
-    while not_done:
-        s1_b, s15_b, s2_b = draw_speed_buttons(surface, x, y, width, height)
-        mute_b, quiet_b, normal_b = draw_sound_buttons(surface, x, y, width, height)
-        display.flip()
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:   # what to do here
-                not_done = False
-                return None
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if done_button.collidepoint(mouse_pos) or options_button.collidepoint(mouse_pos):
-                    not_done = False
-                    break
-                elif s1_b.collidepoint(mouse_pos):
-                    frames_per_second = 60
-                elif s15_b.collidepoint(mouse_pos):
-                    frames_per_second = 90
-                elif s2_b.collidepoint(mouse_pos):
-                    frames_per_second = 120
-                elif mute_b.collidepoint(mouse_pos):
-                    sounds.set_volume(0)
-                elif quiet_b.collidepoint(mouse_pos):
-                    sounds.set_volume(0.4)
-                elif normal_b.collidepoint(mouse_pos):
-                    sounds.set_volume(1)
-        display.flip()
 
 
 def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
