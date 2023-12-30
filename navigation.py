@@ -163,10 +163,8 @@ def draw_sound_buttons(surface, x, y, width, height):
     return mute_button, quiet_button, normal_button
 
 
-def draw_options_window(display, surface, options_button, game):
-    global frames_per_second
-
-    x, y, width, height = 100, 100, 500, 400
+def draw_game_options(display, surface, game, x, y, width, height):
+    #x, y, width, height = 100, 100, 500, 400
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
 
     # Draw the window background
@@ -188,15 +186,11 @@ def draw_options_window(display, surface, options_button, game):
         can_restart = False
         restart_text = "Restart round"
 
-    #replay_button = draw_button(surface, restart_text, (x + width // 2 - 80, y+30), (80, 50), restart_color, 25)
-
+    # Want to restructure this window now added these - positioning does not look good.
     replay_button = draw_button(surface, "Replay", (x + width // 2 - 180, y+30), (80, 40), (70, 130, 180), 25)
     maps_button = draw_button(surface, "Maps", (x + width // 2 - 80, y+30), (80, 40), (233, 116, 81), 25)
     restart_round = draw_button(surface, restart_text, (x + width // 2 + 20, y+30), (150, 40), restart_color, 25)
 
-    #print(restart_round)
-    #print(type(restart_round))
-    #print(dirs(restart_round))
     speed_text = font_title.render("Speed", True, (0, 0, 0))  # Black text
     speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+height//2 - 100))
     surface.blit(speed_text, speed_rect.topleft)
@@ -208,13 +202,23 @@ def draw_options_window(display, surface, options_button, game):
     done_pos =  (x + width // 2 - 40, y+height-60)
     done_button = draw_button(surface, "Done",done_pos, (80, 40))
 
-    #slider = Slider(surface, 200, 200, 200, 20, min=0, max=1, step=0.1)
-    #slider = Slider(surf, 0, 0, 200, 20, min=0, max=1, step=0.1)
+    return can_restart, restart_round, replay_button, maps_button, done_button
 
+
+def draw_options_window(display, surface, options_button, game):
+    global frames_per_second
+    x, y, width, height = 100, 100, 500, 400
     not_done = True
     while not_done:
+
+        # Need functionalize this due to "Are you sure" box, maybe could do at start and then
+        # only if "are_you_sure" and "False".
+        can_restart, restart_round, replay_button, maps_button, done_button = draw_game_options(
+            display, surface, game, x, y, width, height
+        )
         s1_b, s15_b, s2_b = draw_speed_buttons(surface, x, y, width, height)
         mute_b, quiet_b, normal_b = draw_sound_buttons(surface, x, y, width, height)
+
         display.flip()
         events = pygame.event.get()
         for event in events:
@@ -254,7 +258,9 @@ def draw_options_window(display, surface, options_button, game):
 def are_you_sure(display, surface):
     x, y, width, height = 200, 200, 300, 150
 
-    print('here')
+    # Just thinking, if I save game progress (should be easy given already do for restart round)
+    # then this would not really be necessary.
+
     # turns out not just drawing a rectangle border - but filled in!!!
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
     #pygame.draw.rect(surface, (255, 127, 80), (x, y, width, height))
