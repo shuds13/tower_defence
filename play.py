@@ -156,6 +156,7 @@ while game.running:
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
+                continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
 
             #if game.game_over or restart_testing:
             if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
