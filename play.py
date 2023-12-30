@@ -452,6 +452,9 @@ while game.running:
             window, window_size, game
         )
     else:
+        play_again_button = None
+        maps_button = None
+        restart_round_button = None
         if not game.active:
             start_level_button = nav.start_level_button(window, window_size)
 
