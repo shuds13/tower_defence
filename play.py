@@ -105,6 +105,11 @@ start_level_button = None  # To store the button rectangle
 restart_round_button = None
 hint_button = None
 close_game_over = None
+maps_button = None
+
+opts_play_again = False
+opts_maps = False
+opts_restart = False
 
 alert_message = ""
 alert_timer = 0
@@ -141,7 +146,6 @@ def show_tower_info(inset_window):
 
 game.set_money_per_hit()
 
-
 # Game loop
 while game.running:
 
@@ -152,23 +156,29 @@ while game.running:
             mouse_pos = pygame.mouse.get_pos()
 
             if options_button.collidepoint(mouse_pos):
-                nav.draw_options_window(pygame.display, window, options_button)
+                #nav.draw_options_window(pygame.display, window, options_button)
+                opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
+                # prevents restart round from working
+                #continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
 
-            if game.game_over or restart_testing:
-                if restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
-                    game.restart_round(lev)
-                    game.reset_level()
+            #if game.game_over or restart_testing:
+            if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
+                game.restart_round(lev)
+                game.reset_level()
+                opts_restart = False
 
-            if game.game_over:
-                if close_game_over and  nav.is_click_inside_rect(mouse_pos, close_game_over):
-                    close_game_over = None
-                    game.displayed_game_over = True
-                if play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
-                    game = reset_game()
-                if maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
-                    game = reset_game()
-                    gmap = select_map()
-                    continue
+            #if game.game_over:
+            if close_game_over and  nav.is_click_inside_rect(mouse_pos, close_game_over):
+                close_game_over = None
+                game.displayed_game_over = True
+            if opts_play_again or play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
+                game = reset_game()
+                opts_play_again = False
+            if opts_maps or maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
+                game = reset_game()
+                gmap = select_map()
+                opts_maps = False
+                continue
             else:
                 # If GO button is clicked then start level
                 if not game.active and start_level_button:
@@ -208,7 +218,7 @@ while game.running:
             # Place a tower
             else:
             #elif game.current_tower_type is not None:
-                if place.is_valid_position(game.current_tower_type, mouse_pos, paths, game.towers):
+                if place.is_valid_position(game.current_tower_type, mouse_pos, paths, game.towers, options_button):
                     if game.player_money >= game.current_tower_type.price:
                         newtower = game.current_tower_type(position=mouse_pos)
                         game.towers.append(newtower)
@@ -418,7 +428,7 @@ while game.running:
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
 
             range_color = (255,0,0)
-            if place.is_valid_position(game.current_tower_type, (mouse_x, mouse_y), paths, game.towers):
+            if place.is_valid_position(game.current_tower_type, (mouse_x, mouse_y), paths, game.towers, options_button):
                 if game.player_money >= game.current_tower_type.price:
                     range_color = (0,255,0)
                 else:
@@ -472,9 +482,12 @@ while game.running:
         # click only looked for if game_over - you could reset button to None at that point!
         # Draw the play again button
         play_again_button, maps_button, restart_round_button = nav.play_button(
-            window, window_size, game.last_round_restarts, game.map_complete
+            window, window_size, game
         )
     else:
+        play_again_button = None
+        maps_button = None
+        restart_round_button = None
         if not game.active:
             start_level_button = nav.start_level_button(window, window_size)
 
