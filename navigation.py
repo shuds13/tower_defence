@@ -114,10 +114,17 @@ def draw_speed_buttons(surface, x, y, width, height):
 
     global frames_per_second
 
-    y_from_centre = -60
-    s1_pos = (x + width // 2 - 120, y+height/2 + y_from_centre)
-    s15_pos = (x + width // 2 - 40, y+height/2 + y_from_centre)
-    s2_pos = (x + width // 2 +40, y+height/2 + y_from_centre)
+    #y_from_centre = -60
+    #s1_pos = (x + width // 2 - 120, y+height/2 + y_from_centre)
+    #s15_pos = (x + width // 2 - 40, y+height/2 + y_from_centre)
+    #s2_pos = (x + width // 2 +40, y+height/2 + y_from_centre)
+
+    y_pos = y+75
+    s1_pos = (x + width // 2 - 120, y_pos)
+    s15_pos = (x + width // 2 - 40, y_pos)
+    s2_pos = (x + width // 2 +40, y_pos)
+
+
     col_off = (132, 136, 132)
     col_on = (0,200,0)
 
@@ -140,10 +147,16 @@ def draw_speed_buttons(surface, x, y, width, height):
 
 def draw_sound_buttons(surface, x, y, width, height):
 
-    y_from_centre = 40
-    mute_pos = (x + width // 2 - 120, y+height/2 + y_from_centre)
-    quiet_pos = (x + width // 2 - 40, y+height/2 + y_from_centre)
-    normal_pos = (x + width // 2 +40, y+height/2 + y_from_centre)
+    #y_from_centre = 40
+    #mute_pos = (x + width // 2 - 120, y+height/2 + y_from_centre)
+    #quiet_pos = (x + width // 2 - 40, y+height/2 + y_from_centre)
+    #normal_pos = (x + width // 2 +40, y+height/2 + y_from_centre)
+
+    y_pos = y + 175
+    mute_pos = (x + width // 2 - 120, y_pos)
+    quiet_pos = (x + width // 2 - 40, y_pos)
+    normal_pos = (x + width // 2 +40, y_pos)
+
     col_off = (132, 136, 132)
     col_on = (0,200,0)
 
@@ -191,14 +204,17 @@ def draw_game_options(display, surface, game, x, y, width, height):
     #replay_button = draw_button(surface, "Replay", (x + width // 2 - 180, y+30), (80, 40), (70, 130, 180), 25)
     #maps_button = draw_button(surface, "Maps", (x + width // 2 - 80, y+30), (80, 40), (233, 116, 81), 25)
 
-    restart_round = draw_button(surface, restart_text, (x + width // 2 - 75, y+35), (150, 40), restart_color, 25)
+    restart_y = y+height-150
+    restart_round = draw_button(surface, restart_text, (x + width // 2 - 75, restart_y), (150, 40), restart_color, 25)
 
     speed_text = font_title.render("Speed", True, (0, 0, 0))  # Black text
-    speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+height//2 - 100))
+    #speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+height//2 - 100))
+    speed_rect = speed_text.get_rect(topleft=(x + width // 2 - 40, y+35))
     surface.blit(speed_text, speed_rect.topleft)
 
     sound_text = font_title.render("Sound", True, (0, 0, 0))  # Black text
-    sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height//2))
+    #sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+height//2))
+    sound_rect = sound_text.get_rect(topleft=(x + width // 2 - 40, y+135))
     surface.blit(sound_text, sound_rect.topleft)
 
     buttons_size = (90, 40)
