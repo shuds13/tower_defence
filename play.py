@@ -7,7 +7,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower, tower_types, Totem
+from tower import Tower, tower_types, Totem, CannonBall
 import placements as place
 import navigation as nav
 import levels as lev
@@ -21,7 +21,7 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 150
+initial_money = 15000
 initial_level = 1
 
 print_total_money = False
@@ -53,6 +53,8 @@ inset_window = {
     'tower': None,
     'totem': None
 }
+
+projectiles = []
 
 try:
     # or load latest
@@ -311,11 +313,40 @@ while game.running:
     for tower in game.towers:
         if game.active:
             hits = tower.update(game.enemies)
+            if hits == -1:
+                # try making the projectile a tower - but should prob be its own class.
+                projectile = tower.get_projectile()
+                #projectile = CannonBall(tower)
+                projectiles.append(projectile)
+                projectile.draw(window) # testing
+                #game.towers.append(projectile)
             tower.draw(window, game.enemies)
             game.process_hits(hits)
+
+            #have to remove enmies etc..
+
+            ##can do enemy here
+            #if enemy.health <= 0 and enemy.spawn_on_die:
+                    #enemy.spawn_func(game.enemies)
+
+            ## May not need both conditions as reached_end is set to True when killed
+            #game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
+
         else:
             tower.draw(window, game.enemies)
         tower.highlight = False
+
+
+    if game.active:
+        # projecitles will be game.projecitles of course
+        for projectile in projectiles:
+            hits = projectile.update(game.enemies)
+            game.process_hits(hits)
+            print(f"Here {projectile}")
+            projectile.draw(window)
+
+    projectiles = [p for p in projectiles if p.active]
+
 
     if game.active:
         for enemy in game.enemies:
