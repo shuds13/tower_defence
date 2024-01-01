@@ -61,11 +61,13 @@ cannonball_img = pygame.image.load('images/cannonball.png')
 cannonball1_img = pygame.transform.scale(cannonball_img, (25, 25))
 cannonball2_img = pygame.transform.scale(cannonball_img, (32, 32))
 cannonball3_img = pygame.transform.scale(cannonball_img, (38, 38))
+cannonball4_img = pygame.transform.scale(cannonball_img, (45, 45))
 
 explosion_img = pygame.image.load('images/explosion.png')
 explosion1_img = pygame.transform.scale(explosion_img, (80, 80))
 explosion2_img = pygame.transform.scale(explosion_img, (90, 90))
 explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
+explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
 
 
 class Tower:
@@ -899,8 +901,8 @@ class Cannon(Tower):
     name = 'Cannon'
     image = cannon_img
     range = 120
-    max_level = 3
-    footprint = (50,50)
+    max_level = 4
+    footprint = (50,50)  # May make bigger
 
 
     # Does projectile just go in direct target was when launch - or does it continue
@@ -912,7 +914,7 @@ class Cannon(Tower):
         self.image = Cannon.image
         self.level = 1
         self.attack_speed = 70
-        self.upgrade_costs = [300, 750]
+        self.upgrade_costs = [300, 750, 2000]
         #self.upgrade_name = "Ghost Sight"
 
     def level_up(self):
@@ -931,7 +933,13 @@ class Cannon(Tower):
             #self.max_attacks = 10
             self.cost += self.upgrade_costs[1]
             #self.upgrade_name = "Extra Spicy"
-
+        if self.level == 4:
+            self.attack_speed = 25
+            self.range = 150
+            #self.image = cannon_img
+            #self.max_attacks = 10
+            self.cost += self.upgrade_costs[2]
+            #self.upgrade_name = "Extra Spicy"
 
     def attack(self):
         score = 0
@@ -1000,6 +1008,14 @@ class CannonBall(Tower):
             self.image = cannonball3_img
             self.range = 70
             self.expl_image = explosion3_img
+        if self.launcher.level == 4:
+            # maybe add homing missiles
+            self.speed = 15
+            self.damage = 10
+            self.max_attacks = 12
+            self.image = cannonball4_img
+            self.range = 80
+            self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
     def find_target(self, enemies):
         # Only place to call function - after just check self.cloud_attack
