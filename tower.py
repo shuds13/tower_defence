@@ -56,9 +56,16 @@ totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 cannon_img = pygame.image.load('images/cannon.png')
 cannon_img = pygame.transform.scale(cannon_img, (50, 50))
 
+#alt to black circle
+cannonball_img = pygame.image.load('images/cannonball.png')
+cannonball1_img = pygame.transform.scale(cannonball_img, (25, 25))
+cannonball2_img = pygame.transform.scale(cannonball_img, (32, 32))
+cannonball3_img = pygame.transform.scale(cannonball_img, (38, 38))
+
 explosion_img = pygame.image.load('images/explosion.png')
-#explosion_img = pygame.transform.scale(explosion_img, (100, 100))
-explosion_img = pygame.transform.scale(explosion_img, (80, 80))
+explosion1_img = pygame.transform.scale(explosion_img, (80, 80))
+explosion2_img = pygame.transform.scale(explosion_img, (90, 90))
+explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
 
 
 class Tower:
@@ -888,11 +895,11 @@ class Totem(Tower):
 
 class Cannon(Tower):
 
-    price = 200
+    price = 150
     name = 'Cannon'
     image = cannon_img
-    range = 100
-    max_level = 1
+    range = 120
+    max_level = 3
     footprint = (50,50)
 
 
@@ -904,9 +911,25 @@ class Cannon(Tower):
         self.cost = Cannon.price
         self.image = Cannon.image
         self.level = 1
-        #self.upgrade_costs = [250, 500, 1000]
+        self.attack_speed = 70
+        self.upgrade_costs = [300, 750]
         #self.upgrade_name = "Ghost Sight"
-        #self.attack_tower = False
+
+    def level_up(self):
+        self.level +=1
+        if self.level == 2:
+            self.attack_speed = 55
+            #self.image = cannon_img
+            self.max_attacks = 7
+            self.cost += self.upgrade_costs[0]
+            #self.upgrade_name = "Extra Spicy"
+        if self.level == 3:
+            self.attack_speed = 32
+            #self.image = cannon_img
+            self.max_attacks = 10
+            self.cost += self.upgrade_costs[0]
+            #self.upgrade_name = "Extra Spicy"
+
 
     def attack(self):
         score = 0
@@ -926,7 +949,7 @@ class Cannon(Tower):
         if self.attack_timer <= 0:
             self.find_target(enemies)
             score = self.attack()
-            self.total_score += score
+            #self.total_score += score
         else:
             self.is_attacking = False
         # need to return more though - direction for projectile to move in.
@@ -936,42 +959,72 @@ class Cannon(Tower):
         projectile = CannonBall(self)
         return projectile
 
+    def attack_animate(self, window):
+        pass
+
 
 # Prob make projectile class - diff types and levels of projectile will be inherited.
 class CannonBall(Tower):
+
+    image = cannonball1_img
+
     def __init__(self, tower):
         super().__init__(tower.position)
         self.launcher = tower
         self.speed = 8
+        #self.speed = 12  # testing for higher level
         #self.speed = 4  # testing
         self.target_pos = tower.target.position  # position when shoot
         self.active = True
-        self.max_attacks = 5
-        print('new cannonball')
-
+        self.max_attacks = 4
+        self.damage = 2
+        #self.size = 12  # For circle cannonball (as opposed to image)
+        self.image = CannonBall.image
+        self.range = 50
+        self.expl_image = explosion1_img
+        #print('new cannonball')
+        if self.launcher.level == 2:
+            self.speed = 10
+            self.damage = 4  # 3 or 4
+            self.image = cannonball2_img
+            self.range = 60
+            self.expl_image = explosion2_img
+        if self.launcher.level == 3:
+            # maybe add homing missiles
+            self.speed = 12
+            self.damage = 6
+            self.image = cannonball3_img
+            self.range = 70
+            self.expl_image = explosion3_img
 
     def find_target(self, enemies):
         # Only place to call function - after just check self.cloud_attack
         tmp_target = []
         self.target = []
+        self.see_ghosts = self.launcher.see_ghosts
         for enemy in enemies:
             if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
                 tmp_target.append(enemy)
         if tmp_target:
             self.target = self.create_sublist(tmp_target, self.max_attacks)
+            print(f"{len(self.target)=}")
 
 
     def update(self, enemies):
     # from enemy
     #def move(self):
         # Move towards the next point in the path
+
+        # homing version
+        #self.target_pos = self.launcher.target.position
+
         dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
         distance = (dx**2 + dy**2)**0.5
-        print(f"{distance=} to {self.target_pos}")
+        #print(f"{distance=} to {self.target_pos}")
         if distance > self.speed:
             dx, dy = dx / distance * self.speed, dy / distance * self.speed
         self.position = (self.position[0] + dx, self.position[1] + dy)
-        print(f"new position {self.position}")
+        #print(f"new position {self.position}")
 
         # Check if the enemy has reached the target position
         if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
@@ -981,7 +1034,7 @@ class CannonBall(Tower):
             print(f"blowing up at {self.position}")
             self.find_target(enemies)
             score = self.attack()
-            self.total_score += score
+            self.launcher.total_score += score
             #else:
                 #self.is_attacking = False
             self.active = False  # if dont remove they stop on paths and look like mines
@@ -989,15 +1042,20 @@ class CannonBall(Tower):
         return 0
 
     def draw(self, window):
-        print('drawing it', self.position)
+        #print('drawing it', self.position)
         x = self.position[0]
         y = self.position[1]
         if self.active:
-            pygame.draw.circle(window, (0,0,0), (int(x), int(y)), 20)
-        # can I use this - or make a special one
-        else:
-            explosion_rect = explosion_img.get_rect(center=self.position)
-            window.blit(explosion_img, explosion_rect)
+            #pygame.draw.circle(window, (0,0,0), (int(x), int(y)), self.size)
+            image_rect = self.image.get_rect(center=self.position)
+            window.blit(self.image, image_rect.topleft)
+
+
+    def attack_animate(self, window):
+        if not self.active:
+            explosion_rect = self.expl_image.get_rect(center=self.position)
+            window.blit(self.expl_image, explosion_rect)
+
 
     #from burger
     def attack(self):
@@ -1008,11 +1066,9 @@ class CannonBall(Tower):
             if type(self.target) is list:
                 for target in self.target:
                     # Do more damage to big enemies to simulate multiple projectiles hitting
-                    #multiplier = target.size  # maybe too strong?
-                    if target.size >=3:
-                        multiplier = 2
-                    else:
-                        multiplier = 1
+                    multiplier = target.size
+                    print(f"Damage: {self.damage * multiplier}")
+
                     score += target.take_damage(self.damage * multiplier)
             else:
                 # dont think ever here
@@ -1025,7 +1081,7 @@ class CannonBall(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score
 
-tower_types = [Fighter, Burger, GlueGunner, Wizard, Totem, Cannon]
+tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem]
 
 
 

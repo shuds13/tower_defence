@@ -21,7 +21,7 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 15000
+initial_money = 150
 initial_level = 1
 
 print_total_money = False
@@ -331,7 +331,8 @@ while game.running:
                 projectile.draw(window) # testing
                 #game.towers.append(projectile)
             tower.draw(window, game.enemies)
-            game.process_hits(hits)
+            if hits > -1:
+                game.process_hits(hits)
 
             #have to remove enmies etc..
 
@@ -352,10 +353,10 @@ while game.running:
         for projectile in projectiles:
             hits = projectile.update(game.enemies)
             game.process_hits(hits)
-            print(f"Here {projectile}")
+            #print(f"Here {projectile}")
             projectile.draw(window)
 
-    projectiles = [p for p in projectiles if p.active]
+    #projectiles = [p for p in projectiles if p.active]
 
 
     if game.active:
@@ -397,6 +398,7 @@ while game.running:
     # TODO remind me why this section is separate from above where finds target - though this is just animation
     # Though I dont notice it - I should prob update enemy list inside loop to prevent double(multiple) targeting
     # Instead I check enemy is not reached_end inside for each tower targetting.
+    # one thing is - drawing after enemies - so goes on top
     keep_animate = False
     if keep_animate or game.active:
         for tower in game.towers:
@@ -404,6 +406,11 @@ while game.running:
                 tower.show_viz_persist(window)
             if tower.is_attacking and tower.target:
                 tower.attack_animate(window)
+        for projectile in projectiles:
+            projectile.attack_animate(window)
+
+    projectiles = [p for p in projectiles if p.active]
+
 
     if game.current_tower_type is not None:
         mouse_x, mouse_y = pygame.mouse.get_pos()
