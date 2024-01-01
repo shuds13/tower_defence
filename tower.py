@@ -920,14 +920,16 @@ class Cannon(Tower):
         if self.level == 2:
             self.attack_speed = 55
             #self.image = cannon_img
-            self.max_attacks = 7
+            #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
             #self.upgrade_name = "Extra Spicy"
+            self.range = 130
         if self.level == 3:
-            self.attack_speed = 32
+            self.attack_speed = 35
+            self.range = 140
             #self.image = cannon_img
-            self.max_attacks = 10
-            self.cost += self.upgrade_costs[0]
+            #self.max_attacks = 10
+            self.cost += self.upgrade_costs[1]
             #self.upgrade_name = "Extra Spicy"
 
 
@@ -986,6 +988,7 @@ class CannonBall(Tower):
         if self.launcher.level == 2:
             self.speed = 10
             self.damage = 4  # 3 or 4
+            self.max_attacks = 6
             self.image = cannonball2_img
             self.range = 60
             self.expl_image = explosion2_img
@@ -993,6 +996,7 @@ class CannonBall(Tower):
             # maybe add homing missiles
             self.speed = 12
             self.damage = 6
+            self.max_attacks = 8
             self.image = cannonball3_img
             self.range = 70
             self.expl_image = explosion3_img
