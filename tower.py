@@ -56,6 +56,10 @@ totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 cannon_img = pygame.image.load('images/cannon.png')
 cannon_img = pygame.transform.scale(cannon_img, (50, 50))
 
+explosion_img = pygame.image.load('images/explosion.png')
+#explosion_img = pygame.transform.scale(explosion_img, (100, 100))
+explosion_img = pygame.transform.scale(explosion_img, (80, 80))
+
 
 class Tower:
 
@@ -988,7 +992,12 @@ class CannonBall(Tower):
         print('drawing it', self.position)
         x = self.position[0]
         y = self.position[1]
-        pygame.draw.circle(window, (0,0,0), (int(x), int(y)), 20)
+        if self.active:
+            pygame.draw.circle(window, (0,0,0), (int(x), int(y)), 20)
+        # can I use this - or make a special one
+        else:
+            explosion_rect = explosion_img.get_rect(center=self.position)
+            window.blit(explosion_img, explosion_rect)
 
     #from burger
     def attack(self):
