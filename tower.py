@@ -55,6 +55,7 @@ totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 
 cannon_img = pygame.image.load('images/cannon.png')
 cannon_img = pygame.transform.scale(cannon_img, (50, 50))
+cannon_img_ingame = pygame.transform.scale(cannon_img, (70, 70))
 
 #alt to black circle
 cannonball_img = pygame.image.load('images/cannonball.png')
@@ -900,9 +901,10 @@ class Cannon(Tower):
     price = 150
     name = 'Cannon'
     image = cannon_img
+    in_game_image = cannon_img_ingame
     range = 120
     max_level = 4
-    footprint = (50,50)  # May make bigger
+    footprint = (70,70)  # May make bigger
 
 
     # Does projectile just go in direct target was when launch - or does it continue
@@ -911,7 +913,7 @@ class Cannon(Tower):
         super().__init__(position)
         self.range =  Cannon.range
         self.cost = Cannon.price
-        self.image = Cannon.image
+        self.image = Cannon.in_game_image
         self.level = 1
         self.attack_speed = 70
         self.upgrade_costs = [300, 750, 2000]
@@ -971,6 +973,17 @@ class Cannon(Tower):
 
     def attack_animate(self, window):
         pass
+
+    def get_target_angle(self):
+        if not self.target:
+            return 0
+        if type(self.target) is list:
+            target = self.target[0]
+        else:
+            target = self.target
+        dx = target.position[0] - self.position[0]
+        dy = target.position[1] - self.position[1]
+        return math.degrees(math.atan2(-dy, dx)) + 90
 
 
 # Prob make projectile class - diff types and levels of projectile will be inherited.
