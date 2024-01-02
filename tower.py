@@ -929,7 +929,7 @@ class Cannon(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 55
+            self.attack_speed = 50
             self.image = cannon2_img
             #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
@@ -937,7 +937,7 @@ class Cannon(Tower):
             self.range = 130
         if self.level == 3:
             self.image = cannon3_img
-            self.attack_speed = 35
+            self.attack_speed = 32
             self.range = 140
             #self.image = cannon_img
             #self.max_attacks = 10
@@ -945,7 +945,7 @@ class Cannon(Tower):
             #self.upgrade_name = "Extra Spicy"
         if self.level == 4:
             self.image = cannon4_img
-            self.attack_speed = 25
+            self.attack_speed = 22
             self.range = 150
             #self.image = cannon_img
             #self.max_attacks = 10
