@@ -58,8 +58,10 @@ cannon_img = pygame.transform.scale(cannon_img, (50, 50))
 cannon_img_ingame = pygame.transform.scale(cannon_img, (70, 70))
 cannon2_img = pygame.image.load('images/cannon2.png')
 cannon2_img = pygame.transform.scale(cannon2_img, (70, 70))
-cannon3_img = pygame.transform.scale(cannon2_img, (75, 75))
-cannon4_img = pygame.transform.scale(cannon2_img, (80, 80))
+cannon3_img = pygame.image.load('images/cannon3.png')
+cannon3_img = pygame.transform.scale(cannon3_img, (75, 75))
+cannon4_img = pygame.image.load('images/cannon4.png')
+cannon4_img = pygame.transform.scale(cannon4_img, (80, 80))
 
 
 #alt to black circle
