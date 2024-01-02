@@ -56,6 +56,11 @@ totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 cannon_img = pygame.image.load('images/cannon.png')
 cannon_img = pygame.transform.scale(cannon_img, (50, 50))
 cannon_img_ingame = pygame.transform.scale(cannon_img, (70, 70))
+cannon2_img = pygame.image.load('images/cannon2.png')
+cannon2_img = pygame.transform.scale(cannon2_img, (70, 70))
+cannon3_img = pygame.transform.scale(cannon2_img, (75, 75))
+cannon4_img = pygame.transform.scale(cannon2_img, (80, 80))
+
 
 #alt to black circle
 cannonball_img = pygame.image.load('images/cannonball.png')
@@ -923,12 +928,13 @@ class Cannon(Tower):
         self.level +=1
         if self.level == 2:
             self.attack_speed = 55
-            #self.image = cannon_img
+            self.image = cannon2_img
             #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
             #self.upgrade_name = "Extra Spicy"
             self.range = 130
         if self.level == 3:
+            self.image = cannon3_img
             self.attack_speed = 35
             self.range = 140
             #self.image = cannon_img
@@ -936,6 +942,7 @@ class Cannon(Tower):
             self.cost += self.upgrade_costs[1]
             #self.upgrade_name = "Extra Spicy"
         if self.level == 4:
+            self.image = cannon4_img
             self.attack_speed = 25
             self.range = 150
             #self.image = cannon_img
