@@ -1025,8 +1025,8 @@ class CannonBall(Tower):
         if self.launcher.level == 3:
             # maybe add homing missiles
             self.speed = 12
-            self.damage = 6
-            self.max_attacks = 8
+            self.damage = 7
+            self.max_attacks = 9
             self.image = cannonball3_img
             self.range = 70
             self.expl_image = explosion3_img
@@ -1034,7 +1034,7 @@ class CannonBall(Tower):
             # maybe add homing missiles
             self.speed = 15
             self.damage = 10
-            self.max_attacks = 12
+            self.max_attacks = 14
             self.image = cannonball4_img
             self.range = 80
             self.expl_image = explosion4_img  # Add fourth and prob viz perist
