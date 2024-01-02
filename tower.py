@@ -981,6 +981,7 @@ class Cannon(Tower):
         return projectile
 
     def attack_animate(self, window):
+        # Would like to make nozzle glow as fire, but again need to deal with rotation.
         pass
 
     def get_target_angle(self):
@@ -1124,8 +1125,3 @@ class CannonBall(Tower):
         return score
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem]
-
-
-
-
-
