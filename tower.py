@@ -924,6 +924,8 @@ class Cannon(Tower):
         self.level = 1
         self.attack_speed = 70
         self.upgrade_costs = [300, 750, 2000]
+        self.glow_radius = 10
+        self.glow_time = 5
         #self.upgrade_name = "Ghost Sight"
 
     def level_up(self):
@@ -935,6 +937,7 @@ class Cannon(Tower):
             self.cost += self.upgrade_costs[0]
             #self.upgrade_name = "Extra Spicy"
             self.range = 130
+            self.glow_radius = 16
         if self.level == 3:
             self.image = cannon3_img
             self.attack_speed = 32
@@ -943,6 +946,7 @@ class Cannon(Tower):
             #self.max_attacks = 10
             self.cost += self.upgrade_costs[1]
             #self.upgrade_name = "Extra Spicy"
+            self.glow_radius = 20
         if self.level == 4:
             self.image = cannon4_img
             self.attack_speed = 22
@@ -951,6 +955,7 @@ class Cannon(Tower):
             #self.max_attacks = 10
             self.cost += self.upgrade_costs[2]
             #self.upgrade_name = "Extra Spicy"
+            self.glow_radius = 24 # 16
 
     def attack(self):
         score = 0
@@ -980,9 +985,89 @@ class Cannon(Tower):
         projectile = CannonBall(self)
         return projectile
 
+
+    def _get_start_nozzle_pos(self):
+        if self.level == 1:
+            return (self.position[0], self.position[1]+20)
+        if self.level == 2:
+            return (self.position[0], self.position[1]+23)
+        elif self.level == 3:
+            return (self.position[0], self.position[1]+21)
+        elif self.level == 4:
+            return (self.position[0], self.position[1]+24)
+
+    def rotate_point(self, origin, point, angle):
+        """
+        Rotate a point counterclockwise by a given angle around a given origin.
+
+        Args:
+        origin (tuple): The rotation center (x, y).
+        point (tuple): The point to rotate (x, y).
+        angle (float): The rotation angle in degrees.
+
+        Returns:
+        tuple: The new position of the point after rotation.
+        """
+        # Convert angle to radians
+        angle_rad = math.radians(-angle)
+
+        # Shift the point to the origin
+        ox, oy = origin
+        px, py = point
+
+        # Rotate and shift back
+        qx = ox + math.cos(angle_rad) * (px - ox) - math.sin(angle_rad) * (py - oy)
+        qy = oy + math.sin(angle_rad) * (px - ox) + math.cos(angle_rad) * (py - oy)
+        return qx, qy
+
+
+    def _get_nozzle_pos(self):
+        """
+        Calculate the nozzle position of a rotating cannon.
+
+        Args:
+        cannon_center (tuple): The center position (x, y) of the cannon.
+        cannon_angle (float): The current rotation angle of the cannon in degrees.
+        nozzle_offset_y (int): The vertical offset of the nozzle from the cannon center.
+
+        Returns:
+        tuple: The position of the nozzle after rotation.
+        """
+        # Original position of the nozzle (assuming it starts at x, y - 20)
+        nozzle_position = self._get_start_nozzle_pos()
+
+        # Rotate the nozzle position around the cannon center
+        return self.rotate_point(self.position, nozzle_position, self.current_angle)
+
+
+    def _nozzle_glow(self, window, glow_radius, col, c_alpha, noz_pos):
+        # translucent - prob better
+        nozzle_glow = pygame.Surface((glow_radius*2, glow_radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(nozzle_glow, (col[0], col[1], col[2], c_alpha), (glow_radius,glow_radius), glow_radius)
+        glow_rect = nozzle_glow.get_rect(center=noz_pos)
+        window.blit(nozzle_glow, glow_rect)
+        # opaque
+        #pygame.draw.circle(window, col, noz_pos, glow_radius)
+
+
+    def show_viz_persist(self, window):
+        self._animate_nozzle(window)
+        if self.viz_persist > 0:
+            self.viz_persist -= 1
+
+    def _animate_nozzle(self, window):
+        noz_pos = self._get_nozzle_pos()
+        time_glowed = self.glow_time - self.viz_persist
+        glow_color = (255, 192, 0) # (220, 20, 60)
+        glow_radius = self.glow_radius - 2*time_glowed
+        c_alpha = max(250 - 20*time_glowed, 0)  # 150  # higher is more opaque
+        self._nozzle_glow(window, glow_radius, glow_color, c_alpha, noz_pos)
+
     def attack_animate(self, window):
         # Would like to make nozzle glow as fire, but again need to deal with rotation.
-        pass
+        self.viz_persist = self.glow_time
+        self._animate_nozzle(window)
+        self.viz_persist -= 1
 
     def get_target_angle(self):
         if not self.target:
@@ -993,7 +1078,9 @@ class Cannon(Tower):
             target = self.target
         dx = target.position[0] - self.position[0]
         dy = target.position[1] - self.position[1]
-        return math.degrees(math.atan2(-dy, dx)) + 90
+        # prevent having to recalculate for nozzle glow
+        self.current_angle = math.degrees(math.atan2(-dy, dx)) + 90
+        return self.current_angle
 
 
 # Prob make projectile class - diff types and levels of projectile will be inherited.
