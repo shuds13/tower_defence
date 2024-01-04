@@ -9,7 +9,7 @@ crown_img = pygame.transform.scale(crown_img, (50, 50))
 crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (50, 50))
 save_img = pygame.image.load('images/save.png')
-save_img = pygame.transform.scale(save_img, (50, 50))
+save_img = pygame.transform.scale(save_img, (40, 40))
 
 def render_level_to_surface(gmap, size):
     # Create a new surface

@@ -4,7 +4,6 @@ import pickle
 from pathlib import Path
 import os
 
-
 def new_profile(screen):
     screen_width, screen_height = 600, 150
     pygame.display.set_caption("Create New Profile")
@@ -116,11 +115,12 @@ class Account():
 
     # map is keyword, use gmap (game map)
     def complete_map(self, gmap, aced=False):
-        if not gmap in self.maps_complete:
-            self.maps_complete.append(gmap)
+        gmap_class = gmap.__class__
+        if not gmap_class in self.maps_complete:
+            self.maps_complete.append(gmap_class)
         if aced:
-            if not gmap in self.maps_aced:
-                self.maps_aced.append(gmap)
+            if not gmap_class in self.maps_aced:
+                self.maps_aced.append(gmap_class)
         self.maps_in_progress.pop(gmap.name, None)
 
     def save_map(self, gmap, game):
