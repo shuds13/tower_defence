@@ -1092,17 +1092,13 @@ class CannonBall(Tower):
         super().__init__(tower.position)
         self.launcher = tower
         self.speed = 8
-        #self.speed = 12  # testing for higher level
-        #self.speed = 4  # testing
         self.target_pos = tower.target.position  # position when shoot
         self.active = True
         self.max_attacks = 4
         self.damage = 2
-        #self.size = 12  # For circle cannonball (as opposed to image)
         self.image = CannonBall.image
         self.range = 50
         self.expl_image = explosion1_img
-        #print('new cannonball')
         if self.launcher.level == 2:
             self.speed = 10
             self.damage = 4  # 3 or 4
@@ -1137,57 +1133,38 @@ class CannonBall(Tower):
                 tmp_target.append(enemy)
         if tmp_target:
             self.target = self.create_sublist(tmp_target, self.max_attacks)
-            print(f"{len(self.target)=}")
-
+            #print(f"{len(self.target)=}")
 
     def update(self, enemies):
-    # from enemy
-    #def move(self):
-        # Move towards the next point in the path
-
-        # homing version
-        #self.target_pos = self.launcher.target.position
-
         dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
         distance = (dx**2 + dy**2)**0.5
         #print(f"{distance=} to {self.target_pos}")
         if distance > self.speed:
             dx, dy = dx / distance * self.speed, dy / distance * self.speed
         self.position = (self.position[0] + dx, self.position[1] + dy)
-        #print(f"new position {self.position}")
-
         # Check if the enemy has reached the target position
         if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
-            # This means blows up where original target was  but might want to hit
-            # whenever cross path with enemy
-            # an alternative  - dont blow up and more like you know death ball
-            print(f"blowing up at {self.position}")
+            #print(f"blowing up at {self.position}")
             self.find_target(enemies)
             score = self.attack()
             self.launcher.total_score += score
-            #else:
-                #self.is_attacking = False
             self.active = False  # if dont remove they stop on paths and look like mines
             return score
         return 0
 
     def draw(self, window):
-        #print('drawing it', self.position)
         x = self.position[0]
         y = self.position[1]
         if self.active:
-            #pygame.draw.circle(window, (0,0,0), (int(x), int(y)), self.size)
             image_rect = self.image.get_rect(center=self.position)
             window.blit(self.image, image_rect.topleft)
-
 
     def attack_animate(self, window):
         if not self.active:
             explosion_rect = self.expl_image.get_rect(center=self.position)
             window.blit(self.expl_image, explosion_rect)
 
-
-    #from burger
+    #modified from burger
     def attack(self):
         score = 0
         if self.target and self.attack_timer <= 0:
@@ -1197,13 +1174,11 @@ class CannonBall(Tower):
                 for target in self.target:
                     # Do more damage to big enemies to simulate multiple projectiles hitting
                     multiplier = target.size
-                    print(f"Damage: {self.damage * multiplier}")
-
+                    #print(f"Damage: {self.damage * multiplier}")
                     score += target.take_damage(self.damage * multiplier)
             else:
                 # dont think ever here
                 multiplier = self.target.size  # Do more damage to big enemies to simulate multiple projectiles hitting
-                #print('single', multiplier)
                 score = self.target.take_damage(self.damage * multiplier)
             self.reset_attack_timer()
             self.is_attacking = True  # Set to True when attacking
