@@ -940,7 +940,7 @@ class Cannon(Tower):
             self.glow_radius = 16
         if self.level == 3:
             self.image = cannon3_img
-            self.attack_speed = 32
+            self.attack_speed = 35
             self.range = 140
             #self.image = cannon_img
             #self.max_attacks = 10
@@ -949,7 +949,7 @@ class Cannon(Tower):
             self.glow_radius = 20
         if self.level == 4:
             self.image = cannon4_img
-            self.attack_speed = 22
+            self.attack_speed = 25
             self.range = 150
             #self.image = cannon_img
             #self.max_attacks = 10
@@ -1114,7 +1114,7 @@ class CannonBall(Tower):
             # maybe add homing missiles
             self.speed = 12
             self.damage = 7
-            self.max_attacks = 9
+            self.max_attacks = 8
             self.image = cannonball3_img
             self.range = 70
             self.expl_image = explosion3_img
