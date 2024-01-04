@@ -110,6 +110,17 @@ class Tower:
         self.speed_mod = 1
         self.highlight = False
         self.attack_tower = True
+        self.image = self.__class__.image  # Might not need to put this in inherited towers now.
+
+    # For pickling override __getstate__
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['image']  # Remove the non-picklable attribute
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.image = self.__class__.image  # Restore the non-picklable attribute
 
     def current_range(self):
         return self.range * self.range_mod
