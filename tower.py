@@ -291,7 +291,7 @@ class Burger(Tower):
         self.attack_speed = 75
         self.damage = 1
         self.cost = Burger.price
-        self.image = Burger.image
+        #self.image = Burger.image  # all of these can be done in base class: self.thing = self.__class__.thing
         self.level = 1
         self.max_attacks = 4
         self.upgrade_costs = [95, 220, 680] # , 1200]
@@ -332,6 +332,18 @@ class Burger(Tower):
             #self.cost += self.upgrade_costs[3]
             #self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             #self.damage = 3 # not sure - with damage 2 and other stats nothing got past
+
+    # For pickling override __getstate__
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['image']
+        del state['splat_img']  # Remove the non-picklable attribute
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.image = self.__class__.image  # Restore the non-picklable attribute
+        self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
 
     # Splat attack!
     def attack(self):
@@ -639,7 +651,7 @@ class GlueGunner(Tower):
         self.attack_speed = 40
         self.damage = 1
         self.cost = GlueGunner.price
-        self.image = GlueGunner.image
+        #self.image = GlueGunner.image
         self.level = 1
         self.upgrade_costs = [120, 280, 900]
         self.beam_width = 7
