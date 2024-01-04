@@ -156,3 +156,8 @@ class Game():
                 rbe = self.total_hits + self.lives_lost
                 #print(f"Before level {self.level_num} {total_hits=} {total_money=:.2f} {lives_lost=} {rbe=}")
                 print(f"At finish: level {self.level_num} {self.total_hits=} {self.total_money=:.2f} {self.lives_lost=} {rbe=} {round_money=}")
+
+            # ok it saves if have no towers so def towres that are the problem - but what surface is in towres
+            self.current_tower_type = None  # testing if this is surface cannot pickle. But might not want to set to None
+            account.save_map(gmap.name, self)
+            account.save()

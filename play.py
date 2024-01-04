@@ -14,7 +14,7 @@ import levels as lev
 from maps import map_window
 import sounds
 import hints
-from accounts import Account, load_profile
+from accounts import Account, load_profile, save_profile
 from game_metrics import Game
 
 pygame.font.init()  # Initialize font module
@@ -57,12 +57,15 @@ inset_window = {
 projectiles = []
 
 try:
-    # or load latest
+    # TODO or load most recent profile
     account = load_profile("default.pkl")
 except Exception:
-    print("Failed to load default profile - there should be a file profile/default.pkl")
-    print("Defaulting to no profile loaded")
-    account = None
+    #print("Failed to load default profile - there should be a file profile/default.pkl")
+    #print("Defaulting to no profile loaded")
+    #account = None
+    # create new default profile
+    save_profile("default")
+    account = load_profile("default.pkl")
 
 game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
             lev, print_total_money, inset_window)
@@ -98,6 +101,10 @@ def select_map():
         game.running = False
         return
     gmap = set_map(gmap)
+    # TODO put this in account (profile) function.
+    if gmap.name in account.maps_in_progress:
+        game = account.maps_in_progress[gmap.name]
+        game.restart_round(lev)  # TODO lev could just be imported in game_metrics
     return gmap
 
 play_again_button = None  # To store the button rectangle

@@ -112,6 +112,7 @@ class Account():
         self.name = name
         self.maps_complete = []
         self.maps_aced = []
+        self.maps_in_progress = {}
 
     # map is keyword, use gmap (game map)
     def complete_map(self, gmap, aced=False):
@@ -120,8 +121,14 @@ class Account():
         if aced:
             if not gmap in self.maps_aced:
                 self.maps_aced.append(gmap)
+        self.maps_in_progress.pop(gmap.name, None)
+
+    def save_map(self, gmap, game):
+        print(f"Saving map {gmap} as level {game.level}")
+        self.maps_in_progress[gmap] = game
 
     def save(self):
+        print(f'saving game {self.name}')
         path=Path.cwd() / Path("profiles")
         with Path(path / Path(self.name + ".pkl")).open("wb") as f:
             pickle.dump(self, f)
