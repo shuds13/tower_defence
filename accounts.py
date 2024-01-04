@@ -113,6 +113,9 @@ class Account():
         self.maps_aced = []
         self.maps_in_progress = {}
 
+    def failed_map(self, gmap):
+        self.maps_in_progress.pop(gmap.name, None)
+
     # map is keyword, use gmap (game map)
     def complete_map(self, gmap, aced=False):
         gmap_class = gmap.__class__

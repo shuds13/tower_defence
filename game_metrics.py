@@ -57,6 +57,9 @@ class Game():
         self.path_id = 0
         self.shown_hint = False
 
+    def failed_map(self, gmap, account):
+        account.failed_map(gmap)
+
     def restart_round(self, lev):
         self.player_money = self.start_round_money
         self.total_money = self.start_round_money

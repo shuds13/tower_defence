@@ -153,6 +153,7 @@ def show_tower_info(inset_window):
 
 game.set_money_per_hit()
 
+
 # Game loop
 while game.running:
 
@@ -306,6 +307,7 @@ while game.running:
         if game.lives <= 0:
             game.game_over = True
             game.current_tower_type = None
+            game.failed_map(gmap, account)
 
         # Remove enemies that have reached the end of the path
         game.enemies = [enemy for enemy in game.enemies if not enemy.reached_end]
