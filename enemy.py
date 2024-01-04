@@ -35,6 +35,7 @@ class Enemy:
         self.size = 1
         self.slowable = True
         self.glue_reset()
+        self.distance = 0
 
     def glue_reset(self):
         self.slow_factor = 1
@@ -96,6 +97,8 @@ class Enemy:
             # Check if the enemy has reached the target position
             if abs(self.position[0] - target_pos[0]) < self.speed and abs(self.position[1] - target_pos[1]) < self.speed:
                 self.path_index += 1
+
+            self.distance += self.speed
 
         # Check if the enemy has reached the end of the path
         if self.path_index >= len(self.path) - 1:

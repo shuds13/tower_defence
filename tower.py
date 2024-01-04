@@ -129,12 +129,30 @@ class Tower:
     # Goes through enemies - finds first (could find strongest etc...)
     # Note that enemy order is order came on to screen but may not be at the front at any point in time!
     def find_target(self, enemies):
+        self.target = None
+        shortlist = []
         for enemy in enemies:
+            # ok this may be slower than global reorder - as always have to go through all enemies!
             if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
-                self.target = enemy
-                break
-        else:
-            self.target = None
+                #self.target = enemy
+                shortlist.append(enemy)
+                #break
+        # Now reorder and take first or just go through - latter quicker for this tower - but multi-targeters prob will reorder.
+        if shortlist:
+            shortlist.sort(key=lambda x: x.distance, reverse=True)
+            self.target = shortlist[0]
+        # or if target strong
+        #if shortlist:
+            #shortlist.sort(key=lambda x: x.value, reverse=True)  # health or value?
+            #self.target = shortlist[0]
+
+    #def find_target(self, enemies):
+        #for enemy in enemies:
+            #if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
+                #self.target = enemy
+                #break
+        #else:
+            #self.target = None
 
     def in_range(self, enemy):
         distance = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
@@ -224,7 +242,7 @@ class Fighter(Tower):
     price = 50
     name = 'Fighter'
     image = fighter_img
-    range = 100
+    range = 500 #100  #TMP TEST TEST TEST TEST
     max_level = 4
     see_ghosts = False
 

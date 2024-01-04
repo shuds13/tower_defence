@@ -21,8 +21,8 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 150
-initial_level = 1
+initial_money = 75700
+initial_level = 61
 
 print_total_money = False
 init_last_round_restarts = 3
@@ -290,6 +290,14 @@ while game.running:
 
         # May not need both conditions as reached_end is set to True when killed
         game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
+
+        #print(f"B4: {game.enemies=}")
+        # one approach to order - reorder whole list each time (alt is do in find_target function for enemies in range).
+        # how slow is this - lets find out.
+        #game.enemies.sort(key=lambda x: x.distance, reverse=True)  # so far cant see diff in speed
+
+        #print(f"After: {game.enemies=}")
+
 
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
