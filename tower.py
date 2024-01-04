@@ -111,11 +111,13 @@ class Tower:
         self.highlight = False
         self.attack_tower = True
         self.image = self.__class__.image  # Might not need to put this in inherited towers now.
+        self.target = None
 
     # For pickling override __getstate__
     def __getstate__(self):
         state = self.__dict__.copy()
         del state['image']  # Remove the non-picklable attribute
+        self.target = None  # can I do this rather than deleting
         return state
 
     def __setstate__(self, state):
@@ -357,6 +359,7 @@ class Burger(Tower):
         state = self.__dict__.copy()
         del state['image']
         del state['splat_img']  # Remove the non-picklable attribute
+        self.target = None
         return state
 
     def __setstate__(self, state):
