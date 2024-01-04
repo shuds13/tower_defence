@@ -8,6 +8,8 @@ crown_img = pygame.image.load('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (50, 50))
 crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (50, 50))
+save_img = pygame.image.load('images/save.png')
+save_img = pygame.transform.scale(save_img, (50, 50))
 
 def render_level_to_surface(gmap, size):
     # Create a new surface
@@ -108,6 +110,10 @@ def draw_map_window(display, surface, window_size, account=None):
                 #crown_rect = crown.get_rect(topleft=(x, y+70))  # Appears over bottom left of map
                 crown_rect = crown.get_rect(center=(x+width//2, y))
                 surface.blit(crown, crown_rect.topleft)
+
+            if gmap.name in account.maps_in_progress:
+                save_rect = save_img.get_rect(center=(x, y+60))
+                surface.blit(save_img, save_rect.topleft)
         else:
             pygame.display.set_caption("Menu selection")
 
