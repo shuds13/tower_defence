@@ -121,6 +121,10 @@ class Tower:
     def __setstate__(self, state):
         self.__dict__ = state
         self.image = self.__class__.image  # Restore the non-picklable attribute
+        self.load_images()
+
+    def load_images(self):
+        pass
 
     def current_range(self):
         return self.range * self.range_mod
@@ -251,6 +255,14 @@ class Fighter(Tower):
         self.beam_width = 5
         self.upgrade_name = "Rapid Fire"
 
+    def load_images(self):
+        if self.level == 2:
+            self.image = fighter2_img
+        elif self.level == 3:
+            self.image = fighter3_img
+        elif self.level == 4:
+            self.image = fighter4_img
+
     def level_up(self):
         self.level +=1
         if self.level == 2:
@@ -276,7 +288,6 @@ class Fighter(Tower):
             self.damage = 2
             self.beam_width = 7
 
-
 class Burger(Tower):
 
     price = 65
@@ -298,6 +309,14 @@ class Burger(Tower):
         # range_mod cant be used here - so would have to update when update range_mod
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         self.upgrade_name = "With cheese"
+
+    def load_images(self):
+        if self.level == 2:
+            self.image = burger2_img
+        elif self.level == 3:
+            self.image = burger3_img
+        elif self.level == 4:
+            self.image = burger4_img
 
     def level_up(self):
         self.level +=1
@@ -343,6 +362,7 @@ class Burger(Tower):
     def __setstate__(self, state):
         self.__dict__ = state
         self.image = self.__class__.image  # Restore the non-picklable attribute
+        self.load_images()
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
 
     # Splat attack!
@@ -422,6 +442,14 @@ class Wizard(Tower):
         self.max_cloud_attacks = 8
         self.cloud_type = 1
         self.upgrade_name = "Enchanter"
+
+    def load_images(self):
+        if self.level == 2:
+            self.image = wizard2_img
+        elif self.level == 3:
+            self.image = wizard3_img
+        elif self.level == 4:
+            self.image = wizard4_img
 
     def draw(self, window, enemies=None):
         """Dont rotate wizard"""
@@ -663,6 +691,14 @@ class GlueGunner(Tower):
         self.upgrade_name = "Big Blobs"  # could do better!
         self.attack_tower = False
 
+    def load_images(self):
+        if self.level == 2:
+            self.image = gluegun2_img
+        elif self.level == 3:
+            self.image = gluegun3_img
+        elif self.level == 4:
+            self.image = gluegun4_img
+
     def level_up(self):
         self.level +=1
         if self.level == 2:
@@ -808,6 +844,16 @@ class Totem(Tower):
         self.attack_tower = False
         self.range_boost = 1.10
 
+    def load_images(self):
+        if self.level == 1:
+            self.image = self.__class__.in_game_image
+        if self.level == 2:
+            self.image = totem2_img
+        elif self.level == 3:
+            self.image = totem3_img
+        elif self.level == 4:
+            self.image = totem4_img
+
     def level_up(self):
         self.level +=1
         if self.level == 2:
@@ -936,7 +982,6 @@ class Cannon(Tower):
     max_level = 4
     footprint = (70,70)  # May make bigger
 
-
     # Does projectile just go in direct target was when launch - or does it continue
     # to move towards target with each step (homing missile).
     def __init__(self, position):
@@ -950,6 +995,17 @@ class Cannon(Tower):
         self.glow_radius = 10
         self.glow_time = 5
         #self.upgrade_name = "Ghost Sight"
+
+    def load_images(self):
+        if self.level == 1:
+            self.image = self.__class__.in_game_image
+        if self.level == 2:
+            self.image = cannon2_img
+        elif self.level == 3:
+            self.image = cannon3_img
+        elif self.level == 4:
+            self.image = cannon4_img
+
 
     def level_up(self):
         self.level +=1
