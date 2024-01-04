@@ -59,6 +59,7 @@ class Game():
 
     def failed_map(self, gmap, account):
         account.failed_map(gmap)
+        account.save()  # could do inside failed_map/save_map/complete_map
 
     def restart_round(self, lev):
         self.player_money = self.start_round_money
