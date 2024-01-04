@@ -113,16 +113,19 @@ class Tower:
         self.image = self.__class__.image  # Might not need to put this in inherited towers now.
         self.target = None
 
+
     # For pickling override __getstate__
     def __getstate__(self):
         state = self.__dict__.copy()
         del state['image']  # Remove the non-picklable attribute
-        self.target = None  # can I do this rather than deleting
+        del state['target']
+        #self.target = None  # can I do this rather than deleting
         return state
 
     def __setstate__(self, state):
         self.__dict__ = state
         self.image = self.__class__.image  # Restore the non-picklable attribute
+        self.target = None
         self.load_images()
 
     def load_images(self):
@@ -359,7 +362,7 @@ class Burger(Tower):
         state = self.__dict__.copy()
         del state['image']
         del state['splat_img']  # Remove the non-picklable attribute
-        self.target = None
+        del state['target']
         return state
 
     def __setstate__(self, state):
@@ -367,6 +370,7 @@ class Burger(Tower):
         self.image = self.__class__.image  # Restore the non-picklable attribute
         self.load_images()
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+        self.target = None
 
     # Splat attack!
     def attack(self):
