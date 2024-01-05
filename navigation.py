@@ -261,8 +261,8 @@ def draw_options_window(display, surface, options_button, game):
                     if are_you_sure(display, surface):
                         return True, False, False
                 elif maps_button.collidepoint(mouse_pos):
-                    if are_you_sure(display, surface):
-                        return False, True, False
+                    #if are_you_sure(display, surface):
+                    return False, True, False
                 elif s1_b.collidepoint(mouse_pos):
                     frames_per_second = 60
                 elif s15_b.collidepoint(mouse_pos):
