@@ -61,7 +61,7 @@ class Game():
         account.failed_map(gmap)
         account.save()  # could do inside failed_map/save_map/complete_map
 
-    def restart_round(self, lev):
+    def restart_round(self, lev, decrement=True):
         self.player_money = self.start_round_money
         self.total_money = self.start_round_money
         self.lives = self.start_round_lives
@@ -76,7 +76,9 @@ class Game():
             if isinstance(ctower, Totem):
                 self.totems.append(ctower)
 
-        self.last_round_restarts -= 1
+        if decrement:
+            self.last_round_restarts -= 1
+
         self.game_over = False
         self.level = lev.levels[self.level_num]()  # reset this level (phase num / num_spawned)
         self.lives_highlight = 0

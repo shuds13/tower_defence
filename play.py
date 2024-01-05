@@ -104,7 +104,8 @@ def select_map():
     # TODO put this in account (profile) function.
     if gmap.name in account.maps_in_progress:
         game = account.maps_in_progress[gmap.name]
-        game.restart_round(lev)  # TODO lev could just be imported in game_metrics
+        game.restart_round(lev, decrement=False)  # TODO lev could just be imported in game_metrics
+        game.reset_level()
     return gmap
 
 play_again_button = None  # To store the button rectangle
