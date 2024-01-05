@@ -127,11 +127,11 @@ class Account():
         self.maps_in_progress.pop(gmap.name, None)
 
     def save_map(self, gmap, game):
-        print(f"Saving map {gmap} as level {game.level}")
+        #print(f"Saving map {gmap} as level {game.level}")
         self.maps_in_progress[gmap] = game
 
     def save(self):
-        print(f'saving game {self.name}')
+        #print(f'saving game {self.name}')
         path=Path.cwd() / Path("profiles")
         with Path(path / Path(self.name + ".pkl")).open("wb") as f:
             pickle.dump(self, f)
