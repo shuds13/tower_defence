@@ -10,6 +10,9 @@ crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (50, 50))
 save_img = pygame.image.load('images/save.png')
 save_img = pygame.transform.scale(save_img, (40, 40))
+right_img = pygame.image.load('images/right_chevron.png')
+right_img = pygame.transform.scale(right_img, (60, 60))
+left_img =  pygame.transform.flip(right_img, True, False)
 
 def render_level_to_surface(gmap, size):
     # Create a new surface
@@ -35,60 +38,27 @@ def options_window(display, surface, window_size):
     pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
 
 
-def draw_map_window(display, surface, window_size, account=None):
-    #window_size = (900, 600)
-    #pygame.draw.rect(surface, (159, 226, 191), (0, 0, window_size[0], window_size[1]))
-    pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
-    #window = pygame.display.set_mode(window_size)
-    window_width = window_size[0]
-    window_height = window_size[1]
-    chosen = False
 
-    font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
-    font = pygame.font.SysFont(None, 24)
+def display_maps_page(display, surface, account, maps_page, width, height):
 
-    map_menu_text = font_title.render("Choose a map", True, (0, 0, 0))  # Black text
-    #map_menu_rect = map_menu_text.get_rect(midleft=(10, 10))
-    map_menu_rect = map_menu_text.get_rect(center=(window_width//2, 20))
-    surface.blit(map_menu_text, map_menu_rect.topleft)
-
-    #loop and call
-    width = 180
-    height = 120
-
-    start_x = 60  # 200 works with col_size 4
-    start_y = 80  # 10 works with col_size 4
-    #x = window_width//2 - width//2
-
-    x_offset = width+20
-    y_offset = 150
-
-    # max col_size is 4
-    if len(map_classes) <= 6:
-        #start_x = 100
-        start_x = 120
-        col_size = 2
-        x_offset = width+60
-        y_offset = 200
-    else:
-        col_size = 3
-
-
+    start_x = 120
+    start_y = 80
+    col_size = 2
+    x_offset = width+60
+    y_offset = 200
     x = start_x
     y = start_y
 
     map_rects = []
     maps = []
     gmap = None
-    # map is keyword - so gmap = game map
-    for count, map_class in enumerate(map_classes.values()):
-        #create? Well if I want to eventually to show thumbnails of maps will need create something
+
+    font = pygame.font.SysFont(None, 24)
+
+    for count, map_class in enumerate(maps_page):
         gmap = map_class()
 
-        # if not using thumbnails
-        #map_name_rect = nav.draw_button(surface, gmap.name.upper(), (x, y), (width, height))
-
-        # if using thumbnails
+        # Construct thumbnails
         level_surface = render_level_to_surface(gmap, (700, 600))  # map size without side window
         thumbnail = create_thumbnail(level_surface, (width, height))
         surface.blit(thumbnail, (x,y))
@@ -124,18 +94,60 @@ def draw_map_window(display, surface, window_size, account=None):
             y = start_y
             x += x_offset
 
-    # This wont work with the more than six maps version - should really be in diff window.
+    return map_rects, maps
+
+
+def draw_map_window(display, surface, window_size, account=None, page=1):
+    pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
+    window_width = window_size[0]
+    window_height = window_size[1]
+
+    font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
+    map_menu_text = font_title.render("Choose a map", True, (0, 0, 0))  # Black text
+    map_menu_rect = map_menu_text.get_rect(center=(window_width//2, 20))
+    surface.blit(map_menu_text, map_menu_rect.topleft)
+
+    #loop and call
+    width = 180
+    height = 120
+
+    #start_x = 60
+    #start_y = 80
+
+    maps_per_page = 6
+    nmaps = len(map_classes)
+    npages = nmaps // maps_per_page + 1
+
+    start_map = (page-1)*maps_per_page
+    end_map = min(start_map+maps_per_page, nmaps)
+    maps_page = map_classes[start_map:end_map]
+    map_rects, maps = display_maps_page(display, surface, account, maps_page, width, height)
+
+    # Draw new/load profile buttons
     x = window_width//3 - 100
     y = window_height - 100
     load_account_rect = nav.draw_button(surface, "Load Profile", (x, y), (200, 60))
     x = window_width*2//3 - 100
     new_account_rect = nav.draw_button(surface, "New Profile", (x, y), (200, 60))
+
+    rarrow_rect = None
+    if npages > page:
+        rarrow_rect = right_img.get_rect(center=(window_width-70, window_height//2-60))
+        surface.blit(right_img, rarrow_rect.topleft)
+
+    larrow_rect = None
+    if page > 1:
+        larrow_rect = left_img.get_rect(center=(50, window_height//2-60))
+        surface.blit(left_img, larrow_rect.topleft)
+
     display.flip()
-    return map_rects, load_account_rect, new_account_rect,  maps
+    return map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect
+
 
 def map_window(display, surface, window_size, account=None):
 
-    map_rects, load_account_rect, new_account_rect, maps = draw_map_window(display, surface, window_size, account)
+    page = 1
+    map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
     noclicks = True
@@ -151,11 +163,20 @@ def map_window(display, surface, window_size, account=None):
 
                 if new_account_rect.collidepoint(mouse_pos):
                     account = new_profile(surface)
-                    draw_map_window(display, surface, window_size, account)
+                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if load_account_rect.collidepoint(mouse_pos):
                     account = profile_menu(surface)
-                    draw_map_window(display, surface, window_size, account)
+                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+
+                if rarrow_rect and rarrow_rect.collidepoint(mouse_pos):
+                    page+=1
+                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+
+                if larrow_rect and larrow_rect.collidepoint(mouse_pos):
+                    page-=1
+                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+
 
                 map_id = process_click(map_rects, mouse_pos)
                 if map_id is not None:
@@ -256,6 +277,29 @@ class Spiral(Map):
         self.path_color = (0, 163, 108)
         self.paths = [spiral.spiral_path]
 
+#coe to think of it what happened to that other map I made - I know it wasn't planned to be permanent but hey...
 
-map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
+class Rubbish(Map):
+    def __init__(self):
+        self.name = "Rubbish"
+        self.difficulty = 2
+        self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
+        self.background_color = (50, 25, 0)
+        self.path_thickness = 15
+        self.path_color = (0, 211, 211)
+
+class Rubbish2(Map):
+    def __init__(self):
+        self.name = "Rubbish2"
+        self.difficulty = 2
+        self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
+        self.background_color = (50, 25, 0)
+        self.path_thickness = 15
+        self.path_color = (0, 211, 211)
+
+
+# dont need to be a dictionary
+#map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Rubbish, Rubbish2]
+
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
