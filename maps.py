@@ -294,6 +294,28 @@ class Spiral(Map):
 
 #coe to think of it what happened to that other map I made - I know it wasn't planned to be permanent but hey...
 
+# Initial paths dont look as good as could but actually is quite a good maps from strategic viewpoint.
+class Vase(Map):
+    def __init__(self):
+        self.name = "Rubin's Vase"
+        self.difficulty = 3
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+        # Path for the left face
+        left_path = [
+            (50, 100), (200, 100), (200, 200), (300, 250), (200, 300), (200, 500), (50, 500)
+        ]
+
+        # Path for the right face
+        right_path = [
+            (650, 100),(500, 100),(500, 200),(400, 250),(500, 300),(500, 500),(650, 500)
+        ]
+        self.paths = [left_path, right_path]
+
+
 # "Rubbish" maps are just for testing
 class Rubbish(Map):
     def __init__(self):
@@ -316,6 +338,6 @@ class Rubbish2(Map):
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Rubbish, Rubbish2]
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Vase, Rubbish, Rubbish2]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
