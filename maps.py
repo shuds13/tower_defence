@@ -149,7 +149,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
 
 def map_window(display, surface, window_size, account=None):
 
-    page = 1
+    page = 2
     map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
@@ -305,13 +305,25 @@ class Vase(Map):
         self.path_color = (96, 130, 182) # (178, 190, 181)
 
         # Path for the left face
+        #left_path = [
+            #(50, 100), (200, 100), (200, 200), (300, 250), (200, 300), (200, 500), (50, 500)
+        #]
+
+        ## Path for the right face
+        #right_path = [
+            #(650, 100),(500, 100),(500, 200),(400, 250),(500, 300),(500, 500),(650, 500)
+        #]
+
+        # Path for the left face
         left_path = [
-            (50, 100), (200, 100), (200, 200), (300, 250), (200, 300), (200, 500), (50, 500)
+            (50, 80), (180, 100), (200, 200), (170, 230), (300, 350),
+            (200, 360), (200,400), (160, 420), (200, 430), (200, 500), (50, 600)
         ]
 
         # Path for the right face
         right_path = [
-            (650, 100),(500, 100),(500, 200),(400, 250),(500, 300),(500, 500),(650, 500)
+            (650, 80), (520, 100), (500, 200), (530, 230), (400, 350),
+            (500, 360), (500,400), (540, 420), (500, 430), (500, 500), (650, 600)
         ]
         self.paths = [left_path, right_path]
 
