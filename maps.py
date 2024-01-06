@@ -14,6 +14,9 @@ right_img = pygame.image.load('images/right_chevron.png')
 right_img = pygame.transform.scale(right_img, (60, 60))
 left_img =  pygame.transform.flip(right_img, True, False)
 
+maps_per_page = 6
+periodic_arrows = True
+
 def render_level_to_surface(gmap, size):
     # Create a new surface
     level_surface = pygame.Surface(size)
@@ -97,6 +100,11 @@ def display_maps_page(display, surface, account, maps_page, width, height):
     return map_rects, maps
 
 
+def get_nmaps_npages():
+    nmaps = len(map_classes)
+    npages = nmaps // maps_per_page + 1
+    return nmaps, npages
+
 def draw_map_window(display, surface, window_size, account=None, page=1):
     pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
     window_width = window_size[0]
@@ -111,12 +119,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
     width = 180
     height = 120
 
-    #start_x = 60
-    #start_y = 80
-
-    maps_per_page = 6
-    nmaps = len(map_classes)
-    npages = nmaps // maps_per_page + 1
+    nmaps, npages = get_nmaps_npages()
 
     start_map = (page-1)*maps_per_page
     end_map = min(start_map+maps_per_page, nmaps)
@@ -131,12 +134,12 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
     new_account_rect = nav.draw_button(surface, "New Profile", (x, y), (200, 60))
 
     rarrow_rect = None
-    if npages > page:
+    if nmaps > maps_per_page and (periodic_arrows or npages > page):
         rarrow_rect = right_img.get_rect(center=(window_width-70, window_height//2-60))
         surface.blit(right_img, rarrow_rect.topleft)
 
     larrow_rect = None
-    if page > 1:
+    if nmaps > maps_per_page and (periodic_arrows or page > 1):
         larrow_rect = left_img.get_rect(center=(50, window_height//2-60))
         surface.blit(left_img, larrow_rect.topleft)
 
@@ -170,11 +173,19 @@ def map_window(display, surface, window_size, account=None):
                     map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if rarrow_rect and rarrow_rect.collidepoint(mouse_pos):
-                    page+=1
+                    if periodic_arrows:
+                        nmaps, npages = get_nmaps_npages()
+                        page = page + 1 if page < npages else 1
+                    else:
+                        page += 1
                     map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if larrow_rect and larrow_rect.collidepoint(mouse_pos):
-                    page-=1
+                    if periodic_arrows:
+                        nmaps, npages = get_nmaps_npages()
+                        page = page - 1 if page > 1 else npages
+                    else:
+                        page -= 1
                     map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
 
