@@ -64,7 +64,7 @@ def load_profile(filename):
 def profile_menu(screen):
     # Window settings
     screen_width, screen_height = 600, 400
-    pygame.display.set_caption("Account Loader")
+    pygame.display.set_caption("Profile Loader")
     font = pygame.font.Font(None, 36)
 
     # TODO: Fow now I'm making profiles dir but will make if does not exist
