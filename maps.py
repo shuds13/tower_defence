@@ -294,6 +294,7 @@ class Spiral(Map):
 
 #coe to think of it what happened to that other map I made - I know it wasn't planned to be permanent but hey...
 
+# "Rubbish" maps are just for testing
 class Rubbish(Map):
     def __init__(self):
         self.name = "Rubbish"
@@ -315,6 +316,6 @@ class Rubbish2(Map):
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Rubbish, Rubbish2]
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square] #, Rubbish, Rubbish2]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
