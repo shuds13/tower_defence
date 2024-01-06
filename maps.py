@@ -149,7 +149,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
 
 def map_window(display, surface, window_size, account=None):
 
-    page = 2
+    page = 1
     map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
@@ -328,28 +328,28 @@ class Vase(Map):
         self.paths = [left_path, right_path]
 
 
-# "Rubbish" maps are just for testing
-class Rubbish(Map):
+# Maps for testing
+class Eagle(Map):
     def __init__(self):
-        self.name = "Rubbish"
-        self.difficulty = 2
+        self.name = "Eagle"
+        self.difficulty = 1
         self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
         self.background_color = (50, 25, 0)
         self.path_thickness = 15
         self.path_color = (0, 211, 211)
 
-class Rubbish2(Map):
-    def __init__(self):
-        self.name = "Rubbish2"
-        self.difficulty = 2
-        self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
-        self.background_color = (50, 25, 0)
-        self.path_thickness = 15
-        self.path_color = (0, 211, 211)
+#class Rubbish2(Map):
+    #def __init__(self):
+        #self.name = "Rubbish2"
+        #self.difficulty = 2
+        #self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
+        #self.background_color = (50, 25, 0)
+        #self.path_thickness = 15
+        #self.path_color = (0, 211, 211)
 
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Vase, Rubbish, Rubbish2]
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Vase, Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
