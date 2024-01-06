@@ -46,8 +46,12 @@ class Game():
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        self.current_tower_type = None
+        #self.current_tower_type = None
         return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.current_tower_type = None
 
     def reset_level(self):
         self.enemies = []
