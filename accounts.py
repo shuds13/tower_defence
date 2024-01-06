@@ -23,6 +23,8 @@ def new_profile(screen):
                 if input_active:
                     if event.key == pygame.K_RETURN:
                         # Attempt to save profile
+                        if not user_text:
+                            return  # Do nothing if user_text is empty
                         account, message = save_profile(user_text)
                         if account is not None:
                             return account

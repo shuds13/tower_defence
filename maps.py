@@ -165,11 +165,15 @@ def map_window(display, surface, window_size, account=None):
                 mouse_pos = pygame.mouse.get_pos()
 
                 if new_account_rect.collidepoint(mouse_pos):
-                    account = new_profile(surface)
+                    new_account = new_profile(surface)
+                    if new_account is not None:
+                        account = new_account
                     map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if load_account_rect.collidepoint(mouse_pos):
-                    account = profile_menu(surface)
+                    new_account = profile_menu(surface)
+                    if new_account is not None:
+                        account = new_account
                     map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if rarrow_rect and rarrow_rect.collidepoint(mouse_pos):
