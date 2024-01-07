@@ -300,9 +300,9 @@ class Vase(Map):
         self.name = "Rubin's Vase"
         self.difficulty = 4
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.background_color =  (48, 25, 52) # (40, 40, 43) # (69, 75, 27)
         self.path_thickness = 20
-        self.path_color = (96, 130, 182) # (178, 190, 181)
+        self.path_color = (100, 149, 237) # (25, 25, 112) # (96, 130, 182)
 
         # Path for the left face
         #left_path = [
