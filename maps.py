@@ -298,7 +298,7 @@ class Spiral(Map):
 class Vase(Map):
     def __init__(self):
         self.name = "Rubin's Vase"
-        self.difficulty = 3
+        self.difficulty = 4
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
