@@ -52,6 +52,7 @@ class Game():
     def __setstate__(self, state):
         self.__dict__ = state
         self.current_tower_type = None
+        self.inset_window['active'] = False  # If set current_tower_type to None - need this
 
     def reset_level(self):
         self.enemies = []
