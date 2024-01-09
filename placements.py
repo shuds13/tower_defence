@@ -36,7 +36,7 @@ def too_close_to_path(point, line_start, line_end, w, h):
     return abs(dx) < w//2 and abs(dy) < h//2
 
 
-def is_valid_position(newtowertype, pos, paths, towers, options_button):
+def is_valid_position(newtowertype, pos, paths, towers, options_button, gmap):
     """Check if the position is not on the path and not too close to other towers."""
 
     # TODO should include path thickness
@@ -45,6 +45,9 @@ def is_valid_position(newtowertype, pos, paths, towers, options_button):
 
     #TODO use collide to see if in side panel
     if pos[0] > 675:  # so no part in side panel
+        return False
+
+    if not gmap.can_I_place(pos):
         return False
 
     w1 = newtowertype.footprint[0]

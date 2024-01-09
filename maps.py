@@ -17,6 +17,45 @@ left_img =  pygame.transform.flip(right_img, True, False)
 maps_per_page = 6
 periodic_arrows = True
 
+# May put this elsewhere
+def get_bounding_box(polygon):
+    """
+    Calculate the bounding box (rectangle) for a polygon.
+
+    Args:
+    polygon (list): A list of tuples representing the vertices of the polygon.
+
+    Returns:
+    tuple: A tuple representing the bounding box in the format (min_x, min_y, max_x, max_y).
+    """
+    min_x = min(polygon, key=lambda point: point[0])[0]
+    min_y = min(polygon, key=lambda point: point[1])[1]
+    max_x = max(polygon, key=lambda point: point[0])[0]
+    max_y = max(polygon, key=lambda point: point[1])[1]
+
+    return min_x, min_y, max_x, max_y
+
+def is_point_inside_bounding_box(pos, bounding_box):
+    """
+    Check if a point is inside the bounding box.
+
+    Args:
+    pos (tuple): The (x, y) coordinates of the point.
+    bounding_box (tuple): The bounding box in the format (min_x, min_y, max_x, max_y).
+
+    Returns:
+    bool: True if the point is inside the bounding box, False otherwise.
+    """
+    x, y = pos
+    min_x, min_y, max_x, max_y = bounding_box
+
+    return min_x <= x <= max_x and min_y <= y <= max_y
+
+def in_shape(pos, polygon):
+    bounding_box = get_bounding_box(polygon)
+    return is_point_inside_bounding_box(pos, bounding_box)
+
+
 def render_level_to_surface(gmap, size):
     # Create a new surface
     level_surface = pygame.Surface(size)
@@ -220,6 +259,10 @@ class Map():
     def paint_features(self, window):
         pass
 
+    def can_I_place(self, pos):
+        return True
+
+
 class PicnicPlace(Map):
     def __init__(self):
         self.name = "Picnic Place"
@@ -373,12 +416,9 @@ class Castle(Map):
 
         self.paths = [self.castle_path]
 
-    # May make so can only place on inside of castle - or in dark areas (door and windows)
-    def paint_features(self, window):
-        door_color = (165, 42, 42) #(0,0,0)
-        #door_color = (165, 42, 42) #(0,0,0)
-        pygame.draw.polygon(window, self.color_inside, self.castle_path)
-        door = [
+        self.door_color = (165, 42, 42) #(0,0,0)
+
+        self.door = [
             (400, 550), # Right side of the door
             (400, 450), # Right Top of the door
             (350, 400), # Top of the door
@@ -386,7 +426,7 @@ class Castle(Map):
             (300, 550), # Left side of the door
             (400, 550), # Right side of the door
         ]
-        middle_window = [
+        self.middle_window = [
             (320, 300), # Left tower end
             (320, 150), # Middle tower start
             (350, 100),  # Middle tower top
@@ -394,7 +434,7 @@ class Castle(Map):
             (380, 300), # Right tower start
             (300, 300), # Left tower end
         ]
-        #left_window = [
+        #self.left_window = [
             #(150, 450), # Bottom left of the castle
             #(150, 350), # Left tower start
             #(175, 300), # Left tower top
@@ -404,7 +444,7 @@ class Castle(Map):
 
         #]
         # modified (may not look so nice) to allow cannon to fit if limit placements
-        left_window = [
+        self.left_window = [
             (140, 500), # Bottom left of the castle
             (140, 350), # Left tower start
             (175, 300), # Left tower top
@@ -413,7 +453,7 @@ class Castle(Map):
             (140, 500), # Bottom left of the castle
 
         ]
-        right_window = [
+        self.right_window = [
             (140+350, 500), # Bottom left of the castle
             (140+350, 350), # Left tower start
             (175+350, 300), # Left tower top
@@ -422,12 +462,22 @@ class Castle(Map):
             (140+350, 500), # Bottom left of the castle
 
         ]
-        pygame.draw.polygon(window, door_color, door)
-        pygame.draw.polygon(window, door_color, middle_window)  # windows prob make black
-        pygame.draw.polygon(window, door_color, left_window)  # windows prob make black
-        pygame.draw.polygon(window, door_color, right_window)  # windows prob make black
 
 
+    # May make so can only place on inside of castle - or in dark areas (door and windows)
+    def paint_features(self, window):
+        #door_color = (165, 42, 42) #(0,0,0)
+        pygame.draw.polygon(window, self.color_inside, self.castle_path)
+
+        pygame.draw.polygon(window, self.door_color, self.door)
+        pygame.draw.polygon(window, self.door_color, self.middle_window)  # windows prob make black
+        pygame.draw.polygon(window, self.door_color, self.left_window)  # windows prob make black
+        pygame.draw.polygon(window, self.door_color, self.right_window)  # windows prob make black
+
+    def can_I_place(self, pos):
+        if in_shape(pos, self.door) or in_shape(pos, self.left_window) or in_shape(pos, self.right_window) or in_shape(pos, self.middle_window):
+            return True
+        return False
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}

@@ -227,7 +227,7 @@ while game.running:
             # Place a tower
             else:
             #elif game.current_tower_type is not None:
-                if place.is_valid_position(game.current_tower_type, mouse_pos, paths, game.towers, options_button):
+                if place.is_valid_position(game.current_tower_type, mouse_pos, paths, game.towers, options_button, gmap):
                     if game.player_money >= game.current_tower_type.price:
                         newtower = game.current_tower_type(position=mouse_pos)
                         game.towers.append(newtower)
@@ -446,7 +446,7 @@ while game.running:
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
 
             range_color = (255,0,0)
-            if place.is_valid_position(game.current_tower_type, (mouse_x, mouse_y), paths, game.towers, options_button):
+            if place.is_valid_position(game.current_tower_type, (mouse_x, mouse_y), paths, game.towers, options_button, gmap):
                 if game.player_money >= game.current_tower_type.price:
                     range_color = (0,255,0)
                 else:
