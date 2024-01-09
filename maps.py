@@ -407,6 +407,7 @@ class Castle(Map):
         self.paths = [self.castle_path]
 
         self.door_color = (165, 42, 42) #(0,0,0)
+        self.window_color = (0,0,0)
 
         self.door = [
             (400, 550), # Right side of the door
@@ -456,9 +457,9 @@ class Castle(Map):
         pygame.draw.polygon(window, self.color_inside, self.castle_path)
 
         pygame.draw.polygon(window, self.door_color, self.door)
-        pygame.draw.polygon(window, self.door_color, self.middle_window)  # windows prob make black
-        pygame.draw.polygon(window, self.door_color, self.left_window)  # windows prob make black
-        pygame.draw.polygon(window, self.door_color, self.right_window)  # windows prob make black
+        pygame.draw.polygon(window, self.window_color, self.middle_window)  # windows prob make black
+        pygame.draw.polygon(window, self.window_color, self.left_window)  # windows prob make black
+        pygame.draw.polygon(window, self.window_color, self.right_window)  # windows prob make black
 
     def can_I_place(self, pos):
         # Bounding box round polygon is too high at peak, so do manually.
