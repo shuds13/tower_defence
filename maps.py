@@ -34,8 +34,10 @@ def is_point_inside_bounding_box(pos, bounding_box):
 def is_rect_in_box(center_x, center_y, rect_w, rect_h, bounding_box):
     min_x, min_y, max_x, max_y = bounding_box
     overlap = 10
-    rect_x = center_x - rect_w / 2 + overlap
-    rect_y = center_y - rect_h / 2 + overlap
+    rect_w -= overlap
+    rect_h -= overlap
+    rect_x = center_x - rect_w / 2
+    rect_y = center_y - rect_h / 2
 
     # Check if all corners of the rectangle are inside the bounding box
     return (bounding_box[0] <= rect_x <= bounding_box[2] and
@@ -417,9 +419,9 @@ class Castle(Map):
             (350, 100),  # Middle tower top
             (380, 150), # Middle tower end
             (380, 300), # Right tower start
-            (300, 300), # Left tower end
+            (320, 300), # Left tower end
         ]
-        self.middle_window_box = (300, 125, 380, 300)
+        self.middle_window_box = (320, 125, 380, 300)
 
         self.left_window = [
             (140, 500), # Bottom left of the castle
@@ -462,7 +464,7 @@ class Castle(Map):
             #or in_shape(pos, self.middle_window)
         #):
             #return True
-
+        #print(pos)
         if is_rect_in_box(pos[0], pos[1], w, h, self.doorbox):
             return True
         if is_rect_in_box(pos[0], pos[1], w, h, self.left_window_box):
