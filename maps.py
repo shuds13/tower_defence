@@ -21,6 +21,7 @@ def render_level_to_surface(gmap, size):
     # Create a new surface
     level_surface = pygame.Surface(size)
     level_surface.fill(gmap.background_color)
+    gmap.paint_features(level_surface)
 
     # Draw the background
     #level_surface.blit(background_image, (0, 0))
@@ -216,6 +217,8 @@ class Map():
     def __init__(self):
         pass
 
+    def paint_features(self, window):
+        pass
 
 class PicnicPlace(Map):
     def __init__(self):
@@ -343,11 +346,12 @@ class Castle(Map):
         self.name = "Castle"
         self.difficulty = 1
         #self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
-        self.background_color = (193, 154, 107) #(184, 115, 51) # (50, 25, 0)  # this for another level but not this one (139, 0, 0)
+        self.background_color = (92, 64, 51) # (193, 154, 107) #(184, 115, 51) # (50, 25, 0)  # this for another level but not this one (139, 0, 0)
         self.path_thickness = 20
         self.path_color = (0,0,0) # (92, 64, 51)  # (0, 211, 211)
+        self.color_inside = (193, 154, 107)
 
-        castle_path = [
+        self.castle_path = [
             (100, 550),  # Bottom left of the castle
             (100, 350),  # Left tower start
             (175, 250), # Left tower top
@@ -367,7 +371,11 @@ class Castle(Map):
             (100, 550)   # Back to the start
         ]
 
-        self.paths = [castle_path]
+        self.paths = [self.castle_path]
+
+    def paint_features(self, window):
+        pygame.draw.polygon(window, self.color_inside, self.castle_path)
+
 
 
 # dont need to be a dictionary

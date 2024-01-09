@@ -316,6 +316,7 @@ while game.running:
 
     # Render game state ------------------------------------------------------
     window.fill(background_color)  # Clear screen
+    gmap.paint_features(window)
 
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, game.current_tower_type)
     options_button = nav.draw_options_cog(window)
