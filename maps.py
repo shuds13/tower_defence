@@ -19,15 +19,6 @@ periodic_arrows = True
 
 # May put this elsewhere
 def get_bounding_box(polygon):
-    """
-    Calculate the bounding box (rectangle) for a polygon.
-
-    Args:
-    polygon (list): A list of tuples representing the vertices of the polygon.
-
-    Returns:
-    tuple: A tuple representing the bounding box in the format (min_x, min_y, max_x, max_y).
-    """
     min_x = min(polygon, key=lambda point: point[0])[0]
     min_y = min(polygon, key=lambda point: point[1])[1]
     max_x = max(polygon, key=lambda point: point[0])[0]
@@ -36,24 +27,25 @@ def get_bounding_box(polygon):
     return min_x, min_y, max_x, max_y
 
 def is_point_inside_bounding_box(pos, bounding_box):
-    """
-    Check if a point is inside the bounding box.
-
-    Args:
-    pos (tuple): The (x, y) coordinates of the point.
-    bounding_box (tuple): The bounding box in the format (min_x, min_y, max_x, max_y).
-
-    Returns:
-    bool: True if the point is inside the bounding box, False otherwise.
-    """
     x, y = pos
     min_x, min_y, max_x, max_y = bounding_box
-
     return min_x <= x <= max_x and min_y <= y <= max_y
+
+def is_rect_in_box(center_x, center_y, rect_w, rect_h, bounding_box):
+    min_x, min_y, max_x, max_y = bounding_box
+    overlap = 10
+    rect_x = center_x - rect_w / 2 + overlap
+    rect_y = center_y - rect_h / 2 + overlap
+
+    # Check if all corners of the rectangle are inside the bounding box
+    return (bounding_box[0] <= rect_x <= bounding_box[2] and
+            bounding_box[0] <= rect_x + rect_w <= bounding_box[2] and
+            bounding_box[1] <= rect_y <= bounding_box[3] and
+            bounding_box[1] <= rect_y + rect_h <= bounding_box[3])
 
 def in_shape(pos, polygon):
     bounding_box = get_bounding_box(polygon)
-    print(bounding_box)
+    #print(bounding_box)
     return is_point_inside_bounding_box(pos, bounding_box)
 
 
@@ -461,7 +453,7 @@ class Castle(Map):
         pygame.draw.polygon(window, self.window_color, self.left_window)  # windows prob make black
         pygame.draw.polygon(window, self.window_color, self.right_window)  # windows prob make black
 
-    def can_I_place(self, pos):
+    def can_I_place(self, pos, w, h):
         # Bounding box round polygon is too high at peak, so do manually.
         #if (
             #in_shape(pos, self.door)
@@ -471,13 +463,13 @@ class Castle(Map):
         #):
             #return True
 
-        if is_point_inside_bounding_box(pos, self.doorbox):
+        if is_rect_in_box(pos[0], pos[1], w, h, self.doorbox):
             return True
-        if is_point_inside_bounding_box(pos, self.left_window_box):
+        if is_rect_in_box(pos[0], pos[1], w, h, self.left_window_box):
             return True
-        if is_point_inside_bounding_box(pos, self.right_window_box):
+        if is_rect_in_box(pos[0], pos[1], w, h, self.right_window_box):
             return True
-        if is_point_inside_bounding_box(pos, self.middle_window_box):
+        if is_rect_in_box(pos[0], pos[1], w, h, self.middle_window_box):
             return True
         return False
 

@@ -47,11 +47,11 @@ def is_valid_position(newtowertype, pos, paths, towers, options_button, gmap):
     if pos[0] > 675:  # so no part in side panel
         return False
 
-    if not gmap.can_I_place(pos):
-        return False
-
     w1 = newtowertype.footprint[0]
     h1 = newtowertype.footprint[1]
+
+    if not gmap.can_I_place(pos, w1, h1):
+        return False
 
     if options_button.collidepoint(pos):
         return False
