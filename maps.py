@@ -378,9 +378,8 @@ class Eagle(Map):
 class Castle(Map):
     def __init__(self):
         self.name = "Castle"
-        self.difficulty = 1
-        #self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
-        self.background_color = (92, 64, 51) # (193, 154, 107) #(184, 115, 51) # (50, 25, 0)  # this for another level but not this one (139, 0, 0)
+        self.difficulty = 2
+        self.background_color = (92, 64, 51) # (193, 154, 107) #(184, 115, 51) # (50, 25, 0)
         self.path_thickness = 20
         self.path_color = (0,0,0) # (92, 64, 51)  # (0, 211, 211)
         self.color_inside = (193, 154, 107)
