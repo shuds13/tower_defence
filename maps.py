@@ -150,7 +150,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
 
 def map_window(display, surface, window_size, account=None):
 
-    page = 1
+    page = 2
     map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
@@ -352,8 +352,8 @@ class Castle(Map):
         self.color_inside = (193, 154, 107)
 
         self.castle_path = [
-            (100, 550),  # Bottom left of the castle
-            (100, 350),  # Left tower start
+            (100, 550), # Bottom left of the castle
+            (100, 350), # Left tower start
             (175, 250), # Left tower top
             (250, 350), # Left tower end
             (250, 150), # Middle tower start
@@ -368,13 +368,64 @@ class Castle(Map):
             (350, 400), # Top of the door
             (300, 450), # Left Top of the door
             (300, 550), # Left side of the door
-            (100, 550)   # Back to the start
+            (100, 550)  # Back to the start
         ]
 
         self.paths = [self.castle_path]
 
+    # May make so can only place on inside of castle - or in dark areas (door and windows)
     def paint_features(self, window):
+        door_color = (165, 42, 42) #(0,0,0)
+        #door_color = (165, 42, 42) #(0,0,0)
         pygame.draw.polygon(window, self.color_inside, self.castle_path)
+        door = [
+            (400, 550), # Right side of the door
+            (400, 450), # Right Top of the door
+            (350, 400), # Top of the door
+            (300, 450), # Left Top of the door
+            (300, 550), # Left side of the door
+            (400, 550), # Right side of the door
+        ]
+        middle_window = [
+            (320, 300), # Left tower end
+            (320, 150), # Middle tower start
+            (350, 100),  # Middle tower top
+            (380, 150), # Middle tower end
+            (380, 300), # Right tower start
+            (300, 300), # Left tower end
+        ]
+        #left_window = [
+            #(150, 450), # Bottom left of the castle
+            #(150, 350), # Left tower start
+            #(175, 300), # Left tower top
+            #(200, 350), # Left tower end
+            #(200, 450), # Middle tower start
+            #(150, 450), # Bottom left of the castle
+
+        #]
+        # modified (may not look so nice) to allow cannon to fit if limit placements
+        left_window = [
+            (140, 500), # Bottom left of the castle
+            (140, 350), # Left tower start
+            (175, 300), # Left tower top
+            (210, 350), # Left tower end
+            (210, 500), # Middle tower start
+            (140, 500), # Bottom left of the castle
+
+        ]
+        right_window = [
+            (140+350, 500), # Bottom left of the castle
+            (140+350, 350), # Left tower start
+            (175+350, 300), # Left tower top
+            (210+350, 350), # Left tower end
+            (210+350, 500), # Middle tower start
+            (140+350, 500), # Bottom left of the castle
+
+        ]
+        pygame.draw.polygon(window, door_color, door)
+        pygame.draw.polygon(window, door_color, middle_window)  # windows prob make black
+        pygame.draw.polygon(window, door_color, left_window)  # windows prob make black
+        pygame.draw.polygon(window, door_color, right_window)  # windows prob make black
 
 
 
