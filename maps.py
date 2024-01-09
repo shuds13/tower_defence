@@ -53,6 +53,7 @@ def is_point_inside_bounding_box(pos, bounding_box):
 
 def in_shape(pos, polygon):
     bounding_box = get_bounding_box(polygon)
+    #print(bounding_box)
     return is_point_inside_bounding_box(pos, bounding_box)
 
 
@@ -475,7 +476,12 @@ class Castle(Map):
         pygame.draw.polygon(window, self.door_color, self.right_window)  # windows prob make black
 
     def can_I_place(self, pos):
-        if in_shape(pos, self.door) or in_shape(pos, self.left_window) or in_shape(pos, self.right_window) or in_shape(pos, self.middle_window):
+        if (
+            in_shape(pos, self.door)
+            or in_shape(pos, self.left_window)
+            or in_shape(pos, self.right_window)
+            or in_shape(pos, self.middle_window)
+        ):
             return True
         return False
 
