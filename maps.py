@@ -338,18 +338,40 @@ class Eagle(Map):
         self.path_thickness = 15
         self.path_color = (0, 211, 211)
 
-#class Rubbish2(Map):
-    #def __init__(self):
-        #self.name = "Rubbish2"
-        #self.difficulty = 2
+class Castle(Map):
+    def __init__(self):
+        self.name = "Castle"
+        self.difficulty = 1
         #self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
-        #self.background_color = (50, 25, 0)
-        #self.path_thickness = 15
-        #self.path_color = (0, 211, 211)
+        self.background_color = (193, 154, 107) #(184, 115, 51) # (50, 25, 0)  # this for another level but not this one (139, 0, 0)
+        self.path_thickness = 20
+        self.path_color = (0,0,0) # (92, 64, 51)  # (0, 211, 211)
+
+        castle_path = [
+            (100, 550),  # Bottom left of the castle
+            (100, 350),  # Left tower start
+            (175, 250), # Left tower top
+            (250, 350), # Left tower end
+            (250, 150), # Middle tower start
+            (350, 50),  # Middle tower top
+            (450, 150), # Middle tower end
+            (450, 350), # Right tower start
+            (525, 250), # Right tower top
+            (600, 350), # Right tower end
+            (600, 550), # Bottom right of the castle
+            (400, 550), # Right side of the door
+            (400, 450), # Right Top of the door
+            (350, 400), # Top of the door
+            (300, 450), # Left Top of the door
+            (300, 550), # Left side of the door
+            (100, 550)   # Back to the start
+        ]
+
+        self.paths = [castle_path]
 
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Vase, Eagle]
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Castle, Vase] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
