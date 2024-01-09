@@ -53,7 +53,7 @@ def is_point_inside_bounding_box(pos, bounding_box):
 
 def in_shape(pos, polygon):
     bounding_box = get_bounding_box(polygon)
-    #print(bounding_box)
+    print(bounding_box)
     return is_point_inside_bounding_box(pos, bounding_box)
 
 
@@ -190,7 +190,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
 
 def map_window(display, surface, window_size, account=None):
 
-    page = 2
+    page = 1
     map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
@@ -352,16 +352,6 @@ class Vase(Map):
         self.path_color = (100, 149, 237) # (25, 25, 112) # (96, 130, 182)
 
         # Path for the left face
-        #left_path = [
-            #(50, 100), (200, 100), (200, 200), (300, 250), (200, 300), (200, 500), (50, 500)
-        #]
-
-        ## Path for the right face
-        #right_path = [
-            #(650, 100),(500, 100),(500, 200),(400, 250),(500, 300),(500, 500),(650, 500)
-        #]
-
-        # Path for the left face
         left_path = [
             (50, 0), (180, 70), (200, 200), (170, 230), (300, 350),
             (200, 360), (200,400), (160, 420), (200, 430), (200, 500), (50, 600)
@@ -427,6 +417,8 @@ class Castle(Map):
             (300, 550), # Left side of the door
             (400, 550), # Right side of the door
         ]
+        self.doorbox = (300, 400, 400, 550)
+
         self.middle_window = [
             (320, 300), # Left tower end
             (320, 150), # Middle tower start
@@ -435,16 +427,8 @@ class Castle(Map):
             (380, 300), # Right tower start
             (300, 300), # Left tower end
         ]
-        #self.left_window = [
-            #(150, 450), # Bottom left of the castle
-            #(150, 350), # Left tower start
-            #(175, 300), # Left tower top
-            #(200, 350), # Left tower end
-            #(200, 450), # Middle tower start
-            #(150, 450), # Bottom left of the castle
+        self.middle_window_box = (300, 125, 380, 300)
 
-        #]
-        # modified (may not look so nice) to allow cannon to fit if limit placements
         self.left_window = [
             (140, 500), # Bottom left of the castle
             (140, 350), # Left tower start
@@ -454,6 +438,8 @@ class Castle(Map):
             (140, 500), # Bottom left of the castle
 
         ]
+        self.left_window_box = (140, 325, 210, 500)
+
         self.right_window = [
             (140+350, 500), # Bottom left of the castle
             (140+350, 350), # Left tower start
@@ -461,8 +447,8 @@ class Castle(Map):
             (210+350, 350), # Left tower end
             (210+350, 500), # Middle tower start
             (140+350, 500), # Bottom left of the castle
-
         ]
+        self.right_window_box = (490, 325, 560, 500)
 
 
     # May make so can only place on inside of castle - or in dark areas (door and windows)
@@ -476,12 +462,22 @@ class Castle(Map):
         pygame.draw.polygon(window, self.door_color, self.right_window)  # windows prob make black
 
     def can_I_place(self, pos):
-        if (
-            in_shape(pos, self.door)
-            or in_shape(pos, self.left_window)
-            or in_shape(pos, self.right_window)
-            or in_shape(pos, self.middle_window)
-        ):
+        # Bounding box round polygon is too high at peak, so do manually.
+        #if (
+            #in_shape(pos, self.door)
+            #or in_shape(pos, self.left_window)
+            #or in_shape(pos, self.right_window)
+            #or in_shape(pos, self.middle_window)
+        #):
+            #return True
+
+        if is_point_inside_bounding_box(pos, self.doorbox):
+            return True
+        if is_point_inside_bounding_box(pos, self.left_window_box):
+            return True
+        if is_point_inside_bounding_box(pos, self.right_window_box):
+            return True
+        if is_point_inside_bounding_box(pos, self.middle_window_box):
             return True
         return False
 
