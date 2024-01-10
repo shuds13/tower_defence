@@ -254,7 +254,7 @@ class Map():
     def paint_features(self, window):
         pass
 
-    def can_I_place(self, pos):
+    def can_I_place(self, pos, w, h):
         return True
 
 
