@@ -184,7 +184,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
 
 def map_window(display, surface, window_size, account=None):
 
-    page = 1
+    page = 2 #1
     map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
@@ -369,6 +369,23 @@ class Eagle(Map):
         self.path_thickness = 15
         self.path_color = (0, 211, 211)
 
+
+# Maps for testing
+class Nonsense(Map):
+    def __init__(self):
+        self.name = "Nonsense"
+        self.difficulty = 1
+        self.background_color = (2, 48, 32) #(50, 25, 0)
+        self.path_thickness = 18
+        self.path_color = (0, 28, 211)
+        #path1 = [(100, 0), (360, 360), (600, 0)]
+        #path2 = [(100, 600), (360, 200), (600, 600)]
+        path1 = [(700,300),(500,300),(350,200),(200,300),(0,300)]
+        path2 = [(700,300),(500,300),(350,400),(200,300),(0,300)]
+        path3 = [(700,300),(600,300),(350,100),(100,300),(0,300)]
+        path4 = [(700,300),(600,300),(350,500),(100,300),(0,300)]
+        self.paths = [path1,path2,path3,path4]
+
 class Castle(Map):
     def __init__(self):
         self.name = "Castle"
@@ -477,6 +494,6 @@ class Castle(Map):
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Castle, Vase] # Eagle]
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Castle, Vase, Nonsense] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
