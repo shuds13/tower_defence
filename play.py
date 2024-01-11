@@ -212,17 +212,19 @@ while game.running:
 
             if game.current_tower_type is None:
 
-                # If user clicked on tower - open the info (inset) window
-                if show_tower_info(game.inset_window):
-                    upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
-
                 # Process clicks in the info window
-                elif game.inset_window['active']:
+                if game.inset_window['active']:
                     # should use object for inset window parameters
                     game.player_money, alert_message, alert_timer = nav.process_inset_window(
                         mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, game.player_money,
                         alert_message, alert_timer, game.game_over
                     )
+
+                # If user clicked on tower - open the info (inset) window
+                elif show_tower_info(game.inset_window):
+                    upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
+
+
 
             # Place a tower
             else:
