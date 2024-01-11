@@ -395,6 +395,7 @@ def draw_inset_window(surface, window_info, player_money):
 
     # Coordinates and dimensions for the window
     x, y, width, height = window_info['x'], window_info['y'], window_info['width'], window_info['height']
+
     tower = window_info['tower']
     totem = window_info['totem']
 

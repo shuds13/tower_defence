@@ -18,7 +18,7 @@ hints = {
     }
 
 
-def _render_text_box(screen, text, font, max_line_width, box_bottom, text_color, bg_color):
+def _render_text_box(screen, text, font, max_line_width, box_bottom, box_left, text_color, bg_color):
     words = text.split(' ')
     lines = []
     while words:
@@ -33,7 +33,7 @@ def _render_text_box(screen, text, font, max_line_width, box_bottom, text_color,
 
     # Calculate the top and left of the box
     box_top = box_bottom - box_height - 10
-    box_left = 240
+    #box_left = 240
 
     # Draw the background rectangle
     pygame.draw.rect(screen, (0,0,0), (box_left-2, box_top-2, max_line_width+24, box_height + 14))
@@ -49,11 +49,16 @@ def _render_text_box(screen, text, font, max_line_width, box_bottom, text_color,
     return hint_button
 
 
-def generate_hint(window, round_num):
+def generate_hint(window, round_num, inset):
     hint = hints.get(round_num)
     if hint is None:
         return
     font = pygame.font.SysFont('Arial', 20)
-    hint_button = _render_text_box(window, hint, font, 400, 580, (0,0,0), (182, 208, 226))
+    # Move to allow for inset window if on right
+    box_left = 240
+    if inset['active']:
+        if inset['x'] == inset['xr']:
+            box_left = 40
+    hint_button = _render_text_box(window, hint, font, 400, 580, box_left, (0,0,0), (182, 208, 226))
     return hint_button
 

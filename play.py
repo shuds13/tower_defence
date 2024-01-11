@@ -47,6 +47,8 @@ pygame.display.set_icon(icon)
 inset_window = {
     'active': False,
     'x': 4,  # X position of the window
+    'xl': 4,
+    'xr': window_size[0] - side_panel_width - 204,
     'y': window_size[1] - 304,  # Y position of the window
     'width': 200,
     'height': 300,
@@ -221,10 +223,14 @@ while game.running:
                     )
 
                 # If user clicked on tower - open the info (inset) window
-                elif show_tower_info(game.inset_window):
+                if show_tower_info(game.inset_window):
+                    #if mouse_pos[0] < (window_size[0] - side_panel_width) // 2:  # left side of window
+                    # only if over inset
+                    if mouse_pos[0] < game.inset_window['width'] + 50 and mouse_pos[1] > game.inset_window['y'] - 50:
+                        game.inset_window['x'] = game.inset_window['xr']
+                    else:
+                        game.inset_window['x'] = game.inset_window['xl']
                     upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
-
-
 
             # Place a tower
             else:
@@ -481,7 +487,7 @@ while game.running:
 
 
     if not game.active and not game.shown_hint:
-        hint_button = hints.generate_hint(window, game.level_num)
+        hint_button = hints.generate_hint(window, game.level_num, game.inset_window)
 
     if game.inset_window['active']:
         update_inset_totems(game.inset_window)
