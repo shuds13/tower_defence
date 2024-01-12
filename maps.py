@@ -371,9 +371,9 @@ class Eagle(Map):
 
 
 # Maps for testing
-class Nonsense(Map):
+class Distortion(Map):
     def __init__(self):
-        self.name = "Nonsense"
+        self.name = "Distortion"
         self.difficulty = 3
         self.background_color = (2, 48, 32) #(50, 25, 0)
         self.path_thickness = 18
@@ -494,6 +494,6 @@ class Castle(Map):
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Castle, Vase, Nonsense] # Eagle]
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Castle, Vase, Distortion] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
