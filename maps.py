@@ -359,7 +359,7 @@ class Vase(Map):
         self.paths = [left_path, right_path]
 
 
-# Maps for testing
+# Map for testing
 class Eagle(Map):
     def __init__(self):
         self.name = "Eagle"
@@ -370,7 +370,33 @@ class Eagle(Map):
         self.path_color = (0, 211, 211)
 
 
-# Maps for testing
+
+class Pentagram(Map):
+    def __init__(self):
+        self.name = "Pentagram"
+        self.difficulty = 2
+        path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
+
+        path2 = [(100,350),(350,500),(600,350),(500,100),(200,100),(100,350),] #, (150, 500)]
+        self.background_color = (145, 56, 49) #(50, 25, 0)
+        self.path_thickness = 15
+        self.path_color = (196, 180, 84) #(0, 211, 211)
+        self.paths = [path1, path2]
+
+
+
+# Map for testing
+#class Eagles(Map):
+    #def __init__(self):
+        #self.name = "Eagles"
+        #self.difficulty = 1
+        #path1 = [(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]
+        #path2 = [(50, 500), (350, 350), (350, 100), (285, 190), (350, 550)] #, (150, 500)]
+        #self.background_color = (50, 25, 0)
+        #self.path_thickness = 15
+        #self.path_color = (0, 211, 211)
+        #self.paths = [path1,path2]
+
 class Distortion(Map):
     def __init__(self):
         self.name = "Distortion"
@@ -494,6 +520,7 @@ class Castle(Map):
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
-map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square, Castle, Vase, Distortion] # Eagle]
+map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
+                Castle, Vase, Distortion, Pentagram] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
