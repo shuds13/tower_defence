@@ -422,6 +422,7 @@ class Burger(Tower):
 
 
 # Possible level names Arch Mage, Enchanter, Sorceror, Mage (Sorceror sounds evil to me)
+# Why did a make default cloud attack 2 damage - thats crazy.
 class Wizard(Tower):
 
     price = 125
@@ -997,7 +998,7 @@ class Cannon(Tower):
         self.cost = Cannon.price
         self.image = Cannon.in_game_image
         self.level = 1
-        self.attack_speed = 70
+        self.attack_speed = 65
         self.upgrade_costs = [300, 750, 2000]
         self.glow_radius = 10
         self.glow_time = 5
@@ -1017,7 +1018,7 @@ class Cannon(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 50
+            self.attack_speed = 48
             self.image = cannon2_img
             #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
@@ -1187,7 +1188,7 @@ class CannonBall(Tower):
         self.expl_image = explosion1_img
         if self.launcher.level == 2:
             self.speed = 10
-            self.damage = 4  # 3 or 4
+            self.damage = 4
             self.max_attacks = 6
             self.image = cannonball2_img
             self.range = 60
