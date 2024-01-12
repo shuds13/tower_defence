@@ -374,10 +374,10 @@ class Eagle(Map):
 class Nonsense(Map):
     def __init__(self):
         self.name = "Nonsense"
-        self.difficulty = 1
+        self.difficulty = 3
         self.background_color = (2, 48, 32) #(50, 25, 0)
         self.path_thickness = 18
-        self.path_color = (0, 28, 211)
+        self.path_color = (0, 28, 211)  # blues are near invisible.
         #path1 = [(100, 0), (360, 360), (600, 0)]
         #path2 = [(100, 600), (360, 200), (600, 600)]
         path1 = [(700,300),(500,300),(350,200),(200,300),(0,300)]
