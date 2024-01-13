@@ -31,8 +31,13 @@ def is_point_inside_bounding_box(pos, bounding_box):
     min_x, min_y, max_x, max_y = bounding_box
     return min_x <= x <= max_x and min_y <= y <= max_y
 
-def is_rect_in_box(center_x, center_y, rect_w, rect_h, bounding_box):
+def is_rect_in_box(center_x, center_y, rect_w, rect_h, bounding_box, wh=False):
     min_x, min_y, max_x, max_y = bounding_box
+    if wh:  # The rectangle specified x,y,w,h instead of x,y,x,y
+        max_x += min_x
+        max_y += min_y
+        bounding_box = (min_x, min_y, max_x, max_y)
+
     overlap = 10
     rect_w -= overlap
     rect_h -= overlap
@@ -40,10 +45,30 @@ def is_rect_in_box(center_x, center_y, rect_w, rect_h, bounding_box):
     rect_y = center_y - rect_h / 2
 
     # Check if all corners of the rectangle are inside the bounding box
+    # SH seems a bit overill dont need check rect_x < bb[2] - if checking ect_x + rect_w <= bb[2]
     return (bounding_box[0] <= rect_x <= bounding_box[2] and
             bounding_box[0] <= rect_x + rect_w <= bounding_box[2] and
             bounding_box[1] <= rect_y <= bounding_box[3] and
             bounding_box[1] <= rect_y + rect_h <= bounding_box[3])
+
+
+def is_rect_out_box(center_x, center_y, rect_w, rect_h, bounding_box, wh=False):
+    min_x, min_y, max_x, max_y = bounding_box
+    if wh:  # The rectangle specified x,y,w,h instead of x,y,x,y
+        max_x += min_x
+        max_y += min_y
+        bounding_box = (min_x, min_y, max_x, max_y)
+
+    overlap = 0 #10
+    rect_w -= overlap
+    rect_h -= overlap
+    rect_x = center_x - rect_w / 2
+    rect_y = center_y - rect_h / 2
+
+    # Check if all corners of the rectangle are inside the bounding box
+    return ((bounding_box[2] <= rect_x or rect_x+rect_w <= bounding_box[0]) or
+            (bounding_box[3] <= rect_y or rect_y+rect_h <= bounding_box[1]))
+
 
 def in_shape(pos, polygon):
     bounding_box = get_bounding_box(polygon)
@@ -184,7 +209,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
 
 def map_window(display, surface, window_size, account=None):
 
-    page = 1
+    page = 2 #1
     map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
@@ -518,9 +543,29 @@ class Castle(Map):
             return True
         return False
 
+class Staircase2(Map):
+    def __init__(self):
+        self.name = "Staircase2"
+        self.difficulty = 2
+        self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
+        self.background_color = (50, 25, 0)
+        self.path_thickness = 15
+        self.path_color = (0, 211, 211)
+        self.block = (230, 140, 30, 100)
+
+        #self.
+
+    def paint_features(self, window):
+        pygame.draw.rect(window, (40,60,134), self.block)
+
+    def can_I_place(self, pos, w, h):
+        if is_rect_out_box(pos[0], pos[1], w, h, self.block, wh=True):
+            return True
+        return False
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Castle, Vase, Distortion, Pentagram] # Eagle]
+                Castle, Vase, Distortion, Pentagram, Staircase2] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
