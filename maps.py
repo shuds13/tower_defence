@@ -583,7 +583,7 @@ class Village(Map):
 
     def barriers(self):
         """A list of barriers"""
-        return [self.block]
+        return [self.house1, self.house2, self.house3, self.house4]
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
