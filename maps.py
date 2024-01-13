@@ -282,6 +282,9 @@ class Map():
     def can_I_place(self, pos, w, h):
         return True
 
+    def barriers(self):
+        """A list of barriers"""
+        return []
 
 class PicnicPlace(Map):
     def __init__(self):
@@ -551,7 +554,7 @@ class Staircase2(Map):
         self.background_color = (50, 25, 0)
         self.path_thickness = 15
         self.path_color = (0, 211, 211)
-        self.block = (230, 140, 30, 100)
+        self.block = (205, 140, 10, 100)
 
         #self.
 
@@ -562,6 +565,10 @@ class Staircase2(Map):
         if is_rect_out_box(pos[0], pos[1], w, h, self.block, wh=True):
             return True
         return False
+
+    def barriers(self):
+        """A list of barriers"""
+        return [self.block]
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}

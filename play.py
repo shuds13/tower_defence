@@ -21,8 +21,8 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 150
-initial_level = 1
+initial_money = 1500
+initial_level = 4
 
 print_total_money = False
 init_last_round_restarts = 3
@@ -167,7 +167,7 @@ while game.running:
             mouse_pos = pygame.mouse.get_pos()
 
             #for helping make maps - comment out
-            #print(mouse_pos)
+            print(mouse_pos)
 
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
@@ -344,7 +344,7 @@ while game.running:
 
     for tower in game.towers:
         if game.active:
-            hits = tower.update(game.enemies)
+            hits = tower.update(game.enemies, gmap)
             if hits == -1:
                 # try making the projectile a tower - but should prob be its own class.
                 projectile = tower.get_projectile()
@@ -373,7 +373,7 @@ while game.running:
     if game.active:
         # projecitles will be game.projecitles of course
         for projectile in projectiles:
-            hits = projectile.update(game.enemies)
+            hits = projectile.update(game.enemies, gmap)
             game.process_hits(hits)
             #print(f"Here {projectile}")
             projectile.draw(window)

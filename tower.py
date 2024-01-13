@@ -78,6 +78,35 @@ explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
 explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
 
 
+def line_intersects_rect(p1, p2, rect):
+    """
+    Check if a line segment intersects a rectangle.
+
+    Args:
+    p1, p2 (tuple): Points representing the line segment (x1, y1), (x2, y2).
+    rect (tuple): The rectangle (x, y, width, height).
+
+    Returns:
+    bool: True if the line intersects the rectangle, False otherwise.
+    """
+    rect_x, rect_y, rect_w, rect_h = rect
+    rect_top_left = (rect_x, rect_y)
+    rect_top_right = (rect_x + rect_w, rect_y)
+    rect_bottom_left = (rect_x, rect_y + rect_h)
+    rect_bottom_right = (rect_x + rect_w, rect_y + rect_h)
+
+    def ccw(A, B, C):
+        return (C[1]-A[1]) * (B[0]-A[0]) > (B[1]-A[1]) * (C[0]-A[0])
+
+    def intersect(A, B, C, D):
+        return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
+
+    # Check if the line intersects any of the sides of the rectangle
+    return (intersect(p1, p2, rect_top_left, rect_top_right) or
+            intersect(p1, p2, rect_top_right, rect_bottom_right) or
+            intersect(p1, p2, rect_bottom_right, rect_bottom_left) or
+            intersect(p1, p2, rect_bottom_left, rect_top_left))
+
 class Tower:
 
     price = 0
@@ -143,14 +172,21 @@ class Tower:
     def reset_attack_timer(self):
         self.attack_timer = max(int(self.attack_speed * self.speed_mod), 1)
 
-    def is_visible(self, enemy):
-        return not enemy.invis or self.see_ghosts
+    def is_visible(self, enemy, gmap):
+        if enemy.invis and not self.see_ghosts:
+            return False
+
+        barriers = gmap.barriers()
+        for barrier in barriers:
+            if line_intersects_rect(self.position, enemy.position, barrier):
+                return False
+        return True
 
     # Goes through enemies - finds first (could find strongest etc...)
     # Note that enemy order is order came on to screen but may not be at the front at any point in time!
-    def find_target(self, enemies):
+    def find_target(self, enemies, gmap):
         for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
+            if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
                 self.target = enemy
                 break
         else:
@@ -171,11 +207,11 @@ class Tower:
             self.is_attacking = False
         return score
 
-    def update(self, enemies):
+    def update(self, enemies, gmap):
         score = 0
         self.attack_timer -= 1
         if self.attack_timer <= 0:
-            self.find_target(enemies)
+            self.find_target(enemies, gmap)
             score = self.attack()
             self.total_score += score
         else:
@@ -403,12 +439,12 @@ class Burger(Tower):
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
-    def find_target(self, enemies):
+    def find_target(self, enemies, gmap):
         # Only place to call function - after just check self.cloud_attack
         tmp_target = []
         self.target = []
         for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
+            if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
                 tmp_target.append(enemy)
         if tmp_target:
             self.target = self.create_sublist(tmp_target, self.max_attacks)
@@ -587,7 +623,7 @@ class Wizard(Tower):
                     self.draw_lightning(window, staff_position, self.target.position, 3, (255,0,255))
 
     # Improve efficiency - cloud and multi-attack basically same
-    def find_target(self, enemies):
+    def find_target(self, enemies, gmap):
         # Only place to call function - elsewhere just check self.cloud_attack
         if self._is_cloud_attack():
             tmp_target = []
@@ -612,7 +648,7 @@ class Wizard(Tower):
             if tmp_target:
                 self.target = self.create_sublist(tmp_target, self.max_attacks)
         else:
-            super().find_target(enemies)
+            super().find_target(enemies, gmap)
 
     # Could be generic to deal with lists
     def attack(self):
@@ -764,7 +800,7 @@ class GlueGunner(Tower):
 
     # Shoot slower and hit multiple targets - closest - not spread
     # could avoid some duplication here
-    def find_target(self, enemies):
+    def find_target(self, enemies, gmap):
         self.target = []
         count = 0
 
@@ -772,13 +808,13 @@ class GlueGunner(Tower):
             self.target = None
 
         for enemy in enemies:
-            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end and self.can_I_reglue(enemy):
+            if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end and self.can_I_reglue(enemy):
                 count += 1  # TODO this updates whether same enemy or different...
                 self.target.append(enemy)
                 enemy.toxic_attacks += 1
                 if count >= self.max_attacks:
                     break
-            elif self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end and not enemy.glued:
+            elif self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end and not enemy.glued:
                 count += 1
                 self.target.append(enemy)
                 if count >= self.max_attacks:
@@ -883,7 +919,7 @@ class Totem(Tower):
             self.attack_speed = 3
             self.range_boost = 1.20
 
-    def find_target(self, enemies):
+    def find_target(self, enemies, gmap):
         self.target = None
         for enemy in enemies:
             if enemy.size >= 3 and not enemy.reached_end:
@@ -903,12 +939,12 @@ class Totem(Tower):
             #self.is_attacking = False
         return score
 
-    def update(self, enemies):
+    def update(self, enemies, gmap):
         if self.level < 4:
             return 0
         score = 0
         self.attack_timer -= 1
-        self.find_target(enemies)
+        self.find_target(enemies, gmap)
         score = self.attack()
         self.total_score += score
         #else:
@@ -1056,11 +1092,11 @@ class Cannon(Tower):
             self.is_attacking = False
         return score
 
-    def update(self, enemies):
+    def update(self, enemies, gmap):
         score = 0
         self.attack_timer -= 1
         if self.attack_timer <= 0:
-            self.find_target(enemies)
+            self.find_target(enemies, gmap)
             score = self.attack()
             #self.total_score += score
         else:
@@ -1210,19 +1246,19 @@ class CannonBall(Tower):
             self.range = 80
             self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
-    def find_target(self, enemies):
+    def find_target(self, enemies, gmap):
         # Only place to call function - after just check self.cloud_attack
         tmp_target = []
         self.target = []
         self.see_ghosts = self.launcher.see_ghosts
         for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy) and not enemy.reached_end:
+            if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
                 tmp_target.append(enemy)
         if tmp_target:
             self.target = self.create_sublist(tmp_target, self.max_attacks)
             #print(f"{len(self.target)=}")
 
-    def update(self, enemies):
+    def update(self, enemies, gmap):
         dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
         distance = (dx**2 + dy**2)**0.5
         #print(f"{distance=} to {self.target_pos}")
@@ -1232,7 +1268,7 @@ class CannonBall(Tower):
         # Check if the enemy has reached the target position
         if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
             #print(f"blowing up at {self.position}")
-            self.find_target(enemies)
+            self.find_target(enemies, gmap)
             score = self.attack()
             self.launcher.total_score += score
             self.active = False  # if dont remove they stop on paths and look like mines
