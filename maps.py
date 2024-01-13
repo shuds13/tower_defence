@@ -546,25 +546,40 @@ class Castle(Map):
             return True
         return False
 
-class Staircase2(Map):
+class Village(Map):
     def __init__(self):
-        self.name = "Staircase2"
+        self.name = "Village"
         self.difficulty = 2
-        self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
+        #self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
+        self.paths = [[(0, 280), (100, 280), (100, 100), (300, 100), (300, 280), (400, 280),
+                      (400,100),(600,100),(600,500),(400,500),(400,400), (400,320),(300,320),
+                      (300,500),(100,500),(100,320),(0,320)]]
         self.background_color = (50, 25, 0)
         self.path_thickness = 15
         self.path_color = (0, 211, 211)
-        self.block = (205, 140, 10, 100)
 
-        #self.
+        # TODO Add house pictures to these.
+        self.house1 = (120, 110, 160, 140)
+        self.house2 = (420, 110, 160, 140)
+        self.house3 = (120, 350, 160, 140)
+        self.house4 = (420, 350, 160, 140)
 
     def paint_features(self, window):
-        pygame.draw.rect(window, (40,60,134), self.block)
+        pygame.draw.rect(window, (40,60,134), self.house1)
+        pygame.draw.rect(window, (40,60,134), self.house2)
+        pygame.draw.rect(window, (40,60,134), self.house3)
+        pygame.draw.rect(window, (40,60,134), self.house4)
 
     def can_I_place(self, pos, w, h):
-        if is_rect_out_box(pos[0], pos[1], w, h, self.block, wh=True):
-            return True
-        return False
+        if not is_rect_out_box(pos[0], pos[1], w, h, self.house1, wh=True):
+            return False
+        if not is_rect_out_box(pos[0], pos[1], w, h, self.house2, wh=True):
+            return False
+        if not is_rect_out_box(pos[0], pos[1], w, h, self.house3, wh=True):
+            return False
+        if not is_rect_out_box(pos[0], pos[1], w, h, self.house4, wh=True):
+            return False
+        return True
 
     def barriers(self):
         """A list of barriers"""
@@ -573,6 +588,6 @@ class Staircase2(Map):
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Castle, Vase, Distortion, Pentagram, Staircase2] # Eagle]
+                Castle, Vase, Distortion, Pentagram, Village] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
