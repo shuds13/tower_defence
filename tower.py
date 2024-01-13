@@ -629,7 +629,7 @@ class Wizard(Tower):
             tmp_target = []
             self.target = []
             for enemy in enemies:
-                if self.in_range(enemy) and not enemy.reached_end:
+                if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
                     tmp_target.append(enemy)
             if tmp_target:
                 self.target = self.create_sublist(tmp_target, self.max_cloud_attacks)
@@ -643,7 +643,7 @@ class Wizard(Tower):
             tmp_target = []
             self.target = []
             for enemy in enemies:
-                if self.in_range(enemy) and not enemy.reached_end:
+                if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
                     tmp_target.append(enemy)
             if tmp_target:
                 self.target = self.create_sublist(tmp_target, self.max_attacks)
