@@ -166,6 +166,9 @@ while game.running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
 
+            #for helping make maps - comment out
+            #print(mouse_pos)
+
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
