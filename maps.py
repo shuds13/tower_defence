@@ -180,7 +180,7 @@ def get_nmaps_npages():
 
 def draw_map_window(display, surface, window_size, account=None, page=1):
 
-    dark_mode = False  # implement dark mode or multiple color options
+    dark_mode = True  # implement dark mode or multiple color options
 
     # light mode
     if dark_mode:
@@ -241,12 +241,25 @@ def map_window(display, surface, window_size, account=None):
     map_id = None
     while noclicks:
         time.sleep(0.1)  # Reduce idle CPU usage
+        eleft = False
+        eright = False
+        mouse_pos = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 noclicks = False
                 return None, None
+            elif event.type == pygame.KEYDOWN:
+                mouse_pos = None
+                if event.key == pygame.K_LEFT:
+                    eleft = True
+                    mouse_pos = (0,0)  # no doubt a better way but too tired - its 2am
+                if event.key == pygame.K_RIGHT:
+                    eright = True
+                    mouse_pos = (0,0)  # no doubt a better way but too tired - its 2am
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
+
+            if mouse_pos is not None or eleft or eright:
 
                 if new_account_rect.collidepoint(mouse_pos):
                     new_account = new_profile(surface)
@@ -260,7 +273,7 @@ def map_window(display, surface, window_size, account=None):
                         account = new_account
                     map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
-                if rarrow_rect and rarrow_rect.collidepoint(mouse_pos):
+                if rarrow_rect and rarrow_rect.collidepoint(mouse_pos) or eright:
                     if periodic_arrows:
                         nmaps, npages = get_nmaps_npages()
                         page = page + 1 if page < npages else 1
@@ -268,7 +281,7 @@ def map_window(display, surface, window_size, account=None):
                         page += 1
                     map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
-                if larrow_rect and larrow_rect.collidepoint(mouse_pos):
+                if larrow_rect and larrow_rect.collidepoint(mouse_pos) or eleft:
                     if periodic_arrows:
                         nmaps, npages = get_nmaps_npages()
                         page = page - 1 if page > 1 else npages
