@@ -110,7 +110,7 @@ def options_window(display, surface, window_size):
 
 
 
-def display_maps_page(display, surface, account, maps_page, width, height):
+def display_maps_page(display, surface, account, maps_page, width, height, font_color):
 
     start_x = 120
     start_y = 80
@@ -130,14 +130,19 @@ def display_maps_page(display, surface, account, maps_page, width, height):
         gmap = map_class()
 
         # Construct thumbnails
+        # first cos not really border - solid
+        # (but shouldn't matter - yet dont look right to me when black (dark mode - white looks fine)
+        #nav.draw_border(surface, x, y, width, height, 4, font_color)
+
         level_surface = render_level_to_surface(gmap, (700, 600))  # map size without side window
         thumbnail = create_thumbnail(level_surface, (width, height))
         surface.blit(thumbnail, (x,y))
         map_image_rect = thumbnail.get_rect(topleft=(x,y))
 
         maptxt = gmap.name.upper() + " (" + difficulty[gmap.difficulty] + ")"
-        map_name_text = font.render(maptxt, True, (0, 0, 0))  # Black text
-        map_name_rect = map_name_text.get_rect(topleft=(x, y+120))
+        map_name_text = font.render(maptxt, True, font_color)  # Black text
+        map_name_rect = map_name_text.get_rect(topleft=(x, y+122))
+        #map_name_rect = map_name_text.get_rect(topleft=(x, y+125))  # if border make y bigger
         surface.blit(map_name_text, map_name_rect.topleft)
 
         # This is the class
@@ -174,12 +179,23 @@ def get_nmaps_npages():
     return nmaps, npages
 
 def draw_map_window(display, surface, window_size, account=None, page=1):
-    pygame.draw.rect(surface, (245, 245, 220), (0, 0, window_size[0], window_size[1]))  # alt color
+
+    dark_mode = False  # implement dark mode or multiple color options
+
+    # light mode
+    if dark_mode:
+        background_color = (54, 69, 79)
+        font_color = (250, 249, 246)
+    else:
+        background_color =  (245, 245, 220)
+        font_color = (0,0,0)
+
+    pygame.draw.rect(surface, background_color, (0, 0, window_size[0], window_size[1]))
     window_width = window_size[0]
     window_height = window_size[1]
 
     font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
-    map_menu_text = font_title.render("Choose a map", True, (0, 0, 0))  # Black text
+    map_menu_text = font_title.render("Choose a map", True, font_color)
     map_menu_rect = map_menu_text.get_rect(center=(window_width//2, 20))
     surface.blit(map_menu_text, map_menu_rect.topleft)
 
@@ -192,7 +208,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
     start_map = (page-1)*maps_per_page
     end_map = min(start_map+maps_per_page, nmaps)
     maps_page = map_classes[start_map:end_map]
-    map_rects, maps = display_maps_page(display, surface, account, maps_page, width, height)
+    map_rects, maps = display_maps_page(display, surface, account, maps_page, width, height, font_color)
 
     # Draw new/load profile buttons
     x = window_width//3 - 100
