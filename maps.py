@@ -619,7 +619,7 @@ class DarkForest(Map):
     def __init__(self):
         super().__init__()
         self.name = "Dark Forest"
-        self.difficulty = 2
+        self.difficulty = 3
         self.alternate_paths = True
         path1 = [(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
                 (430, 350), (430, 300),(330, 300), (330, 450), (200,450), (200,150),
