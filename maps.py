@@ -436,7 +436,7 @@ class Distortion(Map):
     def __init__(self):
         self.name = "Distortion"
         self.difficulty = 3
-        self.background_color = (2, 48, 32) #(50, 25, 0)
+        self.background_color = (150, 105, 25) #(99, 3, 48) # (0,0,0) #(2, 48, 32) #(50, 25, 0)
         self.path_thickness = 18
         self.path_color = (0, 28, 211)  # blues are near invisible.
         #path1 = [(100, 0), (360, 360), (600, 0)]
