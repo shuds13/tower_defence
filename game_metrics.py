@@ -23,6 +23,7 @@ class Game():
         self.inset_window = inset_window
         self.inset_window['active'] = False
         self.money_per_hit = 1.0
+        self.failed = False
 
         self.start_round_money = initial_money
         self.start_round_lives = initial_lives
@@ -66,7 +67,10 @@ class Game():
         self.shown_hint = False
 
     def failed_map(self, gmap, account):
-        account.failed_map(gmap)
+        # Update to only remove save if last round restarts are exhausted.
+        self.failed = True
+        if self.last_round_restarts <= 0:
+            account.failed_map(gmap)
         account.save()  # could do inside failed_map/save_map/complete_map
 
     def restart_round(self, lev, decrement=True):
@@ -84,9 +88,10 @@ class Game():
             if isinstance(ctower, Totem):
                 self.totems.append(ctower)
 
-        if decrement:
+        if decrement or self.failed:
             self.last_round_restarts -= 1
 
+        self.failed = False
         self.game_over = False
         self.level = lev.levels[self.level_num]()  # reset this level (phase num / num_spawned)
         self.lives_highlight = 0
@@ -115,7 +120,6 @@ class Game():
             self.money_per_hit = 0.2
         return self.money_per_hit
 
-    # prob add account to this class also
     def level_complete(self, display, window, window_size, lev, gmap, init_last_round_restarts, account):
         font = pygame.font.SysFont(None, 72)
         win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
@@ -133,7 +137,7 @@ class Game():
             self.lives += 10
             self.lives_highlight = self.highlight_time
 
-        # Pause for a few seconds to display the win message
+        # Pause for a second to display the win message
         pygame.time.wait(1000)
 
         if self.level_num == lev.max_level:
