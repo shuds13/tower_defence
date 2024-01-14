@@ -114,6 +114,7 @@ class Account():
         self.maps_complete = []
         self.maps_aced = []
         self.maps_in_progress = {}
+        self.dark_mode = False
 
     def failed_map(self, gmap):
         self.maps_in_progress.pop(gmap.name, None)

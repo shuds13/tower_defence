@@ -14,6 +14,12 @@ right_img = pygame.image.load('images/right_chevron.png')
 right_img = pygame.transform.scale(right_img, (60, 60))
 left_img =  pygame.transform.flip(right_img, True, False)
 
+lightmode_img = pygame.image.load('images/lightmode.png')
+lightmode_img = pygame.transform.scale(lightmode_img, (50, 50))
+darkmode_img = pygame.image.load('images/darkmode.png')
+darkmode_img = pygame.transform.scale(darkmode_img, (50, 50))
+
+
 house1_img = pygame.image.load('images/house1.png')
 house1_img = pygame.transform.scale(house1_img, (160, 140))
 house2_img = pygame.image.load('images/house2.png')
@@ -180,7 +186,13 @@ def get_nmaps_npages():
 
 def draw_map_window(display, surface, window_size, account=None, page=1):
 
-    dark_mode = True  # implement dark mode or multiple color options
+    # For backward compatibility (should I still support no account)
+    if hasattr(account, "dark_mode"):
+        dark_mode = account.dark_mode
+    else:
+        dark_mode = False  # default should be False
+        account.dark_mode = dark_mode
+        account.save()
 
     # light mode
     if dark_mode:
@@ -227,14 +239,22 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
         larrow_rect = left_img.get_rect(center=(50, window_height//2-60))
         surface.blit(left_img, larrow_rect.topleft)
 
+    if dark_mode:
+        ldmode_image = lightmode_img
+    else:
+        ldmode_image = darkmode_img
+
+    ldmode_rect = ldmode_image.get_rect(center=(window_width-70, window_height-70))
+    surface.blit(ldmode_image, ldmode_rect.topleft)
+
     display.flip()
-    return map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect
+    return map_rects, maps, larrow_rect, rarrow_rect, ldmode_rect, load_account_rect, new_account_rect
 
 
 def map_window(display, surface, window_size, account=None):
 
     page = 1
-    map_rects, maps, larrow_rect, rarrow_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
+    map_rects, maps, larrow_rect, rarrow_rect, ldmode_rect, load_account_rect, new_account_rect = draw_map_window(display, surface, window_size, account, page)
 
     # loop to detect clicks
     noclicks = True
@@ -265,13 +285,18 @@ def map_window(display, surface, window_size, account=None):
                     new_account = new_profile(surface)
                     if new_account is not None:
                         account = new_account
-                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+                    map_rects, maps, larrow_rect, rarrow_rect, ldmode_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if load_account_rect.collidepoint(mouse_pos):
                     new_account = profile_menu(surface)
                     if new_account is not None:
                         account = new_account
-                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+                    map_rects, maps, larrow_rect, rarrow_rect, ldmode_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+
+                if ldmode_rect.collidepoint(mouse_pos):
+                    account.dark_mode = not account.dark_mode
+                    account.save()
+                    map_rects, maps, larrow_rect, rarrow_rect, ldmode_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if rarrow_rect and rarrow_rect.collidepoint(mouse_pos) or eright:
                     if periodic_arrows:
@@ -279,7 +304,7 @@ def map_window(display, surface, window_size, account=None):
                         page = page + 1 if page < npages else 1
                     else:
                         page += 1
-                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+                    map_rects, maps, larrow_rect, rarrow_rect, ldmode_rect,  _, _  = draw_map_window(display, surface, window_size, account, page)
 
                 if larrow_rect and larrow_rect.collidepoint(mouse_pos) or eleft:
                     if periodic_arrows:
@@ -287,7 +312,7 @@ def map_window(display, surface, window_size, account=None):
                         page = page - 1 if page > 1 else npages
                     else:
                         page -= 1
-                    map_rects, maps, larrow_rect, rarrow_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
+                    map_rects, maps, larrow_rect, rarrow_rect, ldmode_rect, _, _  = draw_map_window(display, surface, window_size, account, page)
 
 
                 map_id = process_click(map_rects, mouse_pos)
