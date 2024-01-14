@@ -19,7 +19,8 @@ house1_img = pygame.transform.scale(house1_img, (160, 140))
 house2_img = pygame.image.load('images/house2.png')
 house2_img = pygame.transform.scale(house2_img, (160, 140))
 tree_img = pygame.image.load('images/tree1.png')
-tree_img = pygame.transform.scale(tree_img, (70, 160))
+tree1_img = pygame.transform.scale(tree_img, (70, 160))
+bigtree_img = pygame.transform.scale(tree_img, (90, 180))
 
 maps_per_page = 6
 periodic_arrows = True
@@ -578,8 +579,8 @@ class Village(Map):
         window.blit(house2_img, self.house2)
         window.blit(house2_img, self.house3)
         window.blit(house1_img, self.house4)
-        window.blit(tree_img, self.tree1)
-        window.blit(tree_img, self.tree2)
+        window.blit(tree1_img, self.tree1)
+        window.blit(tree1_img, self.tree2)
 
     def can_I_place(self, pos, w, h):
         if not is_rect_out_box(pos[0], pos[1], w, h, self.house1, wh=True):
@@ -600,9 +601,49 @@ class Village(Map):
         """A list of barriers"""
         return [self.house1, self.house2, self.house3, self.house4]
 
+class DarkForest(Map):
+    def __init__(self):
+        self.name = "Dark Forest"
+        self.difficulty = 2
+        path1= [(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
+                (430, 350), (430, 300),(330, 300), (330, 450), (200,450), (200,150),
+                (110, 150), (110, 300), (0, 300)]
+        self.paths = [path1]
+        self.background_color = (0,0,0) #night
+        self.path_thickness = 15
+        self.path_color = (238, 220, 130)  # dev color
+        #self.path_color = (0,0,0) # Real color
+
+        # TODO Add house pictures to these.
+        self.tree1 = (370, 110, 70, 160)
+        self.tree2 = (450, 170, 70, 160)
+        self.tree3 = (540, 330, 90, 180)
+        self.tree4 = (570, 140, 70, 160)
+        self.tree5 = (350, 320, 70, 160)
+        self.tree55 = (380, 380, 70, 160)
+        self.tree6 = (220, 240, 90, 180)
+        self.tree7 = (240, 70, 70, 160)
+        self.tree8 = (120, 170, 70, 160)
+        self.tree9 = (60, 360, 90, 180)
+        self.tree10 = (40, 120, 70, 160)
+
+    def paint_features(self, window):
+        window.blit(tree1_img, self.tree1)
+        window.blit(tree1_img, self.tree2)
+        window.blit(bigtree_img, self.tree3)
+        window.blit(tree1_img, self.tree4)
+        window.blit(tree1_img, self.tree5)
+        window.blit(tree1_img, self.tree55)
+        window.blit(bigtree_img, self.tree6)
+        window.blit(tree1_img, self.tree7)
+        window.blit(tree1_img, self.tree8)
+        window.blit(bigtree_img, self.tree9)
+        window.blit(tree1_img, self.tree10)
+
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Castle, Vase, Distortion, Pentagram, Village] # Eagle]
+                Castle, Vase, Village, Pentagram, Distortion, DarkForest] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
