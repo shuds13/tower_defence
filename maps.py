@@ -581,7 +581,6 @@ class Village(Map):
         self.path_thickness = 20
         self.path_color = (238, 220, 130)
 
-        # TODO Add house pictures to these.
         self.house1 = (120, 110, 160, 140)
         self.house2 = (420, 110, 160, 140)
         self.house3 = (120, 350, 160, 140)
@@ -634,7 +633,6 @@ class DarkForest(Map):
         #self.path_color = (238, 220, 130)  # dev color
         self.path_color = (0,0,0) # Real color
 
-        # TODO Add house pictures to these.
         self.tree1 = (370, 110, 70, 160)
         self.tree2 = (450, 170, 70, 160)
         self.tree3 = (540, 330, 90, 180)
@@ -646,6 +644,9 @@ class DarkForest(Map):
         self.tree8 = (120, 170, 70, 160)
         self.tree9 = (60, 360, 90, 180)
         self.tree10 = (40, 120, 70, 160)
+
+        self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5,
+                      self.tree6, self.tree7, self.tree8, self.tree8, self.tree10]
 
     def paint_features(self, window):
         window.blit(tree1_img, self.tree1)
@@ -659,6 +660,16 @@ class DarkForest(Map):
         window.blit(tree1_img, self.tree8)
         window.blit(bigtree_img, self.tree9)
         window.blit(tree1_img, self.tree10)
+
+    def can_I_place(self, pos, w, h):
+        for tree in self.trees:
+            if not is_rect_out_box(pos[0], pos[1], w, h, tree, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return self.trees
 
 
 # dont need to be a dictionary

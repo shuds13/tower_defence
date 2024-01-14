@@ -922,6 +922,7 @@ class Totem(Tower):
     def find_target(self, enemies, gmap):
         self.target = None
         for enemy in enemies:
+            # No check vis for now - I think he should see everything.
             if enemy.size >= 3 and not enemy.reached_end:
                 self.target = enemy
                 break
