@@ -14,6 +14,13 @@ right_img = pygame.image.load('images/right_chevron.png')
 right_img = pygame.transform.scale(right_img, (60, 60))
 left_img =  pygame.transform.flip(right_img, True, False)
 
+house1_img = pygame.image.load('images/house1.png')
+house1_img = pygame.transform.scale(house1_img, (160, 140))
+house2_img = pygame.image.load('images/house2.png')
+house2_img = pygame.transform.scale(house2_img, (160, 140))
+tree_img = pygame.image.load('images/tree1.png')
+tree_img = pygame.transform.scale(tree_img, (70, 160))
+
 maps_per_page = 6
 periodic_arrows = True
 
@@ -554,21 +561,25 @@ class Village(Map):
         self.paths = [[(0, 280), (100, 280), (100, 100), (300, 100), (300, 280), (400, 280),
                       (400,100),(600,100),(600,500),(400,500),(400,400), (400,320),(300,320),
                       (300,500),(100,500),(100,320),(0,320)]]
-        self.background_color = (50, 25, 0)
-        self.path_thickness = 15
-        self.path_color = (0, 211, 211)
+        self.background_color = (2, 48, 32) # (53, 94, 59) #(0,0,0) night
+        self.path_thickness = 20
+        self.path_color = (238, 220, 130)
 
         # TODO Add house pictures to these.
         self.house1 = (120, 110, 160, 140)
         self.house2 = (420, 110, 160, 140)
         self.house3 = (120, 350, 160, 140)
         self.house4 = (420, 350, 160, 140)
+        self.tree1 = (315, 335, 70, 160)
+        self.tree2 = (315, 100, 70, 160)
 
     def paint_features(self, window):
-        pygame.draw.rect(window, (40,60,134), self.house1)
-        pygame.draw.rect(window, (40,60,134), self.house2)
-        pygame.draw.rect(window, (40,60,134), self.house3)
-        pygame.draw.rect(window, (40,60,134), self.house4)
+        window.blit(house1_img, self.house1)
+        window.blit(house2_img, self.house2)
+        window.blit(house2_img, self.house3)
+        window.blit(house1_img, self.house4)
+        window.blit(tree_img, self.tree1)
+        window.blit(tree_img, self.tree2)
 
     def can_I_place(self, pos, w, h):
         if not is_rect_out_box(pos[0], pos[1], w, h, self.house1, wh=True):
@@ -578,6 +589,10 @@ class Village(Map):
         if not is_rect_out_box(pos[0], pos[1], w, h, self.house3, wh=True):
             return False
         if not is_rect_out_box(pos[0], pos[1], w, h, self.house4, wh=True):
+            return False
+        if not is_rect_out_box(pos[0], pos[1], w, h, self.tree1, wh=True):
+            return False
+        if not is_rect_out_box(pos[0], pos[1], w, h, self.tree2, wh=True):
             return False
         return True
 
