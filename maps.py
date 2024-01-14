@@ -622,14 +622,17 @@ class DarkForest(Map):
         self.name = "Dark Forest"
         self.difficulty = 2
         self.alternate_paths = True
-        path1= [(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
+        path1 = [(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
                 (430, 350), (430, 300),(330, 300), (330, 450), (200,450), (200,150),
                 (110, 150), (110, 300), (0, 300)]
-        self.paths = [path1]
+        path2 = [(180, 0), (180, 150), (110, 150), (110, 340), (200, 340), (200, 240),
+                 (330, 240), (330, 550), (470, 550), (470, 350), (540, 350),
+                 (540, 310), (700, 310)]
+        self.paths = [path1, path2]
         self.background_color = (0,0,0) #night
         self.path_thickness = 15
-        self.path_color = (238, 220, 130)  # dev color
-        #self.path_color = (0,0,0) # Real color
+        #self.path_color = (238, 220, 130)  # dev color
+        self.path_color = (0,0,0) # Real color
 
         # TODO Add house pictures to these.
         self.tree1 = (370, 110, 70, 160)
@@ -638,7 +641,7 @@ class DarkForest(Map):
         self.tree4 = (570, 140, 70, 160)
         self.tree5 = (350, 320, 70, 160)
         self.tree55 = (380, 380, 70, 160)
-        self.tree6 = (220, 240, 90, 180)
+        self.tree6 = (220, 250, 90, 180)
         self.tree7 = (240, 70, 70, 160)
         self.tree8 = (120, 170, 70, 160)
         self.tree9 = (60, 360, 90, 180)

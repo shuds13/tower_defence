@@ -167,7 +167,7 @@ while game.running:
             mouse_pos = pygame.mouse.get_pos()
 
             #for helping make maps - comment out
-            print(mouse_pos)
+            #print(mouse_pos)
 
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
