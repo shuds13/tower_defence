@@ -282,7 +282,7 @@ def map_select():
 
 class Map():
     def __init__(self):
-        pass
+        self.alternate_paths = False
 
     def paint_features(self, window):
         pass
@@ -296,6 +296,7 @@ class Map():
 
 class PicnicPlace(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Picnic Place"
         self.difficulty = 1
         self.paths = [[(0, 400), (200, 100), (200, 400), (600, 400), (600, 200), (520, 200), (520, 600)]]
@@ -306,6 +307,7 @@ class PicnicPlace(Map):
 
 class Staircase(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Staircase"
         self.difficulty = 2
         self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
@@ -316,6 +318,7 @@ class Staircase(Map):
 
 class Diamond(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Diamond"
         self.difficulty = 2
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
@@ -330,6 +333,7 @@ class Diamond(Map):
 
 class Valley(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Valley"
         self.difficulty = 3
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
@@ -341,9 +345,13 @@ class Valley(Map):
         path2 = [(0, 500), (300, 340), (400, 340), (700, 500)]
         self.paths = [path1, path2]
 
+        #tmp for testing
+        #self.alternate_paths = True
+
 
 class Square(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Square"
         self.difficulty = 3
         self.background_color = (54, 69, 79) # (0, 71, 171)
@@ -362,6 +370,7 @@ class Square(Map):
 
 class Spiral(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Spiral"
         self.difficulty = 1
         self.background_color = (0, 71, 171)
@@ -374,6 +383,7 @@ class Spiral(Map):
 # Initial paths dont look as good as could but actually is quite a good maps from strategic viewpoint.
 class Vase(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Rubin's Vase"
         self.difficulty = 4
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
@@ -398,6 +408,7 @@ class Vase(Map):
 # Map for testing
 class Eagle(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Eagle"
         self.difficulty = 1
         self.paths = [[(50, 100), (100, 100), (500, 300), (300, 300), (200, 450), (650, 500)]]
@@ -409,6 +420,7 @@ class Eagle(Map):
 
 class Pentagram(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Pentagram"
         self.difficulty = 2
         path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
@@ -435,6 +447,7 @@ class Pentagram(Map):
 
 class Distortion(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Distortion"
         self.difficulty = 3
         self.background_color = (150, 105, 25) #(99, 3, 48) # (0,0,0) #(2, 48, 32) #(50, 25, 0)
@@ -450,6 +463,7 @@ class Distortion(Map):
 
 class Castle(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Castle"
         self.difficulty = 2
         self.background_color = (92, 64, 51) # (193, 154, 107) #(184, 115, 51) # (50, 25, 0)
@@ -556,6 +570,7 @@ class Castle(Map):
 
 class Village(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Village"
         self.difficulty = 2
         #self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
@@ -603,8 +618,10 @@ class Village(Map):
 
 class DarkForest(Map):
     def __init__(self):
+        super().__init__()
         self.name = "Dark Forest"
         self.difficulty = 2
+        self.alternate_paths = True
         path1= [(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
                 (430, 350), (430, 300),(330, 300), (330, 450), (200,450), (200,150),
                 (110, 150), (110, 300), (0, 300)]

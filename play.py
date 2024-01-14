@@ -107,7 +107,7 @@ def select_map():
     if gmap.name in account.maps_in_progress:
         game = account.maps_in_progress[gmap.name]
         game.restart_round(lev, decrement=False)  # TODO lev could just be imported in game_metrics
-        game.reset_level()
+        game.reset_level(gmap)
     return gmap
 
 play_again_button = None  # To store the button rectangle
@@ -178,7 +178,7 @@ while game.running:
             #if game.game_over or restart_testing:
             if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
                 game.restart_round(lev)
-                game.reset_level()
+                game.reset_level(gmap)
                 opts_restart = False
 
             #if game.game_over:
@@ -289,7 +289,8 @@ while game.running:
                 game.level.update()
 
                 # Distribute enemies evenly over paths
-                if len(paths) > 1:
+
+                if len(paths) > 1 and not gmap.alternate_paths:
                     if game.path_id == len(paths) - 1:
                         game.path_id = 0
                     else:

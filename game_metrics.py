@@ -54,12 +54,15 @@ class Game():
         self.current_tower_type = None
         self.inset_window['active'] = False  # If set current_tower_type to None - need this
 
-    def reset_level(self):
+    def reset_level(self, gmap):
         self.enemies = []
         self.running = True
         self.enemy_spawn_timer = 0
         self.active = False
-        self.path_id = 0
+        if gmap.alternate_paths:
+            self.path_id = (self.level_num - 1) % len(gmap.paths)
+        else:
+            self.path_id = 0
         self.shown_hint = False
 
     def failed_map(self, gmap, account):
@@ -166,7 +169,7 @@ class Game():
             self.level_num += 1
             self.set_money_per_hit()
             self.level = lev.levels[self.level_num]()
-            self.reset_level()
+            self.reset_level(gmap)
             # Will be in stats option in options window.
             if self.print_total_money:
                 rbe = self.total_hits + self.lives_lost
