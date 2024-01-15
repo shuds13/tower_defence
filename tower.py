@@ -399,6 +399,10 @@ class Burger(Tower):
         del state['image']
         del state['splat_img']  # Remove the non-picklable attribute
         del state['target']
+        #print('im here')
+        for k,v in state.items():
+            if isinstance(v, pygame.Surface):
+                print(k)
         return state
 
     def __setstate__(self, state):
@@ -907,12 +911,13 @@ class Totem(Tower):
             self.upgrade_name = "Arcane Energy"  # For now.
             self.range_boost = 1.15
         if self.level == 3:
+            self.range =  120
             self.image = totem3_img
             self.cost += self.upgrade_costs[1]
             self.upgrade_name = "Eye of Moloch"
             self.range_boost = 1.15
         if self.level == 4:
-            self.range =  120
+            self.range =  130
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
@@ -1055,7 +1060,7 @@ class Cannon(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 48
+            self.attack_speed = 45
             self.image = cannon2_img
             #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
@@ -1064,7 +1069,7 @@ class Cannon(Tower):
             self.glow_radius = 16
         if self.level == 3:
             self.image = cannon3_img
-            self.attack_speed = 35
+            self.attack_speed = 33
             self.range = 140
             #self.image = cannon_img
             #self.max_attacks = 10
@@ -1073,7 +1078,7 @@ class Cannon(Tower):
             self.glow_radius = 20
         if self.level == 4:
             self.image = cannon4_img
-            self.attack_speed = 25
+            self.attack_speed = 22
             self.range = 150
             #self.image = cannon_img
             #self.max_attacks = 10
