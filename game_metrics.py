@@ -2,8 +2,10 @@ import copy
 import pygame
 import sounds
 from accounts import Account, load_profile
-from tower import Totem
+from tower import Totem, tower_types
 
+
+# tmp for debugging saves
 def find_surface_attributes(obj, parent_name=""):
     # Check if the object has the __dict__ attribute
     if not hasattr(obj, '__dict__'):
@@ -18,10 +20,9 @@ def find_surface_attributes(obj, parent_name=""):
             find_surface_attributes(attr_value, full_attr_name)
 
 
-
 class Game():
     def __init__(self, initial_money, initial_level, initial_lives, init_last_round_restarts,
-                 lev, print_total_money, inset_window):
+                 lev, print_total_money, inset_window, test_setup=[]):
         self.player_money = initial_money
         self.total_money = initial_money
         self.level_num = initial_level
@@ -59,6 +60,26 @@ class Game():
         self.displayed_game_over = False
         self.round_bonus = 20
         self.highlight_time = 20
+        self.test_setup = test_setup
+        self.test_tower_setup()
+
+    def test_tower_setup(self):
+        """ test_setup is a list of tuples of the form (tower_type, pos, lev)
+        # So [(3, (100,100), 2)] would be a wizard at position (100,100) at level 2.
+        # pos is the position of the center of the tower
+        """
+        for tower in self.test_setup:
+            self.test_placement(*tower)
+
+    def test_placement(self, tower_id, pos, lev):
+        #testing a setup
+        tower_type = tower_types[tower_id]
+        newtower = tower_type(position=pos)
+        for i in range(lev-1):
+            newtower.level_up()
+
+        self.towers.append(newtower)
+        self.start_round_towers.append(copy.copy(newtower))
 
     #def __reduce__(self):
         ## Get the object's state (equivalent to the output of __getstate__)
@@ -78,16 +99,22 @@ class Game():
         ## - State to be pickled
         #return (self.__class__, (), state)
 
-
+    # this might help - you can delete anything thats reset in restart_round
+    # but for towers they will be stored in start_round_towers
+    # but I think enemies may be the issue as only faling when fail map and enemies exist.
     def __getstate__(self):
         state = self.__dict__.copy()
+        # does this fix the intermittent save error?
+        del state['current_tower_type']
+        del state['enemies']
+        del state['towers']
+        del state['totems']
         for key, value in state.items():
             if isinstance(value, pygame.Surface):
                 print(f"Non-picklable pygame.Surface found in attribute: {key}")
                 # Handle or remove the pygame.Surface object
                 # e.g., state[key] = None or remove the key-value pair entirely
                 del state[key]
-        #self.current_tower_type = None
         return state
 
     def __setstate__(self, state):

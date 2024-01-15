@@ -69,12 +69,16 @@ except Exception:
     save_profile("default")
     account = load_profile("default.pkl")
 
+test_setup = []  # Empty list means no setup.
+
+# test_setup = [(1,(360,300),4), (3, (400,300), 1)]
+
 game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
-            lev, print_total_money, inset_window)
+            lev, print_total_money, inset_window, test_setup)
 
 def reset_game():
     game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
-                lev, print_total_money, inset_window)
+                lev, print_total_money, inset_window, test_setup)
     return game
 
 def in_range(my_range, mouse_x, mouse_y, obj):
@@ -156,7 +160,6 @@ def show_tower_info(inset_window):
 
 game.set_money_per_hit()
 
-
 # Game loop
 while game.running:
 
@@ -166,8 +169,8 @@ while game.running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
 
-            #for helping make maps - comment out
-            #print(mouse_pos)
+            # For helping make maps - comment out when done
+            # print(mouse_pos)
 
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
