@@ -102,7 +102,7 @@ class Game():
         self.active = False
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
-            print(f"{self.path_id=}")
+            #print(f"{self.path_id=}")
         else:
             self.path_id = 0
         self.shown_hint = False
