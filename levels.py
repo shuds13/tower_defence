@@ -543,7 +543,7 @@ class Level53(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 160
-        self.spawn_intervals = [3, 3, 1, 8, 3]
+        self.spawn_intervals = [3, 3, 1, 12, 3]
         self.phase_counts = [30, 45, 90, 130, 160]
         self.enemy_types = [3, 10, 2, 14, 5]
 
@@ -605,6 +605,7 @@ class Level60(Level):
         self.spawn_intervals = [1]
         self.phase_counts = [1]
         self.enemy_types = [301]
+
 
 # tests only
 #class Level41(Level):
