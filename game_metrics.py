@@ -4,6 +4,21 @@ import sounds
 from accounts import Account, load_profile
 from tower import Totem
 
+def find_surface_attributes(obj, parent_name=""):
+    # Check if the object has the __dict__ attribute
+    if not hasattr(obj, '__dict__'):
+        return
+
+    for attr_name, attr_value in obj.__dict__.items():
+        full_attr_name = f"{parent_name}.{attr_name}" if parent_name else attr_name
+
+        if isinstance(attr_value, pygame.Surface):
+            print(f"Attribute containing pygame.Surface found: {full_attr_name}")
+        else:
+            find_surface_attributes(attr_value, full_attr_name)
+
+
+
 class Game():
     def __init__(self, initial_money, initial_level, initial_lives, init_last_round_restarts,
                  lev, print_total_money, inset_window):
@@ -29,7 +44,7 @@ class Game():
         self.start_round_lives = initial_lives
         self.start_round_towers = []
         self.last_round_restarts = init_last_round_restarts
-        self.path_id = 0
+        self.path_id = 0  # if had gmap here - could make sure correct even when start on later level.
 
         self.total_hits = 0
         self.start_round_total_hits = 0
@@ -45,8 +60,33 @@ class Game():
         self.round_bonus = 20
         self.highlight_time = 20
 
+    #def __reduce__(self):
+        ## Get the object's state (equivalent to the output of __getstate__)
+        #state = self.__dict__.copy()
+
+        ## Iterate over the state items
+        #for key, value in state.items():
+            #if isinstance(value, pygame.Surface):
+                #print(f"Non-picklable pygame.Surface found in attribute: {key}")
+                ## Handle or remove the pygame.Surface object
+                ## e.g., state[key] = None or remove the key-value pair entirely
+                #del state[key]
+
+        ## Return a tuple that pickle uses for serialization:
+        ## - Callable (usually the class itself)
+        ## - Tuple of arguments for the callable (usually empty)
+        ## - State to be pickled
+        #return (self.__class__, (), state)
+
+
     def __getstate__(self):
         state = self.__dict__.copy()
+        for key, value in state.items():
+            if isinstance(value, pygame.Surface):
+                print(f"Non-picklable pygame.Surface found in attribute: {key}")
+                # Handle or remove the pygame.Surface object
+                # e.g., state[key] = None or remove the key-value pair entirely
+                del state[key]
         #self.current_tower_type = None
         return state
 
@@ -62,6 +102,7 @@ class Game():
         self.active = False
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
+            print(f"{self.path_id=}")
         else:
             self.path_id = 0
         self.shown_hint = False
@@ -71,7 +112,11 @@ class Game():
         self.failed = True
         if self.last_round_restarts <= 0:
             account.failed_map(gmap)
-        account.save()  # could do inside failed_map/save_map/complete_map
+        find_surface_attributes(self)
+        try:
+            account.save()  # could do inside failed_map/save_map/complete_map
+        except TypeError:
+            print('Save failed')
 
     def restart_round(self, lev, decrement=True):
         self.player_money = self.start_round_money
