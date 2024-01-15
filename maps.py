@@ -52,7 +52,7 @@ def is_rect_in_box(center_x, center_y, rect_w, rect_h, bounding_box, wh=False):
         max_y += min_y
         bounding_box = (min_x, min_y, max_x, max_y)
 
-    overlap = 10
+    overlap = 15
     rect_w -= overlap
     rect_h -= overlap
     rect_x = center_x - rect_w / 2
@@ -73,7 +73,7 @@ def is_rect_out_box(center_x, center_y, rect_w, rect_h, bounding_box, wh=False):
         max_y += min_y
         bounding_box = (min_x, min_y, max_x, max_y)
 
-    overlap = 0 #10
+    overlap = 10 #10
     rect_w -= overlap
     rect_h -= overlap
     rect_x = center_x - rect_w / 2
@@ -687,20 +687,21 @@ class DarkForest(Map):
         #self.path_color = (238, 220, 130)  # dev color
         self.path_color = (0,0,0) # Real color
 
-        self.tree1 = (370, 110, 70, 160)
+        self.tree1 = (380, 110, 70, 160)
         self.tree2 = (450, 170, 70, 160)
         self.tree3 = (540, 330, 90, 180)
         self.tree4 = (570, 140, 70, 160)
-        self.tree5 = (350, 320, 70, 160)
-        self.tree55 = (380, 380, 70, 160)
+        self.tree5 = (350, 365, 70, 160)
+        self.tree55 = (390, 380, 70, 160)
         self.tree6 = (220, 250, 90, 180)
         self.tree7 = (240, 70, 70, 160)
         self.tree8 = (120, 170, 70, 160)
-        self.tree9 = (60, 360, 90, 180)
+        self.tree9 = (30, 350, 90, 180)
         self.tree10 = (40, 120, 70, 160)
+        self.tree11 = (125, 410, 70, 160)
 
-        self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5,
-                      self.tree6, self.tree7, self.tree8, self.tree8, self.tree10]
+        self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree55,
+                      self.tree6, self.tree7, self.tree8, self.tree9, self.tree10, self.tree11]
 
     def paint_features(self, window):
         window.blit(tree1_img, self.tree1)
@@ -714,6 +715,7 @@ class DarkForest(Map):
         window.blit(tree1_img, self.tree8)
         window.blit(bigtree_img, self.tree9)
         window.blit(tree1_img, self.tree10)
+        window.blit(tree1_img, self.tree11)
 
     def can_I_place(self, pos, w, h):
         for tree in self.trees:
