@@ -1,3 +1,4 @@
+import glob
 import pygame
 import maps
 import pickle
@@ -61,6 +62,15 @@ def save_profile(profile_name):
 def load_profile(filename):
     with open(f'profiles/{filename}', 'rb') as file:
         return pickle.load(file)
+
+
+def load_most_recent_profile():
+    filename = max(glob.iglob('profiles/*.pkl'), key=os.path.getmtime)
+    with open(f'{filename}', 'rb') as file:
+        # To do following need to make a change - maybe save datetime
+        account = pickle.load(file)
+        #account.save()  # To be most recent even if no changes are made.
+        return account
 
 
 def profile_menu(screen):

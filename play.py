@@ -14,7 +14,7 @@ import levels as lev
 from maps import map_window
 import sounds
 import hints
-from accounts import Account, load_profile, save_profile
+from accounts import Account, load_profile, load_most_recent_profile, save_profile
 from game_metrics import Game
 
 pygame.font.init()  # Initialize font module
@@ -59,12 +59,8 @@ inset_window = {
 projectiles = []
 
 try:
-    # TODO or load most recent profile
-    account = load_profile("default.pkl")
+    account = load_most_recent_profile()
 except Exception:
-    #print("Failed to load default profile - there should be a file profile/default.pkl")
-    #print("Defaulting to no profile loaded")
-    #account = None
     # create new default profile
     save_profile("default")
     account = load_profile("default.pkl")
