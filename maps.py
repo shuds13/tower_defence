@@ -439,7 +439,7 @@ class Vase(Map):
     def __init__(self):
         super().__init__()
         self.name = "Rubin's Vase"
-        self.difficulty = 4
+        self.difficulty = 3
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color =  (48, 25, 52) # (40, 40, 43) # (69, 75, 27)
         self.path_thickness = 20
