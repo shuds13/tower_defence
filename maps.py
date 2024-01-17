@@ -19,6 +19,9 @@ lightmode_img = pygame.transform.scale(lightmode_img, (50, 50))
 darkmode_img = pygame.image.load('images/darkmode.png')
 darkmode_img = pygame.transform.scale(darkmode_img, (50, 50))
 
+#moon_img = pygame.image.load('images/moon.png')
+#moon_img = pygame.transform.scale(moon_img, (50, 50))
+
 
 house1_img = pygame.image.load('images/house1.png')
 house1_img = pygame.transform.scale(house1_img, (160, 140))
@@ -261,10 +264,10 @@ def map_window(display, surface, window_size, account=None):
     map_id = None
     while noclicks:
         time.sleep(0.1)  # Reduce idle CPU usage
-        eleft = False
-        eright = False
-        mouse_pos = None
         for event in pygame.event.get():
+            eleft = False
+            eright = False
+            mouse_pos = None
             if event.type == pygame.QUIT:
                 noclicks = False
                 return None, None
@@ -699,6 +702,7 @@ class DarkForest(Map):
         self.tree9 = (30, 350, 90, 180)
         self.tree10 = (40, 120, 70, 160)
         self.tree11 = (125, 410, 70, 160)
+        #self.moon = (540, 60, 50, 50)
 
         self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree55,
                       self.tree6, self.tree7, self.tree8, self.tree9, self.tree10, self.tree11]
@@ -716,6 +720,7 @@ class DarkForest(Map):
         window.blit(bigtree_img, self.tree9)
         window.blit(tree1_img, self.tree10)
         window.blit(tree1_img, self.tree11)
+        #window.blit(moon_img, self.moon)
 
     def can_I_place(self, pos, w, h):
         for tree in self.trees:
