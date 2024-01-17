@@ -629,7 +629,7 @@ class Village(Map):
     def __init__(self):
         super().__init__()
         self.name = "Village"
-        self.difficulty = 2
+        self.difficulty = 1
         #self.paths = [[(50, 100), (200, 100), (200, 300), (400, 300), (400, 500), (650, 500)]]
         self.paths = [[(0, 280), (100, 280), (100, 100), (300, 100), (300, 280), (400, 280),
                       (400,100),(600,100),(600,500),(400,500),(400,400), (400,320),(300,320),
@@ -736,6 +736,6 @@ class DarkForest(Map):
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Castle, Vase, Village, Pentagram, Distortion, DarkForest] # Eagle]
+                Village, Vase, Castle, Pentagram, Distortion, DarkForest] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
