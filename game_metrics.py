@@ -121,6 +121,9 @@ class Game():
         self.__dict__ = state
         self.current_tower_type = None
         self.inset_window['active'] = False  # If set current_tower_type to None - need this
+        self.enemies = []
+        self.towers = []
+        self.totems = []
 
     def reset_level(self, gmap):
         self.enemies = []
