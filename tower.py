@@ -340,7 +340,7 @@ class Burger(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range =  Burger.range
-        self.attack_speed = 75
+        self.attack_speed = 70
         self.damage = 1
         self.cost = Burger.price
         #self.image = Burger.image  # all of these can be done in base class: self.thing = self.__class__.thing

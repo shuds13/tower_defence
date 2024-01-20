@@ -347,7 +347,7 @@ class Meteor(Enemy):
     health = 10
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
-        self.base_speed = 8
+        self.base_speed = 7
         self.speed = self.base_speed
         self.spawn_on_die = True
         self.spawn_type = Enemy4
