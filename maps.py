@@ -27,8 +27,8 @@ house1_img = pygame.image.load('images/house1.png')
 house1_img = pygame.transform.scale(house1_img, (160, 140))
 house2_img = pygame.image.load('images/house2.png')
 house2_img = pygame.transform.scale(house2_img, (160, 140))
-#house3_img = pygame.image.load('images/house3.png')
-#house3_img = pygame.transform.scale(house3_img, (160, 140))
+house3_img = pygame.image.load('images/house3.png')
+house3_img = pygame.transform.scale(house3_img, (160, 140))
 tree_img = pygame.image.load('images/tree1.png')
 tree1_img = pygame.transform.scale(tree_img, (70, 160))
 bigtree_img = pygame.transform.scale(tree_img, (90, 180))
@@ -735,9 +735,51 @@ class DarkForest(Map):
         return self.trees
 
 
+class Nkag(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Nkag"
+        self.difficulty = 3
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+        path1 = [(350, 0), (350, 100), (200, 100),(200, 300),(130, 300),(130, 450), (80, 450), (80, 600)]
+        path1a = [(350, 0), (350, 100), (200, 100),(200, 300),(130, 300),(130, 450), (180, 450), (180, 600)]
+        path2 = [(350, 0), (350, 100), (200, 100),(200, 300),(270, 300),(270, 450), (220, 450), (220, 600)]
+        path2a = [(350, 0), (350, 100), (200, 100),(200, 300),(270, 300),(270, 450), (320, 450), (320, 600)]
+        path3 = [(350, 0), (350, 100), (500, 100),(500, 300),(430, 300),(430, 450), (380, 450), (380, 600)]
+        path3a = [(350, 0), (350, 100), (500, 100),(500, 300),(430, 300),(430, 450), (480, 450), (480, 600)]
+        path4 = [(350, 0), (350, 100), (500, 100),(500, 300),(570, 300),(570, 450), (520, 450), (520, 600)]
+        path4a = [(350, 0), (350, 100), (500, 100),(500, 300),(570, 300),(570, 450), (620, 450), (620, 600)]
+
+        self.paths = [path1, path1a, path2, path2a, path3, path3a, path4, path4a]
+
+        self.tree1 = (215, 110, 90, 180)
+        self.tree2 = (400, 110, 90, 180)
+        self.house = (270, 300, 160, 140)
+        self.obstacles = [self.tree1, self.tree2, self.house]
+
+    def paint_features(self, window):
+        window.blit(bigtree_img, self.tree1)
+        window.blit(bigtree_img, self.tree2)
+        window.blit(house3_img, self.house)
+
+
+    def can_I_place(self, pos, w, h):
+        for obstacle in self.obstacles:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return self.obstacles
+
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Village, Vase, Castle, Pentagram, Distortion, DarkForest] # Eagle]
+                Village, Vase, Castle, Pentagram, Distortion, DarkForest, Nkag] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
