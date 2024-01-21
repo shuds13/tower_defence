@@ -36,6 +36,11 @@ bigtree_img = pygame.transform.scale(tree_img, (90, 180))
 
 explosion_img = pygame.image.load('images/explosion.png')
 
+# Used in removables so does not store images
+img_dict = {
+    "bigtree_img": bigtree_img,
+    "house3_img": house3_img
+    }
 
 maps_per_page = 6
 periodic_arrows = True
@@ -361,13 +366,18 @@ class Map():
         """List of removable objects"""
         return []
 
+    def set_removables(self, removables):
+        pass
+
     def remove(self, rem, display, window):
-        sounds.play('pop')  # this is not right either - no better than place sound - need explosion sound
-        expl_img = pygame.transform.scale(explosion_img, (rem.loc[2], rem.loc[3]))
-        explosion_rect = expl_img.get_rect(topleft=(rem.loc[0], rem.loc[1]))
-        window.blit(expl_img, explosion_rect)
-        display.flip()
-        time.sleep(1)
+        sounds.play('place')  #todo choose a sound
+        # Need to find a good way to just remove prompt box before showing explosion.
+        #sounds.play('pop')  # this is not right either - no better than place sound - need explosion sound
+        #expl_img = pygame.transform.scale(explosion_img, (rem.loc[2], rem.loc[3]))
+        #explosion_rect = expl_img.get_rect(topleft=(rem.loc[0], rem.loc[1]))
+        #window.blit(expl_img, explosion_rect)
+        #display.flip()
+        #time.sleep(1)
         #pass
 
 
@@ -862,9 +872,9 @@ class Hermit2(Map):
 
         self.paths = [path1, path2, path3, path4]
 
-        self.tree1 = Removable((215, 110, 90, 180), 500, bigtree_img)
-        self.tree2 = Removable((400, 110, 90, 180), 500, bigtree_img)
-        self.house = Removable((270, 300, 160, 140), 1000, house3_img)
+        self.tree1 = Removable((215, 110, 90, 180), 500, "bigtree_img")
+        self.tree2 = Removable((400, 110, 90, 180), 500, "bigtree_img")
+        self.house = Removable((270, 300, 160, 140), 1000, "house3_img")
         self.removables = [self.tree1, self.tree2, self.house]
 
         #self.obstacles = [self.tree1.loc, self.tree2.loc, self.house.loc]
@@ -877,23 +887,28 @@ class Hermit2(Map):
         # could be obstaclte being a superset of removables but for this test all removable.
         #for ob in self.obstacles:
         for ob in self.removables:
-            window.blit(ob.img, ob.loc)
+            window.blit(img_dict[ob.img], ob.loc)
 
 
     def can_I_place(self, pos, w, h):
         #for obstacle in self.obstacles:
+        #print(f"{self.removables=}")
         for obstacle in self.removables:
-            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle, wh=True):
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle.loc, wh=True):
                 return False
         return True
 
     def barriers(self):
         """A list of barriers"""
         #return self.obstacles
-        return self.removables
+        #return self.removables
+        return [removable.loc for removable in self.removables]
 
     def get_removables(self):
         return self.removables
+
+    def set_removables(self, removables):
+        self.removables = removables
 
     def remove(self, rem, display, window):
         # TODO Need to save removal somehow when save progress

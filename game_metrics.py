@@ -62,6 +62,7 @@ class Game():
         self.highlight_time = 20
         self.test_setup = test_setup
         self.test_tower_setup()
+        self.removables = []
 
     def test_tower_setup(self):
         """ test_setup is a list of tuples of the form (tower_type, pos, lev)
@@ -130,6 +131,8 @@ class Game():
         self.running = True
         self.enemy_spawn_timer = 0
         self.active = False
+        #self.removables = gmap.removables
+        gmap.removables = self.removables
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
             #print(f"{self.path_id=}")
@@ -154,6 +157,9 @@ class Game():
         self.lives = self.start_round_lives
         self.total_hits = self.start_round_total_hits
         self.total_money = self.start_round_total_money
+
+        self.removables = self.start_round_removables
+        #print(f"{self.removables=}")
 
         self.towers = []
         self.totems = []
@@ -245,6 +251,9 @@ class Game():
             self.start_round_towers = []
             for tower in self.towers:
                 self.start_round_towers.append(copy.copy(tower))
+            self.start_round_removables = gmap.get_removables()
+            #print(f"{self.start_round_removables=}")
+
             self.level_num += 1
             self.set_money_per_hit()
             self.level = lev.levels[self.level_num]()

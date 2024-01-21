@@ -242,11 +242,16 @@ while game.running:
                             #print(f"Remove {rem.price}")
                             msg = f"Remove for {rem.price}"
                             if game.player_money >= rem.price:
+                                #window_was = pygame.Surface(window_size)
+                                #window_was.blit( window, ( 0, 0 ), ( 0, 0, window_size[0], window_size[1] ) )
+                                #window_was = window.copy()
                                 if nav.are_you_sure(pygame.display, window, msg, True, "", (0, 0, 128)):
-                                    pygame.display.flip()
+
+                                    #pygame.display.flip()
                                     #sounds.play('place')  #todo choose a sound
 
                                     game.player_money -= rem.price
+                                    #gmap.remove(rem, pygame.display, window_was)
                                     gmap.remove(rem, pygame.display, window)
                             else:
                                 nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
