@@ -353,6 +353,14 @@ class Map():
         """A list of barriers"""
         return []
 
+    def get_removables(self):
+        """List of removable objects"""
+        return []
+
+    def remove(self, rem):
+        pass
+
+
 class PicnicPlace(Map):
     def __init__(self):
         super().__init__()
@@ -739,8 +747,15 @@ class Hermit(Map):
     def __init__(self):
         super().__init__()
         self.name = "Hermit's House"
-        self.difficulty = 3
-        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.difficulty = 2
+        #self.background_color =  (69, 75, 27) # original
+        self.background_color =  (240, 255, 255) # snowy/alpine (kind of like but maybe too bright)
+        #self.background_color =  (114, 47, 55) # (Wine) I like this color but maybe not for this map
+        #self.background_color =  (99, 3, 48) # again I like but prob not for this map
+        #self.background_color = (103, 49, 71) # same again
+        #self.background_color = (25, 25, 112) # Again   (128, 70, 27)
+
+         # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
         self.path_color = (96, 130, 182) # (178, 190, 181)
 
@@ -780,9 +795,105 @@ class Hermit(Map):
         return self.obstacles
 
 
+# experiment as not really happy with this level. Too easy for its daunting appearance.
+class Pentagram2(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Pentagram2"
+        self.difficulty = 2
+        path1 = [(100,350), (600,350), (200,100), (350,500)]
+
+        path2 = [(200,100), (350,500), (500,100), (100,350)]
+
+        path3 = [(100,350),(350,500),(600,350),(500,100),(200,100),(100,350),] #, (150, 500)]
+        self.background_color = (145, 56, 49) #(50, 25, 0)
+        self.path_thickness = 15
+        self.path_color = (196, 180, 84) #(0, 211, 211)
+        self.paths = [path1, path2, path3]
+
+
+
+class Removable():
+    # TODO hmm if store img - will need to remove when pickle - or store image dictionary lookup.
+    def __init__(self, location, price, img):
+        self.loc = location
+        self.price = price
+        self.img = img
+        self.rect = pygame.Rect(self.loc)
+
+
+class Hermit2(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Hermit's House 2"
+        self.difficulty = 2
+        #self.background_color =  (69, 75, 27) # original
+        #self.background_color =  (240, 255, 255) # snowy/alpine (kind of like but maybe too bright)
+        #self.background_color =  (114, 47, 55) # (Wine) I like this color but maybe not for this map
+        self.background_color =  (99, 3, 48) # again I like but prob not for this map
+        #self.background_color = (103, 49, 71) # same again
+        #self.background_color = (25, 25, 112) # Again   (128, 70, 27)
+
+         # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+        path1 = [(350, 0), (350, 100), (200, 100), (200, 300), (130, 300), (130, 450),
+                 (270, 450), (270, 300), (130, 300), (130, 450), (80, 450), (80, 600)]
+
+        path2 = [(350, 0), (350, 100), (200, 100), (200, 300), (270, 300), (270, 450),
+                 (130, 450), (130, 300), (270, 300),(270, 450), (320, 450), (320, 600)]
+
+        path3 = [(350, 0), (350, 100), (500, 100), (500, 300), (430, 300), (430, 450),
+                 (570, 450), (570, 300), (430, 300), (430, 450), (380, 450), (380, 600)]
+
+        path4 = [(350, 0), (350, 100), (500, 100), (500, 300), (570, 300), (570, 450),
+                 (430, 450), (430, 300), (570, 300), (570, 450), (620, 450), (620, 600)]
+
+        self.paths = [path1, path2, path3, path4]
+
+        self.tree1 = Removable((215, 110, 90, 180), 500, bigtree_img)
+        self.tree2 = Removable((400, 110, 90, 180), 500, bigtree_img)
+        self.house = Removable((270, 300, 160, 140), 1000, house3_img)
+        self.removables = [self.tree1, self.tree2, self.house]
+
+        #self.obstacles = [self.tree1.loc, self.tree2.loc, self.house.loc]
+
+    def paint_features(self, window):
+        #window.blit(bigtree_img, self.tree1.loc)
+        #window.blit(bigtree_img, self.tree2.loc)
+        #window.blit(house3_img, self.house.loc)
+
+        # could be obstaclte being a superset of removables but for this test all removable.
+        #for ob in self.obstacles:
+        for ob in self.removables:
+            window.blit(ob.img, ob.loc)
+
+
+    def can_I_place(self, pos, w, h):
+        #for obstacle in self.obstacles:
+        for obstacle in self.removables:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        #return self.obstacles
+        return self.removables
+
+    def get_removables(self):
+        return self.removables
+
+    def remove(self, rem):
+        # TODO Need to save removal somehow when save progress
+        self.removables.remove(rem)
+
+
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Village, Vase, Castle, Pentagram, Distortion, DarkForest, Hermit] # Eagle]
+                Village, Vase, Castle, Pentagram, Distortion, DarkForest, Hermit, Hermit2] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}

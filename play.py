@@ -21,11 +21,11 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 150
+initial_money = 150000
 initial_level = 1
 
 print_total_money = False
-init_last_round_restarts = 3
+init_last_round_restarts = 300
 restart_testing = False
 
 # Initialize Pygame
@@ -166,7 +166,7 @@ while game.running:
             mouse_pos = pygame.mouse.get_pos()
 
             # For helping make maps - comment out when done
-            # print(mouse_pos)
+            print(mouse_pos)
 
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
@@ -233,6 +233,17 @@ while game.running:
                     else:
                         game.inset_window['x'] = game.inset_window['xl']
                     upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
+
+                removables = gmap.get_removables()
+                if removables:  #unnecessary
+                    for rem in removables:
+                        if rem.rect.collidepoint(mouse_pos):
+                            #todo replace with window - and ok button
+                            print(f"Remove {rem.price}")
+                            if game.player_money >= rem.price:
+                                sounds.play('place')  #todo choose a sound
+                                game.player_money -= rem.price
+                                gmap.remove(rem)
 
             # Place a tower
             else:
@@ -502,7 +513,7 @@ while game.running:
         # Do we want to always bring up window - not if have last round restarts for now
         if not game.displayed_game_over and (game.map_complete or game.last_round_restarts <= 0):
             close_game_over = nav.draw_game_over_window(pygame.display, window, game.map_complete, game.aced)
-        else:
+        elif not game.map_complete:
             game_over_text = font.render("Game Over", True, (255, 0, 0))
             text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))
             window.blit(game_over_text, text_rect)
