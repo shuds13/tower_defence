@@ -258,10 +258,9 @@ def draw_options_window(display, surface, options_button, game):
                 elif can_restart and restart_round.collidepoint(mouse_pos):
                     return False, False, True
                 elif replay_button.collidepoint(mouse_pos):
-                    if are_you_sure(display, surface):
+                    if are_you_sure(display, surface, "This will end current game"):
                         return True, False, False
                 elif maps_button.collidepoint(mouse_pos):
-                    #if are_you_sure(display, surface):
                     return False, True, False
                 elif s1_b.collidepoint(mouse_pos):
                     frames_per_second = 60
@@ -280,7 +279,7 @@ def draw_options_window(display, surface, options_button, game):
     return False, False, False
 
 
-def are_you_sure(display, surface):
+def are_you_sure(display, surface, msg, enabled=True, prompt="Are you sure?", col=((0, 0, 0))):
     x, y, width, height = 200, 200, 300, 150
 
     # Just thinking, if I save game progress (should be easy given already do for restart round)
@@ -289,35 +288,31 @@ def are_you_sure(display, surface):
     # turns out not just drawing a rectangle border - but filled in!!!
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
     #pygame.draw.rect(surface, (255, 127, 80), (x, y, width, height))
-    pygame.draw.rect(surface, (0, 0, 0), (x, y, width, height))
+    pygame.draw.rect(surface, col, (x, y, width, height))
 
     font_title = pygame.font.SysFont('Arial', 20, bold=True)  # Choose a font and size
-    sure_text1 = font_title.render("This will end current game", True, (255, 255, 255))
-    sure_text2 = font_title.render("Are you sure?", True, (255, 255, 255))
+    sure_text1 = font_title.render(msg, True, (255, 255, 255))
     text_rect1 = sure_text1.get_rect(midtop=(x+width//2, y+10))
-    text_rect2 = sure_text2.get_rect(midtop=(x+width//2, y+30))
     surface.blit(sure_text1, text_rect1)
-    surface.blit(sure_text2, text_rect2)
-
-    #yes_text = font_title.render("Yes", True, (255, 255, 255))
-    #yes_rect = yes_text.get_rect(topleft=(x + width // 2 - 20, y+height//2 - 80))
-    #surface.blit(yes_text, yes_rect.topleft)
-    pos = (x + width // 2 - 90, y + height//2)
-    yes_button = draw_button(surface, "Yes", pos, (80, 40), color=(250, 95, 85))
-
-    #no_text = font_title.render("No", True, (255, 255, 255))
-    #no_rect = no_text.get_rect(topleft=(x + width // 2 + 20, y+height//2 - 80))
-    #surface.blit(no_text, no_rect.topleft)
-    pos = (x + width // 2 +10, y + height//2)
-    no_button = draw_button(surface, "No", pos, (80, 40), color=(250, 95, 85))
-
+    if enabled:
+        sure_text2 = font_title.render(prompt, True, (255, 255, 255))
+        text_rect2 = sure_text2.get_rect(midtop=(x+width//2, y+30))
+        surface.blit(sure_text2, text_rect2)
+        pos = (x + width // 2 - 90, y + height//2)
+        yes_button = draw_button(surface, "Yes", pos, (80, 40), color=(250, 95, 85))
+        pos = (x + width // 2 +10, y + height//2)
+        no_button = draw_button(surface, "No", pos, (80, 40), color=(250, 95, 85))
+    else:
+        no_button = cross_img.get_rect(center=(x+width//2, y+height - 60))
+        surface.blit(cross_img, no_button.topleft)
+        yes_button = None
 
     while True:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if yes_button.collidepoint(mouse_pos):
+                if yes_button and yes_button.collidepoint(mouse_pos):
                     return True
                 elif no_button.collidepoint(mouse_pos):
                     return False
