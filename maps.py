@@ -1,6 +1,7 @@
 import pygame
 import navigation as nav
 import time
+import sounds
 import spiral
 from accounts import profile_menu, new_profile
 
@@ -32,6 +33,9 @@ house3_img = pygame.transform.scale(house3_img, (160, 140))
 tree_img = pygame.image.load('images/tree1.png')
 tree1_img = pygame.transform.scale(tree_img, (70, 160))
 bigtree_img = pygame.transform.scale(tree_img, (90, 180))
+
+explosion_img = pygame.image.load('images/explosion.png')
+
 
 maps_per_page = 6
 periodic_arrows = True
@@ -357,8 +361,14 @@ class Map():
         """List of removable objects"""
         return []
 
-    def remove(self, rem):
-        pass
+    def remove(self, rem, display, window):
+        sounds.play('pop')  # this is not right either - no better than place sound - need explosion sound
+        expl_img = pygame.transform.scale(explosion_img, (rem.loc[2], rem.loc[3]))
+        explosion_rect = expl_img.get_rect(topleft=(rem.loc[0], rem.loc[1]))
+        window.blit(expl_img, explosion_rect)
+        display.flip()
+        time.sleep(1)
+        #pass
 
 
 class PicnicPlace(Map):
@@ -885,8 +895,9 @@ class Hermit2(Map):
     def get_removables(self):
         return self.removables
 
-    def remove(self, rem):
+    def remove(self, rem, display, window):
         # TODO Need to save removal somehow when save progress
+        super().remove(rem, display, window)
         self.removables.remove(rem)
 
 

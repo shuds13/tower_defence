@@ -21,7 +21,7 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 750
+initial_money = 75000
 initial_level = 1
 
 print_total_money = False
@@ -243,9 +243,11 @@ while game.running:
                             msg = f"Remove for {rem.price}"
                             if game.player_money >= rem.price:
                                 if nav.are_you_sure(pygame.display, window, msg, True, "", (0, 0, 128)):
-                                    sounds.play('place')  #todo choose a sound
+                                    pygame.display.flip()
+                                    #sounds.play('place')  #todo choose a sound
+
                                     game.player_money -= rem.price
-                                    gmap.remove(rem)
+                                    gmap.remove(rem, pygame.display, window)
                             else:
                                 nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 
