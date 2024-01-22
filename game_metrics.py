@@ -64,6 +64,12 @@ class Game():
         self.test_tower_setup()
         self.removables = []
 
+    def set_map(self, gmap):
+        self.removables = gmap.get_removables()
+        self.start_round_removables = self.removables.copy()
+        print(f"In set map {self.start_round_removables=}")
+
+
     def test_tower_setup(self):
         """ test_setup is a list of tuples of the form (tower_type, pos, lev)
         # So [(3, (100,100), 2)] would be a wizard at position (100,100) at level 2.
@@ -132,7 +138,8 @@ class Game():
         self.enemy_spawn_timer = 0
         self.active = False
         #self.removables = gmap.removables
-        gmap.removables = self.removables
+        gmap.set_removables(self.removables)
+        print(f"In reset_level gmap removables set to {self.removables=}")
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
             #print(f"{self.path_id=}")
@@ -151,7 +158,7 @@ class Game():
         except TypeError:
             print('Save failed')
 
-    def restart_round(self, lev, decrement=True):
+    def restart_round(self, lev, gmap, decrement=True):
         self.player_money = self.start_round_money
         self.total_money = self.start_round_money
         self.lives = self.start_round_lives
@@ -159,7 +166,9 @@ class Game():
         self.total_money = self.start_round_total_money
 
         self.removables = self.start_round_removables
-        #print(f"{self.removables=}")
+        gmap.set_removables(self.removables)
+
+        print(f"In restart round: {self.removables=} {self.start_round_removables=}")
 
         self.towers = []
         self.totems = []
@@ -252,7 +261,7 @@ class Game():
             for tower in self.towers:
                 self.start_round_towers.append(copy.copy(tower))
             self.start_round_removables = gmap.get_removables()
-            #print(f"{self.start_round_removables=}")
+            print(f"Level complete {self.start_round_removables=}")
 
             self.level_num += 1
             self.set_money_per_hit()

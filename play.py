@@ -77,6 +77,7 @@ def reset_game(gmap=None):
                 lev, print_total_money, inset_window, test_setup)
     if gmap is not None:
         gmap = gmap.__class__()  # Reset map - only needed if removables.
+        game.set_map(gmap)
     return game, gmap
 
 def in_range(my_range, mouse_x, mouse_y, obj):
@@ -105,10 +106,11 @@ def select_map():
         game.running = False
         return
     gmap = set_map(gmap)
+    game.set_map(gmap)
     # TODO put this in account (profile) function.
     if gmap.name in account.maps_in_progress:
         game = account.maps_in_progress[gmap.name]
-        game.restart_round(lev, decrement=False)  # TODO lev could just be imported in game_metrics
+        game.restart_round(lev, gmap, decrement=False)  # TODO lev could just be imported in game_metrics
         game.reset_level(gmap)
     return gmap
 
@@ -178,7 +180,7 @@ while game.running:
 
             #if game.game_over or restart_testing:
             if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
-                game.restart_round(lev)
+                game.restart_round(lev, gmap)
                 game.reset_level(gmap)
                 opts_restart = False
 
