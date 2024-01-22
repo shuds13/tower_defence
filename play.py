@@ -72,10 +72,12 @@ test_setup = []  # Empty list means no setup.
 game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
             lev, print_total_money, inset_window, test_setup)
 
-def reset_game():
+def reset_game(gmap=None):
     game = Game(initial_money, initial_level, initial_lives, init_last_round_restarts,
                 lev, print_total_money, inset_window, test_setup)
-    return game
+    if gmap is not None:
+        gmap = gmap.__class__()  # Reset map - only needed if removables.
+    return game, gmap
 
 def in_range(my_range, mouse_x, mouse_y, obj):
     distance = ((mouse_x - obj.position[0])**2 + (mouse_y - obj.position[1])**2)**0.5
@@ -185,10 +187,10 @@ while game.running:
                 close_game_over = None
                 game.displayed_game_over = True
             if opts_play_again or play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
-                game = reset_game()
+                game, gmap = reset_game(gmap=gmap)
                 opts_play_again = False
             if opts_maps or maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
-                game = reset_game()
+                game, _ = reset_game()
                 gmap = select_map()
                 opts_maps = False
                 continue
