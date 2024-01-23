@@ -250,16 +250,10 @@ while game.running:
                                 #window_was.blit( window, ( 0, 0 ), ( 0, 0, window_size[0], window_size[1] ) )
                                 #window_was = window.copy()
                                 if nav.are_you_sure(pygame.display, window, msg, True, "", (0, 0, 128)):
-
                                     #pygame.display.flip()
-                                    #sounds.play('place')  #todo choose a sound
-
                                     game.player_money -= rem.price
                                     #gmap.remove(rem, pygame.display, window_was)
-                                    #print(f"yyy {gmap.removables} {game.removables} {game.start_round_removables}")
-
                                     gmap.remove(rem, pygame.display, window)
-                                    #print(f"zzz {gmap.removables} {game.removables} {game.start_round_removables}")
                             else:
                                 nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 
