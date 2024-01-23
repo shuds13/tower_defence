@@ -21,7 +21,7 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 75000
+initial_money = 150000
 initial_level = 1
 
 print_total_money = False
@@ -256,7 +256,10 @@ while game.running:
 
                                     game.player_money -= rem.price
                                     #gmap.remove(rem, pygame.display, window_was)
+                                    #print(f"yyy {gmap.removables} {game.removables} {game.start_round_removables}")
+
                                     gmap.remove(rem, pygame.display, window)
+                                    #print(f"zzz {gmap.removables} {game.removables} {game.start_round_removables}")
                             else:
                                 nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 

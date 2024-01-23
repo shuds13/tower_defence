@@ -66,8 +66,8 @@ class Game():
 
     def set_map(self, gmap):
         self.removables = gmap.get_removables()
-        self.start_round_removables = self.removables.copy()
-        print(f"In set map {self.start_round_removables=}")
+        self.start_round_removables = copy.deepcopy(self.removables)
+        print(f"In set map {len(self.removables)=} {len(self.start_round_removables)=}")
 
 
     def test_tower_setup(self):
@@ -139,7 +139,7 @@ class Game():
         self.active = False
         #self.removables = gmap.removables
         gmap.set_removables(self.removables)
-        print(f"In reset_level gmap removables set to {self.removables=}")
+        print(f"In reset_level: {len(self.removables)=} {len(self.start_round_removables)=}")
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
             #print(f"{self.path_id=}")
@@ -165,10 +165,10 @@ class Game():
         self.total_hits = self.start_round_total_hits
         self.total_money = self.start_round_total_money
 
-        self.removables = self.start_round_removables
+        self.removables = copy.deepcopy(self.start_round_removables)
         gmap.set_removables(self.removables)
 
-        print(f"In restart round: {self.removables=} {self.start_round_removables=}")
+        print(f"In restart round: {len(self.removables)=} {len(self.start_round_removables)=}")
 
         self.towers = []
         self.totems = []
@@ -260,7 +260,7 @@ class Game():
             self.start_round_towers = []
             for tower in self.towers:
                 self.start_round_towers.append(copy.copy(tower))
-            self.start_round_removables = gmap.get_removables()
+            self.start_round_removables = copy.deepcopy(self.removables) #gmap.get_removables()
             print(f"Level complete {self.start_round_removables=}")
 
             self.level_num += 1
