@@ -33,6 +33,7 @@ house3_img = pygame.transform.scale(house3_img, (160, 140))
 tree_img = pygame.image.load('images/tree1.png')
 tree1_img = pygame.transform.scale(tree_img, (70, 160))
 bigtree_img = pygame.transform.scale(tree_img, (90, 180))
+shorttree_img = pygame.transform.scale(tree_img, (90, 60))
 shortwidetree_img = pygame.transform.scale(tree_img, (160, 60))
 
 explosion_img = pygame.image.load('images/explosion.png')
@@ -40,6 +41,7 @@ explosion_img = pygame.image.load('images/explosion.png')
 # Used in removables so does not store images
 img_dict = {
     "bigtree_img": bigtree_img,
+    "shorttree_img": shorttree_img,
     "shortwidetree_img": shortwidetree_img,
     "house1_img": house1_img,
     "house2_img": house2_img,
@@ -932,34 +934,36 @@ class Tmp(Map):
                        (580, 510),(580, 130), (710, 130)
                        ]]
 
-        self.tree1 = Removable((304, 55, 90, 180), 300, "bigtree_img")
+        self.tree1 = Removable((304, 55, 90, 180), 200, "bigtree_img")
         self.tree2 = Removable((304, 330, 90, 180), 500, "bigtree_img")
 
         #self.house1 = Removable((1, 150, 160, 140), 750, "house1_img")
         #self.house2 = Removable((1, 290, 160, 140), 300, "house2_img")
         #self.house3 = Removable((1, 440, 160, 140), 300, "house3_img")
 
-        self.tree3 = Removable((15, 150, 160, 140), 750, "bigtree_img")
+        self.tree3 = Removable((15, 150, 160, 140), 500, "bigtree_img")
         self.tree4 = Removable((15, 340, 160, 140), 300, "bigtree_img")
         self.tree5 = Removable((595, 150, 160, 140), 500, "bigtree_img")
         self.tree6 = Removable((595, 340, 160, 140), 300, "bigtree_img")
 
         self.house4 = Removable((125, 80, 160, 140), 750, "house1_img")
         self.house5 = Removable((125, 220, 160, 140), 750, "house2_img")
-        self.house6 = Removable((125, 360, 160, 140), 1000, "house3_img")
+        self.house6 = Removable((125, 360, 160, 140), 750, "house3_img")
 
         self.house7 = Removable((420, 80, 160, 140), 300, "house1_img")
         self.house8 = Removable((420, 220, 160, 140), 500, "house2_img")
         self.house9 = Removable((420, 360, 160, 140), 750, "house3_img")
 
-        self.tree7 = Removable((120, 525, 160, 60), 200, "shortwidetree_img")
-        self.tree8 = Removable((420, 525, 160, 60), 200, "shortwidetree_img")
+        self.tree7 = Removable((120, 525, 160, 60), 150, "shortwidetree_img")
+        self.tree8 = Removable((420, 525, 160, 60), 150, "shortwidetree_img")
+        self.tree9 = Removable((15, 50, 160, 60), 100, "shorttree_img")
+        self.tree10 = Removable((595, 50, 160, 60), 100, "shorttree_img")
 
 
-
+        # TODO - need to deal with clicking through inset window.
         self.removables = [self.tree1, self.tree2, self.tree3,
                            self.tree4, self.tree5, self.tree6,
-                           self.tree7, self.tree8,
+                           self.tree7, self.tree8, self.tree9, self.tree10,
                            #self.house1, self.house2, self.house3,
                            self.house4, self.house5, self.house6,
                            self.house7, self.house8, self.house9
