@@ -33,13 +33,17 @@ house3_img = pygame.transform.scale(house3_img, (160, 140))
 tree_img = pygame.image.load('images/tree1.png')
 tree1_img = pygame.transform.scale(tree_img, (70, 160))
 bigtree_img = pygame.transform.scale(tree_img, (90, 180))
+shortwidetree_img = pygame.transform.scale(tree_img, (160, 60))
 
 explosion_img = pygame.image.load('images/explosion.png')
 
 # Used in removables so does not store images
 img_dict = {
     "bigtree_img": bigtree_img,
-    "house3_img": house3_img
+    "shortwidetree_img": shortwidetree_img,
+    "house1_img": house1_img,
+    "house2_img": house2_img,
+    "house3_img": house3_img,
     }
 
 maps_per_page = 6
@@ -911,7 +915,78 @@ class Hermit2(Map):
         self.removables = removables
 
     def remove(self, rem, display, window):
-        # TODO Need to save removal somehow when save progress
+        super().remove(rem, display, window)
+        self.removables.remove(rem)
+
+
+class Tmp(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Tmp"
+        self.difficulty = 1
+        self.background_color = (184, 115, 51) #(53, 94, 59)
+        self.path_thickness = 20
+        self.path_color = (178, 190, 181)
+        self.paths = [[(0, 130), (120, 130),(120, 510),(285, 510),
+                       (285, 242),(410, 242),(410, 510),
+                       (580, 510),(580, 130), (710, 130)
+                       ]]
+
+        self.tree1 = Removable((304, 55, 90, 180), 300, "bigtree_img")
+        self.tree2 = Removable((304, 330, 90, 180), 500, "bigtree_img")
+
+        #self.house1 = Removable((1, 150, 160, 140), 750, "house1_img")
+        #self.house2 = Removable((1, 290, 160, 140), 300, "house2_img")
+        #self.house3 = Removable((1, 440, 160, 140), 300, "house3_img")
+
+        self.tree3 = Removable((15, 150, 160, 140), 750, "bigtree_img")
+        self.tree4 = Removable((15, 340, 160, 140), 300, "bigtree_img")
+        self.tree5 = Removable((595, 150, 160, 140), 500, "bigtree_img")
+        self.tree6 = Removable((595, 340, 160, 140), 300, "bigtree_img")
+
+        self.house4 = Removable((125, 80, 160, 140), 750, "house1_img")
+        self.house5 = Removable((125, 220, 160, 140), 750, "house2_img")
+        self.house6 = Removable((125, 360, 160, 140), 1000, "house3_img")
+
+        self.house7 = Removable((420, 80, 160, 140), 300, "house1_img")
+        self.house8 = Removable((420, 220, 160, 140), 500, "house2_img")
+        self.house9 = Removable((420, 360, 160, 140), 750, "house3_img")
+
+        self.tree7 = Removable((120, 525, 160, 60), 200, "shortwidetree_img")
+        self.tree8 = Removable((420, 525, 160, 60), 200, "shortwidetree_img")
+
+
+
+        self.removables = [self.tree1, self.tree2, self.tree3,
+                           self.tree4, self.tree5, self.tree6,
+                           self.tree7, self.tree8,
+                           #self.house1, self.house2, self.house3,
+                           self.house4, self.house5, self.house6,
+                           self.house7, self.house8, self.house9
+                           ]
+
+    # This stuff below might be general enough to be inheritable
+    def paint_features(self, window):
+        for ob in self.removables:
+            window.blit(img_dict[ob.img], ob.loc)
+
+    def can_I_place(self, pos, w, h):
+        for obstacle in self.removables:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle.loc, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return [removable.loc for removable in self.removables]
+
+    def get_removables(self):
+        return self.removables
+
+    def set_removables(self, removables):
+        self.removables = removables
+
+    def remove(self, rem, display, window):
         super().remove(rem, display, window)
         self.removables.remove(rem)
 
@@ -920,6 +995,7 @@ class Hermit2(Map):
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Village, Vase, Castle, Pentagram, Distortion, DarkForest, Hermit, Hermit2] # Eagle]
+                Village, Vase, Castle, Pentagram, Distortion, DarkForest,
+                Hermit, Hermit2, Tmp] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
