@@ -929,26 +929,26 @@ class Tmp(Map):
         self.background_color = (184, 115, 51) #(53, 94, 59)
         self.path_thickness = 20
         self.path_color = (178, 190, 181)
-        self.paths = [[(0, 130), (120, 130),(120, 510),(285, 510),
-                       (285, 242),(410, 242),(410, 510),
-                       (580, 510),(580, 130), (710, 130)
+        self.paths = [[(0, 130), (120, 130),(120, 510),(300, 510),
+                       (300, 242),(410, 242),(410, 510),
+                       (590, 510),(590, 130), (700, 130)
                        ]]
 
-        self.tree1 = Removable((304, 55, 90, 180), 200, "bigtree_img")
-        self.tree2 = Removable((304, 330, 90, 180), 500, "bigtree_img")
+        self.tree1 = Removable((310, 55, 90, 180), 200, "bigtree_img")
+        self.tree2 = Removable((310, 330, 90, 180), 500, "bigtree_img")
 
         #self.house1 = Removable((1, 150, 160, 140), 750, "house1_img")
         #self.house2 = Removable((1, 290, 160, 140), 300, "house2_img")
         #self.house3 = Removable((1, 440, 160, 140), 300, "house3_img")
 
-        self.tree3 = Removable((15, 150, 160, 140), 500, "bigtree_img")
-        self.tree4 = Removable((15, 340, 160, 140), 300, "bigtree_img")
-        self.tree5 = Removable((595, 150, 160, 140), 500, "bigtree_img")
-        self.tree6 = Removable((595, 340, 160, 140), 300, "bigtree_img")
+        self.tree3 = Removable((15, 150, 90, 180), 500, "bigtree_img")
+        self.tree4 = Removable((15, 340, 90, 180), 300, "bigtree_img")
+        self.tree5 = Removable((600, 150, 90, 180), 500, "bigtree_img")
+        self.tree6 = Removable((600, 340, 90, 180), 300, "bigtree_img")
 
-        self.house4 = Removable((125, 80, 160, 140), 750, "house1_img")
-        self.house5 = Removable((125, 220, 160, 140), 750, "house2_img")
-        self.house6 = Removable((125, 360, 160, 140), 750, "house3_img")
+        self.house4 = Removable((130, 80, 160, 140), 750, "house1_img")
+        self.house5 = Removable((130, 220, 160, 140), 750, "house2_img")
+        self.house6 = Removable((130, 360, 160, 140), 750, "house3_img")
 
         self.house7 = Removable((420, 80, 160, 140), 300, "house1_img")
         self.house8 = Removable((420, 220, 160, 140), 500, "house2_img")
@@ -956,8 +956,8 @@ class Tmp(Map):
 
         self.tree7 = Removable((120, 525, 160, 60), 150, "shortwidetree_img")
         self.tree8 = Removable((420, 525, 160, 60), 150, "shortwidetree_img")
-        self.tree9 = Removable((15, 50, 160, 60), 100, "shorttree_img")
-        self.tree10 = Removable((595, 50, 160, 60), 100, "shorttree_img")
+        self.tree9 = Removable((15, 50, 90, 60), 100, "shorttree_img")
+        self.tree10 = Removable((595, 50, 90, 60), 100, "shorttree_img")
 
 
         # TODO - need to deal with clicking through inset window.
