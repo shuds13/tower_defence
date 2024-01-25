@@ -21,7 +21,7 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 150000
+initial_money = 150
 initial_level = 1
 
 print_total_money = False
@@ -227,6 +227,25 @@ while game.running:
                         mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, game.player_money,
                         alert_message, alert_timer, game.game_over
                     )
+                else:
+                    removables = gmap.get_removables()
+                    if removables:  #unnecessary
+                        for rem in removables:
+                            if rem.rect.collidepoint(mouse_pos):
+                                #todo replace with window - and ok button
+                                #print(f"Remove {rem.price}")
+                                msg = f"Remove for {rem.price}"
+                                if game.player_money >= rem.price:
+                                    #window_was = pygame.Surface(window_size)
+                                    #window_was.blit( window, ( 0, 0 ), ( 0, 0, window_size[0], window_size[1] ) )
+                                    #window_was = window.copy()
+                                    if nav.are_you_sure(pygame.display, window, msg, True, "", (0, 0, 128)):
+                                        #pygame.display.flip()
+                                        game.player_money -= rem.price
+                                        #gmap.remove(rem, pygame.display, window_was)
+                                        gmap.remove(rem, pygame.display, window)
+                                else:
+                                    nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 
                 # If user clicked on tower - open the info (inset) window
                 if show_tower_info(game.inset_window):
@@ -237,25 +256,6 @@ while game.running:
                     else:
                         game.inset_window['x'] = game.inset_window['xl']
                     upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
-
-                removables = gmap.get_removables()
-                if removables:  #unnecessary
-                    for rem in removables:
-                        if rem.rect.collidepoint(mouse_pos):
-                            #todo replace with window - and ok button
-                            #print(f"Remove {rem.price}")
-                            msg = f"Remove for {rem.price}"
-                            if game.player_money >= rem.price:
-                                #window_was = pygame.Surface(window_size)
-                                #window_was.blit( window, ( 0, 0 ), ( 0, 0, window_size[0], window_size[1] ) )
-                                #window_was = window.copy()
-                                if nav.are_you_sure(pygame.display, window, msg, True, "", (0, 0, 128)):
-                                    #pygame.display.flip()
-                                    game.player_money -= rem.price
-                                    #gmap.remove(rem, pygame.display, window_was)
-                                    gmap.remove(rem, pygame.display, window)
-                            else:
-                                nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 
             # Place a tower
             else:
