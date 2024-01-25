@@ -921,11 +921,11 @@ class Hermit2(Map):
         self.removables.remove(rem)
 
 
-class Tmp(Map):
+class Suburbia(Map):
     def __init__(self):
         super().__init__()
-        self.name = "Tmp"
-        self.difficulty = 1
+        self.name = "Suburbia"
+        self.difficulty = 2
         self.background_color = (184, 115, 51) #(53, 94, 59)
         self.path_thickness = 20
         self.path_color = (178, 190, 181)
@@ -936,10 +936,6 @@ class Tmp(Map):
 
         self.tree1 = Removable((310, 55, 90, 180), 150, "bigtree_img")
         self.tree2 = Removable((310, 330, 90, 180), 300, "bigtree_img")
-
-        #self.house1 = Removable((1, 150, 160, 140), 750, "house1_img")
-        #self.house2 = Removable((1, 290, 160, 140), 300, "house2_img")
-        #self.house3 = Removable((1, 440, 160, 140), 300, "house3_img")
 
         self.tree3 = Removable((15, 150, 90, 180), 300, "bigtree_img")
         self.tree4 = Removable((15, 340, 90, 180), 200, "bigtree_img")
@@ -1000,6 +996,6 @@ class Tmp(Map):
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                Hermit, Tmp] # Eagle]
+                Hermit, Suburbia] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
