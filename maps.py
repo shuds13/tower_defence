@@ -934,8 +934,8 @@ class Tmp(Map):
                        (590, 510),(590, 130), (700, 130)
                        ]]
 
-        self.tree1 = Removable((310, 55, 90, 180), 200, "bigtree_img")
-        self.tree2 = Removable((310, 330, 90, 180), 500, "bigtree_img")
+        self.tree1 = Removable((310, 55, 90, 180), 150, "bigtree_img")
+        self.tree2 = Removable((310, 330, 90, 180), 300, "bigtree_img")
 
         #self.house1 = Removable((1, 150, 160, 140), 750, "house1_img")
         #self.house2 = Removable((1, 290, 160, 140), 300, "house2_img")
@@ -946,18 +946,18 @@ class Tmp(Map):
         self.tree5 = Removable((600, 150, 90, 180), 500, "bigtree_img")
         self.tree6 = Removable((600, 340, 90, 180), 300, "bigtree_img")
 
-        self.house4 = Removable((130, 80, 160, 140), 750, "house1_img")
-        self.house5 = Removable((130, 220, 160, 140), 750, "house2_img")
-        self.house6 = Removable((130, 360, 160, 140), 750, "house3_img")
+        self.house4 = Removable((130, 80, 160, 140), 400, "house1_img")
+        self.house5 = Removable((130, 220, 160, 140), 300, "house2_img")
+        self.house6 = Removable((130, 360, 160, 140), 500, "house3_img")
 
-        self.house7 = Removable((420, 80, 160, 140), 300, "house1_img")
-        self.house8 = Removable((420, 220, 160, 140), 500, "house2_img")
-        self.house9 = Removable((420, 360, 160, 140), 750, "house3_img")
+        self.house7 = Removable((420, 80, 160, 140), 200, "house1_img")
+        self.house8 = Removable((420, 220, 160, 140), 300, "house2_img")
+        self.house9 = Removable((420, 360, 160, 140), 500, "house3_img")
 
-        self.tree7 = Removable((120, 525, 160, 60), 150, "shortwidetree_img")
-        self.tree8 = Removable((420, 525, 160, 60), 150, "shortwidetree_img")
-        self.tree9 = Removable((15, 50, 90, 60), 100, "shorttree_img")
-        self.tree10 = Removable((595, 50, 90, 60), 100, "shorttree_img")
+        self.tree7 = Removable((120, 525, 160, 60), 100, "shortwidetree_img")
+        self.tree8 = Removable((420, 525, 160, 60), 100, "shortwidetree_img")
+        self.tree9 = Removable((15, 50, 90, 60), 50, "shorttree_img")
+        self.tree10 = Removable((595, 50, 90, 60), 50, "shorttree_img")
 
 
         # TODO - need to deal with clicking through inset window.
