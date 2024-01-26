@@ -16,7 +16,6 @@ troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
 frames_per_second = 60
-#frames_per_second = 180 # tmp
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
     #font = pygame.font.SysFont(None, 36)
@@ -271,7 +270,7 @@ def draw_options_window(display, surface, options_button, game):
                 elif mute_b.collidepoint(mouse_pos):
                     sounds.set_volume(0)
                 elif quiet_b.collidepoint(mouse_pos):
-                    sounds.set_volume(0.4)
+                    sounds.set_volume(0.3)
                 elif normal_b.collidepoint(mouse_pos):
                     sounds.set_volume(1)
         display.flip()
