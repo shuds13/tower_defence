@@ -939,10 +939,10 @@ class Suburbia(Map):
 
         self.tree3 = Removable((15, 150, 90, 180), 300, "bigtree_img")
         self.tree4 = Removable((15, 340, 90, 180), 200, "bigtree_img")
-        self.tree5 = Removable((600, 150, 90, 180), 300, "bigtree_img")
+        self.tree5 = Removable((600, 150, 90, 180), 250, "bigtree_img")
         self.tree6 = Removable((600, 340, 90, 180), 200, "bigtree_img")
 
-        self.house4 = Removable((130, 80, 160, 140), 400, "house1_img")
+        self.house4 = Removable((130, 80, 160, 140), 250, "house1_img")
         self.house5 = Removable((130, 220, 160, 140), 300, "house2_img")
         self.house6 = Removable((130, 360, 160, 140), 500, "house3_img")
 
