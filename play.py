@@ -422,17 +422,17 @@ while game.running:
         lives_text = font.render(f"Lives: {game.lives}", True, (0, 255, 0))
         game.lives_highlight -= 1
     else:
-        lives_text = font.render(f"Lives: {game.lives}", True, (255, 255, 255))
+        lives_text = font.render(f"Lives: {game.lives}", True, gmap.font_color)
 
     window.blit(lives_text, (10, 10))
 
     # In your game loop, within the rendering section
     font = pygame.font.SysFont(None, 36)
-    money_text = font.render(f"Money: ${int(game.player_money)}", True, (255, 255, 255))
+    money_text = font.render(f"Money: ${int(game.player_money)}", True, gmap.font_color)
     window.blit(money_text, (10, 50))  # Adjust position as needed
 
     font = pygame.font.SysFont(None, 36)
-    lives_text = font.render(f"Level: {game.level_num}", True, (255, 255, 255))
+    lives_text = font.render(f"Level: {game.level_num}", True, gmap.font_color)
     window.blit(lives_text, (200, 10))
 
     # Draw enemies

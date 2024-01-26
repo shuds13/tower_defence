@@ -357,6 +357,7 @@ def map_select():
 class Map():
     def __init__(self):
         self.alternate_paths = False
+        self.font_color = (255, 255, 255)
 
     def paint_features(self, window):
         pass
@@ -448,6 +449,7 @@ class Square(Map):
         self.name = "Square"
         self.difficulty = 3
         self.background_color = (54, 69, 79) # (0, 71, 171)
+        self.font_color = (255, 191, 0)
         self.path_thickness = 20
         self.path_color = (233, 220, 201) #(255, 255, 240) # (255,255,255) # (0, 163, 108)
 
@@ -776,6 +778,7 @@ class Hermit(Map):
         self.difficulty = 2
         #self.background_color =  (69, 75, 27) # original
         self.background_color =  (240, 255, 255) # snowy/alpine (kind of like but maybe too bright)
+        self.font_color = (0, 0, 0)  # if keep background white then font black (not sure I will cos too bright)
         #self.background_color =  (114, 47, 55) # (Wine) I like this color but maybe not for this map
         #self.background_color =  (99, 3, 48) # again I like but prob not for this map
         #self.background_color = (103, 49, 71) # same again
