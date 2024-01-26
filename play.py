@@ -473,9 +473,8 @@ while game.running:
         else:
             ghost_tower_image = game.current_tower_type.image
 
-        # Show ghost image if not in side panel
-
-        if mouse_x < 675:
+        # Show ghost image if not in side panel (-10 just for aesthetic reasons)
+        if mouse_x < (window_size[0] - side_panel_width - 10):
             ghost_tower_rect = ghost_tower_image.get_rect(center=(mouse_x, mouse_y))
             window.blit(ghost_tower_image, ghost_tower_rect.topleft)
 

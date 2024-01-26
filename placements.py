@@ -43,12 +43,16 @@ def is_valid_position(newtowertype, pos, paths, towers, options_button, gmap):
     min_distance_to_path = 25 # Minimum allowed distance from the path
     overlap = 15
 
-    #TODO use collide to see if in side panel
-    if pos[0] > 675:  # so no part in side panel
-        return False
-
     w1 = newtowertype.footprint[0]
     h1 = newtowertype.footprint[1]
+
+    # Check no part outside of play window (hardcoding to window size ex. side panel - for now)
+    hw = w1//2
+    hh = h1//2
+    if not (hw < pos[0] < 700-hw):
+        return False
+    if not (hh < pos[1] < 600-hh):
+        return False
 
     if not gmap.can_I_place(pos, w1, h1):
         return False
