@@ -994,11 +994,34 @@ class Suburbia(Map):
         self.removables.remove(rem)
 
 
+# could be simple alternating level path or only certain placements.
+class Krakow(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Krakow"
+        self.difficulty = 2
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+        path1 = [(0, 100), (220, 250), (350, 100), (480, 250), (700, 100)]
+        path2 = [(0, 500), (220, 350), (350, 500), (480, 350), (700, 500)]
+        self.paths = [path1, path2]
+
+        #tmp for testing
+        self.alternate_paths = True
+
+
+
+
+
+
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                Hermit, Suburbia] # Eagle]
+                Hermit, Suburbia, Krakow] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
