@@ -995,23 +995,82 @@ class Suburbia(Map):
 
 
 # could be simple alternating level path or only certain placements.
+#class Krakow(Map):
+    #def __init__(self):
+        #super().__init__()
+        #self.name = "Krakow"
+        #self.difficulty = 2
+        ##self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        #self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        #self.path_thickness = 20
+        #self.path_color = (96, 130, 182) # (178, 190, 181)
+        #path1 = [(0, 100), (220, 250), (350, 100), (480, 250), (700, 100)]
+        #path2 = [(0, 500), (220, 350), (350, 500), (480, 350), (700, 500)]
+        #self.paths = [path1, path2]
+        #self.alternate_paths = True
+
+
 class Krakow(Map):
     def __init__(self):
         super().__init__()
         self.name = "Krakow"
         self.difficulty = 2
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (128, 0, 32) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (0, 0, 0) # (178, 190, 181)
+        path1 = [(0, 100), (220, 250), (350, 50), (480, 250), (700, 100)]
+        path2 = [(0, 500), (220, 350), (350, 550), (480, 350), (700, 500)]
+        self.paths = [path1, path2]
+        self.alternate_paths = True
+
+        topmid = [
+            (315, 250),
+            (315, 190),
+            (350, 150),
+            (385, 190),
+            (385, 250),
+        ]
+        topmidbox = (310, 170, 80, 80)
+
+        botmid = [
+            (315, 350),
+            (315, 410),
+            (350, 450),
+            (385, 410),
+            (385, 350),
+        ]
+        botmidbox = (310, 350, 80, 80)
+
+        self.platforms = [topmid, botmid]
+        self.boxes = [topmidbox, botmidbox]
+
+    def paint_features(self, window):
+        pcol = (0,0,0)
+        for platform in self.platforms:
+            pygame.draw.polygon(window, pcol, platform)
+
+    def can_I_place(self, pos, w, h):
+        for box in self.boxes:
+            if is_rect_in_box(pos[0], pos[1], w, h, box, wh=True):
+                return True
+        return False
+
+# See if cannon does well getting blobs on both paths
+# also again shows raptor too strong (given speed and double damage).
+class CannonTest(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "CannonTest"
+        self.difficulty = 2
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
         self.path_color = (96, 130, 182) # (178, 190, 181)
 
-        path1 = [(0, 100), (220, 250), (350, 100), (480, 250), (700, 100)]
-        path2 = [(0, 500), (220, 350), (350, 500), (480, 350), (700, 500)]
+        path1 = [(0, 300), (700, 300)]
+        path2 = [(0, 340), (700, 340)]
         self.paths = [path1, path2]
-
-        #tmp for testing
-        self.alternate_paths = True
-
 
 
 
@@ -1022,6 +1081,6 @@ class Krakow(Map):
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                Hermit, Suburbia, Krakow] # Eagle]
+                Hermit, Suburbia, Krakow, CannonTest] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
