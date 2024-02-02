@@ -1024,26 +1024,31 @@ class Krakow(Map):
         self.paths = [path1, path2]
         self.alternate_paths = True
 
-        topmid = [
-            (315, 250),
-            (315, 190),
-            (350, 150),
-            (385, 190),
-            (385, 250),
-        ]
+        topmid = [(315, 250), (315, 190), (350, 150), (385, 190), (385, 250)]
         topmidbox = (310, 170, 80, 80)
-
-        botmid = [
-            (315, 350),
-            (315, 410),
-            (350, 450),
-            (385, 410),
-            (385, 350),
-        ]
+        botmid = [(315, 350), (315, 410),(350, 450), (385, 410), (385, 350)]
         botmidbox = (310, 350, 80, 80)
 
-        self.platforms = [topmid, botmid]
-        self.boxes = [topmidbox, botmidbox]
+        botleft = [(170, 440), (230, 440), (230, 500), (170, 500)]
+        blbox = (170, 440, 60, 60)
+        topleft = [(170, 100), (230, 100), (230, 160), (170, 160)]
+        tlbox = (170, 100, 60, 60)
+
+        botright = [(470, 440), (530, 440), (530, 500), (470, 500)]
+        brbox = (470, 440, 60, 60)
+        topright = [(470, 100), (530, 100), (530, 160), (470, 160)]
+        trbox = (470, 100, 60, 60)
+
+        farleft = [(80, 270), (150, 270), (150, 330), (80, 330)]
+        flbox = (80, 270, 70, 60)
+        farright = [(550, 270), (620, 270), (620, 330), (550, 330)]
+        frbox = (550, 270, 70, 60)
+
+
+        self.platforms = [topmid, botmid, topleft, botleft,botright,topright,
+                          farleft, farright]
+        self.boxes = [topmidbox, botmidbox, tlbox, blbox, brbox,trbox,
+                      flbox, frbox]
 
     def paint_features(self, window):
         pcol = (0,0,0)
