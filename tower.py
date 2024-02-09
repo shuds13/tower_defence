@@ -340,7 +340,7 @@ class Burger(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range =  Burger.range
-        self.attack_speed = 70
+        self.attack_speed = 65
         self.damage = 1
         self.cost = Burger.price
         #self.image = Burger.image  # all of these can be done in base class: self.thing = self.__class__.thing
@@ -362,7 +362,7 @@ class Burger(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 55  # lower is better currently
+            self.attack_speed = 52  # lower is better currently
             self.range =  70
             self.image = burger2_img
             self.max_attacks = 6
@@ -370,7 +370,7 @@ class Burger(Tower):
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             self.upgrade_name = "Extra Spicy"
         if self.level == 3:
-            self.attack_speed = 26
+            self.attack_speed = 25
             self.range =  75
             self.image = burger3_img
             self.max_attacks = 8
@@ -475,7 +475,7 @@ class Wizard(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range =  Wizard.range
-        self.attack_speed = 60
+        self.attack_speed = 55
         self.damage = 2
         self.cost = Wizard.price
         self.image = Wizard.image
@@ -517,7 +517,7 @@ class Wizard(Tower):
             self.max_cloud_attacks = 14
             self.upgrade_name = "Mage"
         if self.level == 3:
-            self.attack_speed = 15
+            self.attack_speed = 12
             self.range =  150
             self.image = wizard3_img
             self.cloud_freq = 6  # less freq per regular attack (but more frequent in time)
@@ -757,14 +757,14 @@ class GlueGunner(Tower):
             self.glue_layers = 3
             self.beam_width = 9
             self.max_attacks = 3
-            self.slow_factor = [0.4, 0.75, 0.9]
+            self.slow_factor = [0.4, 0.7, 0.9]
             self.upgrade_name = "Toxic Glue"
 
         if self.level == 3:
             self.attack_speed = 28
             self.image = gluegun3_img
             self.cost += self.upgrade_costs[1]
-            self.slow_factor = [0.4, 0.7, 0.8]
+            self.slow_factor = [0.4, 0.6, 0.8]
             self.beam_width = 10
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
@@ -775,7 +775,7 @@ class GlueGunner(Tower):
             self.attack_tower = True
 
         if self.level == 4:
-            self.attack_speed = 20
+            self.attack_speed = 15
             self.range =  120
             self.image = gluegun4_img
             self.cost += self.upgrade_costs[2]
