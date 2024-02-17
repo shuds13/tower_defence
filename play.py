@@ -25,8 +25,9 @@ initial_money = 150
 initial_level = 1
 
 print_total_money = False
-init_last_round_restarts = 300
+init_last_round_restarts = 5
 restart_testing = False
+print_pos = False
 
 # Initialize Pygame
 pygame.init()
@@ -170,7 +171,8 @@ while game.running:
             mouse_pos = pygame.mouse.get_pos()
 
             # For helping make maps - comment out when done
-            print(mouse_pos)
+            if print_pos:
+                print(mouse_pos)
 
             if options_button.collidepoint(mouse_pos):
                 #nav.draw_options_window(pygame.display, window, options_button)
