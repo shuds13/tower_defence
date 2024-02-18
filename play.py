@@ -336,6 +336,9 @@ while game.running:
         # May not need both conditions as reached_end is set to True when killed
         game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
 
+        # Single reorder to keep targeting first
+        game.enemies.sort(key=lambda x: x.distance, reverse=True)
+
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
             game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
