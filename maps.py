@@ -836,7 +836,6 @@ class Hermit(Map):
         return self.obstacles
 
     def background_mod(self, pos, window):
-        print('here')
         if self.ldmode_rect.collidepoint(pos):
             if self.dark_mode:
                 self.background_color =  (240, 255, 255)
