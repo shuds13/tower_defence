@@ -376,6 +376,9 @@ class Map():
     def set_removables(self, removables):
         pass
 
+    def background_mod(self, pos):
+        pass
+
     def remove(self, rem, display, window):
         sounds.play('place')  #todo choose a sound
         # Need to find a good way to just remove prompt box before showing explosion.
@@ -806,12 +809,21 @@ class Hermit(Map):
         self.tree2 = (400, 110, 90, 180)
         self.house = (270, 300, 160, 140)
         self.obstacles = [self.tree1, self.tree2, self.house]
+        self.dark_mode = False
+        self.ldmode_rect = None
 
     def paint_features(self, window):
         window.blit(bigtree_img, self.tree1)
         window.blit(bigtree_img, self.tree2)
         window.blit(house3_img, self.house)
 
+        mpos = (610, 40)
+        if not self.dark_mode:
+            ldmode_image = lightmode_img
+        else:
+            ldmode_image = darkmode_img
+        self.ldmode_rect = ldmode_image.get_rect(center=mpos)
+        window.blit(ldmode_image, self.ldmode_rect.topleft)
 
     def can_I_place(self, pos, w, h):
         for obstacle in self.obstacles:
@@ -822,6 +834,17 @@ class Hermit(Map):
     def barriers(self):
         """A list of barriers"""
         return self.obstacles
+
+    def background_mod(self, pos, window):
+        print('here')
+        if self.ldmode_rect.collidepoint(pos):
+            if self.dark_mode:
+                self.background_color =  (240, 255, 255)
+                self.font_color = (0, 0, 0)
+            else:
+                self.background_color = (12, 12, 50)
+                self.font_color = (255, 255, 255)
+            self.dark_mode = not self.dark_mode
 
 
 # experiment as not really happy with this level. Too easy for its daunting appearance.
@@ -922,6 +945,7 @@ class Hermit2(Map):
     def remove(self, rem, display, window):
         super().remove(rem, display, window)
         self.removables.remove(rem)
+
 
 
 class Suburbia(Map):

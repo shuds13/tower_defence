@@ -94,7 +94,7 @@ def set_map(gmap):
     global pygame, map_name, paths, background_color, path_thickness, path_color
     map_name = gmap.name
     paths = gmap.paths
-    background_color = gmap.background_color
+    #background_color = gmap.background_color  # should use in place - esp if can change
     path_thickness = gmap.path_thickness
     path_color = gmap.path_color
     pygame.display.set_caption("Tower Defense Game" + f" ({gmap.name})")
@@ -179,6 +179,8 @@ while game.running:
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
                 # prevents restart round from working
                 #continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
+
+            gmap.background_mod(mouse_pos, window)
 
             #if game.game_over or restart_testing:
             if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
@@ -354,7 +356,7 @@ while game.running:
 
 
     # Render game state ------------------------------------------------------
-    window.fill(background_color)  # Clear screen
+    window.fill(gmap.background_color)  # Clear screen
     gmap.paint_features(window)
 
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, game.current_tower_type)
