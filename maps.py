@@ -376,7 +376,7 @@ class Map():
     def set_removables(self, removables):
         pass
 
-    def background_mod(self, pos):
+    def background_mod(self, pos, window):
         pass
 
     def remove(self, rem, display, window):
