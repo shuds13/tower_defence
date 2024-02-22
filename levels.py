@@ -588,13 +588,14 @@ class Level58(Level):
         self.enemy_types = [2, 102, 3, 103, 4, 102]
 
 
+# modified since testing RBE
 class Level59(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 40
-        self.spawn_intervals = [5,5,4]
-        self.phase_counts = [10, 20, 40]
-        self.enemy_types = [15, 14, 13]
+        self.num_enemies = 50
+        self.spawn_intervals = [5,5,4,40,4]
+        self.phase_counts = [10, 20, 40, 41, 50]
+        self.enemy_types = [15, 14, 13, 15, 15]
 
 
 # Plan is make this round 60
@@ -606,6 +607,30 @@ class Level60(Level):
         self.phase_counts = [1]
         self.enemy_types = [301]
 
+class Level61(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 150
+        self.spawn_intervals = [4,  40,  4,   40,  4,   40,  1,   40,  1]
+        self.phase_counts =    [40, 41,  60,  61,  100, 101, 130, 131, 150]
+        self.enemy_types =     [5,  103, 103, 105, 105, 104, 104, 105, 105]
+
+# Troll army
+class Level62(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 194
+        self.spawn_intervals = [3,   12,  30,  15,  30,  10,  30,  15]
+        self.phase_counts =    [100, 135, 136, 142, 143, 183, 184, 194]
+        self.enemy_types =     [3,   11,  12,  12,  11,  11,  12,  12]
+
+class Level63(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 1
+        self.spawn_intervals = [1]
+        self.phase_counts = [1]
+        self.enemy_types = [110]
 
 # tests only
 #class Level41(Level):
@@ -624,6 +649,6 @@ class Level60(Level):
         #self.phase_counts = [6, 50, 100]
         #self.enemy_types = [201, 11, 10]
 
-max_level = 60  # TODO get this from last key in levels
+max_level = 63  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}

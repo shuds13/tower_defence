@@ -197,8 +197,11 @@ class Game():
             self.money_per_hit = 0.4
         elif self.level_num < 50:
             self.money_per_hit = 0.3
-        else:
+        elif self.level_num < 60:
             self.money_per_hit = 0.2
+        else:
+            self.money_per_hit = 0.1
+
         return self.money_per_hit
 
     def level_complete(self, display, window, window_size, lev, gmap, init_last_round_restarts, account):
