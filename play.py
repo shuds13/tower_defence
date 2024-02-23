@@ -21,9 +21,8 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 32000
-initial_level = 61
-
+initial_money = 9000
+initial_level = 62
 print_total_money = False
 init_last_round_restarts = 5
 restart_testing = False
@@ -344,7 +343,9 @@ while game.running:
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
             game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
-            continue # this was in if not at max level - does it matter being done either way
+            #testing remove continue - is it needed? Might finish levels clean - inc. toxic
+            #toxic still dont dusappear till after the WIN has finished.
+            #continue # this was in if not at max level - does it matter being done either way
 
         if game.lives <= 0:
             game.game_over = True
