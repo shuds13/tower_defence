@@ -15,7 +15,7 @@ king_img = pygame.transform.scale(king_img, (100, 100))
 king2_img = pygame.image.load('images/kingblob_green.png')
 king2_img = pygame.transform.scale(king2_img, (110, 110))
 burger_king_img = pygame.image.load('images/burger_king.png')
-burger_king_img = pygame.transform.scale(burger_king_img, (100, 100))
+burger_king_img = pygame.transform.scale(burger_king_img, (120, 120))
 
 class Enemy:
     health = 1

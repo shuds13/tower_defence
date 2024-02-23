@@ -658,6 +658,6 @@ class Level64(Level):
         #self.phase_counts = [6, 50, 100]
         #self.enemy_types = [201, 11, 10]
 
-max_level = 63  # TODO get this from last key in levels
+max_level = 64  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
