@@ -439,6 +439,8 @@ class KingBlob2(KingBlob):
         self.size = 3
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
+
+# Not sure if this should release meteors or big ghosts.
 class BurgerKing(KingBlob):
     health = 200
     spawn = True
