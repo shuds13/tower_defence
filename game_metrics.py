@@ -38,7 +38,7 @@ class Game():
         self.current_tower_type = None
         self.inset_window = inset_window
         self.inset_window['active'] = False
-        self.money_per_hit = 1.0
+        self.money_per_hit = self.set_money_per_hit() # 1.0
         self.failed = False
 
         self.start_round_money = initial_money
@@ -185,6 +185,7 @@ class Game():
         self.total_hits += hits
         self.player_money += hits * self.money_per_hit
         self.total_money += hits * self.money_per_hit
+        #print(f"process_hits {self.money_per_hit=}")
 
     def set_money_per_hit(self):
         if self.level_num < 10:
@@ -200,7 +201,9 @@ class Game():
         elif self.level_num < 60:
             self.money_per_hit = 0.2
         else:
-            self.money_per_hit = 0.1
+            self.money_per_hit = 0.15
+
+        #print(f"{self.money_per_hit=}")
 
         return self.money_per_hit
 
