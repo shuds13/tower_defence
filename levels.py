@@ -651,10 +651,10 @@ class Level65(Level):
 class Level66(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 300
-        self.spawn_intervals = [2,   3,   6,   4,   3,   2]
-        self.phase_counts =    [100, 120, 150, 200, 260, 300]
-        self.enemy_types =     [5,   10,  14,  13,  4,   13]
+        self.num_enemies = 270
+        self.spawn_intervals = [2,   3,   6,   4,   3,   7]
+        self.phase_counts =    [100, 120, 150, 200, 260, 270]
+        self.enemy_types =     [5,   10,  14,  13,  4,   16]
 
 # tests only
 #class Level41(Level):

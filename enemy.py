@@ -7,6 +7,7 @@ ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 big_ghost_img = pygame.transform.scale(ghost_img, (70, 70))
 devil_img = pygame.image.load('images/devil.png')
 devil_img = pygame.transform.scale(devil_img, (50, 50))
+bigdevil_img = pygame.transform.scale(devil_img, (75, 75))
 troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
 giant_troll_img = pygame.transform.scale(troll_img, (90, 90))
@@ -327,6 +328,17 @@ class Devil(Ghost):
         self.image = devil_img
         self.size = 2
 
+class BigDevil(Devil):
+    health = 80
+    spawn = True
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.base_speed = 3
+        self.speed = 3
+        self.image = bigdevil_img
+        self.size = 3
+        self.spawn_type = Devil
+        self.spawn_count = 10
 
 class Troll(Enemy):
     health = 20
@@ -467,7 +479,7 @@ class BurgerKing(KingBlob):
 
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
-               10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor,
+               10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor, 16: BigDevil,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 105:Enemy105,
                110: BurgerKing,
                201: KingBlob, 301: KingBlob2}
