@@ -18,6 +18,10 @@ king2_img = pygame.transform.scale(king2_img, (110, 110))
 burger_king_img = pygame.image.load('images/burger_king.png')
 burger_king_img = pygame.transform.scale(burger_king_img, (120, 120))
 
+armored_troll_img = pygame.image.load('images/armored_troll.png')
+armored_troll_img = pygame.transform.scale(armored_troll_img, (60, 60))
+
+
 class Enemy:
     health = 1
     spawn = False
@@ -365,6 +369,19 @@ class Troll(Enemy):
         return score
 
 
+class ArmoredTroll(Troll):
+    health = 50
+    spawn = True
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.image = armored_troll_img
+        self.spawn_type = Enemy103
+        self.spawn_count = 3
+        self.value = self.health + self.spawn_count*self.spawn_type.health
+
+
+# Tempted to give this more health - and even maybe to swap for armored troll in earlier levels...
+# of course will be a large giant armored troll also.
 class GiantTroll(Troll):
     health = 60
     spawn = True
@@ -480,6 +497,7 @@ class BurgerKing(KingBlob):
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor, 16: BigDevil,
+               17: ArmoredTroll,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 105:Enemy105,
                110: BurgerKing,
                201: KingBlob, 301: KingBlob2}

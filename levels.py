@@ -656,6 +656,15 @@ class Level66(Level):
         self.phase_counts =    [100, 120, 150, 200, 260, 270]
         self.enemy_types =     [5,   10,  14,  13,  4,   16]
 
+class Level67(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 300
+        self.spawn_intervals = [1,   3,   1,   5,   40,  20,  10]
+        self.phase_counts =    [100, 150, 200, 240, 241, 270, 300]
+        self.enemy_types =     [2,   102, 3,   11,  17,  17,  17]
+
+
 # tests only
 #class Level41(Level):
     #def __init__(self):
@@ -673,6 +682,6 @@ class Level66(Level):
         #self.phase_counts = [6, 50, 100]
         #self.enemy_types = [201, 11, 10]
 
-max_level = 66  # TODO get this from last key in levels
+max_level = 67  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
