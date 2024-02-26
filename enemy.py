@@ -20,6 +20,7 @@ burger_king_img = pygame.transform.scale(burger_king_img, (120, 120))
 
 armored_troll_img = pygame.image.load('images/armored_troll.png')
 armored_troll_img = pygame.transform.scale(armored_troll_img, (60, 60))
+giant_armored_troll_img = pygame.transform.scale(armored_troll_img, (100, 100))
 
 
 class Enemy:
@@ -370,7 +371,7 @@ class Troll(Enemy):
 
 
 class ArmoredTroll(Troll):
-    health = 50
+    health = 70
     spawn = True
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
@@ -397,6 +398,16 @@ class GiantTroll(Troll):
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
 
+class ArmoredGiantTroll(GiantTroll):
+    health = 220
+    spawn = True
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.image = giant_armored_troll_img
+        self.spawn_count = 25
+        self.value = self.health + self.spawn_count*self.spawn_type.health
+
+
 class Meteor(Enemy):
     health = 10
     value = 30 # tmp until get new function working
@@ -413,6 +424,23 @@ class Meteor(Enemy):
         self.fortified = True
         self.fort_health = self.health
         self.value = self.health + self.spawn_count*self.spawn_type.health
+
+class BlackMeteor(Enemy):
+    health = 40
+    spawn = True
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.base_speed = 7  # could make faster also
+        self.speed = self.base_speed
+        #self.spawn_on_die = True
+        self.spawn_type = Enemy104
+        self.spawn_count = 10
+        self.size = 2
+        self.color = (0,0,0) # (255, 36, 0) # (139, 0, 0) # (253, 208, 23)  # (74, 4, 4) # (196, 180, 84)
+        self.fortified = True
+        self.fort_health = 10
+        self.value = self.health + self.spawn_count*self.spawn_type.health
+
 
 
 class KingBlob(Enemy):
@@ -497,7 +525,8 @@ class BurgerKing(KingBlob):
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor, 16: BigDevil,
-               17: ArmoredTroll,
+               17: ArmoredTroll, 18: ArmoredGiantTroll,
+               19: BlackMeteor,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 105:Enemy105,
                110: BurgerKing,
                201: KingBlob, 301: KingBlob2}
