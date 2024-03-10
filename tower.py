@@ -346,7 +346,7 @@ class Burger(Tower):
         #self.image = Burger.image  # all of these can be done in base class: self.thing = self.__class__.thing
         self.level = 1
         self.max_attacks = 4
-        self.upgrade_costs = [95, 220, 680] # , 1200]
+        self.upgrade_costs = [85, 220, 680] # , 1200]
         # range_mod cant be used here - so would have to update when update range_mod
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         self.upgrade_name = "With cheese"
@@ -362,7 +362,7 @@ class Burger(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 52  # lower is better currently
+            self.attack_speed = 50  # lower is better currently
             self.range =  70
             self.image = burger2_img
             self.max_attacks = 6
@@ -475,7 +475,7 @@ class Wizard(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range =  Wizard.range
-        self.attack_speed = 55
+        self.attack_speed = 50  # made a bit faster - but maybe reduce cloud freq.
         self.damage = 2
         self.cost = Wizard.price
         self.image = Wizard.image
