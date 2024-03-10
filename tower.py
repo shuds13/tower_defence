@@ -1022,6 +1022,11 @@ class Totem(Tower):
             tower.speed_mod = 0.60 # while addin nothing else - boost a bit
 
 
+# some ideas names
+#
+# Heavy Cannon (or Gun if not room) / Bombard
+# Giant Cannon  / Big Bertha / Mons Meg
+# Doomsday (Gun) / Thor
 class Cannon(Tower):
 
     price = 150
@@ -1044,7 +1049,7 @@ class Cannon(Tower):
         self.upgrade_costs = [300, 750, 2000]
         self.glow_radius = 10
         self.glow_time = 5
-        #self.upgrade_name = "Ghost Sight"
+        self.upgrade_name = "Heavy Gun"
 
     def load_images(self):
         if self.level == 1:
@@ -1064,7 +1069,7 @@ class Cannon(Tower):
             self.image = cannon2_img
             #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
-            #self.upgrade_name = "Extra Spicy"
+            self.upgrade_name = "Bombard"
             self.range = 130
             self.glow_radius = 16
         if self.level == 3:
@@ -1074,7 +1079,7 @@ class Cannon(Tower):
             #self.image = cannon_img
             #self.max_attacks = 10
             self.cost += self.upgrade_costs[1]
-            #self.upgrade_name = "Extra Spicy"
+            self.upgrade_name = "Doomday"
             self.glow_radius = 20
         if self.level == 4:
             self.image = cannon4_img
