@@ -1107,10 +1107,31 @@ class CannonTest(Map):
         self.paths = [path1, path2]
 
 
+class XXX(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "XXX"
+        self.difficulty = 2
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+        #path1 = [(0, 300), (700, 300)]
+        #path2 = [(0, 340), (700, 340)]
+
+        path1 = [(300, 0),(300, 130),(510, 130),(510, 300),
+                 (330, 300),(330, 460),(700, 460)]
+
+        path2 = [(0, 230),(430, 230),(430, 400),(200, 400),(200, 600)]
+
+        self.paths = [path1, path2]
+
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow] # Eagle]
+                CannonTest, Hermit, Suburbia, Krakow, XXX] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
