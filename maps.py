@@ -1111,7 +1111,7 @@ class XXX(Map):
     def __init__(self):
         super().__init__()
         self.name = "XXX"
-        self.difficulty = 2
+        self.difficulty = 1
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
@@ -1128,10 +1128,43 @@ class XXX(Map):
         self.paths = [path1, path2]
 
 
+class YYY(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "YYY"
+        self.difficulty = 2
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+        #path1 = [(0, 300), (700, 300)]
+        #path2 = [(0, 340), (700, 340)]
+
+        # dont think this is possible - cant even get started
+        #path1 = [(37, 6), (101, 196), (52, 389), (110, 516), (70, 592)]
+        #path2 = [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
+        #path3 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
+        #path4 = [(584, 6), (654, 171), (587, 354), (651, 513), (618, 596)]
+
+        # too easy - and might be better if all at once.
+        #path1 = [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
+        #path2 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
+        #path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
+
+        path1 = [(204, 6), (260, 160), (194, 305), (280, 436), (191, 598)]
+        path2 = [(488, 3), (545, 149), (470, 355), (548, 484), (490, 595)]
+        path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
+
+
+        #self.paths = [path1, path2, path3, path4]
+        self.paths = [path1, path2, path3]
+        self.alternate_paths = True
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow, XXX] # Eagle]
+                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
