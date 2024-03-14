@@ -20,13 +20,13 @@ from game_metrics import Game
 pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
-initial_lives = 30
-initial_money = 9000
-initial_level = 62
+initial_lives = 300
+initial_money = 150
+initial_level = 1
 print_total_money = False
-init_last_round_restarts = 5
+init_last_round_restarts = 500
 restart_testing = False
-print_pos = False
+print_pos = True
 
 # Initialize Pygame
 pygame.init()
@@ -162,6 +162,9 @@ game.set_money_per_hit()
 
 # Game loop
 while game.running:
+
+    #for now
+    paths = gmap.paths
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

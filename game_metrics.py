@@ -220,6 +220,8 @@ class Game():
         self.lives_lost_round = self.start_round_lives - self.lives
         self.lives_lost += self.lives_lost_round
 
+        gmap.map_update(self.level_num)  # for rare maps that may update after certain levels
+
         if self.level_num % 10 == 0:
             self.lives += 10
             self.lives_highlight = self.highlight_time

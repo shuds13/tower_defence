@@ -390,6 +390,10 @@ class Map():
         #time.sleep(1)
         #pass
 
+    # if a map changes at any point
+    def map_update(self, lev):
+        pass
+
 
 class PicnicPlace(Map):
     def __init__(self):
@@ -1152,14 +1156,30 @@ class YYY(Map):
         #path2 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
         #path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
 
-        path1 = [(204, 6), (260, 160), (194, 305), (280, 436), (191, 598)]
-        path2 = [(488, 3), (545, 149), (470, 355), (548, 484), (490, 595)]
+        # too hard at start - gets easier
+        #path1 = [(204, 6), (260, 160), (194, 305), (280, 436), (191, 598)]
+        #path2 = [(488, 3), (545, 149), (470, 355), (548, 484), (490, 595)]
+        #path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
+
+        #what if paths get further apart as go
+        path1 = [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
+        path2 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
         path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
 
 
-        #self.paths = [path1, path2, path3, path4]
         self.paths = [path1, path2, path3]
         self.alternate_paths = True
+
+    # TODO - make sure saves okay - this needs to be right for level you are on!
+    # might need something to set i reset_round or something
+    def map_update(self, lev):
+        move=10 #15
+        if lev % 9 == 0:
+        #if lev % 10 == 0:  #mayb 9 as 3 tracks
+            print('here', move)
+            self.paths[0] = [(x-move, y) for x, y in self.paths[0]]
+            self.paths[1] = [(x+move, y) for x, y in self.paths[1]]
+            print(f"{self.paths[0]=} --- {self.paths[1]=}")
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
