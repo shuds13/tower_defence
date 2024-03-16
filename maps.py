@@ -1181,10 +1181,50 @@ class YYY(Map):
             self.paths[1] = [(x+move, y) for x, y in self.paths[1]]
             print(f"{self.paths[0]=} --- {self.paths[1]=}")
 
+
+class NKKK(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "nkkk"
+        self.difficulty = 2
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+
+        #what if paths get further apart as go
+        path1 = [(368, 2),(690, 266),(319, 583), (4, 268), (341, 8)]
+        path2 = [(14, 12), (408, 263), (6, 588)]
+        path3 = [(639, 15), (226, 273), (679, 576)]
+
+
+        self.paths = [path1, path2, path3]
+        #self.alternate_paths = True
+
+
+class Pentagram3(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Pentagram3"
+        self.difficulty = 2
+        path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
+
+        path2 = [(100,350),(350,500),(600,350),(500,100),(200,100),(100,350),] #, (150, 500)]
+        self.background_color = (0, 0, 0) #(50, 25, 0)
+        self.color_inside = (145, 56, 49)
+        self.path_thickness = 15
+        self.path_color = (196, 180, 84) #(0, 211, 211)
+        self.paths = [path1, path2]
+
+
+    def paint_features(self, window):
+        pygame.draw.polygon(window, self.color_inside, self.paths[0])
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY] # Eagle]
+                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, NKKK, Pentagram3] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
