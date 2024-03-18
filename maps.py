@@ -1194,12 +1194,14 @@ class NKKK(Map):
 
 
         #what if paths get further apart as go
-        path1 = [(368, 2),(690, 266),(319, 583), (4, 268), (341, 8)]
-        path2 = [(14, 12), (408, 263), (6, 588)]
-        path3 = [(639, 15), (226, 273), (679, 576)]
+        #path1 = [(368, 2),(690, 266),(319, 583), (4, 268), (341, 8)]
+        path1 = [(350, 0),(690, 300), (319, 583)]
+        path2 = [(14, 12), (450, 300), (6, 588)]
+        path3 = [(639, 15), (250, 300), (679, 576)]
+        path4 = [(350, 0), (10, 300), (319, 583)]
 
 
-        self.paths = [path1, path2, path3]
+        self.paths = [path1, path2, path3, path4]
         #self.alternate_paths = True
 
 
@@ -1217,9 +1219,21 @@ class Pentagram3(Map):
         self.path_color = (196, 180, 84) #(0, 211, 211)
         self.paths = [path1, path2]
 
+        t1 = (310, 350 , 390, 475)
+        t2 = (410, 260, 560, 350)
+        t3 = (380, 130, 480, 250)
+        t4 = (220, 120, 330, 240)
+        t5 = (140, 260, 290, 350)
+        self.places = [t1, t2, t3, t4, t5]
 
     def paint_features(self, window):
         pygame.draw.polygon(window, self.color_inside, self.paths[0])
+
+    def can_I_place(self, pos, w, h):
+        for place in self.places:
+            if is_rect_in_box(pos[0], pos[1], w, h, place):
+                return True
+        return False
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
