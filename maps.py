@@ -38,6 +38,10 @@ shortwidetree_img = pygame.transform.scale(tree_img, (160, 60))
 
 explosion_img = pygame.image.load('images/explosion.png')
 
+#candle_img = pygame.image.load('images/candle.png')
+#candle_img = pygame.transform.scale(candle_img, (50, 80))
+
+
 # Used in removables so does not store images
 img_dict = {
     "bigtree_img": bigtree_img,
@@ -1204,7 +1208,8 @@ class NKKK(Map):
         self.paths = [path1, path2, path3, path4]
         #self.alternate_paths = True
 
-
+# still too easy - tempted to add removables - like eyes in the triangles.
+# or to make more paths - not so long
 class Pentagram3(Map):
     def __init__(self):
         super().__init__()
@@ -1213,8 +1218,10 @@ class Pentagram3(Map):
         path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
 
         path2 = [(100,350),(350,500),(600,350),(500,100),(200,100),(100,350),] #, (150, 500)]
-        self.background_color = (0, 0, 0) #(50, 25, 0)
-        self.color_inside = (145, 56, 49)
+
+        # which way round should colors be?
+        self.background_color = (145, 56, 49) # (0, 0, 0) #(50, 25, 0)
+        self.color_inside =  (0, 0, 0) # (145, 56, 49)
         self.path_thickness = 15
         self.path_color = (196, 180, 84) #(0, 211, 211)
         self.paths = [path1, path2]
