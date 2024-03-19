@@ -38,8 +38,10 @@ shortwidetree_img = pygame.transform.scale(tree_img, (160, 60))
 
 explosion_img = pygame.image.load('images/explosion.png')
 
-#candle_img = pygame.image.load('images/candle.png')
-#candle_img = pygame.transform.scale(candle_img, (50, 80))
+candle_img = pygame.image.load('images/candle.png')
+candle_img = pygame.transform.scale(candle_img, (50, 80))
+#eye_img = pygame.image.load('images/eye.png')
+#eye_img = pygame.transform.scale(eye_img, (90, 90))
 
 
 # Used in removables so does not store images
@@ -50,6 +52,8 @@ img_dict = {
     "house1_img": house1_img,
     "house2_img": house2_img,
     "house3_img": house3_img,
+    "candle_img": candle_img,
+    #"eye_img": eye_img,
     }
 
 maps_per_page = 6
@@ -1233,14 +1237,43 @@ class Pentagram3(Map):
         t5 = (140, 260, 290, 350)
         self.places = [t1, t2, t3, t4, t5]
 
+        c1 = Removable((430, 265, 50, 80), 100, "candle_img")
+        c2 = Removable((405, 155, 50, 80), 150, "candle_img")
+        c3 = Removable((245, 155, 50, 80), 150, "candle_img")
+        c4 = Removable((220, 265, 50, 80), 100, "candle_img")
+        c5 = Removable((325, 365, 50, 80), 150, "candle_img")
+        #e1 = Removable((190, 260, 90, 90), 100, "eye_img")
+
+        self.removables = [c1, c2, c3, c4, c5]
+
     def paint_features(self, window):
         pygame.draw.polygon(window, self.color_inside, self.paths[0])
 
+        for ob in self.removables:
+            window.blit(img_dict[ob.img], ob.loc)
+
+    #TODO - I need to crop better round the candle - have to place too far away
+    # should candles be blockers as well as preventing placement?
     def can_I_place(self, pos, w, h):
+        for obstacle in self.removables:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle.loc, wh=True):
+                return False
         for place in self.places:
             if is_rect_in_box(pos[0], pos[1], w, h, place):
                 return True
         return False
+
+    def get_removables(self):
+        return self.removables
+
+    def set_removables(self, removables):
+        self.removables = removables
+
+    def remove(self, rem, display, window):
+        super().remove(rem, display, window)
+        self.removables.remove(rem)
+
+
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
