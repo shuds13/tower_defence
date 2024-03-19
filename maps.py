@@ -1217,7 +1217,7 @@ class NKKK(Map):
 class Pentagram3(Map):
     def __init__(self):
         super().__init__()
-        self.name = "Pentagram3"
+        self.name = "Pentagram"
         self.difficulty = 2
         path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
 
