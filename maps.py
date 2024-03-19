@@ -1278,7 +1278,7 @@ class Pentagram3(Map):
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, NKKK, Pentagram3] # Eagle]
+                Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
+                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, NKKK,] # Pentagram3] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
