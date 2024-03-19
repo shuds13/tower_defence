@@ -29,7 +29,7 @@ wizard_img = pygame.transform.scale(wizard_img, (50, 50))
 wizard2_img = pygame.image.load('images/wizard2.png')
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
 wizard3_img = pygame.image.load('images/wizard3.png')
-wizard3_img = pygame.transform.scale(wizard3_img, (58, 58))
+wizard3_img = pygame.transform.scale(wizard3_img, (60, 60))
 wizard4_img = pygame.image.load('images/wizard4.png')
 wizard4_img = pygame.transform.scale(wizard4_img, (58, 60))
 
