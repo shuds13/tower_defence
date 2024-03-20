@@ -1273,6 +1273,10 @@ class Pentagram3(Map):
         super().remove(rem, display, window)
         self.removables.remove(rem)
 
+    def barriers(self):
+        """A list of barriers"""
+        return [removable.loc for removable in self.removables]
+
 
 
 # dont need to be a dictionary
