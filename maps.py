@@ -1237,11 +1237,11 @@ class Pentagram3(Map):
         t5 = (140, 260, 290, 350)
         self.places = [t1, t2, t3, t4, t5]
 
-        c1 = Removable((435, 265, 40, 80), 100, "candle_img")
+        c1 = Removable((435, 265, 40, 80), 150, "candle_img")
         c2 = Removable((408, 150, 40, 80), 150, "candle_img")
         c3 = Removable((250, 150, 40, 80), 150, "candle_img")
-        c4 = Removable((225, 265, 40, 80), 100, "candle_img")
-        c5 = Removable((330, 365, 40, 80), 150, "candle_img")
+        c4 = Removable((225, 265, 40, 80), 150, "candle_img")
+        c5 = Removable((330, 365, 40, 80), 200, "candle_img")
         #e1 = Removable((190, 260, 90, 90), 100, "eye_img")
 
         self.removables = [c1, c2, c3, c4, c5]
