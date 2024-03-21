@@ -137,7 +137,7 @@ class Game():
         self.active = False
         gmap.set_removables(self.removables)
 
-        #print('here', self.level_num)
+        print('here1', self.level_num)
         # TODO - check - may also need in restart round - but maybe not if that calls this anyway
         gmap.map_update(self.level_num, newstart=True)  # for rare maps that may update after certain levels
 
@@ -183,6 +183,10 @@ class Game():
         self.lives_highlight = 0
         self.map_complete = False
         self.aced = False
+
+        #print('here2')
+        #gmap.map_update(self.level_num, newstart=True)
+
         #lives_lost -= lives_lost_round  # no cos if died was not done - so this will be needed if restart when not dead
         #or calc lives lost even when die and then always do it.
 

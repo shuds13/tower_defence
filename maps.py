@@ -1151,8 +1151,14 @@ class YYY(Map):
         self.path_thickness = 20
         self.path_color = (96, 130, 182) # (178, 190, 181)
 
-        self.startpath1 =  [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
-        self.startpath2 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
+        #original
+        #self.startpath1 =  [(254, 0), (292, 160), (244, 305), (312, 470), (241, 598)]
+        #self.startpath2 = [(438, 0), (495, 149), (420, 355), (498, 484), (440, 595)]
+
+        self.startpath1 =  [(250, 0), (320, 150), (240, 320), (310, 470), (240, 600)]
+        self.startpath2 = [(450, 0), (380, 150), (460, 320), (390, 470), (460, 600)]
+
+
         path1 = copy.deepcopy(self.startpath1)
         path2 = copy.deepcopy(self.startpath2)
         path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
@@ -1164,7 +1170,6 @@ class YYY(Map):
     # might need something to set i reset_round or something
     def map_update(self, lev, newstart=False):
         move=10 #15
-
         # should just calc - but would need starting width here so instead iterate over
         if newstart:
             # For round restart - reset first
