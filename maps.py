@@ -399,7 +399,7 @@ class Map():
         #pass
 
     # if a map changes at any point
-    def map_update(self, lev):
+    def map_update(self, lev, newstart=False):
         pass
 
 
@@ -1180,14 +1180,17 @@ class YYY(Map):
 
     # TODO - make sure saves okay - this needs to be right for level you are on!
     # might need something to set i reset_round or something
-    def map_update(self, lev):
+    def map_update(self, lev, newstart=False):
         move=10 #15
+
+        # should just calc - but would need starting width here so instead iterate over
+        if newstart:
+            for lv in range(1, lev+1):
+                self.map_update(lv)
+
         if lev % 9 == 0:
-        #if lev % 10 == 0:  #mayb 9 as 3 tracks
-            print('here', move)
             self.paths[0] = [(x-move, y) for x, y in self.paths[0]]
             self.paths[1] = [(x+move, y) for x, y in self.paths[1]]
-            print(f"{self.paths[0]=} --- {self.paths[1]=}")
 
 
 class NKKK(Map):
@@ -1219,18 +1222,25 @@ class Pentagram3(Map):
         super().__init__()
         self.name = "Pentagram"
         self.difficulty = 2
-        path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
-
-        path2 = [(100,350),(350,500),(600,350),(500,100),(200,100),(100,350),] #, (150, 500)]
 
         # which way round should colors be?
         self.background_color = (145, 56, 49) # (0, 0, 0) #(50, 25, 0)
         self.color_inside =  (0, 0, 0) # (145, 56, 49)
         self.path_thickness = 15
         self.path_color = (196, 180, 84) #(0, 211, 211)
-        self.paths = [path1, path2]
 
-        t1 = (310, 350 , 390, 475)
+        path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
+        path2 = [(100,350),(350,500),(600,350),(500,100),(200,100),(100,350)] #, (150, 500)]
+
+        # alt (could be better with this version to alternate paths on rounds)
+        #path1 = [(100,350),(600,350),(200,100),(350,500)]
+        #path2 = [(600,350), (100,350), (500,100), (350,500)] # star (easy on own)
+        #path3 = [(350,500),(600,350),(500,100),(200,100),(100,350), (350,500)] #, (150, 500)]
+        #self.star = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)]
+
+        self.paths = [path1, path2] #, path3]
+
+        t1 = (310, 350, 390, 475)
         t2 = (410, 260, 560, 350)
         t3 = (380, 130, 480, 250)
         t4 = (220, 120, 330, 240)
@@ -1248,6 +1258,7 @@ class Pentagram3(Map):
 
     def paint_features(self, window):
         pygame.draw.polygon(window, self.color_inside, self.paths[0])
+        #pygame.draw.polygon(window, self.color_inside, self.star)
 
         for ob in self.removables:
             window.blit(img_dict[ob.img], ob.loc)
@@ -1283,6 +1294,6 @@ class Pentagram3(Map):
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, NKKK,] # Pentagram3] # Eagle]
+                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY ] #, NKKK,] # Pentagram3] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
