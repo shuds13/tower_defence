@@ -1,3 +1,4 @@
+import copy
 import pygame
 import navigation as nav
 import time
@@ -1150,30 +1151,11 @@ class YYY(Map):
         self.path_thickness = 20
         self.path_color = (96, 130, 182) # (178, 190, 181)
 
-        #path1 = [(0, 300), (700, 300)]
-        #path2 = [(0, 340), (700, 340)]
-
-        # dont think this is possible - cant even get started
-        #path1 = [(37, 6), (101, 196), (52, 389), (110, 516), (70, 592)]
-        #path2 = [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
-        #path3 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
-        #path4 = [(584, 6), (654, 171), (587, 354), (651, 513), (618, 596)]
-
-        # too easy - and might be better if all at once.
-        #path1 = [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
-        #path2 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
-        #path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
-
-        # too hard at start - gets easier
-        #path1 = [(204, 6), (260, 160), (194, 305), (280, 436), (191, 598)]
-        #path2 = [(488, 3), (545, 149), (470, 355), (548, 484), (490, 595)]
-        #path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
-
-        #what if paths get further apart as go
-        path1 = [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
-        path2 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
+        self.startpath1 =  [(254, 6), (292, 160), (244, 305), (312, 470), (241, 598)]
+        self.startpath2 = [(438, 3), (495, 149), (420, 355), (498, 484), (440, 595)]
+        path1 = copy.deepcopy(self.startpath1)
+        path2 = copy.deepcopy(self.startpath2)
         path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
-
 
         self.paths = [path1, path2, path3]
         self.alternate_paths = True
@@ -1185,10 +1167,15 @@ class YYY(Map):
 
         # should just calc - but would need starting width here so instead iterate over
         if newstart:
+            # For round restart - reset first
+            self.paths[0] = copy.deepcopy(self.startpath1)
+            self.paths[1] = copy.deepcopy(self.startpath2)
+            #print('newstart', lev)
             for lv in range(1, lev+1):
                 self.map_update(lv)
 
         if lev % 9 == 0:
+            print('in loop', lev)
             self.paths[0] = [(x-move, y) for x, y in self.paths[0]]
             self.paths[1] = [(x+move, y) for x, y in self.paths[1]]
 
