@@ -400,7 +400,7 @@ class Map():
         #pass
 
     # if a map changes at any point
-    def map_update(self, lev, newstart=False):
+    def map_update(self, lev): #, newstart=False):
         pass
 
 
@@ -1168,21 +1168,15 @@ class YYY(Map):
 
     # TODO - make sure saves okay - this needs to be right for level you are on!
     # might need something to set i reset_round or something
-    def map_update(self, lev, newstart=False):
-        move=10 #15
-        # should just calc - but would need starting width here so instead iterate over
-        if newstart:
-            # For round restart - reset first
-            self.paths[0] = copy.deepcopy(self.startpath1)
-            self.paths[1] = copy.deepcopy(self.startpath2)
-            #print('newstart', lev)
-            for lv in range(1, lev+1):
-                self.map_update(lv)
+    def map_update(self, lev): #, newstart=False):
+        move = 10
+        lev_freq = 9
+        num_moves = lev // lev_freq
+        updated_move = num_moves * move
 
-        if lev % 9 == 0:
-            print('in loop', lev)
-            self.paths[0] = [(x-move, y) for x, y in self.paths[0]]
-            self.paths[1] = [(x+move, y) for x, y in self.paths[1]]
+        # Update positions for self.paths[0] and self.paths[1] without looping
+        self.paths[0] = [(x - updated_move, y) for x, y in self.startpath1]
+        self.paths[1] = [(x + updated_move, y) for x, y in self.startpath2]
 
 
 class NKKK(Map):

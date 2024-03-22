@@ -21,9 +21,9 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 300
-initial_money = 150000
-initial_level = 64
-print_total_money = False
+initial_money = 150
+initial_level = 1
+print_total_money = True
 init_last_round_restarts = 500
 restart_testing = False
 print_pos = True
@@ -79,7 +79,7 @@ def reset_game(gmap=None):
         gmap = gmap.__class__()  # Reset map - only needed if removables.
         game.set_map(gmap)
         # in case starting at a different level
-        gmap.map_update(initial_level, newstart=True)
+        gmap.map_update(initial_level) #, newstart=True)
     return game, gmap
 
 def in_range(my_range, mouse_x, mouse_y, obj):

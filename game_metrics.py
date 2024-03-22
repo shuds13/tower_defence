@@ -137,9 +137,9 @@ class Game():
         self.active = False
         gmap.set_removables(self.removables)
 
-        print('here1', self.level_num)
+        #print('here1', self.level_num)
         # TODO - check - may also need in restart round - but maybe not if that calls this anyway
-        gmap.map_update(self.level_num, newstart=True)  # for rare maps that may update after certain levels
+        gmap.map_update(self.level_num) #, newstart=True)  # for rare maps that may update after certain levels
 
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
@@ -229,7 +229,8 @@ class Game():
         self.lives_lost_round = self.start_round_lives - self.lives
         self.lives_lost += self.lives_lost_round
 
-        gmap.map_update(self.level_num)  # for rare maps that may update after certain levels
+        # if doint every level reset dont need this
+        #gmap.map_update(self.level_num)  # for rare maps that may update after certain levels
 
         if self.level_num % 10 == 0:
             self.lives += 10
