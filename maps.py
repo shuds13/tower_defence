@@ -1147,9 +1147,10 @@ class YYY(Map):
         self.name = "YYY"
         self.difficulty = 2
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.background_color = (25, 25, 112) # (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
-        self.path_color = (96, 130, 182) # (178, 190, 181)
+        self.path_color = (178, 190, 181)
+        self.color_inside = (225, 219, 88) #  (69, 75, 27)
 
         #original
         #self.startpath1 =  [(254, 0), (292, 160), (244, 305), (312, 470), (241, 598)]
@@ -1177,6 +1178,12 @@ class YYY(Map):
         # Update positions for self.paths[0] and self.paths[1] without looping
         self.paths[0] = [(x - updated_move, y) for x, y in self.startpath1]
         self.paths[1] = [(x + updated_move, y) for x, y in self.startpath2]
+
+    def paint_features(self, window):
+        inner = self.paths[0]+self.paths[1][::-1]
+        #print(f"{inner=}")
+        pygame.draw.polygon(window, self.color_inside, inner)
+        #pygame.draw.polygon(window, self.color_inside, self.star)
 
 
 class NKKK(Map):
