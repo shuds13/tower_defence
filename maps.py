@@ -36,6 +36,7 @@ tree1_img = pygame.transform.scale(tree_img, (70, 160))
 bigtree_img = pygame.transform.scale(tree_img, (90, 180))
 shorttree_img = pygame.transform.scale(tree_img, (90, 60))
 shortwidetree_img = pygame.transform.scale(tree_img, (160, 60))
+gianttree_img = pygame.transform.scale(tree_img, (130, 260))
 
 explosion_img = pygame.image.load('images/explosion.png')
 
@@ -50,6 +51,7 @@ img_dict = {
     "bigtree_img": bigtree_img,
     "shorttree_img": shorttree_img,
     "shortwidetree_img": shortwidetree_img,
+    "gianttree_img": gianttree_img,
     "house1_img": house1_img,
     "house2_img": house2_img,
     "house3_img": house3_img,
@@ -1178,6 +1180,9 @@ class YYY(Map):
         # Update positions for self.paths[0] and self.paths[1] without looping
         self.paths[0] = [(x - updated_move, y) for x, y in self.startpath1]
         self.paths[1] = [(x + updated_move, y) for x, y in self.startpath2]
+        #only problem with this approach is when do I make the sound.
+        #maybe if path has increased.
+        #also now it happens at beginning of level not at the end.
 
     def paint_features(self, window):
         inner = self.paths[0]+self.paths[1][::-1]
@@ -1282,11 +1287,77 @@ class Pentagram3(Map):
         return [removable.loc for removable in self.removables]
 
 
+class AAA(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "AAA"
+        self.difficulty = 3
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+        #self.tree1 = (310, 160, 130, 260)
+        #self.trees = [self.tree1]
+        tree1 = Removable((305, 160, 130, 260), 300, "gianttree_img")
+        self.removables = [tree1]
+
+        path1 = [(520, 0),(520, 250), (450, 250), (450, 180), (700, 180)]
+        path2 = [(220, 600), (220, 310), (290, 310), (290, 380), (0, 380)]
+
+        self.paths = [path1, path2]
+
+    def paint_features(self, window):
+        for ob in self.removables:
+            window.blit(img_dict[ob.img], ob.loc)
+
+    def can_I_place(self, pos, w, h):
+        for obstacle in self.removables:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle.loc, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return [removable.loc for removable in self.removables]
+
+    def get_removables(self):
+        return self.removables
+
+    def set_removables(self, removables):
+        self.removables = removables
+
+    def remove(self, rem, display, window):
+        super().remove(rem, display, window)
+        self.removables.remove(rem)
+
+
+class BBB(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "BBB"
+        self.difficulty = 3
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+        #self.tree1 = (310, 160, 130, 260)
+        #self.trees = [self.tree1]
+        tree1 = Removable((305, 160, 130, 260), 300, "gianttree_img")
+        self.removables = [tree1]
+
+        path1 = [(520, 0),  (520, 310),  (220, 310), (220, 480), (300, 480), (300, 410), (0, 410)]
+        path2 = [(220, 600), (220, 310), (520, 310), (520,100), (450, 100), (450, 180),(690, 180)]
+
+
+        #(520, 0)]# (290, 310), (290, 380), (0, 380)]
+
+        self.paths = [path1, path2]
+
 
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY ] #, NKKK,] # Pentagram3] # Eagle]
+                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, AAA, BBB ] #, NKKK,] # Pentagram3] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
