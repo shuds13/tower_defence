@@ -1354,10 +1354,64 @@ class BBB(Map):
         self.paths = [path1, path2]
 
 
+class CCC(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "CCC"
+        self.difficulty = 3
+        self.alternate_paths = True
+
+        path1 = [(0, 300), (110, 300), (110, 150), (207, 156), (201, 265), (330, 265),
+                 (330, 450), (432, 430),(426, 431), (434, 45), (526, 50), (533, 302), (693, 310)]
+
+        path2 = [(0, 300), (110, 300), (120, 436), (207, 436), (201, 265), (330, 265),
+                 (327, 548), (425, 554),(540, 485),(533, 387),(681, 431)]
+
+            #(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
+                #(430, 350), (430, 300),(330, 300), (330, 450), (200,450), (200,150),
+                #, , ]
+
+        self.paths = [path1, path2]
+        self.background_color = (0,25,40) #night
+        self.path_thickness = 25
+        #self.path_color = (238, 220, 130)  # dev color
+        self.path_color = (89,100,187) # Real color
+
+        self.tree1 = (350, 250, 70, 160)
+        self.tree2 = (450, 170, 70, 160)
+        self.tree3 = (220, 70, 90, 180)
+        self.tree4 = (570, 140, 70, 160)
+        self.tree5 = (11, 100, 70, 160)
+        self.tree6 = (220, 290, 90, 180)
+        self.tree7 = (11, 320, 70, 160)
+
+
+        self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree6, self.tree7]
+
+    def paint_features(self, window):
+        window.blit(tree1_img, self.tree1)
+        window.blit(tree1_img, self.tree2)
+        window.blit(bigtree_img, self.tree3)
+        window.blit(tree1_img, self.tree4)
+        window.blit(tree1_img, self.tree5)
+        window.blit(bigtree_img, self.tree6)
+        window.blit(tree1_img, self.tree7)
+
+    def can_I_place(self, pos, w, h):
+        for tree in self.trees:
+            if not is_rect_out_box(pos[0], pos[1], w, h, tree, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return self.trees
+
+
 # dont need to be a dictionary
 #map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, AAA, BBB ] #, NKKK,] # Pentagram3] # Eagle]
+                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, AAA, BBB, CCC ] #, NKKK,] # Pentagram3] # Eagle]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
