@@ -45,6 +45,8 @@ candle_img = pygame.transform.scale(candle_img, (40, 80))
 #eye_img = pygame.image.load('images/eye.png')
 #eye_img = pygame.transform.scale(eye_img, (90, 90))
 
+gravestone_img = pygame.image.load('images/gravestone.png')
+gravestone_img = pygame.transform.scale(gravestone_img, (55, 88))
 
 # Used in removables so does not store images
 img_dict = {
@@ -56,6 +58,7 @@ img_dict = {
     "house2_img": house2_img,
     "house3_img": house3_img,
     "candle_img": candle_img,
+    "gravestone_img": gravestone_img,
     #"eye_img": eye_img,
     }
 
@@ -760,7 +763,7 @@ class DarkForest(Map):
         self.tree11 = (125, 410, 70, 160)
         #self.moon = (540, 60, 50, 50)
 
-        self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree55,
+        self.objects = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree55,
                       self.tree6, self.tree7, self.tree8, self.tree9, self.tree10, self.tree11]
 
     def paint_features(self, window):
@@ -779,14 +782,14 @@ class DarkForest(Map):
         #window.blit(moon_img, self.moon)
 
     def can_I_place(self, pos, w, h):
-        for tree in self.trees:
+        for tree in self.objects:
             if not is_rect_out_box(pos[0], pos[1], w, h, tree, wh=True):
                 return False
         return True
 
     def barriers(self):
         """A list of barriers"""
-        return self.trees
+        return self.objects
 
 
 class Hermit(Map):
@@ -1384,9 +1387,10 @@ class CCC(Map):
         self.tree5 = (11, 100, 70, 160)
         self.tree6 = (220, 290, 90, 180)
         self.tree7 = (11, 320, 70, 160)
+        self.gravestone = (130, 250, 50, 80)
 
 
-        self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree6, self.tree7]
+        self.objects = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree6, self.tree7, self.gravestone]
 
     def paint_features(self, window):
         window.blit(tree1_img, self.tree1)
@@ -1396,16 +1400,17 @@ class CCC(Map):
         window.blit(tree1_img, self.tree5)
         window.blit(bigtree_img, self.tree6)
         window.blit(tree1_img, self.tree7)
+        window.blit(gravestone_img, self.gravestone)
 
     def can_I_place(self, pos, w, h):
-        for tree in self.trees:
-            if not is_rect_out_box(pos[0], pos[1], w, h, tree, wh=True):
+        for obj in self.objects:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obj, wh=True):
                 return False
         return True
 
     def barriers(self):
         """A list of barriers"""
-        return self.trees
+        return self.objects
 
 
 # dont need to be a dictionary
