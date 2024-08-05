@@ -24,7 +24,6 @@ darkmode_img = pygame.transform.scale(darkmode_img, (50, 50))
 #moon_img = pygame.image.load('images/moon.png')
 #moon_img = pygame.transform.scale(moon_img, (50, 50))
 
-
 house1_img = pygame.image.load('images/house1.png')
 house1_img = pygame.transform.scale(house1_img, (160, 140))
 house2_img = pygame.image.load('images/house2.png')
@@ -1035,26 +1034,10 @@ class Suburbia(Map):
         self.removables.remove(rem)
 
 
-# could be simple alternating level path or only certain placements.
-#class Krakow(Map):
-    #def __init__(self):
-        #super().__init__()
-        #self.name = "Krakow"
-        #self.difficulty = 2
-        ##self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        #self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
-        #self.path_thickness = 20
-        #self.path_color = (96, 130, 182) # (178, 190, 181)
-        #path1 = [(0, 100), (220, 250), (350, 100), (480, 250), (700, 100)]
-        #path2 = [(0, 500), (220, 350), (350, 500), (480, 350), (700, 500)]
-        #self.paths = [path1, path2]
-        #self.alternate_paths = True
-
-
-class Krakow(Map):
+class Catacombs(Map):
     def __init__(self):
         super().__init__()
-        self.name = "Krakow"
+        self.name = "Catacombs"
         self.difficulty = 3  # if anything like now - will be Expert.
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (128, 0, 32) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
@@ -1104,15 +1087,15 @@ class Krakow(Map):
 
 # See if cannon does well getting blobs on both paths
 # also again shows raptor too strong (given speed and double damage).
-class CannonTest(Map):
+class Creek(Map):
     def __init__(self):
         super().__init__()
-        self.name = "CannonTest"
+        self.name = "Creek"
         self.difficulty = 3
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.background_color = (0, 163, 108) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
-        self.path_color = (96, 130, 182) # (178, 190, 181)
+        self.path_color = (20, 52, 164) # (96, 130, 182) # (178, 190, 181)
 
         #path1 = [(0, 300), (700, 300)]
         #path2 = [(0, 340), (700, 340)]
@@ -1125,18 +1108,14 @@ class CannonTest(Map):
         self.paths = [path1, path2]
 
 
-class XXX(Map):
+class Tangle(Map):
     def __init__(self):
         super().__init__()
-        self.name = "XXX"
+        self.name = "Tangle"
         self.difficulty = 1
-        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.background_color = (250, 213, 165) # (224, 191, 184) #(150, 121, 105) #(69, 75, 27)
         self.path_thickness = 20
-        self.path_color = (96, 130, 182) # (178, 190, 181)
-
-        #path1 = [(0, 300), (700, 300)]
-        #path2 = [(0, 340), (700, 340)]
+        self.path_color = (93, 63, 211) #(48, 25, 52) #(128, 0, 128)
 
         path1 = [(300, 0),(300, 130),(510, 130),(510, 300),
                  (330, 300),(330, 460),(700, 460)]
@@ -1146,34 +1125,23 @@ class XXX(Map):
         self.paths = [path1, path2]
 
 
-class YYY(Map):
+class Isthmus(Map):
     def __init__(self):
         super().__init__()
-        self.name = "YYY"
+        self.name = "Isthmus"
         self.difficulty = 2
-        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (25, 25, 112) # (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.background_color = (25, 25, 112)
         self.path_thickness = 20
         self.path_color = (178, 190, 181)
         self.color_inside = (225, 219, 88) #  (69, 75, 27)
-
-        #original
-        #self.startpath1 =  [(254, 0), (292, 160), (244, 305), (312, 470), (241, 598)]
-        #self.startpath2 = [(438, 0), (495, 149), (420, 355), (498, 484), (440, 595)]
-
         self.startpath1 =  [(250, 0), (320, 150), (240, 320), (310, 470), (240, 600)]
         self.startpath2 = [(450, 0), (380, 150), (460, 320), (390, 470), (460, 600)]
-
-
         path1 = copy.deepcopy(self.startpath1)
         path2 = copy.deepcopy(self.startpath2)
         path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
-
         self.paths = [path1, path2, path3]
         self.alternate_paths = True
 
-    # TODO - make sure saves okay - this needs to be right for level you are on!
-    # might need something to set i reset_round or something
     def map_update(self, lev): #, newstart=False):
         move = 10
         lev_freq = 9
@@ -1183,15 +1151,10 @@ class YYY(Map):
         # Update positions for self.paths[0] and self.paths[1] without looping
         self.paths[0] = [(x - updated_move, y) for x, y in self.startpath1]
         self.paths[1] = [(x + updated_move, y) for x, y in self.startpath2]
-        #only problem with this approach is when do I make the sound.
-        #maybe if path has increased.
-        #also now it happens at beginning of level not at the end.
 
     def paint_features(self, window):
         inner = self.paths[0]+self.paths[1][::-1]
-        #print(f"{inner=}")
         pygame.draw.polygon(window, self.color_inside, inner)
-        #pygame.draw.polygon(window, self.color_inside, self.star)
 
 
 class NKKK(Map):
@@ -1357,11 +1320,11 @@ class BBB(Map):
         self.paths = [path1, path2]
 
 
-class CCC(Map):
+class Haunted(Map):
     def __init__(self):
         super().__init__()
-        self.name = "CCC"
-        self.difficulty = 3
+        self.name = "Haunted"
+        self.difficulty = 2
         self.alternate_paths = True
 
         path1 = [(0, 300), (110, 300), (110, 150), (207, 156), (201, 265), (330, 265),
@@ -1413,10 +1376,8 @@ class CCC(Map):
         return self.objects
 
 
-# dont need to be a dictionary
-#map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow, XXX, YYY, AAA, BBB, CCC ] #, NKKK,] # Pentagram3] # Eagle]
+                Tangle, Hermit, Suburbia, Isthmus, Creek, Catacombs] #, AAA, BBB, Haunted]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
