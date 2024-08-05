@@ -2,6 +2,7 @@ import pygame
 import textwrap
 
 r1 = "Click on towers on the right, and click on the map to place."
+r4 = "Too slow? Hit the cog to see speed options."
 r12 = "Ghosts are coming. The wizard can see them, but other towers need a little help."
 r30 = "Report from scouts, trolls spotted!"
 r33 = "Meteors are reinforced and come fast."
@@ -10,6 +11,7 @@ r47 = "Prepare for round 47. If you have money to spend, I would spend it now!"
 
 hints = {
     1: r1,
+    4: r4,
     12: r12,
     30: r30,
     33: r33,
