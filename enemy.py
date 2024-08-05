@@ -512,15 +512,13 @@ class BurgerKing(KingBlob):
         self.size = 3
         #self.value = self.health + self.spawn_count*self.spawn_type.health
         self.value = self.health + self.spawn_count*Meteor.value
-        print(self.value)
-
+        ##print(self.value)
 
     #def recursive_value(self):
         #value = self.health
         #if self.spawn_on_die:
             #value += self.spawn_count * self.spawn_type.recursive_value()
         #return value
-
 
 
 enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
@@ -530,11 +528,3 @@ enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 105:Enemy105,
                110: BurgerKing,
                201: KingBlob, 301: KingBlob2}
-
-
-#test value
-#import pdb;pdb.set_trace()
-path=[(1,2), (3,4)]
-for en in enemy_types.values():
-    enemy = en(path)
-    print(f"{en}: {enemy.value}")

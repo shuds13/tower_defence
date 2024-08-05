@@ -23,10 +23,10 @@ pygame.font.init()  # Initialize font module
 initial_lives = 30
 initial_money = 150
 initial_level = 1
-print_total_money = True
+print_total_money = False
 init_last_round_restarts = 5
 restart_testing = False
-print_pos = True
+print_pos = False
 
 # Initialize Pygame
 pygame.init()
