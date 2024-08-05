@@ -1079,7 +1079,7 @@ class Cannon(Tower):
             #self.image = cannon_img
             #self.max_attacks = 10
             self.cost += self.upgrade_costs[1]
-            self.upgrade_name = "Doomday"
+            self.upgrade_name = "Doomsday"
             self.glow_radius = 20
         if self.level == 4:
             self.image = cannon4_img
