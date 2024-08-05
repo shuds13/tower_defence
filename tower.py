@@ -29,7 +29,7 @@ wizard_img = pygame.transform.scale(wizard_img, (50, 50))
 wizard2_img = pygame.image.load('images/wizard2.png')
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
 wizard3_img = pygame.image.load('images/wizard3.png')
-wizard3_img = pygame.transform.scale(wizard3_img, (58, 58))
+wizard3_img = pygame.transform.scale(wizard3_img, (60, 60))
 wizard4_img = pygame.image.load('images/wizard4.png')
 wizard4_img = pygame.transform.scale(wizard4_img, (58, 60))
 
@@ -346,7 +346,7 @@ class Burger(Tower):
         #self.image = Burger.image  # all of these can be done in base class: self.thing = self.__class__.thing
         self.level = 1
         self.max_attacks = 4
-        self.upgrade_costs = [95, 220, 680] # , 1200]
+        self.upgrade_costs = [85, 220, 680] # , 1200]
         # range_mod cant be used here - so would have to update when update range_mod
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         self.upgrade_name = "With cheese"
@@ -362,7 +362,7 @@ class Burger(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 52  # lower is better currently
+            self.attack_speed = 50  # lower is better currently
             self.range =  70
             self.image = burger2_img
             self.max_attacks = 6
@@ -475,7 +475,7 @@ class Wizard(Tower):
     def __init__(self, position):
         super().__init__(position)
         self.range =  Wizard.range
-        self.attack_speed = 55
+        self.attack_speed = 50  # made a bit faster - but maybe reduce cloud freq.
         self.damage = 2
         self.cost = Wizard.price
         self.image = Wizard.image
@@ -1022,6 +1022,11 @@ class Totem(Tower):
             tower.speed_mod = 0.60 # while addin nothing else - boost a bit
 
 
+# some ideas names
+#
+# Heavy Cannon (or Gun if not room) / Bombard
+# Giant Cannon  / Big Bertha / Mons Meg
+# Doomsday (Gun) / Thor
 class Cannon(Tower):
 
     price = 150
@@ -1044,7 +1049,7 @@ class Cannon(Tower):
         self.upgrade_costs = [300, 750, 2000]
         self.glow_radius = 10
         self.glow_time = 5
-        #self.upgrade_name = "Ghost Sight"
+        self.upgrade_name = "Heavy Gun"
 
     def load_images(self):
         if self.level == 1:
@@ -1064,7 +1069,7 @@ class Cannon(Tower):
             self.image = cannon2_img
             #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
-            #self.upgrade_name = "Extra Spicy"
+            self.upgrade_name = "Bombard"
             self.range = 130
             self.glow_radius = 16
         if self.level == 3:
@@ -1074,7 +1079,7 @@ class Cannon(Tower):
             #self.image = cannon_img
             #self.max_attacks = 10
             self.cost += self.upgrade_costs[1]
-            #self.upgrade_name = "Extra Spicy"
+            self.upgrade_name = "Doomsday"
             self.glow_radius = 20
         if self.level == 4:
             self.image = cannon4_img

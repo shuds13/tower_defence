@@ -1,3 +1,4 @@
+import copy
 import pygame
 import navigation as nav
 import time
@@ -23,7 +24,6 @@ darkmode_img = pygame.transform.scale(darkmode_img, (50, 50))
 #moon_img = pygame.image.load('images/moon.png')
 #moon_img = pygame.transform.scale(moon_img, (50, 50))
 
-
 house1_img = pygame.image.load('images/house1.png')
 house1_img = pygame.transform.scale(house1_img, (160, 140))
 house2_img = pygame.image.load('images/house2.png')
@@ -35,17 +35,30 @@ tree1_img = pygame.transform.scale(tree_img, (70, 160))
 bigtree_img = pygame.transform.scale(tree_img, (90, 180))
 shorttree_img = pygame.transform.scale(tree_img, (90, 60))
 shortwidetree_img = pygame.transform.scale(tree_img, (160, 60))
+gianttree_img = pygame.transform.scale(tree_img, (130, 260))
 
 explosion_img = pygame.image.load('images/explosion.png')
+
+candle_img = pygame.image.load('images/candle.png')
+candle_img = pygame.transform.scale(candle_img, (40, 80))
+#eye_img = pygame.image.load('images/eye.png')
+#eye_img = pygame.transform.scale(eye_img, (90, 90))
+
+gravestone_img = pygame.image.load('images/gravestone.png')
+gravestone_img = pygame.transform.scale(gravestone_img, (55, 88))
 
 # Used in removables so does not store images
 img_dict = {
     "bigtree_img": bigtree_img,
     "shorttree_img": shorttree_img,
     "shortwidetree_img": shortwidetree_img,
+    "gianttree_img": gianttree_img,
     "house1_img": house1_img,
     "house2_img": house2_img,
     "house3_img": house3_img,
+    "candle_img": candle_img,
+    "gravestone_img": gravestone_img,
+    #"eye_img": eye_img,
     }
 
 maps_per_page = 6
@@ -389,6 +402,10 @@ class Map():
         #display.flip()
         #time.sleep(1)
         #pass
+
+    # if a map changes at any point
+    def map_update(self, lev): #, newstart=False):
+        pass
 
 
 class PicnicPlace(Map):
@@ -745,7 +762,7 @@ class DarkForest(Map):
         self.tree11 = (125, 410, 70, 160)
         #self.moon = (540, 60, 50, 50)
 
-        self.trees = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree55,
+        self.objects = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree55,
                       self.tree6, self.tree7, self.tree8, self.tree9, self.tree10, self.tree11]
 
     def paint_features(self, window):
@@ -764,14 +781,14 @@ class DarkForest(Map):
         #window.blit(moon_img, self.moon)
 
     def can_I_place(self, pos, w, h):
-        for tree in self.trees:
+        for tree in self.objects:
             if not is_rect_out_box(pos[0], pos[1], w, h, tree, wh=True):
                 return False
         return True
 
     def barriers(self):
         """A list of barriers"""
-        return self.trees
+        return self.objects
 
 
 class Hermit(Map):
@@ -1017,26 +1034,10 @@ class Suburbia(Map):
         self.removables.remove(rem)
 
 
-# could be simple alternating level path or only certain placements.
-#class Krakow(Map):
-    #def __init__(self):
-        #super().__init__()
-        #self.name = "Krakow"
-        #self.difficulty = 2
-        ##self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        #self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
-        #self.path_thickness = 20
-        #self.path_color = (96, 130, 182) # (178, 190, 181)
-        #path1 = [(0, 100), (220, 250), (350, 100), (480, 250), (700, 100)]
-        #path2 = [(0, 500), (220, 350), (350, 500), (480, 350), (700, 500)]
-        #self.paths = [path1, path2]
-        #self.alternate_paths = True
-
-
-class Krakow(Map):
+class Catacombs(Map):
     def __init__(self):
         super().__init__()
-        self.name = "Krakow"
+        self.name = "Catacombs"
         self.difficulty = 3  # if anything like now - will be Expert.
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (128, 0, 32) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
@@ -1086,15 +1087,15 @@ class Krakow(Map):
 
 # See if cannon does well getting blobs on both paths
 # also again shows raptor too strong (given speed and double damage).
-class CannonTest(Map):
+class Creek(Map):
     def __init__(self):
         super().__init__()
-        self.name = "CannonTest"
+        self.name = "Creek"
         self.difficulty = 3
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
-        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.background_color = (0, 163, 108) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
-        self.path_color = (96, 130, 182) # (178, 190, 181)
+        self.path_color = (20, 52, 164) # (96, 130, 182) # (178, 190, 181)
 
         #path1 = [(0, 300), (700, 300)]
         #path2 = [(0, 340), (700, 340)]
@@ -1107,10 +1108,276 @@ class CannonTest(Map):
         self.paths = [path1, path2]
 
 
-# dont need to be a dictionary
-#map_classes  = {1: PicnicPlace, 2: Spiral, 3: Staircase, 4: Diamond, 5: Valley, 6: Square}
+class Tangle(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Tangle"
+        self.difficulty = 1
+        self.background_color = (250, 213, 165) # (224, 191, 184) #(150, 121, 105) #(69, 75, 27)
+        self.path_thickness = 20
+        self.path_color = (93, 63, 211) #(48, 25, 52) #(128, 0, 128)
+
+        path1 = [(300, 0),(300, 130),(510, 130),(510, 300),
+                 (330, 300),(330, 460),(700, 460)]
+
+        path2 = [(0, 230),(430, 230),(430, 400),(200, 400),(200, 600)]
+
+        self.paths = [path1, path2]
+
+
+class Isthmus(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Isthmus"
+        self.difficulty = 2
+        self.background_color = (25, 25, 112)
+        self.path_thickness = 20
+        self.path_color = (178, 190, 181)
+        self.color_inside = (225, 219, 88) #  (69, 75, 27)
+        self.startpath1 =  [(250, 0), (320, 150), (240, 320), (310, 470), (240, 600)]
+        self.startpath2 = [(450, 0), (380, 150), (460, 320), (390, 470), (460, 600)]
+        path1 = copy.deepcopy(self.startpath1)
+        path2 = copy.deepcopy(self.startpath2)
+        path3 = [(2, 303), (180, 249), (357, 335), (543, 252), (698, 370)]
+        self.paths = [path1, path2, path3]
+        self.alternate_paths = True
+
+    def map_update(self, lev): #, newstart=False):
+        move = 10
+        lev_freq = 9
+        num_moves = lev // lev_freq
+        updated_move = num_moves * move
+
+        # Update positions for self.paths[0] and self.paths[1] without looping
+        self.paths[0] = [(x - updated_move, y) for x, y in self.startpath1]
+        self.paths[1] = [(x + updated_move, y) for x, y in self.startpath2]
+
+    def paint_features(self, window):
+        inner = self.paths[0]+self.paths[1][::-1]
+        pygame.draw.polygon(window, self.color_inside, inner)
+
+
+class NKKK(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "nkkk"
+        self.difficulty = 2
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+
+
+        #what if paths get further apart as go
+        #path1 = [(368, 2),(690, 266),(319, 583), (4, 268), (341, 8)]
+        path1 = [(350, 0),(690, 300), (319, 583)]
+        path2 = [(14, 12), (450, 300), (6, 588)]
+        path3 = [(639, 15), (250, 300), (679, 576)]
+        path4 = [(350, 0), (10, 300), (319, 583)]
+
+
+        self.paths = [path1, path2, path3, path4]
+        #self.alternate_paths = True
+
+# still too easy - tempted to add removables - like eyes in the triangles.
+# or to make more paths - not so long
+class Pentagram3(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Pentagram"
+        self.difficulty = 2
+
+        # which way round should colors be?
+        self.background_color = (145, 56, 49) # (0, 0, 0) #(50, 25, 0)
+        self.color_inside =  (0, 0, 0) # (145, 56, 49)
+        self.path_thickness = 15
+        self.path_color = (196, 180, 84) #(0, 211, 211)
+
+        path1 = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)] # star (easy on own)
+        path2 = [(100,350),(350,500),(600,350),(500,100),(200,100),(100,350)] #, (150, 500)]
+
+        # alt (could be better with this version to alternate paths on rounds)
+        #path1 = [(100,350),(600,350),(200,100),(350,500)]
+        #path2 = [(600,350), (100,350), (500,100), (350,500)] # star (easy on own)
+        #path3 = [(350,500),(600,350),(500,100),(200,100),(100,350), (350,500)] #, (150, 500)]
+        #self.star = [(100,350),(600,350),(200,100),(350,500),(500,100),(100,350)]
+
+        self.paths = [path1, path2] #, path3]
+
+        t1 = (310, 350, 390, 475)
+        t2 = (410, 260, 560, 350)
+        t3 = (380, 130, 480, 250)
+        t4 = (220, 120, 330, 240)
+        t5 = (140, 260, 290, 350)
+        self.places = [t1, t2, t3, t4, t5]
+
+        c1 = Removable((435, 265, 40, 80), 150, "candle_img")
+        c2 = Removable((408, 150, 40, 80), 150, "candle_img")
+        c3 = Removable((250, 150, 40, 80), 150, "candle_img")
+        c4 = Removable((225, 265, 40, 80), 150, "candle_img")
+        c5 = Removable((330, 365, 40, 80), 200, "candle_img")
+        #e1 = Removable((190, 260, 90, 90), 100, "eye_img")
+
+        self.removables = [c1, c2, c3, c4, c5]
+
+    def paint_features(self, window):
+        pygame.draw.polygon(window, self.color_inside, self.paths[0])
+        #pygame.draw.polygon(window, self.color_inside, self.star)
+
+        for ob in self.removables:
+            window.blit(img_dict[ob.img], ob.loc)
+
+    #TODO - I need to crop better round the candle - have to place too far away
+    # should candles be blockers as well as preventing placement?
+    def can_I_place(self, pos, w, h):
+        for obstacle in self.removables:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle.loc, wh=True):
+                return False
+        for place in self.places:
+            if is_rect_in_box(pos[0], pos[1], w, h, place):
+                return True
+        return False
+
+    def get_removables(self):
+        return self.removables
+
+    def set_removables(self, removables):
+        self.removables = removables
+
+    def remove(self, rem, display, window):
+        super().remove(rem, display, window)
+        self.removables.remove(rem)
+
+    def barriers(self):
+        """A list of barriers"""
+        return [removable.loc for removable in self.removables]
+
+
+class AAA(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "AAA"
+        self.difficulty = 3
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+        #self.tree1 = (310, 160, 130, 260)
+        #self.trees = [self.tree1]
+        tree1 = Removable((305, 160, 130, 260), 300, "gianttree_img")
+        self.removables = [tree1]
+
+        path1 = [(520, 0),(520, 250), (450, 250), (450, 180), (700, 180)]
+        path2 = [(220, 600), (220, 310), (290, 310), (290, 380), (0, 380)]
+
+        self.paths = [path1, path2]
+
+    def paint_features(self, window):
+        for ob in self.removables:
+            window.blit(img_dict[ob.img], ob.loc)
+
+    def can_I_place(self, pos, w, h):
+        for obstacle in self.removables:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obstacle.loc, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return [removable.loc for removable in self.removables]
+
+    def get_removables(self):
+        return self.removables
+
+    def set_removables(self, removables):
+        self.removables = removables
+
+    def remove(self, rem, display, window):
+        super().remove(rem, display, window)
+        self.removables.remove(rem)
+
+
+class BBB(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "BBB"
+        self.difficulty = 3
+        #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
+        self.background_color = (69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
+        self.path_thickness = 20
+        self.path_color = (96, 130, 182) # (178, 190, 181)
+        #self.tree1 = (310, 160, 130, 260)
+        #self.trees = [self.tree1]
+        tree1 = Removable((305, 160, 130, 260), 300, "gianttree_img")
+        self.removables = [tree1]
+
+        path1 = [(520, 0),  (520, 310),  (220, 310), (220, 480), (300, 480), (300, 410), (0, 410)]
+        path2 = [(220, 600), (220, 310), (520, 310), (520,100), (450, 100), (450, 180),(690, 180)]
+
+
+        #(520, 0)]# (290, 310), (290, 380), (0, 380)]
+
+        self.paths = [path1, path2]
+
+
+class Haunted(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Haunted"
+        self.difficulty = 2
+        self.alternate_paths = True
+
+        path1 = [(0, 300), (110, 300), (110, 150), (207, 156), (201, 265), (330, 265),
+                 (330, 450), (432, 430),(426, 431), (434, 45), (526, 50), (533, 302), (693, 310)]
+
+        path2 = [(0, 300), (110, 300), (120, 436), (207, 436), (201, 265), (330, 265),
+                 (327, 548), (425, 554),(540, 485),(533, 387),(681, 431)]
+
+            #(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
+                #(430, 350), (430, 300),(330, 300), (330, 450), (200,450), (200,150),
+                #, , ]
+
+        self.paths = [path1, path2]
+        self.background_color = (0,25,40) #night
+        self.path_thickness = 25
+        #self.path_color = (238, 220, 130)  # dev color
+        self.path_color = (89,100,187) # Real color
+
+        self.tree1 = (350, 250, 70, 160)
+        self.tree2 = (450, 170, 70, 160)
+        self.tree3 = (220, 70, 90, 180)
+        self.tree4 = (570, 140, 70, 160)
+        self.tree5 = (11, 100, 70, 160)
+        self.tree6 = (220, 290, 90, 180)
+        self.tree7 = (11, 320, 70, 160)
+        self.gravestone = (130, 250, 50, 80)
+
+
+        self.objects = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree6, self.tree7, self.gravestone]
+
+    def paint_features(self, window):
+        window.blit(tree1_img, self.tree1)
+        window.blit(tree1_img, self.tree2)
+        window.blit(bigtree_img, self.tree3)
+        window.blit(tree1_img, self.tree4)
+        window.blit(tree1_img, self.tree5)
+        window.blit(bigtree_img, self.tree6)
+        window.blit(tree1_img, self.tree7)
+        window.blit(gravestone_img, self.gravestone)
+
+    def can_I_place(self, pos, w, h):
+        for obj in self.objects:
+            if not is_rect_out_box(pos[0], pos[1], w, h, obj, wh=True):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return self.objects
+
+
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
-                Village, Vase, Castle, Pentagram, Distortion, DarkForest,
-                CannonTest, Hermit, Suburbia, Krakow] # Eagle]
+                Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
+                Tangle, Hermit, Suburbia, Isthmus, Creek, Catacombs] #, AAA, BBB, Haunted]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}

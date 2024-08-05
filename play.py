@@ -23,11 +23,10 @@ pygame.font.init()  # Initialize font module
 initial_lives = 30
 initial_money = 150
 initial_level = 1
-
-print_total_money = False
+print_total_money = True
 init_last_round_restarts = 5
 restart_testing = False
-print_pos = False
+print_pos = True
 
 # Initialize Pygame
 pygame.init()
@@ -79,6 +78,8 @@ def reset_game(gmap=None):
     if gmap is not None:
         gmap = gmap.__class__()  # Reset map - only needed if removables.
         game.set_map(gmap)
+        # in case starting at a different level
+        gmap.map_update(initial_level) #, newstart=True)
     return game, gmap
 
 def in_range(my_range, mouse_x, mouse_y, obj):
@@ -163,6 +164,9 @@ game.set_money_per_hit()
 
 # Game loop
 while game.running:
+
+    #for now
+    paths = gmap.paths
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -344,7 +348,9 @@ while game.running:
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
             game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
-            continue # this was in if not at max level - does it matter being done either way
+            #testing remove continue - is it needed? Might finish levels clean - inc. toxic
+            #toxic still dont dusappear till after the WIN has finished.
+            #continue # this was in if not at max level - does it matter being done either way
 
         if game.lives <= 0:
             game.game_over = True

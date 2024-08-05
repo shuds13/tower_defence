@@ -38,7 +38,7 @@ class Game():
         self.current_tower_type = None
         self.inset_window = inset_window
         self.inset_window['active'] = False
-        self.money_per_hit = 1.0
+        self.money_per_hit = self.set_money_per_hit() # 1.0
         self.failed = False
 
         self.start_round_money = initial_money
@@ -136,6 +136,11 @@ class Game():
         self.enemy_spawn_timer = 0
         self.active = False
         gmap.set_removables(self.removables)
+
+        #print('here1', self.level_num)
+        # TODO - check - may also need in restart round - but maybe not if that calls this anyway
+        gmap.map_update(self.level_num) #, newstart=True)  # for rare maps that may update after certain levels
+
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
         else:
@@ -178,6 +183,10 @@ class Game():
         self.lives_highlight = 0
         self.map_complete = False
         self.aced = False
+
+        #print('here2')
+        #gmap.map_update(self.level_num, newstart=True)
+
         #lives_lost -= lives_lost_round  # no cos if died was not done - so this will be needed if restart when not dead
         #or calc lives lost even when die and then always do it.
 
@@ -185,6 +194,7 @@ class Game():
         self.total_hits += hits
         self.player_money += hits * self.money_per_hit
         self.total_money += hits * self.money_per_hit
+        #print(f"process_hits {self.money_per_hit=}")
 
     def set_money_per_hit(self):
         if self.level_num < 10:
@@ -197,8 +207,13 @@ class Game():
             self.money_per_hit = 0.4
         elif self.level_num < 50:
             self.money_per_hit = 0.3
-        else:
+        elif self.level_num < 60:
             self.money_per_hit = 0.2
+        else:
+            self.money_per_hit = 0.15
+
+        #print(f"{self.money_per_hit=}")
+
         return self.money_per_hit
 
     def level_complete(self, display, window, window_size, lev, gmap, init_last_round_restarts, account):
@@ -213,6 +228,9 @@ class Game():
         # for stats
         self.lives_lost_round = self.start_round_lives - self.lives
         self.lives_lost += self.lives_lost_round
+
+        # if doint every level reset dont need this
+        #gmap.map_update(self.level_num)  # for rare maps that may update after certain levels
 
         if self.level_num % 10 == 0:
             self.lives += 10
