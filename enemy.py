@@ -19,7 +19,7 @@ burger_king_img = pygame.image.load('images/burger_king.png')
 burger_king_img = pygame.transform.scale(burger_king_img, (120, 120))
 
 armored_troll_img = pygame.image.load('images/armored_troll.png')
-armored_troll_img = pygame.transform.scale(armored_troll_img, (60, 60))
+armored_troll_img = pygame.transform.scale(armored_troll_img, (65, 65))
 giant_armored_troll_img = pygame.transform.scale(armored_troll_img, (100, 100))
 
 
@@ -371,7 +371,7 @@ class Troll(Enemy):
 
 
 class ArmoredTroll(Troll):
-    health = 70
+    health = 60 #70 60 more aesthetic - like original giant troll
     spawn = True
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
@@ -384,7 +384,7 @@ class ArmoredTroll(Troll):
 # Tempted to give this more health - and even maybe to swap for armored troll in earlier levels...
 # of course will be a large giant armored troll also.
 class GiantTroll(Troll):
-    health = 60
+    health = 120  # was 60 but thats now armored troll - up this
     spawn = True
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
@@ -392,18 +392,19 @@ class GiantTroll(Troll):
         self.speed = 2
         self.image = giant_troll_img
         #self.spawn_on_die = True
-        self.spawn_type = Enemy103
-        self.spawn_count = 6
+        #self.spawn_type = Enemy103  # make same as troll
+        self.spawn_count = 25 # 6 Up number as not armorred
         self.size = 3
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
 
 class ArmoredGiantTroll(GiantTroll):
-    health = 220
+    health = 240 # 220 - make at least 240 as double giant - but maybe should triple to 360?
     spawn = True
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.image = giant_armored_troll_img
+        self.spawn_type = Enemy103
         self.spawn_count = 25
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
