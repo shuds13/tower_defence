@@ -46,6 +46,7 @@ class Enemy:
         self.slowable = True
         self.glue_reset()
         self.distance = 0
+        self.spawn_sep = 2
 
     def glue_reset(self):
         self.slow_factor = 1
@@ -138,7 +139,7 @@ class Enemy:
         for i in range(self.spawn_count):
             enemy = self.spawn_type(self.path, self.position, self.path_index)
             # Spread out slightly
-            for j in range(i*2):
+            for j in range(i*self.spawn_sep):
                 enemy.move()
             enemies.append(enemy)  # Also puts on end - so will not attack first!
 
@@ -393,7 +394,8 @@ class GiantTroll(Troll):
         self.image = giant_troll_img
         #self.spawn_on_die = True
         #self.spawn_type = Enemy103  # make same as troll
-        self.spawn_count = 25 # 6 Up number as not armorred
+        self.spawn_sep = 1
+        self.spawn_count = 20 # 6 Up number as not armored
         self.size = 3
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
@@ -405,7 +407,6 @@ class ArmoredGiantTroll(GiantTroll):
         super().__init__(path, position, path_index)
         self.image = giant_armored_troll_img
         self.spawn_type = Enemy103
-        self.spawn_count = 25
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
 

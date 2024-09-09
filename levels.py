@@ -58,21 +58,22 @@ class Level4(Level):
         self.phase_counts = [10, 20, 30]
         self.enemy_types = [1, 2, 2]
 
+# tried swapping 5 and 6 so greens on round 6
 class Level5(Level):
-    def __init__(self):
-        Level.__init__(self)
-        self.num_enemies = 30
-        self.spawn_intervals = [20, 20, 25]
-        self.phase_counts = [10, 20, 30]
-        self.enemy_types = [1, 2, 3]
-
-class Level6(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 35
         self.spawn_intervals = [10, 20, 14]
         self.phase_counts = [10, 22, 35]
         self.enemy_types = [1,2,2]
+
+class Level6(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 30
+        self.spawn_intervals = [20, 20, 25]
+        self.phase_counts = [10, 20, 30]
+        self.enemy_types = [1, 2, 3]
 
 class Level7(Level):
     def __init__(self):

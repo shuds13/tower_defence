@@ -307,7 +307,7 @@ class Fighter(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 25  # lower is better currently
+            self.attack_speed = 27  # lower is better currently
             self.range =  110
             self.image = fighter2_img
             self.cost += self.upgrade_costs[0]
@@ -766,6 +766,7 @@ class GlueGunner(Tower):
             self.cost += self.upgrade_costs[1]
             self.slow_factor = [0.4, 0.6, 0.8]
             self.beam_width = 10
+            self.glue_layers = 4
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
             self.toxic_time = 150
@@ -775,16 +776,16 @@ class GlueGunner(Tower):
             self.attack_tower = True
 
         if self.level == 4:
-            self.attack_speed = 15
+            self.attack_speed = 12
             self.range =  120
             self.image = gluegun4_img
             self.cost += self.upgrade_costs[2]
-            self.slow_factor = [0.4, 0.5, 0.7]
+            self.slow_factor = [0.3, 0.4, 0.7]
             self.beam_width = 12
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
             self.toxic_time = 60 # 75
-            self.glue_layers = 4
+            self.glue_layers = 6
             self.max_attacks = 6
             self.max_toxic_big_reattacks = 2  # Repeatedly attack same enemy - takes toxic damage for each
             self.max_toxic_giant_reattacks = 5
