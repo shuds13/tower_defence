@@ -404,7 +404,7 @@ class Map():
         #pass
 
     # if a map changes at any point
-    def map_update(self, lev): #, newstart=False):
+    def map_update(self, lev, display=None, window=None): #, newstart=False):
         pass
 
 
@@ -1142,15 +1142,50 @@ class Isthmus(Map):
         self.paths = [path1, path2, path3]
         self.alternate_paths = True
 
-    def map_update(self, lev): #, newstart=False):
+
+    def map_update(self, lev, display=None, window=None):
         move = 10
         lev_freq = 9
         num_moves = lev // lev_freq
-        updated_move = num_moves * move
+        total_move = num_moves * move
+        steps = 10  # Number of smaller steps for animation
 
-        # Update positions for self.paths[0] and self.paths[1] without looping
-        self.paths[0] = [(x - updated_move, y) for x, y in self.startpath1]
-        self.paths[1] = [(x + updated_move, y) for x, y in self.startpath2]
+        if lev % lev_freq != 0:
+            return
+
+        if display is None:
+            # Update positions in one go
+            self.paths[0] = [(x - total_move, y) for x, y in self.startpath1]
+            self.paths[1] = [(x + total_move, y) for x, y in self.startpath2]
+        else:
+            print(f"{window=}")
+            # Update positions incrementally for animation
+            sounds.play('unlock')
+            for step in range(steps):
+                # Calculate the incremental move for this step
+                partial_move = total_move * (step + 1) / steps
+
+                # Update paths incrementally
+                for i, (x, y) in enumerate(self.startpath1):
+                    self.paths[0][i] = (x - partial_move, y)
+
+                for i, (x, y) in enumerate(self.startpath2):
+                    self.paths[1][i] = (x + partial_move, y)
+
+                # Repaint and flip the display
+                self.paint_features(window)
+
+
+                # do whats in play.py to draw paths - this should be improved - maybe function of maps.
+                for path in self.paths:
+                    for i in range(len(path) - 1):
+                        pygame.draw.line(window, (self.path_color), path[i], path[i+1], self.path_thickness)
+
+                display.flip()
+
+                # Small pause between updates to create animation effect
+                time.sleep(0.1)
+
 
     def paint_features(self, window):
         inner = self.paths[0]+self.paths[1][::-1]

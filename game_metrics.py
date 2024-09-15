@@ -130,7 +130,7 @@ class Game():
         self.towers = []
         self.totems = []
 
-    def reset_level(self, gmap):
+    def reset_level(self, gmap, display, window):
         self.enemies = []
         self.running = True
         self.enemy_spawn_timer = 0
@@ -139,7 +139,7 @@ class Game():
 
         #print('here1', self.level_num)
         # TODO - check - may also need in restart round - but maybe not if that calls this anyway
-        gmap.map_update(self.level_num) #, newstart=True)  # for rare maps that may update after certain levels
+        gmap.map_update(self.level_num, display, window) #, newstart=True)  # for rare maps that may update after certain levels
 
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)
@@ -273,7 +273,7 @@ class Game():
             self.level_num += 1
             self.set_money_per_hit()
             self.level = lev.levels[self.level_num]()
-            self.reset_level(gmap)
+            self.reset_level(gmap, display, window)
             # Will be in stats option in options window.
             if self.print_total_money:
                 rbe = self.total_hits + self.lives_lost
