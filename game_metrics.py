@@ -139,7 +139,7 @@ class Game():
 
         #print('here1', self.level_num)
         # TODO - check - may also need in restart round - but maybe not if that calls this anyway
-        gmap.map_update(self.level_num, display, window) #, newstart=True)  # for rare maps that may update after certain levels
+        gmap.map_update(self.level_num, display, window, self.towers) #, newstart=True)  # for rare maps that may update after certain levels
 
         if gmap.alternate_paths:
             self.path_id = (self.level_num - 1) % len(gmap.paths)

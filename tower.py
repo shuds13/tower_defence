@@ -989,10 +989,13 @@ class Totem(Tower):
         glow_rect = eyeglow.get_rect(center=eye_pos)
         window.blit(eyeglow, glow_rect)
 
-    def draw(self, window, enemies):
+    def draw(self, window, enemies=None):
         """Dont rotate toetem"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
+
+        if enemies is None:
+            return
 
         # If ghosts/spirits on screen eyes glow - oh will have to change position based on level.
         if self.level >= 2 and any(enemy.invis for enemy in enemies):
@@ -1288,7 +1291,7 @@ class CannonBall(Tower):
             return score
         return 0
 
-    def draw(self, window):
+    def draw(self, window, enemies=None):
         x = self.position[0]
         y = self.position[1]
         if self.active:

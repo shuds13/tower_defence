@@ -404,7 +404,7 @@ class Map():
         #pass
 
     # if a map changes at any point
-    def map_update(self, lev, display=None, window=None): #, newstart=False):
+    def map_update(self, lev, display=None, window=None, towers=None): #, newstart=False):
         pass
 
 
@@ -1143,7 +1143,7 @@ class Isthmus(Map):
         self.alternate_paths = True
 
 
-    def map_update(self, lev, display=None, window=None):
+    def map_update(self, lev, display=None, window=None, towers=None):
         move = 10
         lev_freq = 9
         num_moves = lev // lev_freq
@@ -1179,6 +1179,9 @@ class Isthmus(Map):
                 for path in self.paths:
                     for i in range(len(path) - 1):
                         pygame.draw.line(window, (self.path_color), path[i], path[i+1], self.path_thickness)
+
+                for tower in towers:
+                    tower.draw(window)
 
                 display.flip()
 
