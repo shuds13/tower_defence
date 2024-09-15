@@ -1150,36 +1150,39 @@ class Isthmus(Map):
         total_move = num_moves * move
         steps = 10  # Number of smaller steps for animation
 
+        # Update positions in one go
+        # Always doing this helps it work from restarts etc...
+        self.paths[0] = [(x - total_move, y) for x, y in self.startpath1]
+        self.paths[1] = [(x + total_move, y) for x, y in self.startpath2]
+
         if lev % lev_freq != 0:
             return
 
-        if display is None:
-            # Update positions in one go
-            self.paths[0] = [(x - total_move, y) for x, y in self.startpath1]
-            self.paths[1] = [(x + total_move, y) for x, y in self.startpath2]
-        else:
+        if display is not None:
+            if num_moves > 0:
+                # Rewind last one to animate it.
+                self.paths[0] = [(x + move, y) for x, y in self.paths[0]]
+                self.paths[1] = [(x - move, y) for x, y in self.paths[1]]
+
             # Update positions incrementally for animation
             sounds.play('unlock')
             for step in range(steps):
                 # Calculate the incremental move for this step
-                partial_move = total_move * (step + 1) / steps
+                # partial_move = move * (step + 1) / steps
+                partial_move = 1
 
                 # Update paths incrementally
-                for i, (x, y) in enumerate(self.startpath1):
+                for i, (x, y) in enumerate(self.paths[0]):
                     self.paths[0][i] = (x - partial_move, y)
 
-                for i, (x, y) in enumerate(self.startpath2):
+                for i, (x, y) in enumerate(self.paths[1]):
                     self.paths[1][i] = (x + partial_move, y)
 
-                # Repaint and flip the display
+                # Repaint screen and flip the display
                 self.paint_features(window)
-
-
-                # do whats in play.py to draw paths - this should be improved - maybe function of maps.
                 for path in self.paths:
                     for i in range(len(path) - 1):
                         pygame.draw.line(window, (self.path_color), path[i], path[i+1], self.path_thickness)
-
                 for tower in towers:
                     tower.draw(window)
 
