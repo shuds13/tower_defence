@@ -1,0 +1,19 @@
+I've let this lapse, with levels up to 70, including things I like (new enemies) but not sure about progressions - might need 5th tiers, or slower progression (with lowering of money per hit).
+
+Also, new maps, but some are experimental.
+
+This branch is to bring into main only completed maps, and without levels beyond 60. But brings in some
+of the games updates that happened on these branches.
+
+branches:
+
+lev_60_plus -> xhffi_levels (experimental levels - means "maps") -> updates_but_only_to_60_and_finished_maps (comment out levels beyond 60 and maps and some cleanup).
+
+If spend more time on this, I might bring  armored trolls in before 60.
+
+Complete the haunted level.
+
+As levels go up - consider adjustments to Totem - top level gets more powerful as use with more powerful towers, so it gets kind of OP.
+
+Level Isthus - now animating and adding sound - but should make so cant place in water?!?
+ - need correct anitmation a bit - and on restarts.
