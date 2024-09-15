@@ -1158,7 +1158,6 @@ class Isthmus(Map):
             self.paths[0] = [(x - total_move, y) for x, y in self.startpath1]
             self.paths[1] = [(x + total_move, y) for x, y in self.startpath2]
         else:
-            print(f"{window=}")
             # Update positions incrementally for animation
             sounds.play('unlock')
             for step in range(steps):
