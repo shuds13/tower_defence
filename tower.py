@@ -378,7 +378,7 @@ class Burger(Tower):
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             self.upgrade_name = "Whopper"
         if self.level == 4:
-            self.attack_speed = 12 # 16 (dam 2)
+            self.attack_speed = 10 # 16 (if damage 2)
             self.range =  80
             self.image = burger4_img
             self.max_attacks = 15  # 12 (dam 2)
@@ -504,6 +504,7 @@ class Wizard(Tower):
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
+    # thinking at first cloud should do 1 damage - maybe hit more though.
     def level_up(self):
         self.level +=1
         if self.level == 2:
