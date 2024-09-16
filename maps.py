@@ -1197,6 +1197,36 @@ class Isthmus(Map):
         pygame.draw.polygon(window, self.color_inside, inner)
 
 
+    def can_I_place(self, pos, w, h):
+        x, y = pos
+        inner_coords = self.paths[0] + self.paths[1][::-1]
+        num_vertices = len(inner_coords)
+        inside = False
+
+        for i in range(num_vertices):
+            j = (i + 1) % num_vertices
+            xi, yi = inner_coords[i]
+            xj, yj = inner_coords[j]
+
+            # Check if the point is on an horizontal boundary
+            if yi == yj and y == yi and min(xi, xj) <= x <= max(xi, xj):
+                return True  # Point is on the boundary
+
+            # Check if the point is within the y-bounds of the edge
+            if ((yi > y) != (yj > y)):
+                # Compute the x-coordinate of the intersection of the edge with the horizontal line y
+                try:
+                    intersect_x = (xj - xi) * (y - yi) / (yj - yi) + xi
+                except ZeroDivisionError:
+                    intersect_x = xi  # Avoid division by zero if yj == yi
+
+                if x == intersect_x:
+                    return True  # Point is on the boundary
+                if x < intersect_x:
+                    inside = not inside
+        return inside
+
+
 class NKKK(Map):
     def __init__(self):
         super().__init__()
