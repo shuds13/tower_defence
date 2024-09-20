@@ -78,6 +78,9 @@ explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
 explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
 
 
+ninja_img = pygame.image.load('images/ninja.png')
+ninja_img = pygame.transform.scale(ninja_img, (50, 50))
+
 def line_intersects_rect(p1, p2, rect):
     """
     Check if a line segment intersects a rectangle.
@@ -1325,4 +1328,248 @@ class CannonBall(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score
 
-tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem]
+
+# yeah a bit of work to do here
+# initial attack will be in his range and pick first target - that will decide path
+# maybe i can get path from enemy - get path and path_index of enemy.
+# then once hit first target (ninja hit) the shurken object will take over and travel in reverse along the path
+# tried doing this very tired so made a mess so far.
+class Ninja(Tower):
+
+    price = 10
+    name = 'Ninja'
+    image = ninja_img
+    #in_game_image = cannon_img_ingame
+    range = 70
+    max_level = 1
+    footprint = (40,50)  # May make bigger
+
+    # Does projectile just go in direct target was when launch - or does it continue
+    # to move towards target with each step (homing missile).
+    def __init__(self, position):
+        super().__init__(position)
+        self.range =  Ninja.range
+        self.cost = Ninja.price
+        self.image = Ninja.image
+        self.level = 1
+        self.attack_speed = 60
+        self.upgrade_costs = [300, 750, 2000]
+        #self.glow_radius = 10
+        #self.glow_time = 5
+        #self.upgrade_name = "Heavy Gun"
+
+    def attack(self):
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            self.attack_count += 1
+            #score = self.target.take_damage(self.damage)
+            score = -1  # tell it to release a projectile
+            self.reset_attack_timer()
+            self.is_attacking = True
+        else:
+            self.is_attacking = False
+        return score
+
+    def update(self, enemies, gmap):
+        score = 0
+        self.attack_timer -= 1
+        if self.attack_timer <= 0:
+            self.find_target(enemies, gmap)
+            score = self.attack()
+            #self.total_score += score
+        else:
+            self.is_attacking = False
+        # need to return more though - direction for projectile to move in.
+        return score
+
+    def get_projectile(self):
+        projectile = Shuriken(self)
+        #projectile = CannonBall(self)
+        return projectile
+
+    def draw(self, window, enemies=None):
+        """Dont rotate burger"""
+        new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
+        self.general_draw(window, self.image, new_rect)
+
+
+#class Shuriken(CannonBall):  # tmp inheritence
+# Prob make projectile class - diff types and levels of projectile will be inherited.
+# looks like cannonball for now - not most copy/pasted from cannonball for now but updating find_target/attack
+# forgot how projectiles move
+class Shuriken(Tower):
+
+    image = cannonball1_img
+
+    def __init__(self, tower):
+        super().__init__(tower.position)
+        self.launcher = tower
+        self.speed = 8
+        self.target_pos = tower.target.position  # position when shoot
+        self.active = True
+        self.max_attacks = 4
+        self.damage = 1
+        self.image = CannonBall.image
+        self.range = 1
+        self.expl_image = explosion1_img
+        if self.launcher.level == 2:
+            self.speed = 10
+            self.damage = 4
+            self.max_attacks = 6
+            self.image = cannonball2_img
+            self.range = 60
+            self.expl_image = explosion2_img
+        if self.launcher.level == 3:
+            # maybe add homing missiles
+            self.speed = 12
+            self.damage = 7
+            self.max_attacks = 8
+            self.image = cannonball3_img
+            self.range = 70
+            self.expl_image = explosion3_img
+        if self.launcher.level == 4:
+            # maybe add homing missiles
+            self.speed = 15
+            self.damage = 12
+            self.max_attacks = 18
+            self.image = cannonball4_img
+            self.range = 90
+            self.expl_image = explosion4_img  # Add fourth and prob viz perist
+
+    #def find_target(self, enemies, gmap):
+        ## Only place to call function - after just check self.cloud_attack
+        ##self.target = enemies # put all in here.
+        ##tmp_target = []
+        #self.target = []
+        ##self.see_ghosts = self.launcher.see_ghosts
+        #for enemy in enemies:
+            #if self.is_visible(enemy, gmap) and not enemy.reached_end:
+                #self.target.append(enemy)
+            #if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                #tmp_target.append(enemy)
+        #if tmp_target:
+            #self.target = self.create_sublist(tmp_target, self.max_attacks)
+            #print(f"{len(self.target)=}")
+
+    #def update(self, enemies, gmap):
+        #dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
+        #distance = (dx**2 + dy**2)**0.5
+        ##print(f"{distance=} to {self.target_pos}")
+        #if distance > self.speed:
+            #dx, dy = dx / distance * self.speed, dy / distance * self.speed
+        #self.position = (self.position[0] + dx, self.position[1] + dy)
+        ## Check if the enemy has reached the target position
+        #if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
+            ##print(f"blowing up at {self.position}")
+            #self.find_target(enemies, gmap)
+            #score = self.attack()
+            #self.launcher.total_score += score
+            #self.active = False  # if dont remove they stop on paths and look like mines
+            #return score
+        #return 0
+
+
+
+# reverse of enemy movement
+# enemy movement function
+
+    #def move(self): #reversing
+    def update(self, enemies, gmap):
+        # Move towards the next point in the path
+        if self.path_index > 0:
+            target_pos = self.path[self.path_index - 1]  # for backwards move just make -1
+            dx, dy = target_pos[0] - self.position[0], target_pos[1] - self.position[1]
+            distance = (dx**2 + dy**2)**0.5
+            if distance > self.speed:
+                dx, dy = dx / distance * self.speed, dy / distance * self.speed
+            self.position = (self.position[0] + dx, self.position[1] + dy)
+
+            # add for hit target - here or end?
+            if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
+                self.find_target(enemies, gmap)
+                score = self.attack()
+                self.launcher.total_score += score
+                #self.active = False  # if dont remove they stop on paths and look like mines
+                return score
+
+            # Check if the enemy has reached the target position
+            if abs(self.position[0] - target_pos[0]) < self.speed and abs(self.position[1] - target_pos[1]) < self.speed:
+                self.path_index -= 1
+
+            self.distance += self.speed
+
+        # Check if the enemy has reached the end of the path
+        if self.path_index <=  0:
+            self.active = False  # if dont remove they stop on paths and look like mines
+            self.reached_end = True  # reached start
+
+
+
+
+
+    def draw(self, window, enemies=None):
+        x = self.position[0]
+        y = self.position[1]
+        if self.active:
+            image_rect = self.image.get_rect(center=self.position)
+            window.blit(self.image, image_rect.topleft)
+
+    def attack_animate(self, window):
+        if not self.active:
+            explosion_rect = self.expl_image.get_rect(center=self.position)
+            window.blit(self.expl_image, explosion_rect)
+
+
+
+    #def attack(self):
+        #score = 0
+
+        ## dont remember why find_target is separate from attack
+        #if self.self.attack_timer > 0:
+            #self.is_attacking = False
+            #return score
+
+        ## no this is going to be determined by initial range if do all at once....
+        ##   want to do one at time no...
+        #next_target = []
+        #for enemy in self.target:
+            #if self.in_range(enemy):  # CHECK - range of ninja or Shuriken - i think this is shuriken determined...
+                #next_target.append(enemy)
+                #if len(next_target) == self.max_attacks:
+                    #break
+
+        #if next_target:
+            #self.attack_count += 1
+            #score = self.target.take_damage(self.damage)
+            #self.reset_attack_timer()
+            #self.is_attacking = True
+        #else:
+            #self.is_attacking = False
+        #return score
+
+    #def attack(self):
+        #score = 0
+        #if self.target and self.attack_timer <= 0:
+            ## If using IF this could be in generic one
+            #self.attack_count += 1
+            #if type(self.target) is list:
+                #for target in self.target:
+                    ## Do more damage to big enemies to simulate multiple projectiles hitting
+                    #multiplier = target.size
+                    ##print(f"Damage: {self.damage * multiplier}")
+                    #score += target.take_damage(self.damage * multiplier)
+            #else:
+                ## dont think ever here
+                #multiplier = self.target.size  # Do more damage to big enemies to simulate multiple projectiles hitting
+                #score = self.target.take_damage(self.damage * multiplier)
+            #self.reset_attack_timer()
+            #self.is_attacking = True  # Set to True when attacking
+        #else:
+            #self.is_attacking = False  # Set to False otherwise
+        #return score
+
+
+
+
+
+tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
