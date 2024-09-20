@@ -58,21 +58,22 @@ class Level4(Level):
         self.phase_counts = [10, 20, 30]
         self.enemy_types = [1, 2, 2]
 
+# tried swapping 5 and 6 so greens on round 6
 class Level5(Level):
-    def __init__(self):
-        Level.__init__(self)
-        self.num_enemies = 30
-        self.spawn_intervals = [20, 20, 25]
-        self.phase_counts = [10, 20, 30]
-        self.enemy_types = [1, 2, 3]
-
-class Level6(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 35
         self.spawn_intervals = [10, 20, 14]
         self.phase_counts = [10, 22, 35]
         self.enemy_types = [1,2,2]
+
+class Level6(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 30
+        self.spawn_intervals = [20, 20, 25]
+        self.phase_counts = [10, 20, 30]
+        self.enemy_types = [1, 2, 3]
 
 class Level7(Level):
     def __init__(self):
@@ -440,10 +441,12 @@ class Level44(Level):
 class Level45(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 47
+        self.num_enemies = 48 # 47
         self.spawn_intervals = [8, 20, 40, 40, 18, 40]
-        self.phase_counts = [25, 35, 36, 37, 46, 47]
-        self.enemy_types = [3, 11, 12, 11, 11, 12]
+        #self.phase_counts = [25, 35, 36, 37, 46, 47]
+        #self.enemy_types = [3, 11, 12, 11, 11, 12]
+        self.phase_counts = [25, 35, 36, 37, 46, 48]
+        self.enemy_types = [3, 11, 17, 11, 11, 17]  # changed giant to armoroed trolls
 
 class Level46(Level):
     def __init__(self):
@@ -530,13 +533,21 @@ class Level51(Level):
         self.phase_counts = [200]
         self.enemy_types = [5]
 
+#class Level52(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 51
+        #self.spawn_intervals = [8, 15, 30, 30, 12, 20, 25]
+        #self.phase_counts = [25, 35, 36, 37, 46, 50, 51]
+        #self.enemy_types = [103, 11, 12, 11, 11, 12, 201]
+
 class Level52(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 51
-        self.spawn_intervals = [8, 15, 30, 30, 12, 20, 25]
-        self.phase_counts = [25, 35, 36, 37, 46, 50, 51]
-        self.enemy_types = [103, 11, 12, 11, 11, 12, 201]
+        self.num_enemies = 55
+        self.spawn_intervals = [8,   15, 50, 30,   30, 12, 50, 20, 50]
+        self.phase_counts =    [25,  35, 36, 39,   40, 49, 50, 54, 55]
+        self.enemy_types =     [103, 11, 17, 17,   11, 11, 17, 17, 12] # switch end to giant troll
 
 # I want to introduc metors earlier like cermics - but they are very fast.
 class Level53(Level):
@@ -571,11 +582,19 @@ class Level56(Level):
         self.phase_counts = [25, 55, 80, 100, 150]
         self.enemy_types = [5, 3, 1, 3, 102]
 
+#class Level57(Level):
+    #def __init__(self):
+        #Level.__init__(self)
+        #self.num_enemies = 55
+        #self.spawn_intervals = [8, 18, 30, 12, 20, 18]
+        #self.phase_counts = [35, 38, 39, 46, 48, 55]
+        #self.enemy_types = [11, 12, 11, 11, 12, 15]
+
 class Level57(Level):
     def __init__(self):
         Level.__init__(self)
         self.num_enemies = 55
-        self.spawn_intervals = [8, 18, 30, 12, 20, 18]
+        self.spawn_intervals = [8, 22, 30, 12, 20, 18]
         self.phase_counts = [35, 38, 39, 46, 48, 55]
         self.enemy_types = [11, 12, 11, 11, 12, 15]
 

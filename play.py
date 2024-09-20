@@ -113,7 +113,7 @@ def select_map():
     if gmap.name in account.maps_in_progress:
         game = account.maps_in_progress[gmap.name]
         game.restart_round(lev, gmap, decrement=False)  # TODO lev could just be imported in game_metrics
-        game.reset_level(gmap)
+        game.reset_level(gmap, pygame.display, window)
     return gmap
 
 play_again_button = None  # To store the button rectangle
@@ -189,7 +189,7 @@ while game.running:
             #if game.game_over or restart_testing:
             if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
                 game.restart_round(lev, gmap)
-                game.reset_level(gmap)
+                game.reset_level(gmap, pygame.display, window)
                 opts_restart = False
 
             #if game.game_over:

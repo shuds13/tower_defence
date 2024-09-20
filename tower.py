@@ -307,7 +307,7 @@ class Fighter(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 25  # lower is better currently
+            self.attack_speed = 27  # lower is better currently
             self.range =  110
             self.image = fighter2_img
             self.cost += self.upgrade_costs[0]
@@ -378,7 +378,7 @@ class Burger(Tower):
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
             self.upgrade_name = "Whopper"
         if self.level == 4:
-            self.attack_speed = 12 # 16 (dam 2)
+            self.attack_speed = 10 # 16 (if damage 2)
             self.range =  80
             self.image = burger4_img
             self.max_attacks = 15  # 12 (dam 2)
@@ -504,6 +504,7 @@ class Wizard(Tower):
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
+    # thinking at first cloud should do 1 damage - maybe hit more though.
     def level_up(self):
         self.level +=1
         if self.level == 2:
@@ -766,6 +767,7 @@ class GlueGunner(Tower):
             self.cost += self.upgrade_costs[1]
             self.slow_factor = [0.4, 0.6, 0.8]
             self.beam_width = 10
+            self.glue_layers = 4
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
             self.toxic_time = 150
@@ -775,16 +777,16 @@ class GlueGunner(Tower):
             self.attack_tower = True
 
         if self.level == 4:
-            self.attack_speed = 15
+            self.attack_speed = 12
             self.range =  120
             self.image = gluegun4_img
             self.cost += self.upgrade_costs[2]
-            self.slow_factor = [0.4, 0.5, 0.7]
+            self.slow_factor = [0.3, 0.4, 0.7]
             self.beam_width = 12
             # try colors - want to show up on green enemies
             self.glue_color = (124, 252, 0) # (15, 255, 80)
             self.toxic_time = 60 # 75
-            self.glue_layers = 4
+            self.glue_layers = 6
             self.max_attacks = 6
             self.max_toxic_big_reattacks = 2  # Repeatedly attack same enemy - takes toxic damage for each
             self.max_toxic_giant_reattacks = 5
@@ -921,7 +923,7 @@ class Totem(Tower):
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
-            self.attack_speed = 3
+            self.attack_speed = 2
             self.range_boost = 1.20
 
     def find_target(self, enemies, gmap):
@@ -987,10 +989,13 @@ class Totem(Tower):
         glow_rect = eyeglow.get_rect(center=eye_pos)
         window.blit(eyeglow, glow_rect)
 
-    def draw(self, window, enemies):
+    def draw(self, window, enemies=None):
         """Dont rotate toetem"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
+
+        if enemies is None:
+            return
 
         # If ghosts/spirits on screen eyes glow - oh will have to change position based on level.
         if self.level >= 2 and any(enemy.invis for enemy in enemies):
@@ -1019,7 +1024,7 @@ class Totem(Tower):
         if self.level >= 3:
             tower.speed_mod = 0.75 # while addin nothing else - boost a bit
         if self.level >= 4:
-            tower.speed_mod = 0.60 # while addin nothing else - boost a bit
+            tower.speed_mod = 0.65 # while addin nothing else - boost a bit
 
 
 # some ideas names
@@ -1251,10 +1256,10 @@ class CannonBall(Tower):
         if self.launcher.level == 4:
             # maybe add homing missiles
             self.speed = 15
-            self.damage = 10
-            self.max_attacks = 14
+            self.damage = 12
+            self.max_attacks = 18
             self.image = cannonball4_img
-            self.range = 80
+            self.range = 90
             self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
     def find_target(self, enemies, gmap):
@@ -1286,7 +1291,7 @@ class CannonBall(Tower):
             return score
         return 0
 
-    def draw(self, window):
+    def draw(self, window, enemies=None):
         x = self.position[0]
         y = self.position[1]
         if self.active:

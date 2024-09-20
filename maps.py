@@ -404,7 +404,7 @@ class Map():
         #pass
 
     # if a map changes at any point
-    def map_update(self, lev): #, newstart=False):
+    def map_update(self, lev, display=None, window=None, towers=None): #, newstart=False):
         pass
 
 
@@ -1142,19 +1142,89 @@ class Isthmus(Map):
         self.paths = [path1, path2, path3]
         self.alternate_paths = True
 
-    def map_update(self, lev): #, newstart=False):
+
+    def map_update(self, lev, display=None, window=None, towers=None):
         move = 10
         lev_freq = 9
         num_moves = lev // lev_freq
-        updated_move = num_moves * move
+        total_move = num_moves * move
+        steps = 10  # Number of smaller steps for animation
 
-        # Update positions for self.paths[0] and self.paths[1] without looping
-        self.paths[0] = [(x - updated_move, y) for x, y in self.startpath1]
-        self.paths[1] = [(x + updated_move, y) for x, y in self.startpath2]
+        # Update positions in one go
+        # Always doing this helps it work from restarts etc...
+        self.paths[0] = [(x - total_move, y) for x, y in self.startpath1]
+        self.paths[1] = [(x + total_move, y) for x, y in self.startpath2]
+
+        if lev % lev_freq != 0:
+            return
+
+        if display is not None:
+            if num_moves > 0:
+                # Rewind last one to animate it.
+                self.paths[0] = [(x + move, y) for x, y in self.paths[0]]
+                self.paths[1] = [(x - move, y) for x, y in self.paths[1]]
+
+            # Update positions incrementally for animation
+            sounds.play('unlock')
+            for step in range(steps):
+                # Calculate the incremental move for this step
+                # partial_move = move * (step + 1) / steps
+                partial_move = 1
+
+                # Update paths incrementally
+                for i, (x, y) in enumerate(self.paths[0]):
+                    self.paths[0][i] = (x - partial_move, y)
+
+                for i, (x, y) in enumerate(self.paths[1]):
+                    self.paths[1][i] = (x + partial_move, y)
+
+                # Repaint screen and flip the display
+                self.paint_features(window)
+                for path in self.paths:
+                    for i in range(len(path) - 1):
+                        pygame.draw.line(window, (self.path_color), path[i], path[i+1], self.path_thickness)
+                for tower in towers:
+                    tower.draw(window)
+
+                display.flip()
+
+                # Small pause between updates to create animation effect
+                time.sleep(0.1)
+
 
     def paint_features(self, window):
         inner = self.paths[0]+self.paths[1][::-1]
         pygame.draw.polygon(window, self.color_inside, inner)
+
+
+    def can_I_place(self, pos, w, h):
+        x, y = pos
+        inner_coords = self.paths[0] + self.paths[1][::-1]
+        num_vertices = len(inner_coords)
+        inside = False
+
+        for i in range(num_vertices):
+            j = (i + 1) % num_vertices
+            xi, yi = inner_coords[i]
+            xj, yj = inner_coords[j]
+
+            # Check if the point is on an horizontal boundary
+            if yi == yj and y == yi and min(xi, xj) <= x <= max(xi, xj):
+                return True  # Point is on the boundary
+
+            # Check if the point is within the y-bounds of the edge
+            if ((yi > y) != (yj > y)):
+                # Compute the x-coordinate of the intersection of the edge with the horizontal line y
+                try:
+                    intersect_x = (xj - xi) * (y - yi) / (yj - yi) + xi
+                except ZeroDivisionError:
+                    intersect_x = xi  # Avoid division by zero if yj == yi
+
+                if x == intersect_x:
+                    return True  # Point is on the boundary
+                if x < intersect_x:
+                    inside = not inside
+        return inside
 
 
 class NKKK(Map):
