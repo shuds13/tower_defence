@@ -923,7 +923,7 @@ class Totem(Tower):
             self.image = totem4_img
             self.cost += self.upgrade_costs[2]
             self.attack_tower = True
-            self.attack_speed = 3
+            self.attack_speed = 2
             self.range_boost = 1.20
 
     def find_target(self, enemies, gmap):
@@ -1024,7 +1024,7 @@ class Totem(Tower):
         if self.level >= 3:
             tower.speed_mod = 0.75 # while addin nothing else - boost a bit
         if self.level >= 4:
-            tower.speed_mod = 0.60 # while addin nothing else - boost a bit
+            tower.speed_mod = 0.65 # while addin nothing else - boost a bit
 
 
 # some ideas names
@@ -1256,10 +1256,10 @@ class CannonBall(Tower):
         if self.launcher.level == 4:
             # maybe add homing missiles
             self.speed = 15
-            self.damage = 10
-            self.max_attacks = 14
+            self.damage = 12
+            self.max_attacks = 18
             self.image = cannonball4_img
-            self.range = 80
+            self.range = 90
             self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
     def find_target(self, enemies, gmap):
