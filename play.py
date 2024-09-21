@@ -351,6 +351,7 @@ while game.running:
             #testing remove continue - is it needed? Might finish levels clean - inc. toxic
             #toxic still dont dusappear till after the WIN has finished.
             #continue # this was in if not at max level - does it matter being done either way
+            projectiles = []
 
         if game.lives <= 0:
             game.game_over = True

@@ -1346,7 +1346,7 @@ class Ninja(Tower):
     image = ninja_img
     #in_game_image = cannon_img_ingame
     range = 80
-    max_level = 1
+    max_level = 2
     footprint = (40,50)  # May make bigger
 
     # Does projectile just go in direct target was when launch - or does it continue
@@ -1426,17 +1426,17 @@ class Shuriken(Tower):
         self.distance = 0
         self.num_hits = 0
         self.active = True
-        self.max_attacks = 100 #4
+        self.max_attacks = 80 #4
         self.damage = 1
         self.image = CannonBall.image
-        self.range = 1
+        #self.range = 1
         self.expl_image = explosion1_img
         if self.launcher.level == 2:
             self.speed = 10
-            self.damage = 4
-            self.max_attacks = 6
+            self.damage = 1
+            self.max_attacks = 8
             self.image = cannonball2_img
-            self.range = 60
+            #self.range = 60
             self.expl_image = explosion2_img
         if self.launcher.level == 3:
             # maybe add homing missiles
@@ -1444,7 +1444,7 @@ class Shuriken(Tower):
             self.damage = 7
             self.max_attacks = 8
             self.image = cannonball3_img
-            self.range = 70
+            #self.range = 70
             self.expl_image = explosion3_img
         if self.launcher.level == 4:
             # maybe add homing missiles
@@ -1452,7 +1452,7 @@ class Shuriken(Tower):
             self.damage = 12
             self.max_attacks = 18
             self.image = cannonball4_img
-            self.range = 90
+            #self.range = 90
             self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
 
@@ -1525,6 +1525,9 @@ class Shuriken(Tower):
 
         return distance_sq <= self.hit_tolerance ** 2
 
+    # check for see ghosts- i mean yeah nina will need to release but prob should be here
+    # also - what did i do for cannon
+    # make it dissapear at end of round.
     def update(self, enemies, gmap):
         # Move towards the next point in the path
         #spawn = False
