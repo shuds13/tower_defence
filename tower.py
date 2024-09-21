@@ -440,7 +440,7 @@ class Burger(Tower):
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
-        return score
+        return score, False
 
     def draw(self, window, enemies=None):
         """Dont rotate burger"""
@@ -684,7 +684,7 @@ class Wizard(Tower):
             self.is_attacking = True
         else:
             self.is_attacking = False
-        return score
+        return score, False
 
     # TODO can now use burger algorithm to attach >2 - check if this fumc is different
     # And also may be same as cloud but for animation.
@@ -874,7 +874,7 @@ class GlueGunner(Tower):
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
-        return score
+        return score, False
 
 # Maybe the Demons need more than ghost sight - 3rd level wizard or 3rd level totem.
 class Totem(Tower):
