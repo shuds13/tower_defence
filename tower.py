@@ -1339,6 +1339,7 @@ class CannonBall(Tower):
 # then once hit first target (ninja hit) the shurken object will take over and travel in reverse along the path
 # tried doing this very tired so made a mess so far.
 # what if projectile misses first target? Should it be instant to first target?
+# dont now why level upgrade not working.
 class Ninja(Tower):
 
     price = 10
@@ -1358,10 +1359,10 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 60
-        self.upgrade_costs = [300, 750, 2000]
+        self.upgrade_costs = [140] #, 320, 850]
         #self.glow_radius = 10
         #self.glow_time = 5
-        #self.upgrade_name = "Heavy Gun"
+        self.upgrade_name = "Placeholder"
 
     def attack(self):
         score = 0
@@ -1417,7 +1418,7 @@ class Shuriken(Tower):
         super().__init__(tower.target.position)
         self.launcher = tower
         self.speed = 8
-        self.hit_tolerance = 5
+        self.hit_tolerance = 8
         self.hit_enemies = []
         self.target_pos = tower.target.position  # position when shoot
         self.path = tower.target.path
