@@ -1371,6 +1371,7 @@ class Ninja(Tower):
     # need to remove laser animation - replace with animate shuriken somehow going to first one???
     # and rem at some level i want him to see ghosts - should be hinted at in either image or lvel name.
     # for higher level - more damage - and/or more damge ot bigger opponents. Very weak against big opponents
+    # also if animate mini-explosion each hit would look good on trolls eetc..
     def __init__(self, position):
         super().__init__(position)
         self.range =  Ninja.range
@@ -1378,7 +1379,8 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 60
-        self.upgrade_costs = [140, 320, 850]
+        #self.upgrade_costs = [140, 320, 850] # rough - need to decide
+        self.upgrade_costs = [5, 5, 5] # testing
         #self.glow_radius = 10
         #self.glow_time = 5
         self.upgrade_name = "Placeholder"
@@ -1471,6 +1473,7 @@ class Shuriken(Tower):
         self.path_index = tower.target.path_index
         #print(f"initial {self.path_index}")
         self.distance = 0
+        self.distance_since_hit = 0
         self.num_hits = 0
         self.active = True
         self.max_attacks = 4 #80 #4
@@ -1478,14 +1481,17 @@ class Shuriken(Tower):
         self.image = Shuriken.image
         #self.range = 1
         self.expl_image = explosionMini_img
+        self.hit_range = 80
         if self.launcher.level == 2:
             #self.speed = 10  # dont nec want to be faster - may be a bit with higher level
+            self.hit_range = 100
             self.damage = 1
             self.max_attacks = 8
             #self.image = cannonball2_img
             #self.range = 60
             #self.expl_image = explosion2_img
         if self.launcher.level == 3:
+            self.hit_range = 160
             # maybe add homing missiles
             self.speed = 10
             self.damage = 1
@@ -1494,6 +1500,7 @@ class Shuriken(Tower):
             #self.range = 70
             self.expl_image = explosion3_img
         if self.launcher.level == 4:
+            self.hit_range = 180
             # maybe add homing missiles
             #self.speed = 15
             self.damage = 2
@@ -1548,6 +1555,10 @@ class Shuriken(Tower):
             old_position = self.position
             self.position = (self.position[0] - dx, self.position[1] - dy)
 
+            self.distance += self.speed
+            self.distance_since_hit += self.speed
+            #print(f"{self.distance_since_hit=}  {self.distance=}")
+
             for enemy in enemies:
                 if enemy in self.hit_enemies:
                     continue  # Skip enemies already hit by this projectile
@@ -1557,6 +1568,7 @@ class Shuriken(Tower):
                     self.launcher.total_score += score
                     self.num_hits += 1
                     self.hit_enemies.append(enemy)  # Add enemy to hit list
+                    self.distance_since_hit = 0
 
                     # To show mini-explosion (streak of ninja power) each hit
                     #self.attack_animate(window) # dam dont have window - why is animate separated anyway????
@@ -1571,10 +1583,10 @@ class Shuriken(Tower):
                abs(self.position[1] - target_pos[1]) < self.speed:
                 self.path_index -= 1
 
-            self.distance += self.speed
+            #self.distance += self.speed
 
         # Check if the projectile has reached the end of the path
-        if self.path_index < 0:
+        if self.distance_since_hit > self.hit_range or self.path_index < 0:
             self.active = False
 
         return score, False  # Temporary return values - maybe right - launch gets score...
