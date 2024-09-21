@@ -95,7 +95,9 @@ shuriken_img = pygame.image.load('images/shuriken.png')
 shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
 #shuriken_img = pygame.transform.scale(shuriken_img, (30, 30))
 #shuriken_img = pygame.transform.scale(shuriken_img, (40, 40))
-
+shuriken_img2 = shuriken_img
+shuriken_img3 = shuriken_img
+shuriken_img4 = shuriken_img
 
 def line_intersects_rect(p1, p2, rect):
     """
@@ -1366,6 +1368,12 @@ class Ninja(Tower):
     max_level = 4
     footprint = (40,50)  # May make bigger
 
+    #image1 = shuriken_img
+    #image2 = shuriken_img2
+    #image3 = shuriken_img3
+    #image4 = shuriken_img4
+    shurikens = {1: shuriken_img, 2:shuriken_img2, 3:shuriken_img3, 4:shuriken_img4}
+
     # Does projectile just go in direct target was when launch - or does it continue
     # to move towards target with each step (homing missile).
     # need to remove laser animation - replace with animate shuriken somehow going to first one???
@@ -1384,6 +1392,7 @@ class Ninja(Tower):
         #self.glow_radius = 10
         #self.glow_time = 5
         self.upgrade_name = "lev 2"
+
 
     # still no range limit on richochet - think about that
     def level_up(self):
@@ -1430,6 +1439,9 @@ class Ninja(Tower):
     # may make it go with closest - but soon to make first/strong/close options
     # this is to get closest in range - else can use default find_target
     # when implement first/clost/strong/maybe last options can use that with default of close
+    # I may not make this default - look at picnic place if place him between path (up and down) and closer
+    # to up path will not fire at later down path.
+    # but use code when make options
     def find_target(self, enemies, gmap):
         tmp_target = []
         self.target = []
@@ -1472,6 +1484,16 @@ class Ninja(Tower):
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
+    def attack_animate(self, window):
+        image = self.shurikens[self.level]
+        mid_point = ((self.position[0] + self.target.position[0]) // 2,
+                     (self.position[1] + self.target.position[1]) // 2)
+        shuriken_rect = image.get_rect(center=mid_point)
+        window.blit(image, shuriken_rect)
+
+
+
+
 
 #class Shuriken(CannonBall):  # tmp inheritence
 # Prob make projectile class - diff types and levels of projectile will be inherited.
@@ -1482,7 +1504,12 @@ class Ninja(Tower):
 # could make smaller one and call attack_animate on every hit - might be slow?
 class Shuriken(Tower):
 
+    # For now same - but can be diff for each level
     image = shuriken_img
+    image2 = shuriken_img2
+    image3 = shuriken_img3
+    image4 = shuriken_img4
+
 
     def __init__(self, tower):
         super().__init__(tower.target.position)
@@ -1506,29 +1533,28 @@ class Shuriken(Tower):
         self.expl_image = explosionMini_img
         self.hit_range = 80
         if self.launcher.level == 2:
+            self.image = Shuriken.image2
             #self.speed = 10  # dont nec want to be faster - may be a bit with higher level
             self.hit_range = 100
             self.damage = 1
             self.max_attacks = 8
-            #self.image = cannonball2_img
             #self.range = 60
-            #self.expl_image = explosion2_img
         if self.launcher.level == 3:
+            self.image = Shuriken.image3
             self.hit_range = 160
             # maybe add homing missiles
             self.speed = 10
             self.damage = 1
             self.max_attacks = 32
-            #self.image = cannonball3_img
             #self.range = 70
             self.expl_image = explosion3_img
         if self.launcher.level == 4:
+            self.image = Shuriken.image4
             self.hit_range = 180
             # maybe add homing missiles
             #self.speed = 15
             self.damage = 2
             self.max_attacks = 100
-            #self.image = cannonball4_img
             #self.range = 90
             #self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
