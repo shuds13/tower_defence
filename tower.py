@@ -1469,47 +1469,6 @@ class Shuriken(Tower):
             self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
 
-
-    #def update(self, enemies, gmap):
-        #dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
-        #distance = (dx**2 + dy**2)**0.5
-        ##print(f"{distance=} to {self.target_pos}")
-        #if distance > self.speed:
-            #dx, dy = dx / distance * self.speed, dy / distance * self.speed
-        #self.position = (self.position[0] + dx, self.position[1] + dy)
-        ## Check if the enemy has reached the target position
-        #if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
-            ##print(f"blowing up at {self.position}")
-            #self.find_target(enemies, gmap)
-            #score = self.attack()
-            #self.launcher.total_score += score
-            #self.active = False  # if dont remove they stop on paths and look like mines
-            #return score
-        #return 0
-
-
-
-# reverse of enemy movement
-# enemy movement function
-
-
-    #def find_target(self, enemies, gmap):
-        ## Only place to call function - after just check self.cloud_attack
-        ##self.target = enemies # put all in here.
-        ##tmp_target = []
-        #self.target = []
-        ##self.see_ghosts = self.launcher.see_ghosts
-        #for enemy in enemies:
-            #if self.is_visible(enemy, gmap) and not enemy.reached_end:
-                #self.target.append(enemy)
-            #if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
-                #tmp_target.append(enemy)
-        #if tmp_target:
-            #self.target = self.create_sublist(tmp_target, self.max_attacks)
-            #print(f"{len(self.target)=}")
-
-
-
     def is_between(self, old_pos, new_pos, enemy_pos):
         # Check if enemy position is close to the line segment defined by old_pos and new_pos
         x0, y0 = enemy_pos
@@ -1582,82 +1541,6 @@ class Shuriken(Tower):
 
         return score, False  # Temporary return values - maybe right - launch gets score...
 
-
-    #def is_between(self, old_pos, new_pos, enemy_pos):
-        ## Check if enemy position is on the line segment defined by old_pos and new_pos
-        #return (min(old_pos[0], new_pos[0]) <= enemy_pos[0] <= max(old_pos[0], new_pos[0]) and
-                #min(old_pos[1], new_pos[1]) <= enemy_pos[1] <= max(old_pos[1], new_pos[1]))
-
-
-    ##def move(self): #reversing
-    #def update(self, enemies, gmap):
-        ## Move towards the next point in the path
-        #spawn = False
-        #if self.path_index >= 0:
-            ##print(f"{self.path_index=}")
-            #target_pos = self.path[self.path_index]  # for backwards move (rather than +1)
-            #dx, dy = self.position[0] - target_pos[0], self.position[1] - target_pos[1]
-            #distance = (dx**2 + dy**2)**0.5
-            #if distance > self.speed:
-                #dx, dy = dx / distance * self.speed, dy / distance * self.speed
-
-            #old_position = self.position
-            #self.position = (self.position[0] - dx, self.position[1] - dy)
-
-            #print(f"{enemies=}")
-            #for enemy in enemies:
-                ## Optimize: Only check enemies on the same path
-                ## also need to check on same path? then could prob do if cross either x or y
-                ##  for that would be easier of each had a path_id e.g. 1 or 2 or 3
-                #if enemy.path_index == self.path_index:
-
-                ##if True:  # test if above condition is causing th problem
-                    #print(f"My path {self.path} enemy path {enemy.path}")
-
-                    #print(f"{old_position}")
-                    #print(f"{self.position}")
-                    #print(f"{enemy.position}\n")
-                    #if self.is_between(old_position, self.position, enemy.position):
-                        #print(f"inbetween: {enemy}\n")
-
-                        ## this should use attack (and maybe find_target
-                        ## inc any adjuster for bigger targets etc..
-                        #score = enemy.take_damage(self.damage)
-                        #self.num_hits += 1
-
-                        #if self.num_hits >= self.max_attacks:
-                            ## will deactivate here
-                            #self.active = False
-                            #break
-
-
-
-            ## add for hit target - here or end?
-            ##if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
-                ##self.find_target(enemies, gmap)
-                ##score, spawn = self.attack()
-                ##self.launcher.total_score += score
-                ###self.active = False  # if dont remove they stop on paths and look like mines
-                ##return score, spawn
-
-            ## Check if reached the target position
-            #if abs(self.position[0] - target_pos[0]) < self.speed and abs(self.position[1] - target_pos[1]) < self.speed:
-                #self.path_index -= 1
-
-            #self.distance += self.speed
-            ##print(f"{self.distance=}")
-
-        ## Check if the enemy has reached the end of the path
-        #if self.path_index <  0:
-            #self.active = False  # if dont remove they stop on paths and look like mines
-            ##self.reached_end = True  # reached start
-
-        ##return score, spawn
-        #return 0, False # tmp - go to beginning of course without killing anything
-
-
-
-
     def draw(self, window, enemies=None):
         x = self.position[0]
         y = self.position[1]
@@ -1669,58 +1552,6 @@ class Shuriken(Tower):
         if not self.active:
             explosion_rect = self.expl_image.get_rect(center=self.position)
             window.blit(self.expl_image, explosion_rect)
-
-
-
-    #def attack(self):
-        #score = 0
-
-        ## dont remember why find_target is separate from attack
-        #if self.self.attack_timer > 0:
-            #self.is_attacking = False
-            #return score
-
-        ## no this is going to be determined by initial range if do all at once....
-        ##   want to do one at time no...
-        #next_target = []
-        #for enemy in self.target:
-            #if self.in_range(enemy):  # CHECK - range of ninja or Shuriken - i think this is shuriken determined...
-                #next_target.append(enemy)
-                #if len(next_target) == self.max_attacks:
-                    #break
-
-        #if next_target:
-            #self.attack_count += 1
-            #score = self.target.take_damage(self.damage)
-            #self.reset_attack_timer()
-            #self.is_attacking = True
-        #else:
-            #self.is_attacking = False
-        #return score
-
-    #def attack(self):
-        #score = 0
-        #if self.target and self.attack_timer <= 0:
-            ## If using IF this could be in generic one
-            #self.attack_count += 1
-            #if type(self.target) is list:
-                #for target in self.target:
-                    ## Do more damage to big enemies to simulate multiple projectiles hitting
-                    #multiplier = target.size
-                    ##print(f"Damage: {self.damage * multiplier}")
-                    #score += target.take_damage(self.damage * multiplier)
-            #else:
-                ## dont think ever here
-                #multiplier = self.target.size  # Do more damage to big enemies to simulate multiple projectiles hitting
-                #score = self.target.take_damage(self.damage * multiplier)
-            #self.reset_attack_timer()
-            #self.is_attacking = True  # Set to True when attacking
-        #else:
-            #self.is_attacking = False  # Set to False otherwise
-        #return score
-
-
-
 
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
