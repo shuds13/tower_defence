@@ -81,6 +81,21 @@ explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
 ninja_img = pygame.image.load('images/ninja.png')
 ninja_img = pygame.transform.scale(ninja_img, (50, 50))
 
+# make it rotate
+# can barely see this - was better using a cannonball - perhaps make bolt shooter instead
+# in fact if you did make a bolt shooter - it could start going straight - but an upgrade
+# would be to follow path? - maybe or maybe not - as makes for different tactic
+# could make bolt shooter a different character - need more with longer range.
+# a bit better if make it bigger and looks better on dark background
+# perhaps need to change color depending on background?!?!?
+# or maybe one with a border - eg. black with white border - would look good in forest.
+shuriken_img = pygame.image.load('images/shuriken.png')
+#shuriken_img = pygame.image.load('images/shuriken.png')
+#shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
+shuriken_img = pygame.transform.scale(shuriken_img, (30, 30))
+#shuriken_img = pygame.transform.scale(shuriken_img, (40, 40))
+
+
 def line_intersects_rect(p1, p2, rect):
     """
     Check if a line segment intersects a rectangle.
@@ -1422,13 +1437,16 @@ class Ninja(Tower):
 # Prob make projectile class - diff types and levels of projectile will be inherited.
 # looks like cannonball for now - not most copy/pasted from cannonball for now but updating find_target/attack
 # forgot how projectiles move
+# change image/color - maybe red - or more flashy at higher levels.
+# still a little (explosion) on end - but i actually quite like that!
 class Shuriken(Tower):
 
-    image = cannonball1_img
+    image = shuriken_img
 
     def __init__(self, tower):
         super().__init__(tower.target.position)
         self.launcher = tower
+        self.angle
         self.speed = 8
         self.hit_tolerance = 8
         self.hit_enemies = []
@@ -1441,7 +1459,7 @@ class Shuriken(Tower):
         self.active = True
         self.max_attacks = 80 #4
         self.damage = 1
-        self.image = CannonBall.image
+        self.image = Shuriken.image
         #self.range = 1
         self.expl_image = explosion1_img
         if self.launcher.level == 2:
@@ -1541,12 +1559,16 @@ class Shuriken(Tower):
 
         return score, False  # Temporary return values - maybe right - launch gets score...
 
+
     def draw(self, window, enemies=None):
         x = self.position[0]
         y = self.position[1]
         if self.active:
-            image_rect = self.image.get_rect(center=self.position)
-            window.blit(self.image, image_rect.topleft)
+            self.angle = (self.angle + 45) % 360
+            rotated_image = pygame.transform.rotate(self.image, self.angle)
+            image_rect = rotated_image.get_rect(center=self.position)
+            window.blit(rotated_image, image_rect.topleft)
+
 
     def attack_animate(self, window):
         if not self.active:
