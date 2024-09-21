@@ -1417,6 +1417,8 @@ class Shuriken(Tower):
         super().__init__(tower.target.position)
         self.launcher = tower
         self.speed = 8
+        self.hit_tolerance = 5
+        self.hit_enemies = []
         self.target_pos = tower.target.position  # position when shoot
         self.path = tower.target.path
         self.path_index = tower.target.path_index
@@ -1424,7 +1426,7 @@ class Shuriken(Tower):
         self.distance = 0
         self.num_hits = 0
         self.active = True
-        self.max_attacks = 4
+        self.max_attacks = 100 #4
         self.damage = 1
         self.image = CannonBall.image
         self.range = 1
@@ -1494,20 +1496,42 @@ class Shuriken(Tower):
             #print(f"{len(self.target)=}")
 
 
-    def is_between(self, old_pos, new_pos, enemy_pos):
-        # Check if enemy position is on the line segment defined by old_pos and new_pos
-        return (min(old_pos[0], new_pos[0]) <= enemy_pos[0] <= max(old_pos[0], new_pos[0]) and
-                min(old_pos[1], new_pos[1]) <= enemy_pos[1] <= max(old_pos[1], new_pos[1]))
 
-    #def move(self): #reversing
+    def is_between(self, old_pos, new_pos, enemy_pos):
+        # Check if enemy position is close to the line segment defined by old_pos and new_pos
+        x0, y0 = enemy_pos
+        x1, y1 = old_pos
+        x2, y2 = new_pos
+
+        dx = x2 - x1
+        dy = y2 - y1
+        line_length_sq = dx * dx + dy * dy
+
+        if line_length_sq == 0:
+            # The line segment is a point
+            distance_sq = (x0 - x1) ** 2 + (y0 - y1) ** 2
+            return distance_sq <= self.hit_tolerance ** 2
+
+        # Parameter t of the projection of the enemy onto the line
+        t = ((x0 - x1) * dx + (y0 - y1) * dy) / line_length_sq
+        t = max(0, min(1, t))  # Clamp t to [0, 1] to stay within the segment
+
+        # Closest point on the segment
+        closest_x = x1 + t * dx
+        closest_y = y1 + t * dy
+
+        # Distance from enemy to the closest point
+        distance_sq = (x0 - closest_x) ** 2 + (y0 - closest_y) ** 2
+
+        return distance_sq <= self.hit_tolerance ** 2
+
     def update(self, enemies, gmap):
         # Move towards the next point in the path
         spawn = False
         if self.path_index >= 0:
-            print(f"{self.path_index=}")
-            target_pos = self.path[self.path_index]  # for backwards move (rather than +1)
+            target_pos = self.path[self.path_index]  # For backward movement
             dx, dy = self.position[0] - target_pos[0], self.position[1] - target_pos[1]
-            distance = (dx**2 + dy**2)**0.5
+            distance = (dx ** 2 + dy ** 2) ** 0.5
             if distance > self.speed:
                 dx, dy = dx / distance * self.speed, dy / distance * self.speed
 
@@ -1515,44 +1539,103 @@ class Shuriken(Tower):
             self.position = (self.position[0] - dx, self.position[1] - dy)
 
             for enemy in enemies:
-                # Optimize: Only check enemies on the same path
-                if enemy.path_index == self.path_index:
-                    if self.is_between(old_position, self.position, enemy.position):
+                if enemy in self.hit_enemies:
+                    continue  # Skip enemies already hit by this projectile
 
-                        # this should use attack (and maybe find_target
-                        # inc any adjuster for bigger targets etc..
-                        score = enemy.take_damage(self.damage)
-                        self.num_hits += 1
+                if self.is_between(old_position, self.position, enemy.position):
+                    score = enemy.take_damage(self.damage)
+                    self.num_hits += 1
+                    self.hit_enemies.append(enemy)  # Add enemy to hit list
 
-                        if self.num_hits >= self.max_attacks:
-                            # will deactivate here
-                            self.active = False
-                            break
-
-
-
-            # add for hit target - here or end?
-            #if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
-                #self.find_target(enemies, gmap)
-                #score, spawn = self.attack()
-                #self.launcher.total_score += score
-                ##self.active = False  # if dont remove they stop on paths and look like mines
-                #return score, spawn
+                    if self.num_hits >= self.max_attacks:
+                        self.active = False
+                        break
 
             # Check if reached the target position
-            if abs(self.position[0] - target_pos[0]) < self.speed and abs(self.position[1] - target_pos[1]) < self.speed:
+            if abs(self.position[0] - target_pos[0]) < self.speed and \
+               abs(self.position[1] - target_pos[1]) < self.speed:
                 self.path_index -= 1
 
             self.distance += self.speed
-            print(f"{self.distance=}")
 
-        # Check if the enemy has reached the end of the path
-        if self.path_index <  0:
-            self.active = False  # if dont remove they stop on paths and look like mines
-            #self.reached_end = True  # reached start
+        # Check if the projectile has reached the end of the path
+        if self.path_index < 0:
+            self.active = False
 
-        #return score, spawn
-        return 0, False # tmp - go to beginning of course without killing anything
+        return 0, False  # Temporary return values
+
+
+    #def is_between(self, old_pos, new_pos, enemy_pos):
+        ## Check if enemy position is on the line segment defined by old_pos and new_pos
+        #return (min(old_pos[0], new_pos[0]) <= enemy_pos[0] <= max(old_pos[0], new_pos[0]) and
+                #min(old_pos[1], new_pos[1]) <= enemy_pos[1] <= max(old_pos[1], new_pos[1]))
+
+
+    ##def move(self): #reversing
+    #def update(self, enemies, gmap):
+        ## Move towards the next point in the path
+        #spawn = False
+        #if self.path_index >= 0:
+            ##print(f"{self.path_index=}")
+            #target_pos = self.path[self.path_index]  # for backwards move (rather than +1)
+            #dx, dy = self.position[0] - target_pos[0], self.position[1] - target_pos[1]
+            #distance = (dx**2 + dy**2)**0.5
+            #if distance > self.speed:
+                #dx, dy = dx / distance * self.speed, dy / distance * self.speed
+
+            #old_position = self.position
+            #self.position = (self.position[0] - dx, self.position[1] - dy)
+
+            #print(f"{enemies=}")
+            #for enemy in enemies:
+                ## Optimize: Only check enemies on the same path
+                ## also need to check on same path? then could prob do if cross either x or y
+                ##  for that would be easier of each had a path_id e.g. 1 or 2 or 3
+                #if enemy.path_index == self.path_index:
+
+                ##if True:  # test if above condition is causing th problem
+                    #print(f"My path {self.path} enemy path {enemy.path}")
+
+                    #print(f"{old_position}")
+                    #print(f"{self.position}")
+                    #print(f"{enemy.position}\n")
+                    #if self.is_between(old_position, self.position, enemy.position):
+                        #print(f"inbetween: {enemy}\n")
+
+                        ## this should use attack (and maybe find_target
+                        ## inc any adjuster for bigger targets etc..
+                        #score = enemy.take_damage(self.damage)
+                        #self.num_hits += 1
+
+                        #if self.num_hits >= self.max_attacks:
+                            ## will deactivate here
+                            #self.active = False
+                            #break
+
+
+
+            ## add for hit target - here or end?
+            ##if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
+                ##self.find_target(enemies, gmap)
+                ##score, spawn = self.attack()
+                ##self.launcher.total_score += score
+                ###self.active = False  # if dont remove they stop on paths and look like mines
+                ##return score, spawn
+
+            ## Check if reached the target position
+            #if abs(self.position[0] - target_pos[0]) < self.speed and abs(self.position[1] - target_pos[1]) < self.speed:
+                #self.path_index -= 1
+
+            #self.distance += self.speed
+            ##print(f"{self.distance=}")
+
+        ## Check if the enemy has reached the end of the path
+        #if self.path_index <  0:
+            #self.active = False  # if dont remove they stop on paths and look like mines
+            ##self.reached_end = True  # reached start
+
+        ##return score, spawn
+        #return 0, False # tmp - go to beginning of course without killing anything
 
 
 
