@@ -1422,6 +1422,7 @@ class Shuriken(Tower):
         self.path_index = tower.target.path_index
         #print(f"initial {self.path_index}")
         self.distance = 0
+        self.num_hits = 0
         self.active = True
         self.max_attacks = 4
         self.damage = 1
@@ -1452,20 +1453,7 @@ class Shuriken(Tower):
             self.range = 90
             self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
-    #def find_target(self, enemies, gmap):
-        ## Only place to call function - after just check self.cloud_attack
-        ##self.target = enemies # put all in here.
-        ##tmp_target = []
-        #self.target = []
-        ##self.see_ghosts = self.launcher.see_ghosts
-        #for enemy in enemies:
-            #if self.is_visible(enemy, gmap) and not enemy.reached_end:
-                #self.target.append(enemy)
-            #if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
-                #tmp_target.append(enemy)
-        #if tmp_target:
-            #self.target = self.create_sublist(tmp_target, self.max_attacks)
-            #print(f"{len(self.target)=}")
+
 
     #def update(self, enemies, gmap):
         #dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
@@ -1489,6 +1477,28 @@ class Shuriken(Tower):
 # reverse of enemy movement
 # enemy movement function
 
+
+    #def find_target(self, enemies, gmap):
+        ## Only place to call function - after just check self.cloud_attack
+        ##self.target = enemies # put all in here.
+        ##tmp_target = []
+        #self.target = []
+        ##self.see_ghosts = self.launcher.see_ghosts
+        #for enemy in enemies:
+            #if self.is_visible(enemy, gmap) and not enemy.reached_end:
+                #self.target.append(enemy)
+            #if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                #tmp_target.append(enemy)
+        #if tmp_target:
+            #self.target = self.create_sublist(tmp_target, self.max_attacks)
+            #print(f"{len(self.target)=}")
+
+
+    def is_between(self, old_pos, new_pos, enemy_pos):
+        # Check if enemy position is on the line segment defined by old_pos and new_pos
+        return (min(old_pos[0], new_pos[0]) <= enemy_pos[0] <= max(old_pos[0], new_pos[0]) and
+                min(old_pos[1], new_pos[1]) <= enemy_pos[1] <= max(old_pos[1], new_pos[1]))
+
     #def move(self): #reversing
     def update(self, enemies, gmap):
         # Move towards the next point in the path
@@ -1500,7 +1510,26 @@ class Shuriken(Tower):
             distance = (dx**2 + dy**2)**0.5
             if distance > self.speed:
                 dx, dy = dx / distance * self.speed, dy / distance * self.speed
+
+            old_position = self.position
             self.position = (self.position[0] - dx, self.position[1] - dy)
+
+            for enemy in enemies:
+                # Optimize: Only check enemies on the same path
+                if enemy.path_index == self.path_index:
+                    if self.is_between(old_position, self.position, enemy.position):
+
+                        # this should use attack (and maybe find_target
+                        # inc any adjuster for bigger targets etc..
+                        score = enemy.take_damage(self.damage)
+                        self.num_hits += 1
+
+                        if self.num_hits >= self.max_attacks:
+                            # will deactivate here
+                            self.active = False
+                            break
+
+
 
             # add for hit target - here or end?
             #if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
@@ -1510,7 +1539,7 @@ class Shuriken(Tower):
                 ##self.active = False  # if dont remove they stop on paths and look like mines
                 #return score, spawn
 
-            # Check if the enemy has reached the target position
+            # Check if reached the target position
             if abs(self.position[0] - target_pos[0]) < self.speed and abs(self.position[1] - target_pos[1]) < self.speed:
                 self.path_index -= 1
 
