@@ -1527,7 +1527,8 @@ class Shuriken(Tower):
 
     def update(self, enemies, gmap):
         # Move towards the next point in the path
-        spawn = False
+        #spawn = False
+        score = 0
         if self.path_index >= 0:
             target_pos = self.path[self.path_index]  # For backward movement
             dx, dy = self.position[0] - target_pos[0], self.position[1] - target_pos[1]
@@ -1544,6 +1545,7 @@ class Shuriken(Tower):
 
                 if self.is_between(old_position, self.position, enemy.position):
                     score = enemy.take_damage(self.damage)
+                    self.launcher.total_score += score
                     self.num_hits += 1
                     self.hit_enemies.append(enemy)  # Add enemy to hit list
 
@@ -1562,7 +1564,7 @@ class Shuriken(Tower):
         if self.path_index < 0:
             self.active = False
 
-        return 0, False  # Temporary return values
+        return score, False  # Temporary return values - maybe right - launch gets score...
 
 
     #def is_between(self, old_pos, new_pos, enemy_pos):
