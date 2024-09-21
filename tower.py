@@ -1363,11 +1363,14 @@ class Ninja(Tower):
     image = ninja_img
     #in_game_image = cannon_img_ingame
     range = 80
-    max_level = 2
+    max_level = 4
     footprint = (40,50)  # May make bigger
 
     # Does projectile just go in direct target was when launch - or does it continue
     # to move towards target with each step (homing missile).
+    # need to remove laser animation - replace with animate shuriken somehow going to first one???
+    # and rem at some level i want him to see ghosts - should be hinted at in either image or lvel name.
+    # for higher level - more damage - and/or more damge ot bigger opponents. Very weak against big opponents
     def __init__(self, position):
         super().__init__(position)
         self.range =  Ninja.range
@@ -1375,22 +1378,33 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 60
-        self.upgrade_costs = [140] #, 320, 850]
+        self.upgrade_costs = [140, 320, 850]
         #self.glow_radius = 10
         #self.glow_time = 5
         self.upgrade_name = "Placeholder"
 
+    # still no range limit on richochet - think about that
     def level_up(self):
         self.level +=1
+        # provisional
         if self.level == 2:
             self.attack_speed = 40
             #self.image = cannon2_img
-            #self.max_attacks = 7
             self.cost += self.upgrade_costs[0]
             #self.upgrade_name = "Bombard"
             self.range = 90
-            #self.glow_radius = 16
-
+        if self.level == 3:
+            self.attack_speed = 40 # may not increase - shuriken richet increates a lot
+            #self.image = cannon2_img
+            self.cost += self.upgrade_costs[0]
+            #self.upgrade_name = "Bombard"
+            self.range = 100
+        if self.level == 4:
+            self.attack_speed = 40
+            #self.image = cannon2_img
+            self.cost += self.upgrade_costs[0]
+            #self.upgrade_name = "Bombard"
+            self.range = 120
 
     def attack(self):
         score = 0
@@ -1465,7 +1479,7 @@ class Shuriken(Tower):
         #self.range = 1
         self.expl_image = explosionMini_img
         if self.launcher.level == 2:
-            self.speed = 10
+            #self.speed = 10  # dont nec want to be faster - may be a bit with higher level
             self.damage = 1
             self.max_attacks = 8
             #self.image = cannonball2_img
@@ -1473,20 +1487,20 @@ class Shuriken(Tower):
             #self.expl_image = explosion2_img
         if self.launcher.level == 3:
             # maybe add homing missiles
-            self.speed = 12
-            self.damage = 7
-            self.max_attacks = 8
-            self.image = cannonball3_img
+            self.speed = 10
+            self.damage = 1
+            self.max_attacks = 32
+            #self.image = cannonball3_img
             #self.range = 70
             self.expl_image = explosion3_img
         if self.launcher.level == 4:
             # maybe add homing missiles
-            self.speed = 15
-            self.damage = 12
-            self.max_attacks = 18
-            self.image = cannonball4_img
+            #self.speed = 15
+            self.damage = 2
+            self.max_attacks = 100
+            #self.image = cannonball4_img
             #self.range = 90
-            self.expl_image = explosion4_img  # Add fourth and prob viz perist
+            #self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
 
     def is_between(self, old_pos, new_pos, enemy_pos):
