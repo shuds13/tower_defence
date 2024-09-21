@@ -1364,6 +1364,18 @@ class Ninja(Tower):
         #self.glow_time = 5
         self.upgrade_name = "Placeholder"
 
+    def level_up(self):
+        self.level +=1
+        if self.level == 2:
+            self.attack_speed = 40
+            #self.image = cannon2_img
+            #self.max_attacks = 7
+            self.cost += self.upgrade_costs[0]
+            #self.upgrade_name = "Bombard"
+            self.range = 90
+            #self.glow_radius = 16
+
+
     def attack(self):
         score = 0
         spawn = False
@@ -1436,9 +1448,9 @@ class Shuriken(Tower):
             self.speed = 10
             self.damage = 1
             self.max_attacks = 8
-            self.image = cannonball2_img
+            #self.image = cannonball2_img
             #self.range = 60
-            self.expl_image = explosion2_img
+            #self.expl_image = explosion2_img
         if self.launcher.level == 3:
             # maybe add homing missiles
             self.speed = 12
