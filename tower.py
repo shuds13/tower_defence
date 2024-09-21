@@ -1378,12 +1378,12 @@ class Ninja(Tower):
         self.cost = Ninja.price
         self.image = Ninja.image
         self.level = 1
-        self.attack_speed = 60
+        self.attack_speed = 55
         #self.upgrade_costs = [140, 320, 850] # rough - need to decide
         self.upgrade_costs = [5, 5, 5] # testing
         #self.glow_radius = 10
         #self.glow_time = 5
-        self.upgrade_name = "Placeholder"
+        self.upgrade_name = "lev 2"
 
     # still no range limit on richochet - think about that
     def level_up(self):
@@ -1393,13 +1393,13 @@ class Ninja(Tower):
             self.attack_speed = 40
             #self.image = cannon2_img
             self.cost += self.upgrade_costs[0]
-            #self.upgrade_name = "Bombard"
+            self.upgrade_name = "lev 3"
             self.range = 90
         if self.level == 3:
             self.attack_speed = 40 # may not increase - shuriken richet increates a lot
             #self.image = cannon2_img
             self.cost += self.upgrade_costs[0]
-            #self.upgrade_name = "Bombard"
+            self.upgrade_name = "lev 4"
             self.range = 100
         if self.level == 4:
             self.attack_speed = 40
@@ -1426,6 +1426,29 @@ class Ninja(Tower):
         else:
             self.is_attacking = False
         return score, spawn
+
+    # may make it go with closest - but soon to make first/strong/close options
+    # this is to get closest in range - else can use default find_target
+    # when implement first/clost/strong/maybe last options can use that with default of close
+    def find_target(self, enemies, gmap):
+        tmp_target = []
+        self.target = []
+        for enemy in enemies:
+            if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                tmp_target.append(enemy)
+        if tmp_target:
+            self.target = self.find_close(tmp_target)
+
+    def find_close(self, enemies):
+        """Return the closest enemy or None"""
+        closest_enemy = None
+        closest_dist = float('inf')  # Start with a very high value
+        for enemy in enemies:
+            dist = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
+            if dist < closest_dist:
+                closest_dist = dist
+                closest_enemy = enemy
+        return closest_enemy
 
     def update(self, enemies, gmap):
         score = 0
