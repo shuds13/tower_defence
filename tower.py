@@ -208,18 +208,19 @@ class Tower:
             self.is_attacking = True
         else:
             self.is_attacking = False
-        return score
+        return score, False  # 2nd is whether to spawn a projectile
 
     def update(self, enemies, gmap):
         score = 0
+        spawn = False
         self.attack_timer -= 1
         if self.attack_timer <= 0:
             self.find_target(enemies, gmap)
-            score = self.attack()
+            score, spawn = self.attack()
             self.total_score += score
         else:
             self.is_attacking = False
-        return score
+        return score, spawn
 
     def get_target_angle(self):
         if not self.target:
@@ -948,19 +949,20 @@ class Totem(Tower):
             self.is_attacking = True
         #else:
             #self.is_attacking = False
-        return score
+        return score, False
 
     def update(self, enemies, gmap):
+        spawn = False
         if self.level < 4:
-            return 0
+            return 0, spawn
         score = 0
         self.attack_timer -= 1
         self.find_target(enemies, gmap)
-        score = self.attack()
+        score, spawn = self.attack()
         self.total_score += score
         #else:
             #self.is_attacking = False
-        return score
+        return score, spawn
 
     def _get_eye_pos(self):
         if self.level == 2:
@@ -1101,27 +1103,29 @@ class Cannon(Tower):
 
     def attack(self):
         score = 0
+        spawn = False
         if self.target and self.attack_timer <= 0:
             self.attack_count += 1
             #score = self.target.take_damage(self.damage)
-            score = -1  # tell it to release a projectile
+            # old -1  # tell it to release a projectile
+            spawn = True
             self.reset_attack_timer()
             self.is_attacking = True
         else:
             self.is_attacking = False
-        return score
+        return score, spawn
 
     def update(self, enemies, gmap):
         score = 0
+        spawn = False
         self.attack_timer -= 1
         if self.attack_timer <= 0:
             self.find_target(enemies, gmap)
-            score = self.attack()
+            score, spawn = self.attack()
             #self.total_score += score
         else:
             self.is_attacking = False
-        # need to return more though - direction for projectile to move in.
-        return score
+        return score, spawn
 
     def get_projectile(self):
         projectile = CannonBall(self)
@@ -1288,11 +1292,11 @@ class CannonBall(Tower):
         if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
             #print(f"blowing up at {self.position}")
             self.find_target(enemies, gmap)
-            score = self.attack()
+            score, _ = self.attack()
             self.launcher.total_score += score
             self.active = False  # if dont remove they stop on paths and look like mines
-            return score
-        return 0
+            return score, False
+        return 0, False
 
     def draw(self, window, enemies=None):
         x = self.position[0]
@@ -1326,7 +1330,7 @@ class CannonBall(Tower):
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
-        return score
+        return score, False
 
 
 # yeah a bit of work to do here
@@ -1334,13 +1338,14 @@ class CannonBall(Tower):
 # maybe i can get path from enemy - get path and path_index of enemy.
 # then once hit first target (ninja hit) the shurken object will take over and travel in reverse along the path
 # tried doing this very tired so made a mess so far.
+# what if projectile misses first target? Should it be instant to first target?
 class Ninja(Tower):
 
     price = 10
     name = 'Ninja'
     image = ninja_img
     #in_game_image = cannon_img_ingame
-    range = 70
+    range = 80
     max_level = 1
     footprint = (40,50)  # May make bigger
 
@@ -1360,27 +1365,34 @@ class Ninja(Tower):
 
     def attack(self):
         score = 0
-        if self.target and self.attack_timer <= 0:
+        spawn = False
+        if self.target and self.attack_timer <= 0:  # why attack_timer here and in update?
             self.attack_count += 1
-            #score = self.target.take_damage(self.damage)
-            score = -1  # tell it to release a projectile
+            # hmm the score -1 method is  aproblem if want ordinary hit - then releaes projectile.
+            # alt is we release projectile - but when gets to orig target point - the target is hit
+            # even if moved on - but it could be killed by something else by then!
+
+            # Hits first then spawns shuriken from there
+            score = self.target.take_damage(self.damage)
+            #score = -1  # tell it to release a projectile
+            spawn = True
             self.reset_attack_timer()
             self.is_attacking = True
         else:
             self.is_attacking = False
-        return score
+        return score, spawn
 
     def update(self, enemies, gmap):
         score = 0
+        spawn = False
         self.attack_timer -= 1
         if self.attack_timer <= 0:
             self.find_target(enemies, gmap)
-            score = self.attack()
+            score, spawn = self.attack()
             #self.total_score += score
         else:
             self.is_attacking = False
-        # need to return more though - direction for projectile to move in.
-        return score
+        return score, spawn
 
     def get_projectile(self):
         projectile = Shuriken(self)
@@ -1402,10 +1414,14 @@ class Shuriken(Tower):
     image = cannonball1_img
 
     def __init__(self, tower):
-        super().__init__(tower.position)
+        super().__init__(tower.target.position)
         self.launcher = tower
         self.speed = 8
         self.target_pos = tower.target.position  # position when shoot
+        self.path = tower.target.path
+        self.path_index = tower.target.path_index
+        #print(f"initial {self.path_index}")
+        self.distance = 0
         self.active = True
         self.max_attacks = 4
         self.damage = 1
@@ -1476,33 +1492,38 @@ class Shuriken(Tower):
     #def move(self): #reversing
     def update(self, enemies, gmap):
         # Move towards the next point in the path
-        if self.path_index > 0:
-            target_pos = self.path[self.path_index - 1]  # for backwards move just make -1
-            dx, dy = target_pos[0] - self.position[0], target_pos[1] - self.position[1]
+        spawn = False
+        if self.path_index >= 0:
+            print(f"{self.path_index=}")
+            target_pos = self.path[self.path_index]  # for backwards move (rather than +1)
+            dx, dy = self.position[0] - target_pos[0], self.position[1] - target_pos[1]
             distance = (dx**2 + dy**2)**0.5
             if distance > self.speed:
                 dx, dy = dx / distance * self.speed, dy / distance * self.speed
-            self.position = (self.position[0] + dx, self.position[1] + dy)
+            self.position = (self.position[0] - dx, self.position[1] - dy)
 
             # add for hit target - here or end?
-            if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
-                self.find_target(enemies, gmap)
-                score = self.attack()
-                self.launcher.total_score += score
-                #self.active = False  # if dont remove they stop on paths and look like mines
-                return score
+            #if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
+                #self.find_target(enemies, gmap)
+                #score, spawn = self.attack()
+                #self.launcher.total_score += score
+                ##self.active = False  # if dont remove they stop on paths and look like mines
+                #return score, spawn
 
             # Check if the enemy has reached the target position
             if abs(self.position[0] - target_pos[0]) < self.speed and abs(self.position[1] - target_pos[1]) < self.speed:
                 self.path_index -= 1
 
             self.distance += self.speed
+            print(f"{self.distance=}")
 
         # Check if the enemy has reached the end of the path
-        if self.path_index <=  0:
+        if self.path_index <  0:
             self.active = False  # if dont remove they stop on paths and look like mines
-            self.reached_end = True  # reached start
+            #self.reached_end = True  # reached start
 
+        #return score, spawn
+        return 0, False # tmp - go to beginning of course without killing anything
 
 
 

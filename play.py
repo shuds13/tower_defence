@@ -380,8 +380,10 @@ while game.running:
 
     for tower in game.towers:
         if game.active:
-            hits = tower.update(game.enemies, gmap)
-            if hits == -1:
+            hits, spawn_proj = tower.update(game.enemies, gmap)
+            #print(f"{hits=} {spawn_proj=}")
+            #if hits == -1:
+            if spawn_proj:
                 # try making the projectile a tower - but should prob be its own class.
                 projectile = tower.get_projectile()
                 #projectile = CannonBall(tower)
@@ -389,7 +391,7 @@ while game.running:
                 projectile.draw(window) # testing
                 #game.towers.append(projectile)
             tower.draw(window, game.enemies)
-            if hits > -1:
+            if hits >= 0:
                 game.process_hits(hits)
 
             #have to remove enmies etc..
@@ -409,7 +411,9 @@ while game.running:
     if game.active:
         # projecitles will be game.projecitles of course
         for projectile in projectiles:
-            hits = projectile.update(game.enemies, gmap)
+            # not spawning from projectiles right now - could be used for richochet...
+            hits, _ = projectile.update(game.enemies, gmap)
+            #print(hits)
             game.process_hits(hits)
             #print(f"Here {projectile}")
             projectile.draw(window)
