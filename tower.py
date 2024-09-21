@@ -1442,25 +1442,25 @@ class Ninja(Tower):
     # I may not make this default - look at picnic place if place him between path (up and down) and closer
     # to up path will not fire at later down path.
     # but use code when make options
-    def find_target(self, enemies, gmap):
-        tmp_target = []
-        self.target = []
-        for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
-                tmp_target.append(enemy)
-        if tmp_target:
-            self.target = self.find_close(tmp_target)
+    #def find_target(self, enemies, gmap):
+        #tmp_target = []
+        #self.target = []
+        #for enemy in enemies:
+            #if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                #tmp_target.append(enemy)
+        #if tmp_target:
+            #self.target = self.find_close(tmp_target)
 
-    def find_close(self, enemies):
-        """Return the closest enemy or None"""
-        closest_enemy = None
-        closest_dist = float('inf')  # Start with a very high value
-        for enemy in enemies:
-            dist = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
-            if dist < closest_dist:
-                closest_dist = dist
-                closest_enemy = enemy
-        return closest_enemy
+    #def find_close(self, enemies):
+        #"""Return the closest enemy or None"""
+        #closest_enemy = None
+        #closest_dist = float('inf')  # Start with a very high value
+        #for enemy in enemies:
+            #dist = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
+            #if dist < closest_dist:
+                #closest_dist = dist
+                #closest_enemy = enemy
+        #return closest_enemy
 
     def update(self, enemies, gmap):
         score = 0
