@@ -76,6 +76,7 @@ explosion1_img = pygame.transform.scale(explosion_img, (80, 80))
 explosion2_img = pygame.transform.scale(explosion_img, (90, 90))
 explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
 explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
+explosionMini_img = pygame.transform.scale(explosion_img, (50, 50))
 
 
 ninja_img = pygame.image.load('images/ninja.png')
@@ -91,8 +92,8 @@ ninja_img = pygame.transform.scale(ninja_img, (50, 50))
 # or maybe one with a border - eg. black with white border - would look good in forest.
 shuriken_img = pygame.image.load('images/shuriken.png')
 #shuriken_img = pygame.image.load('images/shuriken.png')
-#shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
-shuriken_img = pygame.transform.scale(shuriken_img, (30, 30))
+shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
+#shuriken_img = pygame.transform.scale(shuriken_img, (30, 30))
 #shuriken_img = pygame.transform.scale(shuriken_img, (40, 40))
 
 
@@ -1438,7 +1439,8 @@ class Ninja(Tower):
 # looks like cannonball for now - not most copy/pasted from cannonball for now but updating find_target/attack
 # forgot how projectiles move
 # change image/color - maybe red - or more flashy at higher levels.
-# still a little (explosion) on end - but i actually quite like that!
+# still a little (explosion) on end - but i actually quite like that! no when its big though! Ending image!
+# could make smaller one and call attack_animate on every hit - might be slow?
 class Shuriken(Tower):
 
     image = shuriken_img
@@ -1457,11 +1459,11 @@ class Shuriken(Tower):
         self.distance = 0
         self.num_hits = 0
         self.active = True
-        self.max_attacks = 80 #4
+        self.max_attacks = 4 #80 #4
         self.damage = 1
         self.image = Shuriken.image
         #self.range = 1
-        self.expl_image = explosion1_img
+        self.expl_image = explosionMini_img
         if self.launcher.level == 2:
             self.speed = 10
             self.damage = 1
@@ -1542,6 +1544,10 @@ class Shuriken(Tower):
                     self.num_hits += 1
                     self.hit_enemies.append(enemy)  # Add enemy to hit list
 
+                    # To show mini-explosion (streak of ninja power) each hit
+                    #self.attack_animate(window) # dam dont have window - why is animate separated anyway????
+                    # todo - see why animate was separated - pass window to update....
+
                     if self.num_hits >= self.max_attacks:
                         self.active = False
                         break
@@ -1571,6 +1577,7 @@ class Shuriken(Tower):
 
 
     def attack_animate(self, window):
+        # quite like mini explosion effect except at end of level when looks like explosion
         if not self.active:
             explosion_rect = self.expl_image.get_rect(center=self.position)
             window.blit(self.expl_image, explosion_rect)
