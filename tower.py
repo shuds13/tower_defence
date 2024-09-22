@@ -1379,6 +1379,7 @@ class CannonBall(Tower):
 # tried doing this very tired so made a mess so far.
 # what if projectile misses first target? Should it be instant to first target?
 # dont now why level upgrade not working.
+# sell price wrong? - se top level
 class Ninja(Tower):
 
     price = 90
@@ -1437,7 +1438,7 @@ class Ninja(Tower):
         if self.level == 3:
             self.attack_speed = 40 # may not increase - shuriken richet increates a lot
             self.image = ninja3_img
-            self.cost += self.upgrade_costs[0]
+            self.cost += self.upgrade_costs[1]
             self.upgrade_name = "lev 4"
             self.ghostsight = True
             self.range = 100
@@ -1448,7 +1449,7 @@ class Ninja(Tower):
             self.spawn_attack_factor = 5
             self.multi_attack = 4
             self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
-            self.cost += self.upgrade_costs[0]
+            self.cost += self.upgrade_costs[2]
             #self.upgrade_name = "Bombard"
             self.range = 100
             self.ghostsight = True
