@@ -82,6 +82,16 @@ explosionMini_img = pygame.transform.scale(explosion_img, (50, 50))
 ninja_img = pygame.image.load('images/ninja.png')
 ninja_img = pygame.transform.scale(ninja_img, (50, 50))
 
+ninja2_img = pygame.image.load('images/ninja2.png')
+ninja2_img = pygame.transform.scale(ninja2_img, (50, 50))
+
+ninja3_img = pygame.image.load('images/ninja3.png')
+ninja3_img = pygame.transform.scale(ninja3_img, (55, 55))
+
+ninja4_img = pygame.image.load('images/ninja4.png')
+ninja4_img = pygame.transform.scale(ninja4_img, (55, 55))
+
+
 # make it rotate
 # can barely see this - was better using a cannonball - perhaps make bolt shooter instead
 # in fact if you did make a bolt shooter - it could start going straight - but an upgrade
@@ -1401,11 +1411,11 @@ class Ninja(Tower):
 
     def load_images(self):
         if self.level == 2:
-            self.image = ninja_img
+            self.image = ninja2_img
         elif self.level == 3:
-            self.image = ninja_img
+            self.image = ninja3_img
         elif self.level == 4:
-            self.image = ninja_img
+            self.image = ninja4_img
 
     # still no range limit on richochet - think about that
     def level_up(self):
@@ -1413,26 +1423,25 @@ class Ninja(Tower):
         # provisional
         if self.level == 2:
             self.attack_speed = 40
-            #self.image = cannon2_img
+            self.image = ninja2_img
             self.cost += self.upgrade_costs[0]
             self.upgrade_name = "lev 3"
             self.range = 90
             self.ghostsight = True
         if self.level == 3:
             self.attack_speed = 40 # may not increase - shuriken richet increates a lot
-            #self.image = cannon2_img
+            self.image = ninja3_img
             self.cost += self.upgrade_costs[0]
             self.upgrade_name = "lev 4"
             self.ghostsight = True
             self.range = 100
         if self.level == 4:
             # different for spawn and non-spawn attacks
+            self.image = ninja4_img
             self.attack_speed = 8
             self.spawn_attack_factor = 5
             self.multi_attack = 4
             self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
-
-            #self.image = cannon2_img
             self.cost += self.upgrade_costs[0]
             #self.upgrade_name = "Bombard"
             self.range = 100
@@ -1555,7 +1564,8 @@ class Ninja(Tower):
         self.general_draw(window, self.image, new_rect)
 
         #if self.level == 4 and self.target and self.target.size>=2:
-        if self.level == 4:
+        if self.level == 4 and enemies:
+            #print(f"{enemies=}")
             #x = self.position[0]
             #y = self.position[1]
 
