@@ -80,16 +80,22 @@ explosionMini_img = pygame.transform.scale(explosion_img, (50, 50))
 
 
 ninja_img = pygame.image.load('images/ninja.png')
+#ninja_img = pygame.transform.scale(ninja_img, (50, 50))
+
+# tmp to see what this guy looks like in menu
+#ninja_img = pygame.image.load('images/ninja2.png')
 ninja_img = pygame.transform.scale(ninja_img, (50, 50))
 
+#ninja2_img = pygame.image.load('images/ninja2.png')
 ninja2_img = pygame.image.load('images/ninja2.png')
 ninja2_img = pygame.transform.scale(ninja2_img, (50, 50))
 
 ninja3_img = pygame.image.load('images/ninja3.png')
-ninja3_img = pygame.transform.scale(ninja3_img, (55, 55))
+ninja3_img = pygame.transform.scale(ninja3_img, (50, 50))
+#ninja3_img = pygame.transform.scale(ninja3_img, (65, 65)) #tmp test
 
 ninja4_img = pygame.image.load('images/ninja4.png')
-ninja4_img = pygame.transform.scale(ninja4_img, (55, 55))
+ninja4_img = pygame.transform.scale(ninja4_img, (50, 50))
 
 
 # make it rotate
@@ -1402,8 +1408,8 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 55
-        #self.upgrade_costs = [140, 320, 850] # rough - need to decide
-        self.upgrade_costs = [5, 5, 5] # testing
+        self.upgrade_costs = [140, 380, 1200] # rough - need to decide
+        #self.upgrade_costs = [5, 5, 5] # testing
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
         self.multi_attack = 1
@@ -1438,7 +1444,7 @@ class Ninja(Tower):
         if self.level == 4:
             # different for spawn and non-spawn attacks
             self.image = ninja4_img
-            self.attack_speed = 8
+            self.attack_speed = 6
             self.spawn_attack_factor = 5
             self.multi_attack = 4
             self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
@@ -1663,7 +1669,7 @@ class Shuriken(Tower):
             self.image = Shuriken.image4
             self.hit_range = 180
             self.damage = 2
-            self.max_attacks = 100
+            self.max_attacks = 64
             #self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
 
