@@ -1395,6 +1395,9 @@ class Ninja(Tower):
         #self.upgrade_costs = [140, 320, 850] # rough - need to decide
         self.upgrade_costs = [5, 5, 5] # testing
         self.upgrade_name = "Spirit Eye"
+        self.damage = 1  # same as normal shuriken
+        self.multi_attack = 1
+        self.spawn_attack_factor = 1
 
     def load_images(self):
         if self.level == 2:
@@ -1423,11 +1426,16 @@ class Ninja(Tower):
             self.ghostsight = True
             self.range = 100
         if self.level == 4:
-            self.attack_speed = 40
+            # different for spawn and non-spawn attacks
+            self.attack_speed = 4
+            self.spawn_attack_factor = 10
+            self.multi_attack = 8
+            self.red_damage = 5  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
+
             #self.image = cannon2_img
             self.cost += self.upgrade_costs[0]
             #self.upgrade_name = "Bombard"
-            self.range = 120
+            self.range = 100
             self.ghostsight = True
             #self.angle = 0
 
@@ -1437,25 +1445,6 @@ class Ninja(Tower):
             self.shuriken_rotation_speed = 45  # Degrees per frame for shuriken rotation
             self.orbit_speed = 5  # Degrees per frame for orbit movement
 
-
-    def attack(self):
-        score = 0
-        spawn = False
-        if self.target and self.attack_timer <= 0:  # why attack_timer here and in update?
-            self.attack_count += 1
-            # hmm the score -1 method is  aproblem if want ordinary hit - then releaes projectile.
-            # alt is we release projectile - but when gets to orig target point - the target is hit
-            # even if moved on - but it could be killed by something else by then!
-
-            # Hits first then spawns shuriken from there
-            score = self.target.take_damage(self.damage)
-            #score = -1  # tell it to release a projectile
-            spawn = True
-            self.reset_attack_timer()
-            self.is_attacking = True
-        else:
-            self.is_attacking = False
-        return score, spawn
 
     # may make it go with closest - but soon to make first/strong/close options
     # this is to get closest in range - else can use default find_target
@@ -1483,14 +1472,72 @@ class Ninja(Tower):
                 #closest_enemy = enemy
         #return closest_enemy
 
+    def attack(self):
+        score = 0
+        spawn = False
+        if self.target and self.attack_timer <= 0:  # why attack_timer here and in update?
+            self.attack_count += 1
+            # Hits first then spawns shuriken from that position
+            score = self.target.take_damage(self.damage)
+            spawn = True
+            self.reset_attack_timer()
+            self.is_attacking = True
+        else:
+            self.is_attacking = False
+        return score, spawn
+
+
+    def lev4_attack(self, enemies, gmap):
+        score = 0
+        spawn = False
+        if self.target and self.attack_timer <= 0:  # why attack_timer here and in update?
+        #if self.attack_timer <= 0:  # why attack_timer here and in update?
+            self.attack_count += 1
+
+            # Hits first then spawns shuriken from there
+            if self.level==4:
+                if self.attack_count % self.spawn_attack_factor == 0:
+                    # Hits first then spawns shuriken from that position
+                    #self.find_target(enemies, gmap)
+                    score = self.target.take_damage(self.damage)
+                    spawn = True
+                else:
+                    # ************************ got to boost for big enemies remember... too complicated now
+                    # even though found a target - going to calc multiple targets now.
+                    tmp_target = []
+                    self.target = []
+                    for enemy in enemies:
+                        if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                            self.target.append(enemy)
+                            if len(self.target) > self.multi_attack:
+                                break
+                    for target in self.target:
+                        score += target.take_damage(self.damage * target.size)
+                    spawn = False
+            else:
+                score = self.target.take_damage(self.red_damage)
+                spawn = True
+            self.reset_attack_timer()
+            self.is_attacking = True
+        else:
+            self.is_attacking = False
+        return score, spawn
+
+
     def update(self, enemies, gmap):
         score = 0
         spawn = False
         self.attack_timer -= 1
         if self.attack_timer <= 0:
+
+            # Hits first then spawns shuriken from there
             self.find_target(enemies, gmap)
-            score, spawn = self.attack()
-            #self.total_score += score
+            if self.level==4:
+                score, spawn = self.lev4_attack(enemies, gmap)
+            else:
+                #self.find_target(enemies, gmap)
+                score, spawn = self.attack()
+                #self.total_score += score
         else:
             self.is_attacking = False
         return score, spawn
@@ -1518,7 +1565,7 @@ class Ninja(Tower):
             #window.blit(rotated_image, image_rect.topleft)
 
             if self.target:
-                booster = 3
+                booster = 5
             else:
                 booster = 1
 
@@ -1541,11 +1588,12 @@ class Ninja(Tower):
 
 
     def attack_animate(self, window):
-        image = self.shurikens[self.level]
-        mid_point = ((self.position[0] + self.target.position[0]) // 2,
-                     (self.position[1] + self.target.position[1]) // 2)
-        shuriken_rect = image.get_rect(center=mid_point)
-        window.blit(image, shuriken_rect)
+        if type(self.target) is not list:
+            image = self.shurikens[self.level]
+            mid_point = ((self.position[0] + self.target.position[0]) // 2,
+                        (self.position[1] + self.target.position[1]) // 2)
+            shuriken_rect = image.get_rect(center=mid_point)
+            window.blit(image, shuriken_rect)
 
 
 
