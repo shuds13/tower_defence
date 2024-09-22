@@ -1668,7 +1668,7 @@ class Shuriken(Tower):
         if self.launcher.level == 4:
             self.image = Shuriken.image4
             self.hit_range = 180
-            self.damage = 2
+            self.damage = 1
             self.max_attacks = 64
             #self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
