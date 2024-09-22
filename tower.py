@@ -99,6 +99,14 @@ shuriken_img2 = shuriken_img
 shuriken_img3 = shuriken_img
 shuriken_img4 = shuriken_img
 
+shuriken_red_img = pygame.image.load('images/shuriken_red.png')
+#shuriken_red_img = pygame.transform.scale(shuriken_red_img, (25, 25))
+shuriken_red_img = pygame.transform.scale(shuriken_red_img, (40, 40))
+
+#shuriken_img2 = shuriken_red_img
+
+
+
 def line_intersects_rect(p1, p2, rect):
     """
     Check if a line segment intersects a rectangle.
@@ -1384,8 +1392,8 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 55
-        self.upgrade_costs = [140, 320, 850] # rough - need to decide
-        #self.upgrade_costs = [5, 5, 5] # testing
+        #self.upgrade_costs = [140, 320, 850] # rough - need to decide
+        self.upgrade_costs = [5, 5, 5] # testing
         self.upgrade_name = "Spirit Eye"
 
     def load_images(self):
@@ -1421,6 +1429,14 @@ class Ninja(Tower):
             #self.upgrade_name = "Bombard"
             self.range = 120
             self.ghostsight = True
+            #self.angle = 0
+
+            self.orbit_angle = 0  # Starting angle in degrees
+            self.orbit_radius = 30  # Radius of the orbit (adjust as needed)
+            self.shuriken_rotation_angle = 0  # For shuriken spinning effect
+            self.shuriken_rotation_speed = 45  # Degrees per frame for shuriken rotation
+            self.orbit_speed = 5  # Degrees per frame for orbit movement
+
 
     def attack(self):
         score = 0
@@ -1480,14 +1496,43 @@ class Ninja(Tower):
         return score, spawn
 
     def get_projectile(self):
-        projectile = Shuriken(self)
-        #projectile = CannonBall(self)
+        if self.level == 4 and self.target.size >= 2:
+            projectile = RedShuriken(self)
+        else:
+            projectile = Shuriken(self)
         return projectile
 
     def draw(self, window, enemies=None):
         """Dont rotate burger"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
+
+        if self.level == 4 and self.target and self.target.size>=2:
+            #x = self.position[0]
+            #y = self.position[1]
+
+            #self.angle = (self.angle + 45) % 360
+            #rotated_image = pygame.transform.rotate(shuriken_red_img, self.angle)
+            #image_rect = rotated_image.get_rect(center=self.position)
+            #window.blit(rotated_image, image_rect.topleft)
+
+            self.orbit_angle = (self.orbit_angle + self.orbit_speed) % 360
+            self.shuriken_rotation_angle = (self.shuriken_rotation_angle + self.shuriken_rotation_speed) % 360
+
+            # Calculate shuriken position around the ninja
+            angle_rad = math.radians(self.orbit_angle)
+            shuriken_x = self.position[0] + self.orbit_radius * math.cos(angle_rad)
+            shuriken_y = self.position[1] + self.orbit_radius * math.sin(angle_rad)
+            shuriken_position = (shuriken_x, shuriken_y)
+
+            # Rotate the shuriken image
+            rotated_image = pygame.transform.rotate(shuriken_red_img, self.shuriken_rotation_angle)
+            image_rect = rotated_image.get_rect(center=shuriken_position)
+
+            # Draw the shuriken
+            window.blit(rotated_image, image_rect.topleft)
+
+
 
     def attack_animate(self, window):
         image = self.shurikens[self.level]
@@ -1535,6 +1580,8 @@ class Shuriken(Tower):
         self.image = Shuriken.image
         self.expl_image = explosionMini_img
         self.hit_range = 80
+        self.show_expl = False
+
 
         if self.launcher.level == 2:
             self.image = Shuriken.image2
@@ -1620,12 +1667,19 @@ class Shuriken(Tower):
                     # To show mini-explosion (streak of ninja power) each hit
                     #self.attack_animate(window) # dam dont have window - why is animate separated anyway????
                     # todo - see why animate was separated - pass window to update....
-                    explosion_rect = self.expl_image.get_rect(center=self.position)
-                    window.blit(self.expl_image, explosion_rect)
+
+                    if self.show_expl:
+                        explosion_rect = self.expl_image.get_rect(center=self.position)
+                        window.blit(self.expl_image, explosion_rect)
 
                     if self.num_hits >= self.max_attacks:
                         self.active = False
                         break
+
+                # if do here - slighly fewer
+                # but shows up much more for some reason?
+                #explosion_rect = self.expl_image.get_rect(center=self.position)
+                #window.blit(self.expl_image, explosion_rect)
 
             # Check if reached the target position
             if abs(self.position[0] - target_pos[0]) < self.speed and \
@@ -1654,9 +1708,25 @@ class Shuriken(Tower):
     def attack_animate(self, window):
         pass
         ## quite like mini explosion effect except at end of level when looks like explosion
-        #if not self.active:
-            #explosion_rect = self.expl_image.get_rect(center=self.position)
-            #window.blit(self.expl_image, explosion_rect)
+        if not self.active:
+            explosion_rect = self.expl_image.get_rect(center=self.position)
+            window.blit(self.expl_image, explosion_rect)
+
+
+class RedShuriken(Shuriken):
+
+    # For now same - but can be diff for each level
+    image = shuriken_red_img
+
+    def __init__(self, tower):
+        super().__init__(tower)
+        self.hit_tolerance = 10
+        self.max_attacks = 12
+        self.damage = 5
+        self.image = RedShuriken.image
+        self.expl_image = explosionMini_img
+        self.hit_range = 120
+        self.show_expl = True
 
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
