@@ -101,7 +101,7 @@ shuriken_img4 = shuriken_img
 
 shuriken_red_img = pygame.image.load('images/shuriken_red.png')
 #shuriken_red_img = pygame.transform.scale(shuriken_red_img, (25, 25))
-shuriken_red_img = pygame.transform.scale(shuriken_red_img, (40, 40))
+shuriken_red_img = pygame.transform.scale(shuriken_red_img, (30, 30))
 
 #shuriken_img2 = shuriken_red_img
 
@@ -1427,10 +1427,10 @@ class Ninja(Tower):
             self.range = 100
         if self.level == 4:
             # different for spawn and non-spawn attacks
-            self.attack_speed = 4
-            self.spawn_attack_factor = 10
-            self.multi_attack = 8
-            self.red_damage = 5  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
+            self.attack_speed = 8
+            self.spawn_attack_factor = 5
+            self.multi_attack = 4
+            self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
 
             #self.image = cannon2_img
             self.cost += self.upgrade_costs[0]
@@ -1776,7 +1776,7 @@ class RedShuriken(Shuriken):
         super().__init__(tower)
         self.hit_tolerance = 10
         self.max_attacks = 12
-        self.damage = 5
+        self.damage = 3
         self.image = RedShuriken.image
         self.expl_image = explosionMini_img
         self.hit_range = 120
