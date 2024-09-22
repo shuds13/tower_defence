@@ -1296,7 +1296,7 @@ class CannonBall(Tower):
             self.target = self.create_sublist(tmp_target, self.max_attacks)
             #print(f"{len(self.target)=}")
 
-    def update(self, enemies, gmap):
+    def update(self, enemies, gmap, window):
         dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
         distance = (dx**2 + dy**2)**0.5
         #print(f"{distance=} to {self.target_pos}")
@@ -1357,7 +1357,7 @@ class CannonBall(Tower):
 # dont now why level upgrade not working.
 class Ninja(Tower):
 
-    price = 10
+    price = 90
     name = 'Ninja'
     image = ninja_img
     #in_game_image = cannon_img_ingame
@@ -1384,8 +1384,8 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 55
-        #self.upgrade_costs = [140, 320, 850] # rough - need to decide
-        self.upgrade_costs = [5, 5, 5] # testing
+        self.upgrade_costs = [140, 320, 850] # rough - need to decide
+        #self.upgrade_costs = [5, 5, 5] # testing
         self.upgrade_name = "Spirit Eye"
 
     def load_images(self):
@@ -1587,7 +1587,7 @@ class Shuriken(Tower):
     # check for see ghosts- i mean yeah nina will need to release but prob should be here
     # also - what did i do for cannon
     # make it dissapear at end of round.
-    def update(self, enemies, gmap):
+    def update(self, enemies, gmap, window):
         # Move towards the next point in the path
         #spawn = False
         score = 0
@@ -1620,6 +1620,8 @@ class Shuriken(Tower):
                     # To show mini-explosion (streak of ninja power) each hit
                     #self.attack_animate(window) # dam dont have window - why is animate separated anyway????
                     # todo - see why animate was separated - pass window to update....
+                    explosion_rect = self.expl_image.get_rect(center=self.position)
+                    window.blit(self.expl_image, explosion_rect)
 
                     if self.num_hits >= self.max_attacks:
                         self.active = False
@@ -1650,10 +1652,11 @@ class Shuriken(Tower):
 
 
     def attack_animate(self, window):
-        # quite like mini explosion effect except at end of level when looks like explosion
-        if not self.active:
-            explosion_rect = self.expl_image.get_rect(center=self.position)
-            window.blit(self.expl_image, explosion_rect)
+        pass
+        ## quite like mini explosion effect except at end of level when looks like explosion
+        #if not self.active:
+            #explosion_rect = self.expl_image.get_rect(center=self.position)
+            #window.blit(self.expl_image, explosion_rect)
 
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]

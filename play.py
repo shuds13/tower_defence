@@ -131,6 +131,8 @@ alert_message = ""
 alert_timer = 0
 # restart_timer = 20000
 
+clean_cycle_needed = True
+
 gmap = select_map()
 options_button = nav.draw_options_cog(window)
 
@@ -347,11 +349,18 @@ while game.running:
 
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
-            game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
-            #testing remove continue - is it needed? Might finish levels clean - inc. toxic
-            #toxic still dont dusappear till after the WIN has finished.
-            #continue # this was in if not at max level - does it matter being done either way
-            projectiles = []
+
+            if clean_cycle_needed == False:
+                game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
+                clean_cycle_needed = True
+                #testing remove continue - is it needed? Might finish levels clean - inc. toxic
+                #toxic still dont dusappear till after the WIN has finished.
+                #continue # this was in if not at max level - does it matter being done either way
+
+            else:
+                projectiles = []
+                clean_cycle_needed = False
+
 
         if game.lives <= 0:
             game.game_over = True
@@ -413,7 +422,7 @@ while game.running:
         # projecitles will be game.projecitles of course
         for projectile in projectiles:
             # not spawning from projectiles right now - could be used for richochet...
-            hits, _ = projectile.update(game.enemies, gmap)
+            hits, _ = projectile.update(game.enemies, gmap, window)
             #print(hits)
             game.process_hits(hits)
             #print(f"Here {projectile}")
