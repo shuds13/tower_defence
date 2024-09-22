@@ -134,7 +134,6 @@ class Tower:
     name = 'Tower'
     image = None
     range = 100
-    see_ghosts = False
     max_level = 1
     footprint = (50,50)  # for distance to place towers - this should not change for a tower (image size may)
 
@@ -153,7 +152,7 @@ class Tower:
         self.viz_persist = 0
         self.level = 1
         self.total_score = 0
-        self.see_ghosts = False
+        self.ghostsight = False  # can this character see ghosts unassisted
         self.beam_width = 5
         self.image_angle_offset = 0
         self.upgrade_name = "Upgrade"
@@ -304,7 +303,6 @@ class Fighter(Tower):
     image = fighter_img
     range = 100
     max_level = 4
-    see_ghosts = False
 
     def __init__(self, position):
         super().__init__(position)
@@ -492,7 +490,6 @@ class Wizard(Tower):
     image = wizard_img
     range = 120
     max_level = 4
-    see_ghosts = True
 
     def __init__(self, position):
         super().__init__(position)
@@ -507,7 +504,7 @@ class Wizard(Tower):
         self.cloud_attack = False
         self.upgrade_costs = [200, 600, 1400]  # [200]  4th level prob 1800 or 2000 -but for now less
         self.beam_width = 6
-        self.see_ghosts = True
+        self.ghostsight = True
         self.max_attacks = 2
         self.max_cloud_attacks = 8
         self.cloud_type = 1
@@ -1389,10 +1386,15 @@ class Ninja(Tower):
         self.attack_speed = 55
         #self.upgrade_costs = [140, 320, 850] # rough - need to decide
         self.upgrade_costs = [5, 5, 5] # testing
-        #self.glow_radius = 10
-        #self.glow_time = 5
-        self.upgrade_name = "lev 2"
+        self.upgrade_name = "Spirit Eye"
 
+    def load_images(self):
+        if self.level == 2:
+            self.image = ninja_img
+        elif self.level == 3:
+            self.image = ninja_img
+        elif self.level == 4:
+            self.image = ninja_img
 
     # still no range limit on richochet - think about that
     def level_up(self):
@@ -1404,11 +1406,13 @@ class Ninja(Tower):
             self.cost += self.upgrade_costs[0]
             self.upgrade_name = "lev 3"
             self.range = 90
+            self.ghostsight = True
         if self.level == 3:
             self.attack_speed = 40 # may not increase - shuriken richet increates a lot
             #self.image = cannon2_img
             self.cost += self.upgrade_costs[0]
             self.upgrade_name = "lev 4"
+            self.ghostsight = True
             self.range = 100
         if self.level == 4:
             self.attack_speed = 40
@@ -1416,6 +1420,7 @@ class Ninja(Tower):
             self.cost += self.upgrade_costs[0]
             #self.upgrade_name = "Bombard"
             self.range = 120
+            self.ghostsight = True
 
     def attack(self):
         score = 0
@@ -1521,41 +1526,33 @@ class Shuriken(Tower):
         self.target_pos = tower.target.position  # position when shoot
         self.path = tower.target.path
         self.path_index = tower.target.path_index
-        #print(f"initial {self.path_index}")
         self.distance = 0
         self.distance_since_hit = 0
         self.num_hits = 0
         self.active = True
-        self.max_attacks = 4 #80 #4
+        self.max_attacks = 4
         self.damage = 1
         self.image = Shuriken.image
-        #self.range = 1
         self.expl_image = explosionMini_img
         self.hit_range = 80
+
         if self.launcher.level == 2:
             self.image = Shuriken.image2
-            #self.speed = 10  # dont nec want to be faster - may be a bit with higher level
             self.hit_range = 100
             self.damage = 1
             self.max_attacks = 8
-            #self.range = 60
         if self.launcher.level == 3:
             self.image = Shuriken.image3
             self.hit_range = 160
-            # maybe add homing missiles
             self.speed = 10
             self.damage = 1
             self.max_attacks = 32
-            #self.range = 70
-            self.expl_image = explosion3_img
+            #self.expl_image = explosion3_img
         if self.launcher.level == 4:
             self.image = Shuriken.image4
             self.hit_range = 180
-            # maybe add homing missiles
-            #self.speed = 15
             self.damage = 2
             self.max_attacks = 100
-            #self.range = 90
             #self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
 
@@ -1594,6 +1591,7 @@ class Shuriken(Tower):
         # Move towards the next point in the path
         #spawn = False
         score = 0
+        self.see_ghosts = self.launcher.see_ghosts
         if self.path_index >= 0:
             target_pos = self.path[self.path_index]  # For backward movement
             dx, dy = self.position[0] - target_pos[0], self.position[1] - target_pos[1]

@@ -299,7 +299,7 @@ while game.running:
     for tower in game.towers:
         tower.speed_mod = 1
         tower.range_mod = 1
-        tower.see_ghosts = tower.__class__.see_ghosts
+        tower.see_ghosts = tower.ghostsight  # set to natural ghostsight for character at level
 
     for totem in game.totems:
         for tower in game.towers:
