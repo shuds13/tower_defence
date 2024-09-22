@@ -358,6 +358,9 @@ while game.running:
                 #continue # this was in if not at max level - does it matter being done either way
 
             else:
+                for tower in game.towers:
+                    tower.target = None
+
                 projectiles = []
                 clean_cycle_needed = False
 

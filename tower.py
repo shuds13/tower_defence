@@ -1507,7 +1507,8 @@ class Ninja(Tower):
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
-        if self.level == 4 and self.target and self.target.size>=2:
+        #if self.level == 4 and self.target and self.target.size>=2:
+        if self.level == 4:
             #x = self.position[0]
             #y = self.position[1]
 
@@ -1516,7 +1517,12 @@ class Ninja(Tower):
             #image_rect = rotated_image.get_rect(center=self.position)
             #window.blit(rotated_image, image_rect.topleft)
 
-            self.orbit_angle = (self.orbit_angle + self.orbit_speed) % 360
+            if self.target:
+                booster = 3
+            else:
+                booster = 1
+
+            self.orbit_angle = (self.orbit_angle + self.orbit_speed*booster) % 360
             self.shuriken_rotation_angle = (self.shuriken_rotation_angle + self.shuriken_rotation_speed) % 360
 
             # Calculate shuriken position around the ninja
