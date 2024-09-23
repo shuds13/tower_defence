@@ -370,6 +370,12 @@ while game.running:
             game.current_tower_type = None
             game.failed_map(gmap, account)
 
+            for tower in game.towers:
+                tower.target = None
+
+            projectiles = []
+            clean_cycle_needed = False
+
         # Remove enemies that have reached the end of the path
         game.enemies = [enemy for enemy in game.enemies if not enemy.reached_end]
 
@@ -403,7 +409,8 @@ while game.running:
                 projectiles.append(projectile)
                 projectile.draw(window) # testing
                 #game.towers.append(projectile)
-            tower.draw(window, game.enemies)
+            #tower.draw(window, game.enemies)
+            tower.draw(window, game.active)
             if hits >= 0:
                 game.process_hits(hits)
 
@@ -417,7 +424,8 @@ while game.running:
             #game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
 
         else:
-            tower.draw(window, game.enemies)
+            #tower.draw(window, game.enemies)
+            tower.draw(window, game.active)  # yeah with if/else could just send True/False
         tower.highlight = False
 
 
@@ -550,6 +558,15 @@ while game.running:
 
     if game.game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)
+
+        # see if repeating this here prevents ninja 4 blades spinning when game over.
+        # nope - but not surprsiing as its not a projectile
+        # - i need to send game_active to draw function instead of enemies - as it draws if enemies - but if
+        # game over there are enemies.
+        #for tower in game.towers:
+            #tower.target = None
+        #projectiles = []
+        #clean_cycle_needed = False
 
         # Do we want to always bring up window - not if have last round restarts for now
         if not game.displayed_game_over and (game.map_complete or game.last_round_restarts <= 0):
