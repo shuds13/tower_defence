@@ -160,6 +160,7 @@ class Tower:
     range = 100
     max_level = 1
     footprint = (50,50)  # for distance to place towers - this should not change for a tower (image size may)
+    new_tower = False
 
     def __init__(self, position):
         self.position = position
@@ -1389,6 +1390,7 @@ class Ninja(Tower):
     range = 80
     max_level = 4
     footprint = (40,50)  # May make bigger
+    new_tower = True
 
     #image1 = shuriken_img
     #image2 = shuriken_img2
@@ -1415,6 +1417,7 @@ class Ninja(Tower):
         self.damage = 1  # same as normal shuriken
         self.multi_attack = 1
         self.spawn_attack_factor = 1
+
 
     def load_images(self):
         if self.level == 2:
@@ -1816,3 +1819,4 @@ class RedShuriken(Shuriken):
 
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
+#tower_types = [Fighter, Burger, GlueGunner, Ninja, Wizard, Cannon, Totem]
