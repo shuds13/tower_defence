@@ -1419,6 +1419,9 @@ class Ninja(Tower):
         self.spawn_attack_factor = 1
 
 
+        self.tmp_score_check = 0
+
+
     def load_images(self):
         if self.level == 2:
             self.image = ninja2_img
@@ -1506,6 +1509,7 @@ class Ninja(Tower):
             score = self.target.take_damage(self.red_damage)
         else:
             score = self.target.take_damage(self.damage)
+        self.tmp_score_check+=score
         return score
 
 
@@ -1521,6 +1525,8 @@ class Ninja(Tower):
             self.is_attacking = True
         else:
             self.is_attacking = False
+        #self.tmp_score_check+=score
+
         return score, spawn
 
 
@@ -1536,7 +1542,9 @@ class Ninja(Tower):
                 # Hits first then spawns shuriken from that position
                 #self.find_target(enemies, gmap)
                 score = self.attack_score()
-                score = self.target.take_damage(self.damage)
+                #score = self.target.take_damage(self.damage)
+                #self.tmp_score_check+=score
+
                 spawn = True
             else:
                 # even though found a target - going to calc multiple targets now.
@@ -1550,6 +1558,7 @@ class Ninja(Tower):
                 for target in self.target:
                     # shouldn't this be single damage or red damage for large....
                     score += target.take_damage(self.red_damage)
+                self.tmp_score_check+=score
                 spawn = False
             self.reset_attack_timer()
             self.is_attacking = True
@@ -1572,6 +1581,7 @@ class Ninja(Tower):
                 #self.find_target(enemies, gmap)
                 score, spawn = self.attack()
             self.total_score += score
+            #self.tmp_score_check+=score
         else:
             self.is_attacking = False
         return score, spawn
@@ -1751,6 +1761,7 @@ class Shuriken(Tower):
 
                 if self.is_between(old_position, self.position, enemy.position):
                     score = enemy.take_damage(self.damage)
+                    self.launcher.tmp_score_check+=score
                     self.launcher.total_score += score
                     self.num_hits += 1
                     self.hit_enemies.append(enemy)  # Add enemy to hit list
@@ -1761,7 +1772,7 @@ class Shuriken(Tower):
                     # todo - see why animate was separated - pass window to update....
 
                     if self.show_expl:
-                        print('here')
+                        #print('here')
                         #explosion_rect = self.expl_image.get_rect(center=self.position)
                         #window.blit(self.expl_image, explosion_rect)
                         #lets just try this - its not good from a state point of view but hey
