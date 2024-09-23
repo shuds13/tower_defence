@@ -415,7 +415,7 @@ while game.running:
 
                 #game.towers.append(projectile)
             #tower.draw(window, game.enemies)
-            tower.draw(window, game.active)
+            tower.draw(window, game.enemies, game.active)
             if hits >= 0:
                 game.process_hits(hits)
 
@@ -430,7 +430,7 @@ while game.running:
 
         else:
             #tower.draw(window, game.enemies)
-            tower.draw(window, game.active)  # yeah with if/else could just send True/False
+            tower.draw(window, game.enemies, game.active)  # yeah with if/else could just send True/False
         tower.highlight = False
 
 

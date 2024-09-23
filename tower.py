@@ -280,7 +280,7 @@ class Tower:
             pygame.draw.rect(window, (0,160,0), rect, 3)
         window.blit(image, rect.topleft)
 
-    def draw(self, window, active=False):
+    def draw(self, window, enemies=None, active=False):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
 
@@ -483,7 +483,7 @@ class Burger(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score, False
 
-    def draw(self, window, active=False):
+    def draw(self, window, enemies=None, active=False):
         """Dont rotate burger"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -543,7 +543,7 @@ class Wizard(Tower):
         elif self.level == 4:
             self.image = wizard4_img
 
-    def draw(self, window, active=False):
+    def draw(self, window, enemies=None, active=False):
         """Dont rotate wizard"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -1034,7 +1034,7 @@ class Totem(Tower):
         glow_rect = eyeglow.get_rect(center=eye_pos)
         window.blit(eyeglow, glow_rect)
 
-    def draw(self, window, active=False):
+    def draw(self, window, enemies=None, active=False):
         """Dont rotate toetem"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -1338,7 +1338,7 @@ class CannonBall(Tower):
             return score, False
         return 0, False
 
-    def draw(self, window, active=False):
+    def draw(self, window, enemies=None, active=False):
         x = self.position[0]
         y = self.position[1]
         if self.active:
@@ -1583,7 +1583,7 @@ class Ninja(Tower):
             projectile = Shuriken(self)
         return projectile
 
-    def draw(self, window, active=False):
+    def draw(self, window, enemies=None, active=False):
         """Dont rotate burger"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -1784,7 +1784,7 @@ class Shuriken(Tower):
         return score, False  # Temporary return values - maybe right - launch gets score...
 
 
-    def draw(self, window, active=False):
+    def draw(self, window, enemies=None, active=False):
         x = self.position[0]
         y = self.position[1]
         if self.active:
