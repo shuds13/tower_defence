@@ -407,7 +407,12 @@ while game.running:
                 projectile = tower.get_projectile()
                 #projectile = CannonBall(tower)
                 projectiles.append(projectile)
-                projectile.draw(window) # testing
+
+                #try drawing afater enemeis
+                #projectile.draw(window) # testing
+
+
+
                 #game.towers.append(projectile)
             #tower.draw(window, game.enemies)
             tower.draw(window, game.active)
@@ -437,7 +442,10 @@ while game.running:
             #print(hits)
             game.process_hits(hits)
             #print(f"Here {projectile}")
-            projectile.draw(window)
+
+
+            #why drawn here aswell - try not
+            #projectile.draw(window)
 
     #projectiles = [p for p in projectiles if p.active]
 
@@ -476,6 +484,10 @@ while game.running:
     # Draw enemies
     for enemy in game.enemies:
         enemy.draw(window)
+
+    for projectile in projectiles:
+        projectile.draw(window) # testing
+
 
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
