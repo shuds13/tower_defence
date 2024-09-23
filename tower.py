@@ -1571,7 +1571,7 @@ class Ninja(Tower):
             else:
                 #self.find_target(enemies, gmap)
                 score, spawn = self.attack()
-                #self.total_score += score
+            self.total_score += score
         else:
             self.is_attacking = False
         return score, spawn
@@ -1669,7 +1669,10 @@ class Shuriken(Tower):
         self.image = Shuriken.image
         self.expl_image = explosionMini_img
         self.hit_range = 80
-        self.show_expl = False
+        self.show_expl = False  # general option
+        self.show_blast = False  # whether to show this cycle
+        self.blast_cycles = 0
+
 
 
         if self.launcher.level == 2:
@@ -1758,17 +1761,27 @@ class Shuriken(Tower):
                     # todo - see why animate was separated - pass window to update....
 
                     if self.show_expl:
-                        explosion_rect = self.expl_image.get_rect(center=self.position)
-                        window.blit(self.expl_image, explosion_rect)
+                        print('here')
+                        #explosion_rect = self.expl_image.get_rect(center=self.position)
+                        #window.blit(self.expl_image, explosion_rect)
+                        #lets just try this - its not good from a state point of view but hey
+                        self.show_blast = True
+                        self.blast_cycles = 1
+
 
                     if self.num_hits >= self.max_attacks:
                         self.active = False
                         break
 
-                # if do here - slighly fewer
-                # but shows up much more for some reason?
-                #explosion_rect = self.expl_image.get_rect(center=self.position)
-                #window.blit(self.expl_image, explosion_rect)
+                ## if do here - slighly fewer
+                ## but shows up much more for some reason? And see rectangle???
+                ##explosion_rect = self.expl_image.get_rect(center=self.position)
+                ##window.blit(self.expl_image, explosion_rect)
+                #if self.show_expl:
+                    #print('here')
+                    #explosion_rect = self.expl_image.get_rect(center=self.position)
+                    #window.blit(self.expl_image, explosion_rect)
+
 
             # Check if reached the target position
             if abs(self.position[0] - target_pos[0]) < self.speed and \
@@ -1788,18 +1801,24 @@ class Shuriken(Tower):
         x = self.position[0]
         y = self.position[1]
         if self.active:
-            self.angle = (self.angle + 45) % 360
+            #self.angle = (self.angle + 45) % 360
+            self.angle = (self.angle + 20) % 360  # try roate slower
             rotated_image = pygame.transform.rotate(self.image, self.angle)
             image_rect = rotated_image.get_rect(center=self.position)
             window.blit(rotated_image, image_rect.topleft)
+            #print(f"{self.target=}")
 
 
     def attack_animate(self, window):
-        pass
-        ## quite like mini explosion effect except at end of level when looks like explosion
-        if not self.active:
+        # quite like mini explosion effect except at end of level when looks like explosion
+        #print(f"{self.target=}")
+        #print(f"{self.blast_cycles=}")
+        if self.show_blast or not self.active:
             explosion_rect = self.expl_image.get_rect(center=self.position)
             window.blit(self.expl_image, explosion_rect)
+            self.blast_cycles -= 1
+            if self.blast_cycles <= 0:
+                self.show_blast = False
 
 
 class RedShuriken(Shuriken):
