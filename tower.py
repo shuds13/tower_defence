@@ -1409,7 +1409,7 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 55
-        self.upgrade_costs = [140, 380, 1200] # rough - need to decide
+        self.upgrade_costs = [140, 420, 1200] # rough - need to decide
         #self.upgrade_costs = [5, 5, 5] # testing
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
@@ -1432,23 +1432,27 @@ class Ninja(Tower):
             self.attack_speed = 40
             self.image = ninja2_img
             self.cost += self.upgrade_costs[0]
-            self.upgrade_name = "lev 3"
+            self.upgrade_name = "Iron Wind"   # provisional - working on it
             self.range = 90
             self.ghostsight = True
         if self.level == 3:
-            self.attack_speed = 40 # may not increase - shuriken richet increates a lot
+            self.attack_speed = 35 # may not increase - shuriken richet increates a lot
             self.image = ninja3_img
             self.cost += self.upgrade_costs[1]
-            self.upgrade_name = "lev 4"
+            self.upgrade_name = "Red Reaper" # "Blade Reaper" #"Whirlwind of Rage"  # provisional - working on it / Blade Torrent
+            # i would like to capture my fav bible phrase - "they have sown the wind, they shall reap the whirlwind"
+            # "Reap the whirlwind"
             self.ghostsight = True
             self.range = 100
+            # try giving him red shurikens
+            self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
         if self.level == 4:
             # different for spawn and non-spawn attacks
             self.image = ninja4_img
             self.attack_speed = 6
             self.spawn_attack_factor = 5
             self.multi_attack = 4
-            self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
+            #self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
             self.cost += self.upgrade_costs[2]
             #self.upgrade_name = "Bombard"
             self.range = 100
@@ -1488,13 +1492,27 @@ class Ninja(Tower):
                 #closest_enemy = enemy
         #return closest_enemy
 
+
+    def use_red_shuriken(self):
+        # whether to realesae a red shuriken
+        return self.level >= 3 and self.target.size >= 2
+
+
+    def attack_score(self):
+        if self.use_red_shuriken():
+            score = self.target.take_damage(self.red_damage)
+        else:
+            score = self.target.take_damage(self.damage)
+        return score
+
+
     def attack(self):
         score = 0
         spawn = False
         if self.target and self.attack_timer <= 0:  # why attack_timer here and in update?
             self.attack_count += 1
             # Hits first then spawns shuriken from that position
-            score = self.target.take_damage(self.damage)
+            score = self.attack_score()
             spawn = True
             self.reset_attack_timer()
             self.is_attacking = True
@@ -1511,28 +1529,25 @@ class Ninja(Tower):
             self.attack_count += 1
 
             # Hits first then spawns shuriken from there
-            if self.level==4:
-                if self.attack_count % self.spawn_attack_factor == 0:
-                    # Hits first then spawns shuriken from that position
-                    #self.find_target(enemies, gmap)
-                    score = self.target.take_damage(self.damage)
-                    spawn = True
-                else:
-                    # ************************ got to boost for big enemies remember... too complicated now
-                    # even though found a target - going to calc multiple targets now.
-                    tmp_target = []
-                    self.target = []
-                    for enemy in enemies:
-                        if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
-                            self.target.append(enemy)
-                            if len(self.target) > self.multi_attack:
-                                break
-                    for target in self.target:
-                        score += target.take_damage(self.damage * target.size)
-                    spawn = False
-            else:
-                score = self.target.take_damage(self.red_damage)
+            if self.attack_count % self.spawn_attack_factor == 0:
+                # Hits first then spawns shuriken from that position
+                #self.find_target(enemies, gmap)
+                score = self.attack_score()
+                score = self.target.take_damage(self.damage)
                 spawn = True
+            else:
+                # even though found a target - going to calc multiple targets now.
+                tmp_target = []
+                self.target = []
+                for enemy in enemies:
+                    if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                        self.target.append(enemy)
+                        if len(self.target) > self.multi_attack:
+                            break
+                for target in self.target:
+                    # shouldn't this be single damage or red damage for large....
+                    score += target.take_damage(self.red_damage)
+                spawn = False
             self.reset_attack_timer()
             self.is_attacking = True
         else:
@@ -1559,7 +1574,7 @@ class Ninja(Tower):
         return score, spawn
 
     def get_projectile(self):
-        if self.level == 4 and self.target.size >= 2:
+        if self.use_red_shuriken():
             projectile = RedShuriken(self)
         else:
             projectile = Shuriken(self)
@@ -1669,7 +1684,7 @@ class Shuriken(Tower):
         if self.launcher.level == 4:
             self.image = Shuriken.image4
             self.hit_range = 180
-            self.damage = 1
+            self.damage = 1  # tried 2
             self.max_attacks = 64
             #self.expl_image = explosion4_img  # Add fourth and prob viz perist
 
