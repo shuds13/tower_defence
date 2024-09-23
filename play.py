@@ -485,8 +485,9 @@ while game.running:
     for enemy in game.enemies:
         enemy.draw(window)
 
-    for projectile in projectiles:
-        projectile.draw(window) # testing
+    if game.active: # see if this condition prevents lurking projectiles
+        for projectile in projectiles:
+            projectile.draw(window) # testing
 
 
     # Draw tower attacks
