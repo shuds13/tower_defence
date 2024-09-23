@@ -21,8 +21,8 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 150
-initial_level = 1
+initial_money = 15000
+initial_level =
 print_total_money = False
 init_last_round_restarts = 5
 restart_testing = False
@@ -258,14 +258,14 @@ while game.running:
                                     nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 
                 # If user clicked on tower - open the info (inset) window
-                if show_tower_info(game.inset_window):
-                    #if mouse_pos[0] < (window_size[0] - side_panel_width) // 2:  # left side of window
-                    # only if over inset
-                    if mouse_pos[0] < game.inset_window['width'] + 50 and mouse_pos[1] > game.inset_window['y'] - 50:
-                        game.inset_window['x'] = game.inset_window['xr']
-                    else:
-                        game.inset_window['x'] = game.inset_window['xl']
-                    upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
+                    if show_tower_info(game.inset_window):
+                        #if mouse_pos[0] < (window_size[0] - side_panel_width) // 2:  # left side of window
+                        # only if over inset
+                        if mouse_pos[0] < game.inset_window['width'] + 50 and mouse_pos[1] > game.inset_window['y'] - 50:
+                            game.inset_window['x'] = game.inset_window['xr']
+                        else:
+                            game.inset_window['x'] = game.inset_window['xl']
+                        upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
 
             # Place a tower
             else:
@@ -349,6 +349,9 @@ while game.running:
 
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
+
+            #for tower in game.towers:
+                #print(f"{tower.tmp_score_check=}")
 
             if clean_cycle_needed == False:
                 game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
