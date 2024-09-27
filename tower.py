@@ -1383,7 +1383,7 @@ class CannonBall(Tower):
 # sell price wrong? - se top level
 class Ninja(Tower):
 
-    price = 90
+    price = 100
     name = 'Ninja'
     image = ninja_img
     #in_game_image = cannon_img_ingame
@@ -1411,7 +1411,7 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 55
-        self.upgrade_costs = [140, 420, 1200] # rough - need to decide
+        self.upgrade_costs = [160, 480, 1200] # rough - need to decide
         #self.upgrade_costs = [5, 5, 5] # testing
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
@@ -1435,7 +1435,7 @@ class Ninja(Tower):
         self.level +=1
         # provisional
         if self.level == 2:
-            self.attack_speed = 40
+            self.attack_speed = 45
             self.image = ninja2_img
             self.cost += self.upgrade_costs[0]
             self.upgrade_name = "Iron Wind"   # provisional - working on it
@@ -1455,7 +1455,7 @@ class Ninja(Tower):
         if self.level == 4:
             # different for spawn and non-spawn attacks
             self.image = ninja4_img
-            self.attack_speed = 6
+            self.attack_speed = 8
             self.spawn_attack_factor = 5
             self.multi_attack = 4
             #self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
@@ -1683,13 +1683,11 @@ class Shuriken(Tower):
         self.show_blast = False  # whether to show this cycle
         self.blast_cycles = 0
 
-
-
         if self.launcher.level == 2:
             self.image = Shuriken.image2
             self.hit_range = 100
             self.damage = 1
-            self.max_attacks = 8
+            self.max_attacks = 6
         if self.launcher.level == 3:
             self.image = Shuriken.image3
             self.hit_range = 160
