@@ -16,7 +16,7 @@ troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
 frames_per_second = 60
-#frames_per_second = 45 # testing
+#frames_per_second = 30 # testing
 #frames_per_second = 120 # testing
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
@@ -79,8 +79,9 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
         price_text_1 = font.render(f"${tower_type.price}", True, (0, 0, 0))
         surface.blit(price_text_1, (image_rect_1.right + 5, rect.centery - 10))
         if tower_type.new_tower:
+            price_width = price_text_1.get_width()
             new_text_1 = font.render("(New)", True, (0, 0, 0))
-            surface.blit(new_text_1, (image_rect_1.right + 40, rect.centery - 10))
+            surface.blit(new_text_1, (image_rect_1.right + price_width + 10, rect.centery - 10))
 
         if current_tower_type is not None:
             if tower_type.name == current_tower_type.name:
