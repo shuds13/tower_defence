@@ -21,7 +21,7 @@ pygame.font.init()  # Initialize font module
 
 # Current defaults: 30 / 150 / 1
 initial_lives = 30
-initial_money = 15000
+initial_money = 150
 initial_level = 1
 print_total_money = False
 init_last_round_restarts = 5
@@ -229,11 +229,11 @@ while game.running:
                     continue
 
             if game.current_tower_type is None:
-
+                clicked_nav = False
                 # Process clicks in the info window
                 if game.inset_window['active']:
                     # should use object for inset window parameters
-                    game.player_money, alert_message, alert_timer = nav.process_inset_window(
+                    game.player_money, alert_message, alert_timer, clicked_nav = nav.process_inset_window(
                         mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, game.player_money,
                         alert_message, alert_timer, game.game_over
                     )
@@ -258,8 +258,8 @@ while game.running:
                                     nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 
                 # If user clicked on tower - open the info (inset) window
+                if not clicked_nav:
                     if show_tower_info(game.inset_window):
-                        #if mouse_pos[0] < (window_size[0] - side_panel_width) // 2:  # left side of window
                         # only if over inset
                         if mouse_pos[0] < game.inset_window['width'] + 50 and mouse_pos[1] > game.inset_window['y'] - 50:
                             game.inset_window['x'] = game.inset_window['xr']

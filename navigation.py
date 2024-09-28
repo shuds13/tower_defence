@@ -485,6 +485,7 @@ def draw_inset_window(surface, window_info, player_money):
 
 def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button,
                          sell_button, player_money, alert_message, alert_timer, game_over):
+    on_window = False  # was click on window
     # Upgrade tower
     tower = inset_window['tower']
     if upgrade_button.collidepoint(mouse_pos) and not game_over:
@@ -493,6 +494,7 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
             if player_money >= upgrade_cost:
                 tower.level_up()
                 player_money -= upgrade_cost
+        on_window = True
     # Sell tower
     elif sell_button.collidepoint(mouse_pos) and not game_over:
         sell_val = int(tower.cost * 0.8)
@@ -504,8 +506,9 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
         if tower.__class__.name == "Totem":
             totems.remove(tower)
         inset_window['active'] = False
+        on_window = True
     else:
         # Close if click anywhere else
         inset_window['active'] = False
 
-    return player_money, alert_message, alert_timer
+    return player_money, alert_message, alert_timer, on_window
