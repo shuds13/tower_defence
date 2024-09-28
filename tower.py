@@ -1610,7 +1610,7 @@ class Ninja(Tower):
             #window.blit(rotated_image, image_rect.topleft)
 
             if self.target:
-                booster = 5
+                booster = 5 * self.speed_mod
             else:
                 booster = 1
 
