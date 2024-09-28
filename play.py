@@ -159,6 +159,9 @@ def show_tower_info(inset_window):
             inset_window['active'] = True
             inset_window['tower'] = tower
             update_inset_totems(inset_window)
+            # Move the clicked tower on top
+            game.towers.remove(tower)
+            game.towers.append(tower)
             return True
     return False
 
