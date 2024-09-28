@@ -1754,13 +1754,12 @@ class Shuriken(Tower):
             #print(f"{self.distance_since_hit=}  {self.distance=}")
 
             for enemy in enemies:
-                if enemy in self.hit_enemies:
+                if enemy in self.hit_enemies or enemy.reached_end:
                     continue  # Skip enemies already hit by this projectile
 
                 if self.is_between(old_position, self.position, enemy.position):
-                    score = enemy.take_damage(self.damage)
-                    self.launcher.tmp_score_check+=score
-                    self.launcher.total_score += score
+                    score += enemy.take_damage(self.damage)
+
                     self.num_hits += 1
                     self.hit_enemies.append(enemy)  # Add enemy to hit list
                     self.distance_since_hit = 0
@@ -1802,6 +1801,10 @@ class Shuriken(Tower):
         # Check if the projectile has reached the end of the path
         if self.distance_since_hit > self.hit_range or self.path_index < 0:
             self.active = False
+
+        self.launcher.tmp_score_check += score
+        #print(f"tmp_score_check {self.launcher.tmp_score_check}")
+        self.launcher.total_score += score
 
         return score, False  # Temporary return values - maybe right - launch gets score...
 
