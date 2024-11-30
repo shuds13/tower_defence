@@ -52,7 +52,6 @@ totem3_img = pygame.transform.scale(totem3_img, (80, 80))
 totem4_img = pygame.image.load('images/totem4.png')
 totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 
-
 cannon_img = pygame.image.load('images/cannon.png')
 cannon_img = pygame.transform.scale(cannon_img, (50, 50))
 cannon_img_ingame = pygame.transform.scale(cannon_img, (70, 70))
@@ -63,8 +62,6 @@ cannon3_img = pygame.transform.scale(cannon3_img, (75, 75))
 cannon4_img = pygame.image.load('images/cannon4.png')
 cannon4_img = pygame.transform.scale(cannon4_img, (80, 80))
 
-
-#alt to black circle
 cannonball_img = pygame.image.load('images/cannonball.png')
 cannonball1_img = pygame.transform.scale(cannonball_img, (25, 25))
 cannonball2_img = pygame.transform.scale(cannonball_img, (32, 32))
@@ -78,49 +75,22 @@ explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
 explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
 explosionMini_img = pygame.transform.scale(explosion_img, (50, 50))
 
-
 ninja_img = pygame.image.load('images/ninja.png')
-#ninja_img = pygame.transform.scale(ninja_img, (50, 50))
-
-# tmp to see what this guy looks like in menu
-#ninja_img = pygame.image.load('images/ninja2.png')
 ninja_img = pygame.transform.scale(ninja_img, (50, 50))
-
-#ninja2_img = pygame.image.load('images/ninja2.png')
 ninja2_img = pygame.image.load('images/ninja2.png')
 ninja2_img = pygame.transform.scale(ninja2_img, (50, 50))
-
 ninja3_img = pygame.image.load('images/ninja3.png')
 ninja3_img = pygame.transform.scale(ninja3_img, (50, 50))
-#ninja3_img = pygame.transform.scale(ninja3_img, (65, 65)) #tmp test
-
 ninja4_img = pygame.image.load('images/ninja4.png')
 ninja4_img = pygame.transform.scale(ninja4_img, (50, 50))
 
-
-# make it rotate
-# can barely see this - was better using a cannonball - perhaps make bolt shooter instead
-# in fact if you did make a bolt shooter - it could start going straight - but an upgrade
-# would be to follow path? - maybe or maybe not - as makes for different tactic
-# could make bolt shooter a different character - need more with longer range.
-# a bit better if make it bigger and looks better on dark background
-# perhaps need to change color depending on background?!?!?
-# or maybe one with a border - eg. black with white border - would look good in forest.
 shuriken_img = pygame.image.load('images/shuriken.png')
-#shuriken_img = pygame.image.load('images/shuriken.png')
 shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
-#shuriken_img = pygame.transform.scale(shuriken_img, (30, 30))
-#shuriken_img = pygame.transform.scale(shuriken_img, (40, 40))
 shuriken_img2 = shuriken_img
 shuriken_img3 = shuriken_img
 shuriken_img4 = shuriken_img
-
 shuriken_red_img = pygame.image.load('images/shuriken_red.png')
-#shuriken_red_img = pygame.transform.scale(shuriken_red_img, (25, 25))
 shuriken_red_img = pygame.transform.scale(shuriken_red_img, (30, 30))
-
-#shuriken_img2 = shuriken_red_img
-
 
 
 def line_intersects_rect(p1, p2, rect):
@@ -1269,7 +1239,7 @@ class Cannon(Tower):
         return self.current_angle
 
 
-# Prob make projectile class - diff types and levels of projectile will be inherited.
+# Should make projectile class - diff types and levels of projectile will be inherited.
 class CannonBall(Tower):
 
     image = cannonball1_img
@@ -1373,37 +1343,18 @@ class CannonBall(Tower):
         return score, False
 
 
-# yeah a bit of work to do here
-# initial attack will be in his range and pick first target - that will decide path
-# maybe i can get path from enemy - get path and path_index of enemy.
-# then once hit first target (ninja hit) the shurken object will take over and travel in reverse along the path
-# tried doing this very tired so made a mess so far.
-# what if projectile misses first target? Should it be instant to first target?
-# dont now why level upgrade not working.
-# sell price wrong? - se top level
 class Ninja(Tower):
 
     price = 100
     name = 'Ninja'
     image = ninja_img
-    #in_game_image = cannon_img_ingame
     range = 80
     max_level = 4
     footprint = (40,50)  # May make bigger
     new_tower = True
 
-    #image1 = shuriken_img
-    #image2 = shuriken_img2
-    #image3 = shuriken_img3
-    #image4 = shuriken_img4
     shurikens = {1: shuriken_img, 2:shuriken_img2, 3:shuriken_img3, 4:shuriken_img4}
 
-    # Does projectile just go in direct target was when launch - or does it continue
-    # to move towards target with each step (homing missile).
-    # need to remove laser animation - replace with animate shuriken somehow going to first one???
-    # and rem at some level i want him to see ghosts - should be hinted at in either image or lvel name.
-    # for higher level - more damage - and/or more damge ot bigger opponents. Very weak against big opponents
-    # also if animate mini-explosion each hit would look good on trolls eetc..
     def __init__(self, position):
         super().__init__(position)
         self.range =  Ninja.range
@@ -1412,15 +1363,11 @@ class Ninja(Tower):
         self.level = 1
         self.attack_speed = 55
         self.upgrade_costs = [160, 480, 1200] # rough - need to decide
-        #self.upgrade_costs = [5, 5, 5] # testing
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
         self.multi_attack = 1
         self.spawn_attack_factor = 1
-
-
         self.tmp_score_check = 0
-
 
     def load_images(self):
         if self.level == 2:
@@ -1430,10 +1377,8 @@ class Ninja(Tower):
         elif self.level == 4:
             self.image = ninja4_img
 
-    # still no range limit on richochet - think about that
     def level_up(self):
         self.level +=1
-        # provisional
         if self.level == 2:
             self.attack_speed = 45
             self.image = ninja2_img
@@ -1445,14 +1390,12 @@ class Ninja(Tower):
             self.attack_speed = 35 # may not increase - shuriken richet increates a lot
             self.image = ninja3_img
             self.cost += self.upgrade_costs[1]
-            self.upgrade_name = "Red Reaper" # "Blade Reaper" #"Whirlwind of Rage"  # provisional - working on it / Blade Torrent
-            # i would like to capture my fav bible phrase - "they have sown the wind, they shall reap the whirlwind"
-            # "Reap the whirlwind"
+            self.upgrade_name = "Red Reaper"
             self.ghostsight = True
             self.range = 100
-            # try giving him red shurikens
-            self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
+            self.red_damage = 3  # red shuriken - dpeneds on enemy size.
         if self.level == 4:
+            # "Reap the whirlwind"
             # different for spawn and non-spawn attacks
             self.image = ninja4_img
             self.attack_speed = 8
@@ -1460,10 +1403,8 @@ class Ninja(Tower):
             self.multi_attack = 4
             #self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
             self.cost += self.upgrade_costs[2]
-            #self.upgrade_name = "Bombard"
             self.range = 100
             self.ghostsight = True
-            #self.angle = 0
 
             self.orbit_angle = 0  # Starting angle in degrees
             self.orbit_radius = 30  # Radius of the orbit (adjust as needed)
@@ -1472,12 +1413,8 @@ class Ninja(Tower):
             self.orbit_speed = 5  # Degrees per frame for orbit movement
 
 
-    # may make it go with closest - but soon to make first/strong/close options
+    # soon to make first/strong/close options
     # this is to get closest in range - else can use default find_target
-    # when implement first/clost/strong/maybe last options can use that with default of close
-    # I may not make this default - look at picnic place if place him between path (up and down) and closer
-    # to up path will not fire at later down path.
-    # but use code when make options
     #def find_target(self, enemies, gmap):
         #tmp_target = []
         #self.target = []
@@ -1498,11 +1435,9 @@ class Ninja(Tower):
                 #closest_enemy = enemy
         #return closest_enemy
 
-
     def use_red_shuriken(self):
         # whether to realesae a red shuriken
         return self.level >= 3 and self.target.size >= 2
-
 
     def attack_score(self):
         if self.use_red_shuriken():
@@ -1511,7 +1446,6 @@ class Ninja(Tower):
             score = self.target.take_damage(self.damage)
         self.tmp_score_check+=score
         return score
-
 
     def attack(self):
         score = 0
@@ -1526,9 +1460,7 @@ class Ninja(Tower):
         else:
             self.is_attacking = False
         #self.tmp_score_check+=score
-
         return score, spawn
-
 
     def lev4_attack(self, enemies, gmap):
         score = 0
@@ -1537,14 +1469,10 @@ class Ninja(Tower):
         #if self.attack_timer <= 0:  # why attack_timer here and in update?
             self.attack_count += 1
 
-            # Hits first then spawns shuriken from there
             if self.attack_count % self.spawn_attack_factor == 0:
                 # Hits first then spawns shuriken from that position
-                #self.find_target(enemies, gmap)
                 score = self.attack_score()
-                #score = self.target.take_damage(self.damage)
                 #self.tmp_score_check+=score
-
                 spawn = True
             else:
                 # even though found a target - going to calc multiple targets now.
@@ -1565,7 +1493,6 @@ class Ninja(Tower):
         else:
             self.is_attacking = False
         return score, spawn
-
 
     def update(self, enemies, gmap):
         score = 0
@@ -1598,17 +1525,7 @@ class Ninja(Tower):
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
-        #if self.level == 4 and self.target and self.target.size>=2:
         if self.level == 4 and active:
-            #print(f"{enemies=}")
-            #x = self.position[0]
-            #y = self.position[1]
-
-            #self.angle = (self.angle + 45) % 360
-            #rotated_image = pygame.transform.rotate(shuriken_red_img, self.angle)
-            #image_rect = rotated_image.get_rect(center=self.position)
-            #window.blit(rotated_image, image_rect.topleft)
-
             if self.target:
                 booster = 5 * self.speed_mod
             else:
@@ -1630,8 +1547,6 @@ class Ninja(Tower):
             # Draw the shuriken
             window.blit(rotated_image, image_rect.topleft)
 
-
-
     def attack_animate(self, window):
         if type(self.target) is not list:
             image = self.shurikens[self.level]
@@ -1641,16 +1556,7 @@ class Ninja(Tower):
             window.blit(image, shuriken_rect)
 
 
-
-
-
-#class Shuriken(CannonBall):  # tmp inheritence
-# Prob make projectile class - diff types and levels of projectile will be inherited.
-# looks like cannonball for now - not most copy/pasted from cannonball for now but updating find_target/attack
-# forgot how projectiles move
-# change image/color - maybe red - or more flashy at higher levels.
-# still a little (explosion) on end - but i actually quite like that! no when its big though! Ending image!
-# could make smaller one and call attack_animate on every hit - might be slow?
+# Should make projectile class - diff types and levels of projectile will be inherited.
 class Shuriken(Tower):
 
     # For now same - but can be diff for each level
@@ -1658,7 +1564,6 @@ class Shuriken(Tower):
     image2 = shuriken_img2
     image3 = shuriken_img3
     image4 = shuriken_img4
-
 
     def __init__(self, tower):
         super().__init__(tower.target.position)
@@ -1694,14 +1599,11 @@ class Shuriken(Tower):
             self.speed = 10
             self.damage = 1
             self.max_attacks = 32
-            #self.expl_image = explosion3_img
         if self.launcher.level == 4:
             self.image = Shuriken.image4
             self.hit_range = 180
             self.damage = 1  # tried 2
             self.max_attacks = 64
-            #self.expl_image = explosion4_img  # Add fourth and prob viz perist
-
 
     def is_between(self, old_pos, new_pos, enemy_pos):
         # Check if enemy position is close to the line segment defined by old_pos and new_pos
@@ -1731,12 +1633,8 @@ class Shuriken(Tower):
 
         return distance_sq <= self.hit_tolerance ** 2
 
-    # check for see ghosts- i mean yeah nina will need to release but prob should be here
-    # also - what did i do for cannon
-    # make it dissapear at end of round.
     def update(self, enemies, gmap, window):
         # Move towards the next point in the path
-        #spawn = False
         score = 0
         self.see_ghosts = self.launcher.see_ghosts
         if self.path_index >= 0:
@@ -1765,31 +1663,26 @@ class Shuriken(Tower):
                     self.distance_since_hit = 0
 
                     # To show mini-explosion (streak of ninja power) each hit
-                    #self.attack_animate(window) # dam dont have window - why is animate separated anyway????
+                    # self.attack_animate(window)
                     # todo - see why animate was separated - pass window to update....
 
                     if self.show_expl:
-                        #print('here')
                         #explosion_rect = self.expl_image.get_rect(center=self.position)
                         #window.blit(self.expl_image, explosion_rect)
-                        #lets just try this - its not good from a state point of view but hey
                         self.show_blast = True
                         self.blast_cycles = 1
-
 
                     if self.num_hits >= self.max_attacks:
                         self.active = False
                         break
 
-                ## if do here - slighly fewer
-                ## but shows up much more for some reason? And see rectangle???
-                ##explosion_rect = self.expl_image.get_rect(center=self.position)
-                ##window.blit(self.expl_image, explosion_rect)
-                #if self.show_expl:
-                    #print('here')
-                    #explosion_rect = self.expl_image.get_rect(center=self.position)
-                    #window.blit(self.expl_image, explosion_rect)
-
+                # shows up much more for some reason? And see rectangle???
+                # explosion_rect = self.expl_image.get_rect(center=self.position)
+                # window.blit(self.expl_image, explosion_rect)
+                # if self.show_expl:
+                    # print('here')
+                    # explosion_rect = self.expl_image.get_rect(center=self.position)
+                    # window.blit(self.expl_image, explosion_rect)
 
             # Check if reached the target position
             if abs(self.position[0] - target_pos[0]) < self.speed and \
@@ -1823,8 +1716,6 @@ class Shuriken(Tower):
 
     def attack_animate(self, window):
         # quite like mini explosion effect except at end of level when looks like explosion
-        #print(f"{self.target=}")
-        #print(f"{self.blast_cycles=}")
         if self.show_blast or not self.active:
             explosion_rect = self.expl_image.get_rect(center=self.position)
             window.blit(self.expl_image, explosion_rect)

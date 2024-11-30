@@ -16,8 +16,7 @@ troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
 frames_per_second = 60
-#frames_per_second = 30 # testing
-#frames_per_second = 120 # testing
+# frames_per_second = 30 # testing
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
     #font = pygame.font.SysFont(None, 36)

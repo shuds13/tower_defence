@@ -170,9 +170,7 @@ game.set_money_per_hit()
 # Game loop
 while game.running:
 
-    #for now
     paths = gmap.paths
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game.running = False
@@ -187,7 +185,7 @@ while game.running:
                 #nav.draw_options_window(pygame.display, window, options_button)
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
                 # prevents restart round from working
-                #continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
+                # continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
 
             gmap.background_mod(mouse_pos, window)
 
@@ -197,7 +195,6 @@ while game.running:
                 game.reset_level(gmap, pygame.display, window)
                 opts_restart = False
 
-            #if game.game_over:
             if close_game_over and  nav.is_click_inside_rect(mouse_pos, close_game_over):
                 close_game_over = None
                 game.displayed_game_over = True
@@ -352,24 +349,14 @@ while game.running:
 
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
-
-            #for tower in game.towers:
-                #print(f"{tower.tmp_score_check=}")
-
             if clean_cycle_needed == False:
                 game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
                 clean_cycle_needed = True
-                #testing remove continue - is it needed? Might finish levels clean - inc. toxic
-                #toxic still dont dusappear till after the WIN has finished.
-                #continue # this was in if not at max level - does it matter being done either way
-
             else:
                 for tower in game.towers:
                     tower.target = None
-
                 projectiles = []
                 clean_cycle_needed = False
-
 
         if game.lives <= 0:
             game.game_over = True
@@ -406,55 +393,22 @@ while game.running:
     for tower in game.towers:
         if game.active:
             hits, spawn_proj = tower.update(game.enemies, gmap)
-            #print(f"{hits=} {spawn_proj=}")
-            #if hits == -1:
             if spawn_proj:
-                # try making the projectile a tower - but should prob be its own class.
                 projectile = tower.get_projectile()
-                #projectile = CannonBall(tower)
                 projectiles.append(projectile)
-
-                #try drawing afater enemeis
-                #projectile.draw(window) # testing
-
-
-
-                #game.towers.append(projectile)
-            #tower.draw(window, game.enemies)
             tower.draw(window, game.enemies, game.active)
             if hits >= 0:
                 game.process_hits(hits)
-
-            #have to remove enmies etc..
-
-            ##can do enemy here
-            #if enemy.health <= 0 and enemy.spawn_on_die:
-                    #enemy.spawn_func(game.enemies)
-
-            ## May not need both conditions as reached_end is set to True when killed
-            #game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
-
         else:
-            #tower.draw(window, game.enemies)
-            tower.draw(window, game.enemies, game.active)  # yeah with if/else could just send True/False
+            tower.draw(window, game.enemies, game.active)
         tower.highlight = False
-
 
     if game.active:
         # projecitles will be game.projecitles of course
         for projectile in projectiles:
-            # not spawning from projectiles right now - could be used for richochet...
+            # not spawning from projectiles right now - could be used for richochet/cluster bombs...
             hits, _ = projectile.update(game.enemies, gmap, window)
-            #print(hits)
             game.process_hits(hits)
-            #print(f"Here {projectile}")
-
-
-            #why drawn here aswell - try not
-            #projectile.draw(window)
-
-    #projectiles = [p for p in projectiles if p.active]
-
 
     if game.active:
         for enemy in game.enemies:
@@ -462,7 +416,7 @@ while game.running:
                 #enemy.spawn_func(path, game.enemies)  # to do with multiple path -
                 enemy.spawn_func(game.enemies)  # to do with multiple path -
 
-        # careful of thse between tower.update and animate - could be why sometimes dont see attach
+        # careful of thse between tower.update and animate - could be why sometimes dont see attack
         # SH TODO  bring attack and animate together.
         # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
 
@@ -498,8 +452,7 @@ while game.running:
 
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
-    # Though I dont notice it - I should prob update enemy list inside loop to prevent double(multiple) targeting
-    # Instead I check enemy is not reached_end inside for each tower targetting.
+    # I check enemy is not reached_end inside for each tower targetting (prevents multiple tower targeting)
     # one thing is - drawing after enemies - so goes on top
     keep_animate = False
     if keep_animate or game.active:
@@ -520,8 +473,6 @@ while game.running:
         use_ghost_image = True
         if use_ghost_image:
             # This line ensures image has alpha channel (some do, some dont)
-
-            #try/except lazy way for now
             try:
                 current_tower_type_mod = game.current_tower_type.in_game_image.convert_alpha()
             except AttributeError:
@@ -577,15 +528,6 @@ while game.running:
 
     if game.game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)
-
-        # see if repeating this here prevents ninja 4 blades spinning when game over.
-        # nope - but not surprsiing as its not a projectile
-        # - i need to send game_active to draw function instead of enemies - as it draws if enemies - but if
-        # game over there are enemies.
-        #for tower in game.towers:
-            #tower.target = None
-        #projectiles = []
-        #clean_cycle_needed = False
 
         # Do we want to always bring up window - not if have last round restarts for now
         if not game.displayed_game_over and (game.map_complete or game.last_round_restarts <= 0):
