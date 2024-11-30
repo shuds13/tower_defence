@@ -1549,7 +1549,10 @@ class Ninja(Tower):
 
     def attack_animate(self, window):
         if type(self.target) is not list:
-            image = self.shurikens[self.level]
+            if self.use_red_shuriken():
+                image = shuriken_red_img
+            else:
+                image = self.shurikens[self.level]
             mid_point = ((self.position[0] + self.target.position[0]) // 2,
                         (self.position[1] + self.target.position[1]) // 2)
             shuriken_rect = image.get_rect(center=mid_point)
@@ -1741,4 +1744,4 @@ class RedShuriken(Shuriken):
 
 
 tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
-#tower_types = [Fighter, Burger, GlueGunner, Ninja, Wizard, Cannon, Totem]
+# tower_types = [Fighter, Burger, GlueGunner, Ninja, Wizard, Cannon, Totem]
