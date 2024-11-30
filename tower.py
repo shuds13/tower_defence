@@ -1743,5 +1743,5 @@ class RedShuriken(Shuriken):
         self.show_expl = True
 
 
-tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
-# tower_types = [Fighter, Burger, GlueGunner, Ninja, Wizard, Cannon, Totem]
+#tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
+tower_types = [Fighter, Burger, GlueGunner, Ninja, Wizard, Cannon, Totem]
