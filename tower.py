@@ -52,7 +52,6 @@ totem3_img = pygame.transform.scale(totem3_img, (80, 80))
 totem4_img = pygame.image.load('images/totem4.png')
 totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 
-
 cannon_img = pygame.image.load('images/cannon.png')
 cannon_img = pygame.transform.scale(cannon_img, (50, 50))
 cannon_img_ingame = pygame.transform.scale(cannon_img, (70, 70))
@@ -63,8 +62,6 @@ cannon3_img = pygame.transform.scale(cannon3_img, (75, 75))
 cannon4_img = pygame.image.load('images/cannon4.png')
 cannon4_img = pygame.transform.scale(cannon4_img, (80, 80))
 
-
-#alt to black circle
 cannonball_img = pygame.image.load('images/cannonball.png')
 cannonball1_img = pygame.transform.scale(cannonball_img, (25, 25))
 cannonball2_img = pygame.transform.scale(cannonball_img, (32, 32))
@@ -76,6 +73,24 @@ explosion1_img = pygame.transform.scale(explosion_img, (80, 80))
 explosion2_img = pygame.transform.scale(explosion_img, (90, 90))
 explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
 explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
+explosionMini_img = pygame.transform.scale(explosion_img, (50, 50))
+
+ninja_img = pygame.image.load('images/ninja.png')
+ninja_img = pygame.transform.scale(ninja_img, (50, 50))
+ninja2_img = pygame.image.load('images/ninja2.png')
+ninja2_img = pygame.transform.scale(ninja2_img, (50, 50))
+ninja3_img = pygame.image.load('images/ninja3.png')
+ninja3_img = pygame.transform.scale(ninja3_img, (50, 50))
+ninja4_img = pygame.image.load('images/ninja4.png')
+ninja4_img = pygame.transform.scale(ninja4_img, (50, 50))
+
+shuriken_img = pygame.image.load('images/shuriken.png')
+shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
+shuriken_img2 = shuriken_img
+shuriken_img3 = shuriken_img
+shuriken_img4 = shuriken_img
+shuriken_red_img = pygame.image.load('images/shuriken_red.png')
+shuriken_red_img = pygame.transform.scale(shuriken_red_img, (30, 30))
 
 
 def line_intersects_rect(p1, p2, rect):
@@ -113,9 +128,9 @@ class Tower:
     name = 'Tower'
     image = None
     range = 100
-    see_ghosts = False
     max_level = 1
     footprint = (50,50)  # for distance to place towers - this should not change for a tower (image size may)
+    new_tower = False
 
     def __init__(self, position):
         self.position = position
@@ -132,7 +147,7 @@ class Tower:
         self.viz_persist = 0
         self.level = 1
         self.total_score = 0
-        self.see_ghosts = False
+        self.ghostsight = False  # can this character see ghosts unassisted
         self.beam_width = 5
         self.image_angle_offset = 0
         self.upgrade_name = "Upgrade"
@@ -205,18 +220,19 @@ class Tower:
             self.is_attacking = True
         else:
             self.is_attacking = False
-        return score
+        return score, False  # 2nd is whether to spawn a projectile
 
     def update(self, enemies, gmap):
         score = 0
+        spawn = False
         self.attack_timer -= 1
         if self.attack_timer <= 0:
             self.find_target(enemies, gmap)
-            score = self.attack()
+            score, spawn = self.attack()
             self.total_score += score
         else:
             self.is_attacking = False
-        return score
+        return score, spawn
 
     def get_target_angle(self):
         if not self.target:
@@ -234,7 +250,7 @@ class Tower:
             pygame.draw.rect(window, (0,160,0), rect, 3)
         window.blit(image, rect.topleft)
 
-    def draw(self, window, enemies=None):
+    def draw(self, window, enemies=None, active=False):
         """Rotate an image while keeping its center."""
         angle = self.get_target_angle()
 
@@ -282,7 +298,6 @@ class Fighter(Tower):
     image = fighter_img
     range = 100
     max_level = 4
-    see_ghosts = False
 
     def __init__(self, position):
         super().__init__(position)
@@ -436,9 +451,9 @@ class Burger(Tower):
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
-        return score
+        return score, False
 
-    def draw(self, window, enemies=None):
+    def draw(self, window, enemies=None, active=False):
         """Dont rotate burger"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -470,7 +485,6 @@ class Wizard(Tower):
     image = wizard_img
     range = 120
     max_level = 4
-    see_ghosts = True
 
     def __init__(self, position):
         super().__init__(position)
@@ -485,7 +499,7 @@ class Wizard(Tower):
         self.cloud_attack = False
         self.upgrade_costs = [200, 600, 1400]  # [200]  4th level prob 1800 or 2000 -but for now less
         self.beam_width = 6
-        self.see_ghosts = True
+        self.ghostsight = True
         self.max_attacks = 2
         self.max_cloud_attacks = 8
         self.cloud_type = 1
@@ -499,7 +513,7 @@ class Wizard(Tower):
         elif self.level == 4:
             self.image = wizard4_img
 
-    def draw(self, window, enemies=None):
+    def draw(self, window, enemies=None, active=False):
         """Dont rotate wizard"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -680,7 +694,7 @@ class Wizard(Tower):
             self.is_attacking = True
         else:
             self.is_attacking = False
-        return score
+        return score, False
 
     # TODO can now use burger algorithm to attach >2 - check if this fumc is different
     # And also may be same as cloud but for animation.
@@ -870,7 +884,7 @@ class GlueGunner(Tower):
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
-        return score
+        return score, False
 
 # Maybe the Demons need more than ghost sight - 3rd level wizard or 3rd level totem.
 class Totem(Tower):
@@ -945,19 +959,20 @@ class Totem(Tower):
             self.is_attacking = True
         #else:
             #self.is_attacking = False
-        return score
+        return score, False
 
     def update(self, enemies, gmap):
+        spawn = False
         if self.level < 4:
-            return 0
+            return 0, spawn
         score = 0
         self.attack_timer -= 1
         self.find_target(enemies, gmap)
-        score = self.attack()
+        score, spawn = self.attack()
         self.total_score += score
         #else:
             #self.is_attacking = False
-        return score
+        return score, spawn
 
     def _get_eye_pos(self):
         if self.level == 2:
@@ -989,7 +1004,7 @@ class Totem(Tower):
         glow_rect = eyeglow.get_rect(center=eye_pos)
         window.blit(eyeglow, glow_rect)
 
-    def draw(self, window, enemies=None):
+    def draw(self, window, enemies=None, active=False):
         """Dont rotate toetem"""
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
@@ -1098,27 +1113,29 @@ class Cannon(Tower):
 
     def attack(self):
         score = 0
+        spawn = False
         if self.target and self.attack_timer <= 0:
             self.attack_count += 1
             #score = self.target.take_damage(self.damage)
-            score = -1  # tell it to release a projectile
+            # old -1  # tell it to release a projectile
+            spawn = True
             self.reset_attack_timer()
             self.is_attacking = True
         else:
             self.is_attacking = False
-        return score
+        return score, spawn
 
     def update(self, enemies, gmap):
         score = 0
+        spawn = False
         self.attack_timer -= 1
         if self.attack_timer <= 0:
             self.find_target(enemies, gmap)
-            score = self.attack()
+            score, spawn = self.attack()
             #self.total_score += score
         else:
             self.is_attacking = False
-        # need to return more though - direction for projectile to move in.
-        return score
+        return score, spawn
 
     def get_projectile(self):
         projectile = CannonBall(self)
@@ -1222,7 +1239,7 @@ class Cannon(Tower):
         return self.current_angle
 
 
-# Prob make projectile class - diff types and levels of projectile will be inherited.
+# Should make projectile class - diff types and levels of projectile will be inherited.
 class CannonBall(Tower):
 
     image = cannonball1_img
@@ -1274,7 +1291,7 @@ class CannonBall(Tower):
             self.target = self.create_sublist(tmp_target, self.max_attacks)
             #print(f"{len(self.target)=}")
 
-    def update(self, enemies, gmap):
+    def update(self, enemies, gmap, window):
         dx, dy = self.target_pos[0] - self.position[0], self.target_pos[1] - self.position[1]
         distance = (dx**2 + dy**2)**0.5
         #print(f"{distance=} to {self.target_pos}")
@@ -1285,13 +1302,13 @@ class CannonBall(Tower):
         if abs(self.position[0] - self.target_pos[0]) < self.speed and abs(self.position[1] - self.target_pos[1]) < self.speed:
             #print(f"blowing up at {self.position}")
             self.find_target(enemies, gmap)
-            score = self.attack()
+            score, _ = self.attack()
             self.launcher.total_score += score
             self.active = False  # if dont remove they stop on paths and look like mines
-            return score
-        return 0
+            return score, False
+        return 0, False
 
-    def draw(self, window, enemies=None):
+    def draw(self, window, enemies=None, active=False):
         x = self.position[0]
         y = self.position[1]
         if self.active:
@@ -1323,6 +1340,408 @@ class CannonBall(Tower):
             self.is_attacking = True  # Set to True when attacking
         else:
             self.is_attacking = False  # Set to False otherwise
+        return score, False
+
+
+class Ninja(Tower):
+
+    price = 100
+    name = 'Ninja'
+    image = ninja_img
+    range = 80
+    max_level = 4
+    footprint = (40,50)  # May make bigger
+    new_tower = True
+
+    shurikens = {1: shuriken_img, 2:shuriken_img2, 3:shuriken_img3, 4:shuriken_img4}
+
+    def __init__(self, position):
+        super().__init__(position)
+        self.range =  Ninja.range
+        self.cost = Ninja.price
+        self.image = Ninja.image
+        self.level = 1
+        self.attack_speed = 55
+        self.upgrade_costs = [160, 480, 1200] # rough - need to decide
+        self.upgrade_name = "Spirit Eye"
+        self.damage = 1  # same as normal shuriken
+        self.multi_attack = 1
+        self.spawn_attack_factor = 1
+        self.tmp_score_check = 0
+
+    def load_images(self):
+        if self.level == 2:
+            self.image = ninja2_img
+        elif self.level == 3:
+            self.image = ninja3_img
+        elif self.level == 4:
+            self.image = ninja4_img
+
+    def level_up(self):
+        self.level +=1
+        if self.level == 2:
+            self.attack_speed = 45
+            self.image = ninja2_img
+            self.cost += self.upgrade_costs[0]
+            self.upgrade_name = "Iron Wind"   # provisional - working on it
+            self.range = 90
+            self.ghostsight = True
+        if self.level == 3:
+            self.attack_speed = 35 # may not increase - shuriken richet increates a lot
+            self.image = ninja3_img
+            self.cost += self.upgrade_costs[1]
+            self.upgrade_name = "Red Reaper"
+            self.ghostsight = True
+            self.range = 100
+            self.red_damage = 3  # red shuriken - dpeneds on enemy size.
+        if self.level == 4:
+            # "Reap the whirlwind"
+            # different for spawn and non-spawn attacks
+            self.image = ninja4_img
+            self.attack_speed = 8
+            self.spawn_attack_factor = 5
+            self.multi_attack = 4
+            #self.red_damage = 3  # should be same as shuriken damage - red shuriken - dpeneds on enemy size.
+            self.cost += self.upgrade_costs[2]
+            self.range = 100
+            self.ghostsight = True
+
+            self.orbit_angle = 0  # Starting angle in degrees
+            self.orbit_radius = 30  # Radius of the orbit (adjust as needed)
+            self.shuriken_rotation_angle = 0  # For shuriken spinning effect
+            self.shuriken_rotation_speed = 45  # Degrees per frame for shuriken rotation
+            self.orbit_speed = 5  # Degrees per frame for orbit movement
+
+
+    # soon to make first/strong/close options
+    # this is to get closest in range - else can use default find_target
+    #def find_target(self, enemies, gmap):
+        #tmp_target = []
+        #self.target = []
+        #for enemy in enemies:
+            #if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                #tmp_target.append(enemy)
+        #if tmp_target:
+            #self.target = self.find_close(tmp_target)
+
+    #def find_close(self, enemies):
+        #"""Return the closest enemy or None"""
+        #closest_enemy = None
+        #closest_dist = float('inf')  # Start with a very high value
+        #for enemy in enemies:
+            #dist = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
+            #if dist < closest_dist:
+                #closest_dist = dist
+                #closest_enemy = enemy
+        #return closest_enemy
+
+    def use_red_shuriken(self):
+        # whether to realesae a red shuriken
+        return self.level >= 3 and self.target.size >= 2
+
+    def attack_score(self):
+        if self.use_red_shuriken():
+            score = self.target.take_damage(self.red_damage)
+        else:
+            score = self.target.take_damage(self.damage)
+        self.tmp_score_check+=score
         return score
 
-tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem]
+    def attack(self):
+        score = 0
+        spawn = False
+        if self.target and self.attack_timer <= 0:  # why attack_timer here and in update?
+            self.attack_count += 1
+            # Hits first then spawns shuriken from that position
+            score = self.attack_score()
+            spawn = True
+            self.reset_attack_timer()
+            self.is_attacking = True
+        else:
+            self.is_attacking = False
+        #self.tmp_score_check+=score
+        return score, spawn
+
+    def lev4_attack(self, enemies, gmap):
+        score = 0
+        spawn = False
+        if self.target and self.attack_timer <= 0:  # why attack_timer here and in update?
+        #if self.attack_timer <= 0:  # why attack_timer here and in update?
+            self.attack_count += 1
+
+            if self.attack_count % self.spawn_attack_factor == 0:
+                # Hits first then spawns shuriken from that position
+                score = self.attack_score()
+                #self.tmp_score_check+=score
+                spawn = True
+            else:
+                # even though found a target - going to calc multiple targets now.
+                tmp_target = []
+                self.target = []
+                for enemy in enemies:
+                    if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
+                        self.target.append(enemy)
+                        if len(self.target) > self.multi_attack:
+                            break
+                for target in self.target:
+                    # shouldn't this be single damage or red damage for large....
+                    score += target.take_damage(self.red_damage)
+                self.tmp_score_check+=score
+                spawn = False
+            self.reset_attack_timer()
+            self.is_attacking = True
+        else:
+            self.is_attacking = False
+        return score, spawn
+
+    def update(self, enemies, gmap):
+        score = 0
+        spawn = False
+        self.attack_timer -= 1
+        if self.attack_timer <= 0:
+
+            # Hits first then spawns shuriken from there
+            self.find_target(enemies, gmap)
+            if self.level==4:
+                score, spawn = self.lev4_attack(enemies, gmap)
+            else:
+                #self.find_target(enemies, gmap)
+                score, spawn = self.attack()
+            self.total_score += score
+            #self.tmp_score_check+=score
+        else:
+            self.is_attacking = False
+        return score, spawn
+
+    def get_projectile(self):
+        if self.use_red_shuriken():
+            projectile = RedShuriken(self)
+        else:
+            projectile = Shuriken(self)
+        return projectile
+
+    def draw(self, window, enemies=None, active=False):
+        """Dont rotate burger"""
+        new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
+        self.general_draw(window, self.image, new_rect)
+
+        if self.level == 4 and active:
+            if self.target:
+                booster = 5 * self.speed_mod
+            else:
+                booster = 1
+
+            self.orbit_angle = (self.orbit_angle + self.orbit_speed*booster) % 360
+            self.shuriken_rotation_angle = (self.shuriken_rotation_angle + self.shuriken_rotation_speed) % 360
+
+            # Calculate shuriken position around the ninja
+            angle_rad = math.radians(self.orbit_angle)
+            shuriken_x = self.position[0] + self.orbit_radius * math.cos(angle_rad)
+            shuriken_y = self.position[1] + self.orbit_radius * math.sin(angle_rad)
+            shuriken_position = (shuriken_x, shuriken_y)
+
+            # Rotate the shuriken image
+            rotated_image = pygame.transform.rotate(shuriken_red_img, self.shuriken_rotation_angle)
+            image_rect = rotated_image.get_rect(center=shuriken_position)
+
+            # Draw the shuriken
+            window.blit(rotated_image, image_rect.topleft)
+
+    def attack_animate(self, window):
+        if type(self.target) is not list:
+            if self.use_red_shuriken():
+                image = shuriken_red_img
+            else:
+                image = self.shurikens[self.level]
+            mid_point = ((self.position[0] + self.target.position[0]) // 2,
+                        (self.position[1] + self.target.position[1]) // 2)
+            shuriken_rect = image.get_rect(center=mid_point)
+            window.blit(image, shuriken_rect)
+
+
+# Should make projectile class - diff types and levels of projectile will be inherited.
+class Shuriken(Tower):
+
+    # For now same - but can be diff for each level
+    image = shuriken_img
+    image2 = shuriken_img2
+    image3 = shuriken_img3
+    image4 = shuriken_img4
+
+    def __init__(self, tower):
+        super().__init__(tower.target.position)
+        self.launcher = tower
+        self.angle
+        self.speed = 8
+        self.hit_tolerance = 8
+        self.hit_enemies = []
+        self.target_pos = tower.target.position  # position when shoot
+        self.path = tower.target.path
+        self.path_index = tower.target.path_index
+        self.distance = 0
+        self.distance_since_hit = 0
+        self.num_hits = 0
+        self.active = True
+        self.max_attacks = 4
+        self.damage = 1
+        self.image = Shuriken.image
+        self.expl_image = explosionMini_img
+        self.hit_range = 80
+        self.show_expl = False  # general option
+        self.show_blast = False  # whether to show this cycle
+        self.blast_cycles = 0
+
+        if self.launcher.level == 2:
+            self.image = Shuriken.image2
+            self.hit_range = 100
+            self.damage = 1
+            self.max_attacks = 6
+        if self.launcher.level == 3:
+            self.image = Shuriken.image3
+            self.hit_range = 160
+            self.speed = 10
+            self.damage = 1
+            self.max_attacks = 32
+        if self.launcher.level == 4:
+            self.image = Shuriken.image4
+            self.hit_range = 180
+            self.damage = 1  # tried 2
+            self.max_attacks = 64
+
+    def is_between(self, old_pos, new_pos, enemy_pos):
+        # Check if enemy position is close to the line segment defined by old_pos and new_pos
+        x0, y0 = enemy_pos
+        x1, y1 = old_pos
+        x2, y2 = new_pos
+
+        dx = x2 - x1
+        dy = y2 - y1
+        line_length_sq = dx * dx + dy * dy
+
+        if line_length_sq == 0:
+            # The line segment is a point
+            distance_sq = (x0 - x1) ** 2 + (y0 - y1) ** 2
+            return distance_sq <= self.hit_tolerance ** 2
+
+        # Parameter t of the projection of the enemy onto the line
+        t = ((x0 - x1) * dx + (y0 - y1) * dy) / line_length_sq
+        t = max(0, min(1, t))  # Clamp t to [0, 1] to stay within the segment
+
+        # Closest point on the segment
+        closest_x = x1 + t * dx
+        closest_y = y1 + t * dy
+
+        # Distance from enemy to the closest point
+        distance_sq = (x0 - closest_x) ** 2 + (y0 - closest_y) ** 2
+
+        return distance_sq <= self.hit_tolerance ** 2
+
+    def update(self, enemies, gmap, window):
+        # Move towards the next point in the path
+        score = 0
+        self.see_ghosts = self.launcher.see_ghosts
+        if self.path_index >= 0:
+            target_pos = self.path[self.path_index]  # For backward movement
+            dx, dy = self.position[0] - target_pos[0], self.position[1] - target_pos[1]
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            if distance > self.speed:
+                dx, dy = dx / distance * self.speed, dy / distance * self.speed
+
+            old_position = self.position
+            self.position = (self.position[0] - dx, self.position[1] - dy)
+
+            self.distance += self.speed
+            self.distance_since_hit += self.speed
+            #print(f"{self.distance_since_hit=}  {self.distance=}")
+
+            for enemy in enemies:
+                if enemy in self.hit_enemies or enemy.reached_end:
+                    continue  # Skip enemies already hit by this projectile
+
+                if self.is_between(old_position, self.position, enemy.position):
+                    score += enemy.take_damage(self.damage)
+
+                    self.num_hits += 1
+                    self.hit_enemies.append(enemy)  # Add enemy to hit list
+                    self.distance_since_hit = 0
+
+                    # To show mini-explosion (streak of ninja power) each hit
+                    # self.attack_animate(window)
+                    # todo - see why animate was separated - pass window to update....
+
+                    if self.show_expl:
+                        #explosion_rect = self.expl_image.get_rect(center=self.position)
+                        #window.blit(self.expl_image, explosion_rect)
+                        self.show_blast = True
+                        self.blast_cycles = 1
+
+                    if self.num_hits >= self.max_attacks:
+                        self.active = False
+                        break
+
+                # shows up much more for some reason? And see rectangle???
+                # explosion_rect = self.expl_image.get_rect(center=self.position)
+                # window.blit(self.expl_image, explosion_rect)
+                # if self.show_expl:
+                    # print('here')
+                    # explosion_rect = self.expl_image.get_rect(center=self.position)
+                    # window.blit(self.expl_image, explosion_rect)
+
+            # Check if reached the target position
+            if abs(self.position[0] - target_pos[0]) < self.speed and \
+               abs(self.position[1] - target_pos[1]) < self.speed:
+                self.path_index -= 1
+
+            #self.distance += self.speed
+
+        # Check if the projectile has reached the end of the path
+        if self.distance_since_hit > self.hit_range or self.path_index < 0:
+            self.active = False
+
+        self.launcher.tmp_score_check += score
+        #print(f"tmp_score_check {self.launcher.tmp_score_check}")
+        self.launcher.total_score += score
+
+        return score, False  # Temporary return values - maybe right - launch gets score...
+
+
+    def draw(self, window, enemies=None, active=False):
+        x = self.position[0]
+        y = self.position[1]
+        if self.active:
+            #self.angle = (self.angle + 45) % 360
+            self.angle = (self.angle + 20) % 360  # try roate slower
+            rotated_image = pygame.transform.rotate(self.image, self.angle)
+            image_rect = rotated_image.get_rect(center=self.position)
+            window.blit(rotated_image, image_rect.topleft)
+            #print(f"{self.target=}")
+
+
+    def attack_animate(self, window):
+        # quite like mini explosion effect except at end of level when looks like explosion
+        if self.show_blast or not self.active:
+            explosion_rect = self.expl_image.get_rect(center=self.position)
+            window.blit(self.expl_image, explosion_rect)
+            self.blast_cycles -= 1
+            if self.blast_cycles <= 0:
+                self.show_blast = False
+
+
+class RedShuriken(Shuriken):
+
+    # For now same - but can be diff for each level
+    image = shuriken_red_img
+
+    def __init__(self, tower):
+        super().__init__(tower)
+        self.hit_tolerance = 10
+        self.max_attacks = 12
+        self.damage = 3
+        self.image = RedShuriken.image
+        self.expl_image = explosionMini_img
+        self.hit_range = 120
+        self.show_expl = True
+
+
+#tower_types = [Fighter, Burger, GlueGunner, Wizard, Cannon, Totem, Ninja]
+tower_types = [Fighter, Burger, GlueGunner, Ninja, Wizard, Cannon, Totem]

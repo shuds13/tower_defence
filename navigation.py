@@ -16,6 +16,7 @@ troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
 frames_per_second = 60
+# frames_per_second = 30 # testing
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
     #font = pygame.font.SysFont(None, 36)
@@ -76,6 +77,10 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
         surface.blit(tower_type.image, image_rect_1.topleft)
         price_text_1 = font.render(f"${tower_type.price}", True, (0, 0, 0))
         surface.blit(price_text_1, (image_rect_1.right + 5, rect.centery - 10))
+        if tower_type.new_tower:
+            price_width = price_text_1.get_width()
+            new_text_1 = font.render("(New)", True, (0, 0, 0))
+            surface.blit(new_text_1, (image_rect_1.right + price_width + 10, rect.centery - 10))
 
         if current_tower_type is not None:
             if tower_type.name == current_tower_type.name:
@@ -479,6 +484,7 @@ def draw_inset_window(surface, window_info, player_money):
 
 def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button,
                          sell_button, player_money, alert_message, alert_timer, game_over):
+    on_window = False  # was click on window
     # Upgrade tower
     tower = inset_window['tower']
     if upgrade_button.collidepoint(mouse_pos) and not game_over:
@@ -487,6 +493,7 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
             if player_money >= upgrade_cost:
                 tower.level_up()
                 player_money -= upgrade_cost
+        on_window = True
     # Sell tower
     elif sell_button.collidepoint(mouse_pos) and not game_over:
         sell_val = int(tower.cost * 0.8)
@@ -498,8 +505,9 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
         if tower.__class__.name == "Totem":
             totems.remove(tower)
         inset_window['active'] = False
+        on_window = True
     else:
         # Close if click anywhere else
         inset_window['active'] = False
 
-    return player_money, alert_message, alert_timer
+    return player_money, alert_message, alert_timer, on_window

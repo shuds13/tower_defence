@@ -131,6 +131,8 @@ alert_message = ""
 alert_timer = 0
 # restart_timer = 20000
 
+clean_cycle_needed = True
+
 gmap = select_map()
 options_button = nav.draw_options_cog(window)
 
@@ -157,6 +159,9 @@ def show_tower_info(inset_window):
             inset_window['active'] = True
             inset_window['tower'] = tower
             update_inset_totems(inset_window)
+            # Move the clicked tower on top
+            game.towers.remove(tower)
+            game.towers.append(tower)
             return True
     return False
 
@@ -165,9 +170,7 @@ game.set_money_per_hit()
 # Game loop
 while game.running:
 
-    #for now
     paths = gmap.paths
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game.running = False
@@ -182,7 +185,7 @@ while game.running:
                 #nav.draw_options_window(pygame.display, window, options_button)
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
                 # prevents restart round from working
-                #continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
+                # continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
 
             gmap.background_mod(mouse_pos, window)
 
@@ -192,7 +195,6 @@ while game.running:
                 game.reset_level(gmap, pygame.display, window)
                 opts_restart = False
 
-            #if game.game_over:
             if close_game_over and  nav.is_click_inside_rect(mouse_pos, close_game_over):
                 close_game_over = None
                 game.displayed_game_over = True
@@ -227,11 +229,11 @@ while game.running:
                     continue
 
             if game.current_tower_type is None:
-
+                clicked_nav = False
                 # Process clicks in the info window
                 if game.inset_window['active']:
                     # should use object for inset window parameters
-                    game.player_money, alert_message, alert_timer = nav.process_inset_window(
+                    game.player_money, alert_message, alert_timer, clicked_nav = nav.process_inset_window(
                         mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, game.player_money,
                         alert_message, alert_timer, game.game_over
                     )
@@ -256,14 +258,14 @@ while game.running:
                                     nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
 
                 # If user clicked on tower - open the info (inset) window
-                if show_tower_info(game.inset_window):
-                    #if mouse_pos[0] < (window_size[0] - side_panel_width) // 2:  # left side of window
-                    # only if over inset
-                    if mouse_pos[0] < game.inset_window['width'] + 50 and mouse_pos[1] > game.inset_window['y'] - 50:
-                        game.inset_window['x'] = game.inset_window['xr']
-                    else:
-                        game.inset_window['x'] = game.inset_window['xl']
-                    upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
+                if not clicked_nav:
+                    if show_tower_info(game.inset_window):
+                        # only if over inset
+                        if mouse_pos[0] < game.inset_window['width'] + 50 and mouse_pos[1] > game.inset_window['y'] - 50:
+                            game.inset_window['x'] = game.inset_window['xr']
+                        else:
+                            game.inset_window['x'] = game.inset_window['xl']
+                        upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
 
             # Place a tower
             else:
@@ -299,7 +301,7 @@ while game.running:
     for tower in game.towers:
         tower.speed_mod = 1
         tower.range_mod = 1
-        tower.see_ghosts = tower.__class__.see_ghosts
+        tower.see_ghosts = tower.ghostsight  # set to natural ghostsight for character at level
 
     for totem in game.totems:
         for tower in game.towers:
@@ -347,15 +349,25 @@ while game.running:
 
         # Check win condition
         if not game.enemies and game.lives > 0 and game.level.done():
-            game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
-            #testing remove continue - is it needed? Might finish levels clean - inc. toxic
-            #toxic still dont dusappear till after the WIN has finished.
-            #continue # this was in if not at max level - does it matter being done either way
+            if clean_cycle_needed == False:
+                game.level_complete(pygame.display, window, window_size, lev, gmap, init_last_round_restarts, account)
+                clean_cycle_needed = True
+            else:
+                for tower in game.towers:
+                    tower.target = None
+                projectiles = []
+                clean_cycle_needed = False
 
         if game.lives <= 0:
             game.game_over = True
             game.current_tower_type = None
             game.failed_map(gmap, account)
+
+            for tower in game.towers:
+                tower.target = None
+
+            projectiles = []
+            clean_cycle_needed = False
 
         # Remove enemies that have reached the end of the path
         game.enemies = [enemy for enemy in game.enemies if not enemy.reached_end]
@@ -380,42 +392,23 @@ while game.running:
 
     for tower in game.towers:
         if game.active:
-            hits = tower.update(game.enemies, gmap)
-            if hits == -1:
-                # try making the projectile a tower - but should prob be its own class.
+            hits, spawn_proj = tower.update(game.enemies, gmap)
+            if spawn_proj:
                 projectile = tower.get_projectile()
-                #projectile = CannonBall(tower)
                 projectiles.append(projectile)
-                projectile.draw(window) # testing
-                #game.towers.append(projectile)
-            tower.draw(window, game.enemies)
-            if hits > -1:
+            tower.draw(window, game.enemies, game.active)
+            if hits >= 0:
                 game.process_hits(hits)
-
-            #have to remove enmies etc..
-
-            ##can do enemy here
-            #if enemy.health <= 0 and enemy.spawn_on_die:
-                    #enemy.spawn_func(game.enemies)
-
-            ## May not need both conditions as reached_end is set to True when killed
-            #game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
-
         else:
-            tower.draw(window, game.enemies)
+            tower.draw(window, game.enemies, game.active)
         tower.highlight = False
-
 
     if game.active:
         # projecitles will be game.projecitles of course
         for projectile in projectiles:
-            hits = projectile.update(game.enemies, gmap)
+            # not spawning from projectiles right now - could be used for richochet/cluster bombs...
+            hits, _ = projectile.update(game.enemies, gmap, window)
             game.process_hits(hits)
-            #print(f"Here {projectile}")
-            projectile.draw(window)
-
-    #projectiles = [p for p in projectiles if p.active]
-
 
     if game.active:
         for enemy in game.enemies:
@@ -423,7 +416,7 @@ while game.running:
                 #enemy.spawn_func(path, game.enemies)  # to do with multiple path -
                 enemy.spawn_func(game.enemies)  # to do with multiple path -
 
-        # careful of thse between tower.update and animate - could be why sometimes dont see attach
+        # careful of thse between tower.update and animate - could be why sometimes dont see attack
         # SH TODO  bring attack and animate together.
         # Remove dead enemies - and reached_end check for enemies spawned - who moved in spawn_func
 
@@ -452,10 +445,14 @@ while game.running:
     for enemy in game.enemies:
         enemy.draw(window)
 
+    if game.active: # see if this condition prevents lurking projectiles
+        for projectile in projectiles:
+            projectile.draw(window) # testing
+
+
     # Draw tower attacks
     # TODO remind me why this section is separate from above where finds target - though this is just animation
-    # Though I dont notice it - I should prob update enemy list inside loop to prevent double(multiple) targeting
-    # Instead I check enemy is not reached_end inside for each tower targetting.
+    # I check enemy is not reached_end inside for each tower targetting (prevents multiple tower targeting)
     # one thing is - drawing after enemies - so goes on top
     keep_animate = False
     if keep_animate or game.active:
@@ -476,8 +473,6 @@ while game.running:
         use_ghost_image = True
         if use_ghost_image:
             # This line ensures image has alpha channel (some do, some dont)
-
-            #try/except lazy way for now
             try:
                 current_tower_type_mod = game.current_tower_type.in_game_image.convert_alpha()
             except AttributeError:
