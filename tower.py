@@ -206,7 +206,11 @@ class Tower:
         pass
 
     def reset_attack_timer(self):
-        self.attack_timer = max(int(self.attack_speed * self.speed_mod), 1)
+        # Keep the fraction of a frame left over from this shot, so speed boosts give their exact
+        # percentage on average (e.g. a 1.8 frame interval fires at gaps of 2,2,2,2,1).
+        # A tower that was waiting with nothing to shoot carries nothing over, so it cannot save up shots.
+        leftover = self.attack_timer if self.attack_timer > -1 else 0
+        self.attack_timer = leftover + self.attack_speed * self.speed_mod
 
     def is_visible(self, enemy, gmap):
         if enemy.invis and not self.see_ghosts:
