@@ -4,6 +4,8 @@ import sounds
 from accounts import Account, load_profile
 from tower import Totem, tower_types
 
+crown_win_img = pygame.transform.scale(pygame.image.load('images/crown.png'), (100, 100))
+
 
 # tmp for debugging saves
 def find_surface_attributes(obj, parent_name=""):
@@ -21,6 +23,8 @@ def find_surface_attributes(obj, parent_name=""):
 
 
 class Game():
+    extended_complete = False  # class default also covers games saved before this existed
+
     def __init__(self, initial_money, initial_level, initial_lives, init_last_round_restarts,
                  lev, print_total_money, inset_window, test_setup=[]):
         self.player_money = initial_money
@@ -56,6 +60,7 @@ class Game():
         self.lives_lost = 0
         self.lives_lost_round = 0
         self.map_complete = False
+        self.extended_complete = False
         self.aced = False
         self.displayed_game_over = False
         self.round_bonus = 20
@@ -184,6 +189,7 @@ class Game():
         self.level = lev.levels[self.level_num]()  # reset this level (phase num / num_spawned)
         self.lives_highlight = 0
         self.map_complete = False
+        self.extended_complete = False
         self.aced = False
 
         #print('here2')
@@ -219,9 +225,16 @@ class Game():
         return self.money_per_hit
 
     def level_complete(self, display, window, window_size, lev, gmap, init_last_round_restarts, account):
+        # The first crown comes at crown_level; if there are more levels the game carries on
+        crown_mid_game = self.level_num == lev.crown_level and lev.crown_level < lev.max_level
         font = pygame.font.SysFont(None, 72)
-        win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
-        text_rect = win_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2))
+        centre = ((window_size[0] - 100) / 2, window_size[1] / 2)
+        if crown_mid_game:
+            win_text = font.render("Crown earned!", True, (196, 180, 84))
+            window.blit(crown_win_img, crown_win_img.get_rect(center=(centre[0], centre[1] - 80)))
+        else:
+            win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
+        text_rect = win_text.get_rect(center=centre)
         window.blit(win_text, text_rect)
         display.flip()  # Update the full display Surface to the screen
         self.player_money += self.round_bonus
@@ -238,22 +251,33 @@ class Game():
             self.lives += 10
             self.lives_highlight = self.highlight_time
 
-        # Pause for a second to display the win message
-        pygame.time.wait(1000)
+        if crown_mid_game:
+            # Crown (and ace) are for the original levels
+            self.aced = self.last_round_restarts == init_last_round_restarts and self.lives_lost == 0
+            account.complete_map(gmap, self.aced)
+            sounds.play('victory')
+            pygame.time.wait(2000)
+        else:
+            # Pause for a second to display the win message
+            pygame.time.wait(1000)
 
         if self.level_num == lev.max_level:
             self.game_over = True
             self.current_tower_type = None
             self.map_complete = True
             self.current_tower_type = None
-            # I'm thinking I may actually allow last round restarts for an ACE.
-            # but if so prob want to have option to restart round even when dont die - for going for ace!
-            if self.last_round_restarts == init_last_round_restarts and self.lives_lost == 0:
-                self.aced = True
+            if lev.crown_level < lev.max_level:
+                # Finished the levels beyond the first crown
+                self.extended_complete = True
+                account.complete_map_extended(gmap)
             else:
-                self.aced = False
-
-            account.complete_map(gmap, self.aced)
+                # I'm thinking I may actually allow last round restarts for an ACE.
+                # but if so prob want to have option to restart round even when dont die - for going for ace!
+                if self.last_round_restarts == init_last_round_restarts and self.lives_lost == 0:
+                    self.aced = True
+                else:
+                    self.aced = False
+                account.complete_map(gmap, self.aced)
             account.save()
             sounds.play('victory')
 

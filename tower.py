@@ -186,9 +186,12 @@ class Tower:
         """Called before each round starts."""
         pass
 
-    def max_level_at(self, game_level):
-        """Highest tower level that can be reached on this game level (some upgrades unlock later)."""
+    def max_level_at(self, game_level, map_crowned=False):
+        """Highest tower level that can be reached on this game level (some upgrades unlock later).
+        Once the map's crown has been earned, every upgrade is available on it."""
         top = self.__class__.max_level
+        if map_crowned:
+            return top
         while top > 1 and self.__class__.unlock_game_levels.get(top, 0) > game_level:
             top -= 1
         return top
@@ -356,7 +359,7 @@ class Fighter(Tower):
     range = 100
     max_level = 5
     target_modes = ("first", "strong", "last", "close")
-    unlock_game_levels = {5: 61}  # Nighthawk only after the 60 main levels
+    unlock_game_levels = {5: 61}  # Nighthawk after the 60 main levels (or any level once the map is crowned)
     idle_frames = 60  # frames since the level 5 beam last had a target (class default covers older saves)
 
     def __init__(self, position):

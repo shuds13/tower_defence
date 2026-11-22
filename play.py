@@ -238,7 +238,7 @@ while game.running:
                     # should use object for inset window parameters
                     game.player_money, alert_message, alert_timer, clicked_nav = nav.process_inset_window(
                         mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, target_button, game.player_money,
-                        alert_message, alert_timer, game.game_over, game.level_num
+                        alert_message, alert_timer, game.game_over, game.level_num, account.has_crown(gmap)
                     )
                 else:
                     removables = gmap.get_removables()
@@ -268,7 +268,7 @@ while game.running:
                             game.inset_window['x'] = game.inset_window['xr']
                         else:
                             game.inset_window['x'] = game.inset_window['xl']
-                        upgrade_button, sell_button, target_button = nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num)
+                        upgrade_button, sell_button, target_button = nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap))
 
             # Place a tower
             else:
@@ -531,14 +531,14 @@ while game.running:
 
     if game.inset_window['active']:
         update_inset_totems(game.inset_window)
-    nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num)
+    nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap))
 
     if game.game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)
 
         # Do we want to always bring up window - not if have last round restarts for now
         if not game.displayed_game_over and (game.map_complete or game.last_round_restarts <= 0):
-            close_game_over = nav.draw_game_over_window(pygame.display, window, game.map_complete, game.aced)
+            close_game_over = nav.draw_game_over_window(pygame.display, window, game.map_complete, game.aced, game.extended_complete)
         elif not game.map_complete:
             game_over_text = font.render("Game Over", True, (255, 0, 0))
             text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))

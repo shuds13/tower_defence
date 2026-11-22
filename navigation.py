@@ -12,6 +12,7 @@ crown_img = pygame.image.load('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (100, 100))
 crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (100, 100))
+crown_extended_img = pygame.transform.scale(pygame.image.load('images/crown_extended.png'), (100, 100))  # placeholder art
 troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
@@ -326,7 +327,7 @@ def are_you_sure(display, surface, msg, enabled=True, prompt="Are you sure?", co
 
 
 # okay really need to collect stats / player data together for this
-def draw_game_over_window(display, surface, map_complete, aced):
+def draw_game_over_window(display, surface, map_complete, aced, extended=False):
     #x, y, width, height = 100, 100, 500, 400
     x, y, width, height = 100, 200, 500, 300
 
@@ -356,7 +357,12 @@ def draw_game_over_window(display, surface, map_complete, aced):
     #map_complete = True
     #aced = True
 
-    if map_complete:
+    if map_complete and extended:
+        color = (25, 25, 112) # dark blue
+        complete_text = "All Levels Complete!"
+        image = crown_extended_img
+        game_over_text = font_title.render(complete_text, True, (196, 180, 84))
+    elif map_complete:
         color = (25, 25, 112) # dark blue
         if aced:
             complete_text = "Map Complete (Aced)!"
@@ -388,7 +394,7 @@ def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
     pygame.draw.rect(surface, color, (x - border_width, y - border_width, width + 2 * border_width, height + 2 * border_width))
 
 
-def draw_inset_window(surface, window_info, player_money, game_level):
+def draw_inset_window(surface, window_info, player_money, game_level, map_crowned=False):
     if not window_info['active']:
         return
 
@@ -451,7 +457,7 @@ def draw_inset_window(surface, window_info, player_money, game_level):
     # DONT really like bigger button - looked better before - TODO might adjust size if needed
 
     #at_max_level = tower.level == tower.__class__.max_level
-    if tower.level >= tower.max_level_at(game_level):
+    if tower.level >= tower.max_level_at(game_level, map_crowned):
         at_max_level = True
     else:
         at_max_level = False
@@ -495,7 +501,7 @@ def draw_inset_window(surface, window_info, player_money, game_level):
 
 
 def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button,
-                         sell_button, target_button, player_money, alert_message, alert_timer, game_over, game_level):
+                         sell_button, target_button, player_money, alert_message, alert_timer, game_over, game_level, map_crowned=False):
     on_window = False  # was click on window
     tower = inset_window['tower']
     # Change targeting
@@ -504,7 +510,7 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
         on_window = True
     # Upgrade tower
     elif upgrade_button.collidepoint(mouse_pos) and not game_over:
-        if tower.level < tower.max_level_at(game_level):
+        if tower.level < tower.max_level_at(game_level, map_crowned):
             upgrade_cost = tower.upgrade_costs[tower.level-1]
             if player_money >= upgrade_cost:
                 tower.level_up()

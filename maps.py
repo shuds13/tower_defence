@@ -10,6 +10,7 @@ crown_img = pygame.image.load('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (50, 50))
 crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (50, 50))
+crown_extended_img = pygame.transform.scale(pygame.image.load('images/crown_extended.png'), (40, 40))  # placeholder art
 save_img = pygame.image.load('images/save.png')
 save_img = pygame.transform.scale(save_img, (40, 40))
 right_img = pygame.image.load('images/right_chevron.png')
@@ -195,6 +196,10 @@ def display_maps_page(display, surface, account, maps_page, width, height, font_
                 #crown_rect = crown.get_rect(topleft=(x, y+70))  # Appears over bottom left of map
                 crown_rect = crown.get_rect(center=(x+width//2, y))
                 surface.blit(crown, crown_rect.topleft)
+                if account.has_extended_crown(gmap):
+                    # Second crown, beside the first
+                    ext_rect = crown_extended_img.get_rect(center=(x+width//2 + 40, y))
+                    surface.blit(crown_extended_img, ext_rect.topleft)
 
             if gmap.name in account.maps_in_progress:
                 save_rect = save_img.get_rect(center=(x, y+60))

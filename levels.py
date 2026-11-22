@@ -706,6 +706,7 @@ class Level70(Level):
         self.enemy_types = [110]
 
 
-max_level = 70  # TODO get this from last key in levels
+crown_level = 60  # first crown: the original levels (game continues after this)
+max_level = 70  # second crown for completing all levels  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
