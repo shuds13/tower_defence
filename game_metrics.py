@@ -136,6 +136,8 @@ class Game():
         self.enemy_spawn_timer = 0
         self.active = False
         gmap.set_removables(self.removables)
+        for tower in self.towers:
+            tower.new_round()
 
         #print('here1', self.level_num)
         # TODO - check - may also need in restart round - but maybe not if that calls this anyway

@@ -182,6 +182,10 @@ class Tower:
     def load_images(self):
         pass
 
+    def new_round(self):
+        """Called before each round starts."""
+        pass
+
     def max_level_at(self, game_level):
         """Highest tower level that can be reached on this game level (some upgrades unlock later)."""
         top = self.__class__.max_level
@@ -353,6 +357,7 @@ class Fighter(Tower):
     max_level = 5
     target_modes = ("first", "strong", "last", "close")
     unlock_game_levels = {5: 61}  # Nighthawk only after the 60 main levels
+    idle_frames = 60  # frames since the level 5 beam last had a target (class default covers older saves)
 
     def __init__(self, position):
         super().__init__(position)
@@ -416,6 +421,21 @@ class Fighter(Tower):
             self.image = fighter5_img
             self.cost += self.upgrade_costs[3]
             self.ghostsight = True
+
+    def new_round(self):
+        self.idle_frames = 60  # so the power-up sound plays on the first shot of each round
+
+    def update(self, enemies, gmap):
+        result = super().update(enemies, gmap)
+        if self.level >= 5:
+            # Power-up sound when the beam starts firing after being idle for a second
+            if self.is_attacking:
+                if self.idle_frames >= 60:
+                    sounds.play('nighthawk')
+                self.idle_frames = 0
+            elif self.target is None:
+                self.idle_frames += 1
+        return result
 
     def attack(self):
         if self.level < 5:

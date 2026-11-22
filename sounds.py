@@ -9,6 +9,7 @@ snd_pop = pygame.mixer.Sound('sounds/pop.wav')
 snd_glue = pygame.mixer.Sound('sounds/splat.wav')
 snd_victory = pygame.mixer.Sound('sounds/fanfare.wav')
 snd_unlock = pygame.mixer.Sound('sounds/unlock.wav')
+snd_nighthawk = pygame.mixer.Sound('sounds/power_up_ray.wav')
 
 
 sounds = {
@@ -20,6 +21,7 @@ sounds = {
     'glue':snd_glue,
     'victory':snd_victory,
     'unlock':snd_unlock,
+    'nighthawk':snd_nighthawk,
     }
 
 def play(snd):
