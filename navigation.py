@@ -435,6 +435,15 @@ def draw_inset_window(surface, window_info, player_money):
     image_rect = tower_image.get_rect(center=(x + width // 2, image_y_pos))
     surface.blit(tower_image, image_rect)
 
+    # Targeting option (cycles through modes when clicked); click area is a little larger than the text
+    target_button = None
+    if tower.__class__.target_modes:
+        font_small = pygame.font.SysFont(None, 20)
+        target_text = font_small.render(f"Target: {tower.target_mode.capitalize()}  >", True, (50, 50, 90))
+        target_rect = target_text.get_rect(center=(x + width // 2, y + 163))
+        surface.blit(target_text, target_rect)
+        target_button = target_rect.inflate(10, 6)
+
     # Draw buttons for upgrade and sell
     upgrade_y_pos = y + 175  # was 160
     upgrade_button = pygame.Rect(x + 30, upgrade_y_pos, 140, 40)
@@ -479,15 +488,19 @@ def draw_inset_window(surface, window_info, player_money):
     surface.blit(sell_text, sell_text_rect)
 
     # Return button rects for further use (e.g., click detection)
-    return upgrade_button, sell_button
+    return upgrade_button, sell_button, target_button
 
 
 def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button,
-                         sell_button, player_money, alert_message, alert_timer, game_over):
+                         sell_button, target_button, player_money, alert_message, alert_timer, game_over):
     on_window = False  # was click on window
-    # Upgrade tower
     tower = inset_window['tower']
-    if upgrade_button.collidepoint(mouse_pos) and not game_over:
+    # Change targeting
+    if target_button is not None and target_button.collidepoint(mouse_pos):
+        tower.next_target_mode()
+        on_window = True
+    # Upgrade tower
+    elif upgrade_button.collidepoint(mouse_pos) and not game_over:
         if tower.level < tower.__class__.max_level:
             upgrade_cost = tower.upgrade_costs[tower.level-1]
             if player_money >= upgrade_cost:

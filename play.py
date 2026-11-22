@@ -237,7 +237,7 @@ while game.running:
                 if game.inset_window['active']:
                     # should use object for inset window parameters
                     game.player_money, alert_message, alert_timer, clicked_nav = nav.process_inset_window(
-                        mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, game.player_money,
+                        mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, target_button, game.player_money,
                         alert_message, alert_timer, game.game_over
                     )
                 else:
@@ -268,7 +268,7 @@ while game.running:
                             game.inset_window['x'] = game.inset_window['xr']
                         else:
                             game.inset_window['x'] = game.inset_window['xl']
-                        upgrade_button, sell_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
+                        upgrade_button, sell_button, target_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
 
             # Place a tower
             else:

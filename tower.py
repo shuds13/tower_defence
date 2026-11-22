@@ -133,6 +133,8 @@ class Tower:
     max_level = 1
     footprint = (50,50)  # for distance to place towers - this should not change for a tower (image size may)
     new_tower = False
+    target_modes = ()  # Targeting options offered in the inset window (empty = no choice)
+    target_mode = "first"  # class default also covers towers loaded from older saves
 
     def __init__(self, position):
         self.position = position
@@ -199,15 +201,30 @@ class Tower:
                 return False
         return True
 
-    # Goes through enemies - finds first (could find strongest etc...)
-    # Note that enemy order is order came on to screen but may not be at the front at any point in time!
+    def can_target(self, enemy, gmap):
+        return self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end
+
+    # Enemies are sorted front first (by distance travelled) each frame.
     def find_target(self, enemies, gmap):
-        for enemy in enemies:
-            if self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end:
-                self.target = enemy
-                break
-        else:
+        if self.target_mode == "first":
+            self.target = next((enemy for enemy in enemies if self.can_target(enemy, gmap)), None)
+            return
+        candidates = [enemy for enemy in enemies if self.can_target(enemy, gmap)]
+        if not candidates:
             self.target = None
+        elif self.target_mode == "strong":
+            # value includes what the enemy spawns on death; ties go to the one further along
+            self.target = max(candidates, key=lambda enemy: enemy.value)
+        elif self.target_mode == "last":
+            self.target = candidates[-1]
+        elif self.target_mode == "close":
+            self.target = min(candidates, key=lambda enemy: (enemy.position[0] - self.position[0])**2 + (enemy.position[1] - self.position[1])**2)
+        else:
+            self.target = candidates[0]
+
+    def next_target_mode(self):
+        modes = self.__class__.target_modes
+        self.target_mode = modes[(modes.index(self.target_mode) + 1) % len(modes)]
 
     def in_range(self, enemy):
         distance = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
@@ -300,6 +317,7 @@ class Fighter(Tower):
     image = fighter_img
     range = 100
     max_level = 4
+    target_modes = ("first", "strong", "last", "close")
 
     def __init__(self, position):
         super().__init__(position)
@@ -487,6 +505,7 @@ class Wizard(Tower):
     image = wizard_img
     range = 120
     max_level = 4
+    target_modes = ("first", "strong", "last", "close")
 
     def __init__(self, position):
         super().__init__(position)
@@ -1057,6 +1076,7 @@ class Cannon(Tower):
     in_game_image = cannon_img_ingame
     range = 120
     max_level = 4
+    target_modes = ("first", "strong", "last", "close")
     footprint = (70,70)  # May make bigger
 
     # Does projectile just go in direct target was when launch - or does it continue
@@ -1352,6 +1372,7 @@ class Ninja(Tower):
     image = ninja_img
     range = 80
     max_level = 4
+    target_modes = ("first", "strong", "last", "close")
     footprint = (40,50)  # May make bigger
     new_tower = True
 
