@@ -1374,7 +1374,6 @@ class Ninja(Tower):
     max_level = 4
     target_modes = ("first", "strong", "last", "close")
     footprint = (40,50)  # May make bigger
-    new_tower = True
 
     shurikens = {1: shuriken_img, 2:shuriken_img2, 3:shuriken_img3, 4:shuriken_img4}
 
