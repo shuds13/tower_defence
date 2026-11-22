@@ -371,6 +371,7 @@ class Map():
     def __init__(self):
         self.alternate_paths = False
         self.font_color = (255, 255, 255)
+        self.darkpath = False  # True for dark paths - ninja uses a light shuriken
 
     def paint_features(self, window):
         pass
@@ -584,6 +585,7 @@ class Castle(Map):
         self.background_color = (92, 64, 51) # (193, 154, 107) #(184, 115, 51) # (50, 25, 0)
         self.path_thickness = 20
         self.path_color = (0,0,0) # (92, 64, 51)  # (0, 211, 211)
+        self.darkpath = True
         self.color_inside = (193, 154, 107)
 
         self.castle_path = [
@@ -747,6 +749,7 @@ class DarkForest(Map):
         self.path_thickness = 15
         #self.path_color = (238, 220, 130)  # dev color
         self.path_color = (0,0,0) # Real color
+        self.darkpath = True
 
         self.tree1 = (380, 110, 70, 160)
         self.tree2 = (450, 170, 70, 160)
@@ -1043,6 +1046,7 @@ class Catacombs(Map):
         self.background_color = (128, 0, 32) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
         self.path_color = (0, 0, 0) # (178, 190, 181)
+        self.darkpath = True
         path1 = [(0, 75), (240, 275), (350, 50), (460, 275), (700, 75)]
         path2 = [(0, 525), (240, 325), (350, 550), (460, 325), (700, 525)]
         self.paths = [path1, path2]

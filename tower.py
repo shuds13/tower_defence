@@ -89,6 +89,8 @@ shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
 shuriken_img2 = shuriken_img
 shuriken_img3 = shuriken_img
 shuriken_img4 = shuriken_img
+shuriken_dark_img = pygame.image.load('images/shuriken_darkpath.png')
+shuriken_dark_img = pygame.transform.scale(shuriken_dark_img, (25, 25))
 shuriken_red_img = pygame.image.load('images/shuriken_red.png')
 shuriken_red_img = pygame.transform.scale(shuriken_red_img, (30, 30))
 
@@ -1368,6 +1370,7 @@ class Ninja(Tower):
         self.multi_attack = 1
         self.spawn_attack_factor = 1
         self.tmp_score_check = 0
+        self.darkpath = False  # set from the map each update
 
     def load_images(self):
         if self.level == 2:
@@ -1497,6 +1500,7 @@ class Ninja(Tower):
     def update(self, enemies, gmap):
         score = 0
         spawn = False
+        self.darkpath = gmap.darkpath
         self.attack_timer -= 1
         if self.attack_timer <= 0:
 
@@ -1551,6 +1555,8 @@ class Ninja(Tower):
         if type(self.target) is not list:
             if self.use_red_shuriken():
                 image = shuriken_red_img
+            elif self.darkpath:
+                image = shuriken_dark_img
             else:
                 image = self.shurikens[self.level]
             mid_point = ((self.position[0] + self.target.position[0]) // 2,
@@ -1607,6 +1613,9 @@ class Shuriken(Tower):
             self.hit_range = 180
             self.damage = 1  # tried 2
             self.max_attacks = 64
+
+        if self.launcher.darkpath:
+            self.image = shuriken_dark_img  # RedShuriken overrides this after super().__init__
 
     def is_between(self, old_pos, new_pos, enemy_pos):
         # Check if enemy position is close to the line segment defined by old_pos and new_pos
