@@ -469,12 +469,15 @@ def draw_inset_window(surface, window_info, player_money):
 
     if at_max_level:
         upgrade_text = font.render(f"Max Level", True, (255, 255, 255))  # White text
+        upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
+        surface.blit(upgrade_text, upgrade_text_rect)
     else:
-        #TODO Instead of word "Upgrade" say name of upgrade tower.upgrade_name (will update with tower level)
-        #burger upgrade - "extra spicy"?
-        upgrade_text = font.render(f"{tower.upgrade_name} ${upgrade_cost}", True, (255, 255, 255))  # White text
-    upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
-    surface.blit(upgrade_text, upgrade_text_rect)
+        # Upgrade name on the first line, price on the second
+        cx, cy = upgrade_button.center
+        name_text = font.render(tower.upgrade_name, True, (255, 255, 255))  # White text
+        surface.blit(name_text, name_text.get_rect(center=(cx, cy - 8)))
+        price_text = pygame.font.SysFont(None, 20).render(f"${upgrade_cost}", True, (255, 255, 255))
+        surface.blit(price_text, price_text.get_rect(center=(cx, cy + 10)))
 
     sell_y_pos = y + 240  # was 230
 
