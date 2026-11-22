@@ -50,7 +50,8 @@ class Enemy:
 
     def glue_reset(self):
         self.slow_factor = 1
-        self.glued = 0
+        self.glued = 0  # hits left before the glue wears off
+        self.glue_timer = 0  # frames left before the glue wears off
         self.glue_color = None
         self.toxic_glued = False
         self.toxic_glued_by = None
@@ -103,6 +104,7 @@ class Enemy:
                         self.draw_glue_splat(window, self.glue_color, xn, yn, self.size)
 
     def move(self):
+        self.update_glue()
         # Move towards the next point in the path
         if self.path_index < len(self.path) - 1:
             target_pos = self.path[self.path_index + 1]  # for backwards move just make -1
@@ -122,10 +124,29 @@ class Enemy:
         if self.path_index >= len(self.path) - 1:
             self.reached_end = True
 
+    def unglue(self):
+        self.glue_reset()
+        self.speed = self.base_speed
+
+    def glue_hit(self):
+        # Each hit taken uses up one layer of glue
+        if self.glued > 0:
+            self.glued -= 1
+            if self.glued <= 0:
+                self.unglue()
+
+    def update_glue(self):
+        # Glue also wears off after a time
+        if self.glued > 0:
+            self.glue_timer -= 1
+            if self.glue_timer <= 0:
+                self.unglue()
+
     def take_damage(self, damage):
         score = min(self.health, damage)  # Make sure don't score more than remaining health
         self.health -= damage
         self.value -= damage
+        self.glue_hit()
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
             sounds.play('ting')
@@ -153,8 +174,9 @@ class Enemy:
             self.toxic_timer -= 1
         else:
            #self.toxic_attacks += 1
+           glued_by = self.toxic_glued_by  # the hit below may wear off the glue and clear this
            score = self.take_damage(self.toxic_attacks)
-           self.toxic_glued_by.total_score += score  # if tower is sold - obj still exists but not in tower list
+           glued_by.total_score += score  # if tower is sold - obj still exists but not in tower list
            self.toxic_timer = self.toxic_time
         return score
 
@@ -176,9 +198,6 @@ class Enemy2(Enemy):
             self.value = 1
             if self.glued > 0:
                 self.speed *= self.slow_factor
-                self.glued -= 1
-            else:
-                self.glue_reset()
         return val
 
 
@@ -199,9 +218,6 @@ class Enemy3(Enemy2):
             self.value = 2
             if self.glued > 0:
                 self.speed *= self.slow_factor
-                self.glued -= 1
-            else:
-                self.glue_reset()
         return val
 
 
@@ -222,9 +238,6 @@ class Enemy4(Enemy3):
             self.value = 3
             if self.glued > 0:
                 self.speed *= self.slow_factor
-                self.glued -= 1
-            else:
-                self.glue_reset()
         return val
 
 
@@ -245,9 +258,6 @@ class Enemy5(Enemy4):
             self.value = 4
             if self.glued > 0:
                 self.speed *= self.slow_factor
-                self.glued -= 1
-            else:
-                self.glue_reset()
         return val
 
 
@@ -305,6 +315,7 @@ class Ghost(Enemy):
         score = min(self.health, damage)
         self.health -= damage
         self.value -= damage
+        self.glue_hit()
         sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
@@ -367,6 +378,7 @@ class Troll(Enemy):
         score = min(self.health, damage)
         self.health -= damage
         self.value -= damage
+        self.glue_hit()
         sounds.play('blop')
         if self.health <= 0:
             self.reached_end = True
@@ -466,6 +478,7 @@ class KingBlob(Enemy):
         score = min(self.health, damage)
         self.health -= damage
         self.value -= damage
+        self.glue_hit()
         sounds.play('blop')
         if self.health <= 0:
             sounds.play('pop')

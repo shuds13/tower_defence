@@ -295,6 +295,30 @@ class Tower:
     def attack_animate(self, window):
         pygame.draw.line(window, (255, 0, 0), self.position, self.target.position, self.beam_width)
 
+    def rotate_point(self, origin, point, angle):
+        """
+        Rotate a point counterclockwise by a given angle around a given origin.
+
+        Args:
+        origin (tuple): The rotation center (x, y).
+        point (tuple): The point to rotate (x, y).
+        angle (float): The rotation angle in degrees.
+
+        Returns:
+        tuple: The new position of the point after rotation.
+        """
+        # Convert angle to radians
+        angle_rad = math.radians(-angle)
+
+        # Shift the point to the origin
+        ox, oy = origin
+        px, py = point
+
+        # Rotate and shift back
+        qx = ox + math.cos(angle_rad) * (px - ox) - math.sin(angle_rad) * (py - oy)
+        qy = oy + math.sin(angle_rad) * (px - ox) + math.cos(angle_rad) * (py - oy)
+        return qx, qy
+
     def create_sublist(self,input_list, N):
         """
         Create a sublist of N equally spaced elements from the input list.
@@ -756,6 +780,8 @@ class GlueGunner(Tower):
     image = gluegun_img
     range = 100
     max_level = 4
+    glue_times = {1: 180, 2: 240, 3: 300, 4: 360}  # frames before glue wears off (also wears off after glue_layers hits)
+    nozzle_offsets = {1: (2, -24), 2: (-2, -25), 3: (5, -25), 4: (10, -24)}  # nozzle tip from centre, unrotated image
 
     def __init__(self, position):
         super().__init__(position)
@@ -871,9 +897,14 @@ class GlueGunner(Tower):
         #elif self.level == 3:
             #return (self.position[0]+15, self.position[1]-16)
 
+    def _get_nozzle_pos(self):
+        # The image is drawn rotated by self.angle (see Tower.draw), so rotate the tip the same way
+        ox, oy = self.__class__.nozzle_offsets[self.level]
+        tip = (self.position[0] + ox, self.position[1] + oy)
+        return self.rotate_point(self.position, tip, self.angle)
+
     def attack_animate(self, window):
-        # nozzle = self.get_nozzle_pos()
-        nozzle = self.position
+        nozzle = self._get_nozzle_pos()
         for target in self.target:
             pygame.draw.line(window, self.glue_color, nozzle, target.position, self.beam_width)
 
@@ -893,10 +924,9 @@ class GlueGunner(Tower):
                 target.slow_factor = self.slow_factor[target.size-1]
                 target.speed = target.base_speed * target.slow_factor
                 target.glued = self.glue_layers
+                target.glue_timer = self.__class__.glue_times[self.level]
                 target.glue_color = self.glue_color
                 if self.level >= 3:
-                    # Do one damage straight away
-                    score += target.take_damage(1)
                     target.toxic_glued = True
                     target.toxic_glued_by = self
                     target.toxic_timer = self.toxic_time
@@ -1173,30 +1203,6 @@ class Cannon(Tower):
             return (self.position[0], self.position[1]+21)
         elif self.level == 4:
             return (self.position[0], self.position[1]+24)
-
-    def rotate_point(self, origin, point, angle):
-        """
-        Rotate a point counterclockwise by a given angle around a given origin.
-
-        Args:
-        origin (tuple): The rotation center (x, y).
-        point (tuple): The point to rotate (x, y).
-        angle (float): The rotation angle in degrees.
-
-        Returns:
-        tuple: The new position of the point after rotation.
-        """
-        # Convert angle to radians
-        angle_rad = math.radians(-angle)
-
-        # Shift the point to the origin
-        ox, oy = origin
-        px, py = point
-
-        # Rotate and shift back
-        qx = ox + math.cos(angle_rad) * (px - ox) - math.sin(angle_rad) * (py - oy)
-        qy = oy + math.sin(angle_rad) * (px - ox) + math.cos(angle_rad) * (py - oy)
-        return qx, qy
 
 
     def _get_nozzle_pos(self):
