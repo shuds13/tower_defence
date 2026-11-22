@@ -1383,8 +1383,8 @@ class Ninja(Tower):
         self.cost = Ninja.price
         self.image = Ninja.image
         self.level = 1
-        self.attack_speed = 55
-        self.upgrade_costs = [160, 480, 1200] # rough - need to decide
+        self.attack_speed = 60
+        self.upgrade_costs = [160, 520, 1200] # rough - need to decide
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
         self.multi_attack = 1
@@ -1403,14 +1403,14 @@ class Ninja(Tower):
     def level_up(self):
         self.level +=1
         if self.level == 2:
-            self.attack_speed = 45
+            self.attack_speed = 50
             self.image = ninja2_img
             self.cost += self.upgrade_costs[0]
             self.upgrade_name = "Iron Wind"   # provisional - working on it
             self.range = 90
             self.ghostsight = True
         if self.level == 3:
-            self.attack_speed = 35 # may not increase - shuriken richet increates a lot
+            self.attack_speed = 40
             self.image = ninja3_img
             self.cost += self.upgrade_costs[1]
             self.upgrade_name = "Red Reaper"
@@ -1600,7 +1600,7 @@ class Shuriken(Tower):
         self.angle
         self.speed = 8
         self.hit_tolerance = 8
-        self.hit_enemies = []
+        self.hit_enemies = [tower.target]  # Ninja already hit this enemy when throwing
         self.target_pos = tower.target.position  # position when shoot
         self.path = tower.target.path
         self.path_index = tower.target.path_index
