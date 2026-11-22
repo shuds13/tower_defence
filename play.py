@@ -306,10 +306,14 @@ while game.running:
         tower.range_mod = 1
         tower.see_ghosts = tower.ghostsight  # set to natural ghostsight for character at level
 
-    for totem in game.totems:
-        for tower in game.towers:
-            if totem.tower_in_range(tower):
-                totem.boost(tower)
+    # Each tower is boosted by the highest level totem in range (boosts do not stack)
+    for tower in game.towers:
+        best_totem = None
+        for totem in game.totems:
+            if totem.tower_in_range(tower) and (best_totem is None or totem.level > best_totem.level):
+                best_totem = totem
+        if best_totem is not None:
+            best_totem.boost(tower)
 
     if game.active:
         # Spawn a new enemy at intervals if the max number has not been reached
