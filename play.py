@@ -193,6 +193,7 @@ while game.running:
             if opts_restart or restart_round_button and nav.is_click_inside_rect(mouse_pos, restart_round_button):
                 game.restart_round(lev, gmap)
                 game.reset_level(gmap, pygame.display, window)
+                projectiles = []
                 opts_restart = False
 
             if close_game_over and  nav.is_click_inside_rect(mouse_pos, close_game_over):
@@ -200,9 +201,11 @@ while game.running:
                 game.displayed_game_over = True
             if opts_play_again or play_again_button and nav.is_click_inside_rect(mouse_pos, play_again_button):
                 game, gmap = reset_game(gmap=gmap)
+                projectiles = []
                 opts_play_again = False
             if opts_maps or maps_button and nav.is_click_inside_rect(mouse_pos, maps_button):
                 game, _ = reset_game()
+                projectiles = []
                 gmap = select_map()
                 opts_maps = False
                 continue

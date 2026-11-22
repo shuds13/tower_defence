@@ -89,16 +89,16 @@ class Enemy:
             self.draw_glue_splat(window, self.glue_color, x, y, self.size)
             if self.toxic_glued:
                 if self.toxic_attacks > 1:
-                    random.seed(1)
+                    rng = random.Random(1)  # fixed splat positions without touching the global RNG
                     for splat in range(1, self.toxic_attacks+1):
 
                         # Hack try make king blob look better
                         if isinstance(self, KingBlob):
-                            xn = x + random.randint(-25, 25)
-                            yn = y + random.randint(-5, 30)
+                            xn = x + rng.randint(-25, 25)
+                            yn = y + rng.randint(-5, 30)
                         else:
-                            xn = x + random.randint(-15, 15)
-                            yn = y + random.randint(-15, 15)
+                            xn = x + rng.randint(-15, 15)
+                            yn = y + rng.randint(-15, 15)
 
                         self.draw_glue_splat(window, self.glue_color, xn, yn, self.size)
 
@@ -138,6 +138,7 @@ class Enemy:
     def spawn_func(self, enemies):
         for i in range(self.spawn_count):
             enemy = self.spawn_type(self.path, self.position, self.path_index)
+            enemy.distance = self.distance  # keep place in the first-to-last ordering
             # Spread out slightly
             for j in range(i*self.spawn_sep):
                 enemy.move()
@@ -345,6 +346,7 @@ class BigDevil(Devil):
         self.size = 3
         self.spawn_type = Devil
         self.spawn_count = 10
+        self.value = self.health + self.spawn_count*self.spawn_type.health
 
 class Troll(Enemy):
     health = 20
@@ -481,6 +483,7 @@ class KingBlob(Enemy):
 
         for point in points:
             enemy = self.spawn_type(self.path, point, self.path_index)
+            enemy.distance = self.distance
             enemies.append(enemy)
 
 
