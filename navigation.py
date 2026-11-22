@@ -388,7 +388,7 @@ def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
     pygame.draw.rect(surface, color, (x - border_width, y - border_width, width + 2 * border_width, height + 2 * border_width))
 
 
-def draw_inset_window(surface, window_info, player_money):
+def draw_inset_window(surface, window_info, player_money, game_level):
     if not window_info['active']:
         return
 
@@ -451,7 +451,7 @@ def draw_inset_window(surface, window_info, player_money):
     # DONT really like bigger button - looked better before - TODO might adjust size if needed
 
     #at_max_level = tower.level == tower.__class__.max_level
-    if tower.level == tower.__class__.max_level:
+    if tower.level >= tower.max_level_at(game_level):
         at_max_level = True
     else:
         at_max_level = False
@@ -495,7 +495,7 @@ def draw_inset_window(surface, window_info, player_money):
 
 
 def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button,
-                         sell_button, target_button, player_money, alert_message, alert_timer, game_over):
+                         sell_button, target_button, player_money, alert_message, alert_timer, game_over, game_level):
     on_window = False  # was click on window
     tower = inset_window['tower']
     # Change targeting
@@ -504,7 +504,7 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
         on_window = True
     # Upgrade tower
     elif upgrade_button.collidepoint(mouse_pos) and not game_over:
-        if tower.level < tower.__class__.max_level:
+        if tower.level < tower.max_level_at(game_level):
             upgrade_cost = tower.upgrade_costs[tower.level-1]
             if player_money >= upgrade_cost:
                 tower.level_up()

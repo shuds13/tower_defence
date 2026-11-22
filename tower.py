@@ -11,6 +11,8 @@ fighter3_img = pygame.image.load('images/tower1_lev3.png')
 fighter3_img = pygame.transform.scale(fighter3_img, (55, 55))
 fighter4_img = pygame.image.load('images/tower1_lev4.png')
 fighter4_img = pygame.transform.scale(fighter4_img, (60, 60))
+fighter5_img = pygame.image.load('images/tower1_lev5.png')  # placeholder art
+fighter5_img = pygame.transform.scale(fighter5_img, (64, 64))
 
 burger_img = pygame.image.load('images/burger.png')
 burger_img = pygame.transform.scale(burger_img, (50, 50))
@@ -135,6 +137,7 @@ class Tower:
     new_tower = False
     target_modes = ()  # Targeting options offered in the inset window (empty = no choice)
     target_mode = "first"  # class default also covers towers loaded from older saves
+    unlock_game_levels = {}  # tower level -> first game level where that upgrade can be bought
 
     def __init__(self, position):
         self.position = position
@@ -178,6 +181,13 @@ class Tower:
 
     def load_images(self):
         pass
+
+    def max_level_at(self, game_level):
+        """Highest tower level that can be reached on this game level (some upgrades unlock later)."""
+        top = self.__class__.max_level
+        while top > 1 and self.__class__.unlock_game_levels.get(top, 0) > game_level:
+            top -= 1
+        return top
 
     def current_range(self):
         return self.range * self.range_mod
@@ -340,8 +350,9 @@ class Fighter(Tower):
     name = 'Fighter'
     image = fighter_img
     range = 100
-    max_level = 4
+    max_level = 5
     target_modes = ("first", "strong", "last", "close")
+    unlock_game_levels = {5: 61}  # Nighthawk only after the 60 main levels
 
     def __init__(self, position):
         super().__init__(position)
@@ -351,9 +362,17 @@ class Fighter(Tower):
         self.cost = Fighter.price
         self.image = Fighter.image
         self.level = 1
-        self.upgrade_costs = [40, 180, 400]
+        self.upgrade_costs = [40, 180, 400, 2500]
         self.beam_width = 5
         self.upgrade_name = "Rapid Fire"
+
+    def __setstate__(self, state):
+        super().__setstate__(state)
+        # Fighters saved before level 5 existed
+        if len(self.upgrade_costs) < 4:
+            self.upgrade_costs.append(2500)
+        if self.level == 4:
+            self.upgrade_name = "Nighthawk"
 
     def load_images(self):
         if self.level == 2:
@@ -362,6 +381,8 @@ class Fighter(Tower):
             self.image = fighter3_img
         elif self.level == 4:
             self.image = fighter4_img
+        elif self.level == 5:
+            self.image = fighter5_img
 
     def level_up(self):
         self.level +=1
@@ -387,6 +408,58 @@ class Fighter(Tower):
             self.cost += self.upgrade_costs[2]
             self.damage = 2
             self.beam_width = 7
+            self.upgrade_name = "Nighthawk"
+        if self.level == 5:
+            # Stealth jet: faster, ghost sight, and a Death Star beam (both nose beams join into one)
+            self.attack_speed = 2
+            self.range = 150
+            self.image = fighter5_img
+            self.cost += self.upgrade_costs[3]
+            self.ghostsight = True
+
+    def attack(self):
+        if self.level < 5:
+            return super().attack()
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            self.attack_count += 1
+            # Death Star beam: 4 damage, more against bigger enemies
+            score = self.target.take_damage(4 * self.target.size)
+            self.reset_attack_timer()
+            self.is_attacking = True
+        else:
+            self.is_attacking = False
+        return score, False
+
+    def _get_nose_positions(self):
+        # Level 5 image has two noses; offsets from centre in the unrotated (pointing up) image
+        left = (self.position[0] - 6, self.position[1] - 29)
+        right = (self.position[0] + 4, self.position[1] - 29)
+        return self.rotate_point(self.position, left, self.angle), self.rotate_point(self.position, right, self.angle)
+
+    def attack_animate(self, window):
+        if self.level < 5:
+            super().attack_animate(window)
+            return
+        # Beams from both noses meet just in front of the jet, then fire as one big beam
+        left_nose, right_nose = self._get_nose_positions()
+        mid = ((left_nose[0] + right_nose[0]) / 2, (left_nose[1] + right_nose[1]) / 2)
+        tx, ty = self.target.position
+        dx, dy = tx - mid[0], ty - mid[1]
+        dist = max((dx**2 + dy**2)**0.5, 1)
+        join_dist = min(18, dist / 2)
+        join = (mid[0] + dx / dist * join_dist, mid[1] + dy / dist * join_dist)
+        # Bigger enemies get a stronger beam: thicker, with a red core
+        size = self.target.size
+        green = (60, 255, 60)
+        core = (220, 255, 220) if size < 2 else (255, 30, 30)
+        beam_width = 7 + 2 * size
+        core_width = 2 + size
+        pygame.draw.line(window, green, left_nose, join, 3)
+        pygame.draw.line(window, green, right_nose, join, 3)
+        pygame.draw.line(window, green, join, self.target.position, beam_width)
+        pygame.draw.line(window, core, join, self.target.position, core_width)
+        pygame.draw.circle(window, core, (int(join[0]), int(join[1])), 3 + size)
 
 class Burger(Tower):
 
