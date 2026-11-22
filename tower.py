@@ -364,6 +364,7 @@ class Fighter(Tower):
     max_level = 5
     target_modes = ("first", "strong", "last", "close")
     unlock_game_levels = {5: 61}  # Nighthawk after the 60 main levels (or any level once the map is crowned)
+    death_star_damage = {1: 4, 2: 7, 3: 9}  # level 5 damage per shot by enemy size
     idle_frames = 60  # frames since the level 5 beam last had a target (class default covers older saves)
 
     def __init__(self, position):
@@ -450,8 +451,8 @@ class Fighter(Tower):
         score = 0
         if self.target and self.attack_timer <= 0:
             self.attack_count += 1
-            # Death Star beam: 4 damage, more against bigger enemies
-            score = self.target.take_damage(4 * self.target.size)
+            # Death Star beam: more damage against bigger enemies
+            score = self.target.take_damage(self.__class__.death_star_damage[self.target.size])
             self.reset_attack_timer()
             self.is_attacking = True
         else:
@@ -476,16 +477,23 @@ class Fighter(Tower):
         dist = max((dx**2 + dy**2)**0.5, 1)
         join_dist = min(18, dist / 2)
         join = (mid[0] + dx / dist * join_dist, mid[1] + dy / dist * join_dist)
-        # Bigger enemies get a stronger beam: thicker, with a red core
+        # Bigger enemies get a stronger beam: thicker, with red edges
         size = self.target.size
-        green = (60, 255, 60)
-        core = (220, 255, 220) if size < 2 else (255, 30, 30)
+        green, core, red = (60, 255, 60), (220, 255, 220), (255, 30, 30)
         beam_width = 7 + 2 * size
         core_width = 2 + size
         pygame.draw.line(window, green, left_nose, join, 3)
         pygame.draw.line(window, green, right_nose, join, 3)
         pygame.draw.line(window, green, join, self.target.position, beam_width)
         pygame.draw.line(window, core, join, self.target.position, core_width)
+        if size >= 2:
+            # Red lines just outside each edge of the beam
+            px, py = -dy / dist, dx / dist  # unit vector across the beam
+            off = beam_width / 2 + 1
+            for side in (1, -1):
+                start = (join[0] + side * px * off, join[1] + side * py * off)
+                end = (tx + side * px * off, ty + side * py * off)
+                pygame.draw.line(window, red, start, end, 2)
         pygame.draw.circle(window, core, (int(join[0]), int(join[1])), 3 + size)
 
 class Burger(Tower):
