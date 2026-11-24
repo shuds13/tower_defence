@@ -186,6 +186,11 @@ class Tower:
         """Called before each round starts."""
         pass
 
+    def next_level_taken(self, towers):
+        """True if the next upgrade is tier 5 and another tower of this type already has it (one of each allowed)."""
+        return self.level + 1 >= 5 and any(other is not self and type(other) is type(self) and other.level >= 5
+                                           for other in towers)
+
     def max_level_at(self, game_level, map_crowned=False):
         """Highest tower level that can be reached on this game level (some upgrades unlock later).
         Once the map's crown has been earned, every upgrade is available on it."""

@@ -394,7 +394,7 @@ def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
     pygame.draw.rect(surface, color, (x - border_width, y - border_width, width + 2 * border_width, height + 2 * border_width))
 
 
-def draw_inset_window(surface, window_info, player_money, game_level, map_crowned=False):
+def draw_inset_window(surface, window_info, player_money, game_level, map_crowned=False, towers=()):
     if not window_info['active']:
         return
 
@@ -462,8 +462,12 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     else:
         at_max_level = False
 
+    only_one = not at_max_level and tower.next_level_taken(towers)
+
     if at_max_level:
         upgrade_color = (0, 128, 128)
+    elif only_one:
+        upgrade_color = (100, 100, 100)
     else:
         upgrade_cost = tower.upgrade_costs[tower.level-1]
         if player_money < upgrade_cost:
@@ -477,6 +481,13 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
         upgrade_text = font.render(f"Max Level", True, (255, 255, 255))  # White text
         upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
         surface.blit(upgrade_text, upgrade_text_rect)
+    elif only_one:
+        # Tier 5 is limited to one of each tower
+        cx, cy = upgrade_button.center
+        name_text = font.render(tower.upgrade_name, True, (255, 255, 255))
+        surface.blit(name_text, name_text.get_rect(center=(cx, cy - 8)))
+        note_text = pygame.font.SysFont(None, 20).render("Only one allowed", True, (255, 255, 255))
+        surface.blit(note_text, note_text.get_rect(center=(cx, cy + 10)))
     else:
         # Upgrade name on the first line, price on the second
         cx, cy = upgrade_button.center
@@ -510,7 +521,7 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
         on_window = True
     # Upgrade tower
     elif upgrade_button.collidepoint(mouse_pos) and not game_over:
-        if tower.level < tower.max_level_at(game_level, map_crowned):
+        if tower.level < tower.max_level_at(game_level, map_crowned) and not tower.next_level_taken(towers):
             upgrade_cost = tower.upgrade_costs[tower.level-1]
             if player_money >= upgrade_cost:
                 tower.level_up()

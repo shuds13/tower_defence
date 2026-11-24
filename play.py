@@ -268,7 +268,7 @@ while game.running:
                             game.inset_window['x'] = game.inset_window['xr']
                         else:
                             game.inset_window['x'] = game.inset_window['xl']
-                        upgrade_button, sell_button, target_button = nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap))
+                        upgrade_button, sell_button, target_button = nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap), game.towers)
 
             # Place a tower
             else:
@@ -531,7 +531,7 @@ while game.running:
 
     if game.inset_window['active']:
         update_inset_totems(game.inset_window)
-    nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap))
+    nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap), game.towers)
 
     if game.game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)
