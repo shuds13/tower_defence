@@ -22,8 +22,8 @@ burger3_img = pygame.image.load('images/burger3.png')
 burger3_img = pygame.transform.scale(burger3_img, (55, 55))
 burger4_img = pygame.image.load('images/burger4.png')
 burger4_img = pygame.transform.scale(burger4_img, (60, 60))
-#burger5_img = pygame.image.load('images/burger5.png')
-#burger5_img = pygame.transform.scale(burger5_img, (60, 60))
+burger5_img = pygame.image.load('images/burger_king.png')  # trying the Burger King image (also used by the enemy)
+burger5_img = pygame.transform.scale(burger5_img, (90, 90))  # image is narrow, so drawn larger to look bigger than the Whopper
 splat_img = pygame.image.load('images/splat.png')
 
 wizard_img = pygame.image.load('images/wizard.png')
@@ -502,7 +502,16 @@ class Burger(Tower):
     name = 'Burger'
     image = burger_img
     range = 60
-    max_level = 4 #5
+    max_level = 5
+    unlock_game_levels = {5: 61}  # Burger King after the 60 main levels (or any level once the map is crowned)
+
+    # Level 5 surge: ring of fire, red eyes and double damage for a short time
+    surge_frames = 180  # how long a surge lasts
+    surge_cooldown_frames = 600  # wait after a surge ends before the next can start
+    surge_min_enemies = 10  # surge when this many enemies are in range, or any large enemy
+    surge_timer = 0  # frames of surge left (class defaults also cover older saves)
+    surge_cooldown = 0
+    eye_offsets = ((-10, 3), (9, 4))  # eyes on the level 5 image (drawn at 90x90), from the centre
 
     def __init__(self, position):
         super().__init__(position)
@@ -513,7 +522,7 @@ class Burger(Tower):
         #self.image = Burger.image  # all of these can be done in base class: self.thing = self.__class__.thing
         self.level = 1
         self.max_attacks = 4
-        self.upgrade_costs = [85, 220, 680] # , 1200]
+        self.upgrade_costs = [85, 220, 680, 3200]
         # range_mod cant be used here - so would have to update when update range_mod
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         self.upgrade_name = "With cheese"
@@ -525,6 +534,8 @@ class Burger(Tower):
             self.image = burger3_img
         elif self.level == 4:
             self.image = burger4_img
+        elif self.level == 5:
+            self.image = burger5_img
 
     def level_up(self):
         self.level +=1
@@ -551,14 +562,15 @@ class Burger(Tower):
             self.max_attacks = 15  # 12 (dam 2)
             self.cost += self.upgrade_costs[2]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
-        #if self.level == 5:
-            #self.attack_speed = 8  # lower is better currently
-            #self.range =  100
-            #self.image = burger5_img
-            #self.max_attacks = 20
-            #self.cost += self.upgrade_costs[3]
-            #self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
-            #self.damage = 3 # not sure - with damage 2 and other stats nothing got past
+            self.upgrade_name = "Burger King"
+        if self.level == 5:
+            self.attack_speed = 6
+            self.range =  100
+            self.image = burger5_img
+            self.max_attacks = 30
+            self.cost += self.upgrade_costs[3]
+            self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+            self.damage = 3 # not sure - with damage 2 and other stats nothing got past
 
     # For pickling override __getstate__
     def __getstate__(self):
@@ -578,6 +590,11 @@ class Burger(Tower):
         self.load_images()
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         self.target = None
+        # Burgers saved before level 5 existed
+        if len(self.upgrade_costs) < 4:
+            self.upgrade_costs.append(3200)
+        if self.level == 4:
+            self.upgrade_name = "Burger King"
 
     # Splat attack!
     def attack(self):
@@ -593,6 +610,8 @@ class Burger(Tower):
                         multiplier = 2
                     else:
                         multiplier = 1
+                    if self.surge_timer > 0:
+                        multiplier *= 2
                     score += target.take_damage(self.damage * multiplier)
             else:
                 # dont think ever here
@@ -605,10 +624,65 @@ class Burger(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score, False
 
+    def new_round(self):
+        self.surge_timer = 0
+        self.surge_cooldown = 0
+
+    def update(self, enemies, gmap):
+        if self.level >= 5:
+            self._update_surge(enemies, gmap)
+        return super().update(enemies, gmap)
+
+    def _update_surge(self, enemies, gmap):
+        if self.surge_timer > 0:
+            self.surge_timer -= 1
+            if self.surge_timer == 0:
+                self.surge_cooldown = self.__class__.surge_cooldown_frames
+            return
+        if self.surge_cooldown > 0:
+            self.surge_cooldown -= 1
+            return
+        in_range = [enemy for enemy in enemies if self.can_target(enemy, gmap)]
+        if len(in_range) >= self.__class__.surge_min_enemies or any(enemy.size >= 3 for enemy in in_range):
+            self.surge_timer = self.__class__.surge_frames
+            sounds.play('fireball')
+
+    def _draw_ring_of_fire(self, window):
+        cx, cy = self.position
+        glow = pygame.Surface((120, 120), pygame.SRCALPHA)
+        pygame.draw.circle(glow, (255, 120, 0, 70), (60, 60), 50)
+        window.blit(glow, glow.get_rect(center=(cx, cy)))
+        flames = 18
+        for i in range(flames):
+            angle = 2 * math.pi * i / flames + random.uniform(-0.1, 0.1)
+            ux, uy = math.cos(angle), math.sin(angle)
+            px, py = -uy, ux  # across the flame
+            base = 38
+            length = random.uniform(8, 18)
+            half = random.uniform(4, 6)
+            b = (cx + ux * base, cy + uy * base)
+            tip = (cx + ux * (base + length), cy + uy * (base + length))
+            colour = random.choice(((255, 60, 0), (255, 140, 0), (255, 210, 40)))
+            pygame.draw.polygon(window, colour, [(b[0] + px * half, b[1] + py * half), tip, (b[0] - px * half, b[1] - py * half)])
+
+    def _draw_red_eyes(self, window):
+        for ox, oy in self.__class__.eye_offsets:
+            centre = (self.position[0] + ox, self.position[1] + oy)
+            glow = pygame.Surface((24, 24), pygame.SRCALPHA)
+            pygame.draw.circle(glow, (255, 0, 0, 110), (12, 12), 11)
+            window.blit(glow, glow.get_rect(center=centre))
+            pygame.draw.circle(window, (255, 40, 40), centre, 4)
+            pygame.draw.circle(window, (255, 220, 200), centre, 1)
+
     def draw(self, window, enemies=None, active=False):
         """Dont rotate burger"""
+        surging = self.level >= 5 and self.surge_timer > 0
+        if surging:
+            self._draw_ring_of_fire(window)
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
+        if surging:
+            self._draw_red_eyes(window)
 
     def find_target(self, enemies, gmap):
         # Only place to call function - after just check self.cloud_attack
