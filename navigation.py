@@ -1,6 +1,6 @@
 import pygame
 import sounds
-from tower import Tower, tower_types
+from tower import Tower, tower_types, burger5_img
 
 cross_img = pygame.image.load('images/cross.png')
 cross_img = pygame.transform.scale(cross_img, (50, 50))
@@ -61,6 +61,32 @@ def start_level_button(window, window_size):
     bw = 2  # Width of the border, change as needed
     pygame.draw.rect(window, border_color, (window_size[0] - 125 - bw,window_size[1] - 100 - bw, 50 + 2 * bw, 50 + 2 * bw))
     return draw_button(window, "Go", (window_size[0] - 125, window_size[1] - 100), (50, 50), (0,200,20))
+
+
+def draw_surge_button(surface, burger, inset):
+    """Burger King button, bottom left of the map (moved right if the tower box is open there).
+    Shows ready, surging or cooling down."""
+    x, y, size = 10, 540, 50
+    if inset['active'] and inset['x'] == inset['xl']:
+        x = inset['x'] + inset['width'] + 10
+    rect = pygame.Rect(x, y, size, size)
+    icon = pygame.transform.smoothscale(burger5_img, (size - 4, size - 4))
+    if burger.surge_timer > 0:
+        border, background = (255, 140, 0), (255, 200, 80)  # surging
+    elif burger.surge_cooldown > 0:
+        border, background = (60, 60, 60), (150, 150, 150)  # cooling down
+        icon = pygame.transform.grayscale(icon)
+    else:
+        border, background = (255, 215, 0), (120, 20, 0)  # ready
+    draw_border(surface, x, y, size, size, 3, border)
+    pygame.draw.rect(surface, background, rect)
+    if burger.surge_cooldown > 0:
+        # Fill rises as the cooldown runs down
+        done = 1 - burger.surge_cooldown / burger.__class__.surge_cooldown_frames
+        fill = int(size * done)
+        pygame.draw.rect(surface, (200, 120, 60), (x, y + size - fill, size, fill))
+    surface.blit(icon, icon.get_rect(center=rect.center))
+    return rect
 
 
 def draw_side_panel(surface, panel_rect, current_tower_type):
@@ -441,11 +467,12 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     image_rect = tower_image.get_rect(center=(x + width // 2, image_y_pos))
     surface.blit(tower_image, image_rect)
 
-    # Targeting option (cycles through modes when clicked); click area is a little larger than the text
+    # Tower option, e.g. targeting (cycles when clicked); click area is a little larger than the text
     target_button = None
-    if tower.__class__.target_modes:
+    option_text = tower.option_text()
+    if option_text is not None:
         font_small = pygame.font.SysFont(None, 20)
-        target_text = font_small.render(f"Target: {tower.target_mode.capitalize()}  >", True, (50, 50, 90))
+        target_text = font_small.render(option_text, True, (50, 50, 90))
         target_rect = target_text.get_rect(center=(x + width // 2, y + 163))
         surface.blit(target_text, target_rect)
         target_button = target_rect.inflate(10, 6)
@@ -517,7 +544,7 @@ def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button
     tower = inset_window['tower']
     # Change targeting
     if target_button is not None and target_button.collidepoint(mouse_pos):
-        tower.next_target_mode()
+        tower.next_option()
         on_window = True
     # Upgrade tower
     elif upgrade_button.collidepoint(mouse_pos) and not game_over:

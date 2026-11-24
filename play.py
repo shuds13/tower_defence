@@ -7,7 +7,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower, tower_types, Totem, CannonBall
+from tower import Tower, tower_types, Totem, CannonBall, Burger
 import placements as place
 import navigation as nav
 import levels as lev
@@ -122,6 +122,7 @@ restart_round_button = None
 hint_button = None
 close_game_over = None
 maps_button = None
+surge_button = None  # shown when the Burger King is set to manual surge
 
 opts_play_again = False
 opts_maps = False
@@ -152,6 +153,10 @@ def update_inset_totems(inset_window):
                 if my_totem is None or totem.level > my_totem.level:
                     my_totem = totem
         inset_window['totem'] = my_totem
+
+def manual_surge_burger():
+    """The tier 5 Burger set to manual surge, if there is one (only one tier 5 of each allowed)."""
+    return next((t for t in game.towers if isinstance(t, Burger) and t.level >= 5 and t.surge_mode == "manual"), None)
 
 def show_tower_info(inset_window):
     for tower in game.towers:
@@ -186,6 +191,12 @@ while game.running:
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
                 # prevents restart round from working
                 # continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
+
+            if surge_button and surge_button.collidepoint(mouse_pos):
+                burger = manual_surge_burger()
+                if game.active and burger is not None and burger.surge_ready():
+                    burger.start_surge()
+                continue
 
             gmap.background_mod(mouse_pos, window)
 
@@ -372,6 +383,7 @@ while game.running:
 
             for tower in game.towers:
                 tower.target = None
+                tower.new_round()  # clear round effects such as the Burger King surge
 
             projectiles = []
             clean_cycle_needed = False
@@ -531,7 +543,14 @@ while game.running:
 
     if game.inset_window['active']:
         update_inset_totems(game.inset_window)
-    nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap), game.towers)
+    inset_buttons = nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap), game.towers)
+    if inset_buttons is not None:
+        # Keep click areas current (e.g. an option line appears after an upgrade)
+        upgrade_button, sell_button, target_button = inset_buttons
+
+    # Manual surge button (only during a round, so it does not clash with the hint box)
+    burger = manual_surge_burger()
+    surge_button = nav.draw_surge_button(window, burger, game.inset_window) if burger is not None and game.active else None
 
     if game.game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)

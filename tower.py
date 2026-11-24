@@ -252,6 +252,15 @@ class Tower:
         modes = self.__class__.target_modes
         self.target_mode = modes[(modes.index(self.target_mode) + 1) % len(modes)]
 
+    def option_text(self):
+        """Text for the small clickable option in the tower box, or None if there is no option."""
+        if self.__class__.target_modes:
+            return f"Target: {self.target_mode.capitalize()}  >"
+        return None
+
+    def next_option(self):
+        self.next_target_mode()
+
     def in_range(self, enemy):
         distance = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
         return distance <= self.current_range()
@@ -516,6 +525,7 @@ class Burger(Tower):
     surge_min_value = 50  # surge when enemies in range add up to this much health (including what they spawn)
     surge_timer = 0  # frames of surge left (class defaults also cover older saves)
     surge_cooldown = 0
+    surge_mode = "auto"  # "auto" surges by itself; "manual" waits for the surge button
     eye_offsets = ((-10, 3), (9, 4))  # eyes on the level 5 image (drawn at 90x90), from the centre
 
     def __init__(self, position):
@@ -633,6 +643,21 @@ class Burger(Tower):
         self.surge_timer = 0
         self.surge_cooldown = 0
 
+    def option_text(self):
+        if self.level >= 5:
+            return f"Surge: {self.surge_mode.capitalize()}  >"
+        return None
+
+    def next_option(self):
+        self.surge_mode = "manual" if self.surge_mode == "auto" else "auto"
+
+    def surge_ready(self):
+        return self.level >= 5 and self.surge_timer == 0 and self.surge_cooldown == 0
+
+    def start_surge(self):
+        self.surge_timer = self.__class__.surge_frames
+        sounds.play('fireball')
+
     def update(self, enemies, gmap):
         if self.level >= 5:
             self._update_surge(enemies, gmap)
@@ -647,10 +672,11 @@ class Burger(Tower):
         if self.surge_cooldown > 0:
             self.surge_cooldown -= 1
             return
+        if self.surge_mode == "manual":
+            return  # waits for the surge button
         strength = sum(enemy.value for enemy in enemies if self.can_target(enemy, gmap))
         if strength >= self.__class__.surge_min_value:
-            self.surge_timer = self.__class__.surge_frames
-            sounds.play('fireball')
+            self.start_surge()
 
     def _draw_ring_of_fire(self, window):
         cx, cy = self.position
