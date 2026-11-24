@@ -508,7 +508,7 @@ class Burger(Tower):
     # Level 5 surge: ring of fire, red eyes and double damage for a short time
     surge_frames = 180  # how long a surge lasts
     surge_cooldown_frames = 600  # wait after a surge ends before the next can start
-    surge_min_enemies = 10  # surge when this many enemies are in range, or any large enemy
+    surge_min_value = 50  # surge when enemies in range add up to this much health (including what they spawn)
     surge_timer = 0  # frames of surge left (class defaults also cover older saves)
     surge_cooldown = 0
     eye_offsets = ((-10, 3), (9, 4))  # eyes on the level 5 image (drawn at 90x90), from the centre
@@ -642,8 +642,8 @@ class Burger(Tower):
         if self.surge_cooldown > 0:
             self.surge_cooldown -= 1
             return
-        in_range = [enemy for enemy in enemies if self.can_target(enemy, gmap)]
-        if len(in_range) >= self.__class__.surge_min_enemies or any(enemy.size >= 3 for enemy in in_range):
+        strength = sum(enemy.value for enemy in enemies if self.can_target(enemy, gmap))
+        if strength >= self.__class__.surge_min_value:
             self.surge_timer = self.__class__.surge_frames
             sounds.play('fireball')
 
