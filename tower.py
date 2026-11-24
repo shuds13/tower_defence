@@ -520,8 +520,8 @@ class Burger(Tower):
     unlock_game_levels = {5: 61}  # Burger King after the 60 main levels (or any level once the map is crowned)
 
     # Level 5 surge: ring of fire, red eyes and double damage for a short time
-    surge_frames = 180  # how long a surge lasts
-    surge_cooldown_frames = 600  # wait after a surge ends before the next can start
+    surge_frames = 240  # how long a surge lasts (4 seconds at normal speed)
+    surge_cooldown_frames = 480  # wait after a surge ends before the next can start (8 seconds)
     surge_min_value = 50  # surge when enemies in range add up to this much health (including what they spawn)
     surge_timer = 0  # frames of surge left (class defaults also cover older saves)
     surge_cooldown = 0
