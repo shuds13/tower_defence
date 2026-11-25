@@ -265,6 +265,8 @@ class Game():
             self.game_over = True
             self.current_tower_type = None
             self.map_complete = True
+            for tower in self.towers:
+                tower.new_round()  # clear round effects such as the Burger King surge
             self.current_tower_type = None
             if lev.crown_level < lev.max_level:
                 # Finished the levels beyond the first crown
