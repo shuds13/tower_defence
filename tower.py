@@ -1714,7 +1714,7 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 60
-        self.upgrade_costs = [160, 520, 1200] # rough - need to decide
+        self.upgrade_costs = [160, 480, 1200] # rough - need to decide
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
         self.multi_attack = 1
