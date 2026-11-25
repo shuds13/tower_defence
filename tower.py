@@ -1045,7 +1045,7 @@ class GlueGunner(Tower):
         if len(self.upgrade_costs) < 4:
             self.upgrade_costs.append(3800)
         if self.level == 4:
-            self.upgrade_name = "Acid Smother"
+            self.upgrade_name = "Gloopocalypse"
 
     def level_up(self):
         self.level +=1
@@ -1090,7 +1090,7 @@ class GlueGunner(Tower):
             self.max_toxic_big_reattacks = 2  # Repeatedly attack same enemy - takes toxic damage for each
             self.max_toxic_giant_reattacks = 5
             self.attack_tower = True
-            self.upgrade_name = "Acid Smother"
+            self.upgrade_name = "Gloopocalypse"
 
         if self.level == 5:
             self.image = gluegun5_img
