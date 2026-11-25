@@ -2,6 +2,7 @@ import math
 import pygame
 import random
 import sounds
+from enemy import make_goo, GOO_FILL, GOO_SHINE
 
 fighter_img = pygame.image.load('images/tower1.png')
 fighter_img = pygame.transform.scale(fighter_img, (50, 50))
@@ -43,6 +44,8 @@ gluegun3_img = pygame.image.load('images/glue_gun3.png')
 gluegun3_img = pygame.transform.scale(gluegun3_img, (50, 50))
 gluegun4_img = pygame.image.load('images/glue_gun4.png')
 gluegun4_img = pygame.transform.scale(gluegun4_img, (55, 55))
+gluegun5_img = pygame.image.load('images/glue_gun5.png')  # trial art
+gluegun5_img = pygame.transform.smoothscale(gluegun5_img, (53, 75))
 
 totem_img = pygame.image.load('images/totem.png')
 totem_img = pygame.transform.scale(totem_img, (50, 50))
@@ -170,6 +173,7 @@ class Tower:
         state = self.__dict__.copy()
         del state['image']  # Remove the non-picklable attribute
         del state['target']
+        state.pop('smother_cloud', None)  # cached glue image, redrawn on the next spray
         #self.target = None  # can I do this rather than deleting
         return state
 
@@ -992,9 +996,20 @@ class GlueGunner(Tower):
     name = 'Glue Gunner'
     image = gluegun_img
     range = 100
-    max_level = 4
-    glue_times = {1: 180, 2: 240, 3: 300, 4: 360}  # frames before glue wears off (also wears off after glue_layers hits)
-    nozzle_offsets = {1: (2, -24), 2: (-2, -25), 3: (5, -25), 4: (10, -24)}  # nozzle tip from centre, unrotated image
+    max_level = 5
+    unlock_game_levels = {5: 61}  # tier 5 after the 60 main levels (or any level once the map is crowned)
+    glue_times = {1: 180, 2: 240, 3: 300, 4: 360, 5: 360}  # frames before glue wears off (also wears off after glue_layers hits)
+    nozzle_offsets = {1: (2, -24), 2: (-2, -25), 3: (5, -25), 4: (10, -24), 5: (11, -37)}  # nozzle tip from centre, unrotated image
+    # Tier 5 smother: a big spray encases one enemy, stopping it while acid works
+    smother_every_frames = 60  # time between big sprays
+    smother_cooldown = 0
+    smother_frames = 150  # how long a normal enemy is stopped
+    smother_frames_large = 60  # large (size 3) enemies break free sooner
+    smother_spray_frames = 10  # how long the big spray stays on screen
+    smother_radius = 50  # every enemy this close to the sprayed enemy gets smothered too
+    smother_max = 8  # most enemies smothered by one spray
+    smother_acid = 4  # acid damage every quarter second while smothered
+    smother_spray_target = None  # position the last big spray hit (class default covers older saves)
 
     def __init__(self, position):
         super().__init__(position)
@@ -1004,7 +1019,7 @@ class GlueGunner(Tower):
         self.cost = GlueGunner.price
         #self.image = GlueGunner.image
         self.level = 1
-        self.upgrade_costs = [120, 280, 900]
+        self.upgrade_costs = [120, 280, 900, 3800]
         self.beam_width = 7
         self.slow_factor = [0.5, 0.8, 0.9]
         self.glue_layers = 2
@@ -1021,6 +1036,16 @@ class GlueGunner(Tower):
             self.image = gluegun3_img
         elif self.level == 4:
             self.image = gluegun4_img
+        elif self.level == 5:
+            self.image = gluegun5_img
+
+    def __setstate__(self, state):
+        super().__setstate__(state)
+        # Glue gunners saved before tier 5 existed
+        if len(self.upgrade_costs) < 4:
+            self.upgrade_costs.append(3800)
+        if self.level == 4:
+            self.upgrade_name = "Acid Smother"
 
     def level_up(self):
         self.level +=1
@@ -1065,6 +1090,17 @@ class GlueGunner(Tower):
             self.max_toxic_big_reattacks = 2  # Repeatedly attack same enemy - takes toxic damage for each
             self.max_toxic_giant_reattacks = 5
             self.attack_tower = True
+            self.upgrade_name = "Acid Smother"
+
+        if self.level == 5:
+            self.image = gluegun5_img
+            self.cost += self.upgrade_costs[3]
+            self.beam_width = 22
+            self.glue_color = (60, 160, 25)  # darker, stronger toxic glue
+            self.toxic_time = 30  # toxic glue ticks twice as often as level 4
+            self.attack_speed = 8
+            self.range = 130
+            self.max_attacks = 10
 
     def can_I_reglue(self, enemy):
         if not enemy.toxic_glued:
@@ -1088,6 +1124,8 @@ class GlueGunner(Tower):
             self.target = None
 
         for enemy in enemies:
+            if self.target and not self._in_spray_arc(self.target[0], enemy):
+                continue  # one barrel: only glue enemies roughly in the direction of the first target
             if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end and self.can_I_reglue(enemy):
                 count += 1  # TODO this updates whether same enemy or different...
                 self.target.append(enemy)
@@ -1099,6 +1137,22 @@ class GlueGunner(Tower):
                 self.target.append(enemy)
                 if count >= self.max_attacks:
                     break
+
+    spray_arc_degrees = 60  # glue only goes to enemies within this angle either side of the first target
+
+    def _in_spray_arc(self, first, enemy):
+        a1 = math.atan2(first.position[1] - self.position[1], first.position[0] - self.position[0])
+        a2 = math.atan2(enemy.position[1] - self.position[1], enemy.position[0] - self.position[0])
+        diff = abs((a2 - a1 + math.pi) % (2 * math.pi) - math.pi)
+        return math.degrees(diff) <= self.__class__.spray_arc_degrees
+
+    def get_target_angle(self):
+        # Turn the barrel towards the big smother spray while it is showing
+        if self.viz_persist > 0 and self.smother_spray_target is not None:
+            dx = self.smother_spray_target[0] - self.position[0]
+            dy = self.smother_spray_target[1] - self.position[1]
+            return math.degrees(math.atan2(-dy, dx)) - 90
+        return super().get_target_angle()
 
     # Needs to take account of rotation
     #def get_nozzle_pos(self):
@@ -1120,6 +1174,63 @@ class GlueGunner(Tower):
         nozzle = self._get_nozzle_pos()
         for target in self.target:
             pygame.draw.line(window, self.glue_color, nozzle, target.position, self.beam_width)
+
+    def new_round(self):
+        self.smother_cooldown = 0
+        self.viz_persist = 0
+
+    def update(self, enemies, gmap):
+        result = super().update(enemies, gmap)
+        if self.level >= 5:
+            if self.smother_cooldown > 0:
+                self.smother_cooldown -= 1
+            else:
+                self._smother_one(enemies, gmap)
+        return result
+
+    def _smother_one(self, enemies, gmap):
+        """Big spray at the strongest cluster in range (total health); globs everything clustered round it."""
+        cls = self.__class__
+        candidates = [e for e in enemies if e.can_be_smothered() and self.can_target(e, gmap)]
+        if not candidates:
+            return
+        r2 = cls.smother_radius ** 2
+        def cluster(centre):
+            cx, cy = centre.position
+            return [e for e in candidates if (e.position[0] - cx) ** 2 + (e.position[1] - cy) ** 2 <= r2]
+        target = max(candidates, key=lambda c: sum(e.value for e in cluster(c)))  # ties go to the one further along
+        self.smother_cooldown = cls.smother_every_frames
+        group = cluster(target)
+        for enemy in group[:cls.smother_max]:
+            frames = cls.smother_frames_large if enemy.size >= 3 else cls.smother_frames
+            enemy.smother(self, frames, cls.smother_acid)
+        self.smother_spray_target = target.position
+        # One big glob of goo where the spray lands, drawn once for this spray
+        self.smother_cloud = make_goo(cls.smother_radius * 1.1, cls.smother_radius * 0.65, random.random())
+        self.viz_persist = self.__class__.smother_spray_frames
+        sounds.play('glue')
+
+    def show_viz_persist(self, window):
+        """The big smother spray: a wide cone of glue from the barrel that lingers for a few frames."""
+        if self.smother_spray_target is not None:
+            nozzle = self._get_nozzle_pos()
+            tx, ty = self.smother_spray_target
+            dx, dy = tx - nozzle[0], ty - nozzle[1]
+            dist = max((dx * dx + dy * dy) ** 0.5, 1)
+            px, py = -dy / dist, dx / dist
+            near, far = 10, 30  # half widths at the barrel and at the target
+            cone = [(nozzle[0] + px * near, nozzle[1] + py * near), (tx + px * far, ty + py * far),
+                    (tx - px * far, ty - py * far), (nozzle[0] - px * near, nozzle[1] - py * near)]
+            spray = pygame.Surface(window.get_size(), pygame.SRCALPHA)
+            pygame.draw.polygon(spray, GOO_FILL + (170,), cone)
+            pygame.draw.line(spray, GOO_SHINE + (200,), nozzle, (tx, ty), 5)
+            window.blit(spray, (0, 0))
+            cloud = getattr(self, 'smother_cloud', None)
+            if cloud is not None:
+                surface, (ox, oy) = cloud
+                window.blit(surface, (int(tx - ox), int(ty - oy)))
+        if self.viz_persist > 0:
+            self.viz_persist -= 1
 
     # TODO - work out how more than one lev 4 toxic glue gunner combine - can they both attack
     # prob should be so they can both attack either no. times or until so many glue strikes on big target...

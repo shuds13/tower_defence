@@ -353,8 +353,12 @@ while game.running:
             # Check if the enemy has reached the end of the path (should stop the double use of reached_end !)
             if enemy.reached_end:
                 game.lives -= enemy.value  # Decrease the lives
-            elif enemy.toxic_glued:
-                hits = enemy.toxic_damage()
+            else:
+                hits = 0
+                if enemy.toxic_glued:
+                    hits += enemy.toxic_damage()
+                if enemy.smother_timer > 0 and not enemy.reached_end:
+                    hits += enemy.smother_damage()
                 game.process_hits(hits)
                 if enemy.health <= 0 and enemy.spawn_on_die:
                     enemy.spawn_func(game.enemies)

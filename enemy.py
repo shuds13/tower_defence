@@ -1,3 +1,4 @@
+import math
 import pygame
 import sounds
 import random
@@ -23,9 +24,49 @@ armored_troll_img = pygame.transform.scale(armored_troll_img, (65, 65))
 giant_armored_troll_img = pygame.transform.scale(armored_troll_img, (100, 100))
 
 
+# Toxic goo used by the tier 5 glue gunner's smother
+GOO_FILL, GOO_EDGE, GOO_SHINE = (46, 130, 20), (20, 70, 8), (150, 220, 90)
+
+def make_goo(rx, ry, seed, alpha=175):
+    """A smooth, lumpy glob of dark toxic goo with drips and a highlight.
+    Returns (surface, centre offset) - blit at (x - offset[0], y - offset[1])."""
+    sc = 4  # draw large then shrink, for smooth edges
+    rnd = random.Random(seed)
+    a = [rnd.uniform(0, 6.3) for _ in range(3)]
+    w, h = int(rx * 2.6), int(ry * 3.4)
+    cx, cy = w / 2, ry * 1.3
+    big = pygame.Surface((w * sc, h * sc), pygame.SRCALPHA)
+    pts = []
+    for i in range(72):
+        t = 2 * math.pi * i / 72
+        r = 1 + 0.10 * math.sin(3 * t + a[0]) + 0.07 * math.sin(5 * t + a[1]) + 0.04 * math.sin(7 * t + a[2])
+        pts.append(((cx + math.cos(t) * rx * r) * sc, (cy + math.sin(t) * ry * r) * sc))
+    for _ in range(3):  # drips hanging off the bottom
+        x = (cx + rnd.uniform(-0.7, 0.7) * rx) * sc
+        top = (cy + ry * 0.75) * sc
+        length = rnd.uniform(0.35, 0.8) * ry * sc
+        dw = rnd.uniform(0.08, 0.14) * rx * sc
+        pygame.draw.rect(big, GOO_FILL, (x - dw, top, dw * 2, length))
+        pygame.draw.ellipse(big, GOO_FILL, (x - dw * 1.4, top + length - dw * 1.4, dw * 2.8, dw * 2.8))
+    pygame.draw.polygon(big, GOO_FILL, pts)
+    pygame.draw.lines(big, GOO_EDGE, True, pts, 3 * sc)
+    pygame.draw.ellipse(big, GOO_SHINE, ((cx - rx * 0.55) * sc, (cy - ry * 0.7) * sc, rx * 0.5 * sc, ry * 0.28 * sc))
+    small = pygame.transform.smoothscale(big, (w, h))
+    small.set_alpha(alpha)
+    return small, (cx, cy)
+
+
 class Enemy:
     health = 1
     spawn = False
+    # Smothered by a tier 5 glue gunner: stopped while acid does damage, then briefly immune
+    smother_timer = 0
+    smother_immune = 0
+    smother_tick = 0
+    smothered_by = None
+    smother_tick_frames = 15  # acid damage every this many frames while smothered
+    smother_acid_damage = 2  # set by the tower that smothers it
+    smother_immune_frames = 120
     def __init__(self, path, position=None, path_index=0):
         self.path = path
         self.path_index = path_index
@@ -102,9 +143,59 @@ class Enemy:
                             yn = y + rng.randint(-15, 15)
 
                         self.draw_glue_splat(window, self.glue_color, xn, yn, self.size)
+        if self.smother_timer > 0:
+            self.draw_smother(window)
+
+    def can_be_smothered(self):
+        return self.smother_timer == 0 and self.smother_immune == 0
+
+    def smother(self, tower, frames, acid_damage):
+        self.smother_timer = frames
+        self.smother_acid_damage = acid_damage
+        self.smother_tick = self.smother_tick_frames
+        self.smothered_by = tower
+
+    def smother_damage(self):
+        """Acid damage while smothered (called each frame from the game loop). Returns the score."""
+        if self.smother_timer <= 0:
+            return 0
+        score = 0
+        self.smother_timer -= 1
+        self.smother_tick -= 1
+        if self.smother_tick <= 0:
+            score = self.take_damage(self.smother_acid_damage)
+            if self.smothered_by is not None:
+                self.smothered_by.total_score += score
+            self.smother_tick = self.smother_tick_frames
+        if self.smother_timer == 0:
+            self.smother_immune = self.smother_immune_frames
+            self.smothered_by = None
+        return score
+
+    def draw_smother(self, window):
+        """This enemy stuck in a glob of toxic goo, with bubbles rising through it."""
+        if getattr(self, 'goo', None) is None:
+            if self.image is not None:
+                r = self.image.get_width() // 2 + 6
+            else:
+                r = 10 * self.size + 6
+            self.goo = make_goo(r, r * 0.85, id(self))  # drawn once, reused every frame
+        surface, (ox, oy) = self.goo
+        x, y = self.position
+        window.blit(surface, (int(x - ox), int(y - oy)))
+        r = surface.get_width() / 2.6
+        for i in range(3):
+            phase = (self.smother_timer * 1.5 + i * 23) % 40
+            bx = x + (i - 1) * r * 0.45
+            by = y + r * 0.5 - phase / 40 * r * 1.1
+            pygame.draw.circle(window, GOO_SHINE, (int(bx), int(by)), 2, 1)
 
     def move(self):
         self.update_glue()
+        if self.smother_immune > 0:
+            self.smother_immune -= 1
+        if self.smother_timer > 0:
+            return  # smothered: stuck in place
         # Move towards the next point in the path
         if self.path_index < len(self.path) - 1:
             target_pos = self.path[self.path_index + 1]  # for backwards move just make -1
