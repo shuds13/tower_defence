@@ -49,9 +49,9 @@ inset_window = {
     'x': 4,  # X position of the window
     'xl': 4,
     'xr': window_size[0] - side_panel_width - 204,
-    'y': window_size[1] - 304,  # Y position of the window
+    'y': window_size[1] - 316,  # Y position of the window
     'width': 200,
-    'height': 300,
+    'height': 312,
     'tower': None,
     'totem': None
 }
@@ -112,6 +112,7 @@ def select_map():
     # TODO put this in account (profile) function.
     if gmap.name in account.maps_in_progress:
         game = account.maps_in_progress[gmap.name]
+        game.inset_window = inset_window  # saved games keep an old copy of the tower box settings
         game.restart_round(lev, gmap, decrement=False)  # TODO lev could just be imported in game_metrics
         game.reset_level(gmap, pygame.display, window)
     return gmap

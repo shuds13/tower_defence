@@ -140,7 +140,7 @@ class Tower:
     new_tower = False
     target_modes = ()  # Targeting options offered in the inset window (empty = no choice)
     target_mode = "first"  # class default also covers towers loaded from older saves
-    unlock_game_levels = {}  # tower level -> first game level where that upgrade can be bought
+    crown_levels = ()  # tower levels that need the map's crown (earned by winning level 60)
 
     def __init__(self, position):
         self.position = position
@@ -190,18 +190,31 @@ class Tower:
         """Called before each round starts."""
         pass
 
+    @classmethod
+    def level_names(cls):
+        """Name of each level (the upgrade that reached it); level 1 has none. Worked out once per tower type."""
+        if '_level_names' not in cls.__dict__:
+            tower = cls((0, 0))
+            names = {1: ''}
+            while tower.level < cls.max_level:
+                name = tower.upgrade_name
+                tower.level_up()
+                names[tower.level] = name
+            cls._level_names = names
+        return cls._level_names
+
+    def level_name(self):
+        return self.level_names().get(self.level, '')
+
     def next_level_taken(self, towers):
         """True if the next upgrade is tier 5 and another tower of this type already has it (one of each allowed)."""
         return self.level + 1 >= 5 and any(other is not self and type(other) is type(self) and other.level >= 5
                                            for other in towers)
 
-    def max_level_at(self, game_level, map_crowned=False):
-        """Highest tower level that can be reached on this game level (some upgrades unlock later).
-        Once the map's crown has been earned, every upgrade is available on it."""
+    def max_level_at(self, map_crowned=False):
+        """Highest tower level that can be reached; crown levels need the map's crown."""
         top = self.__class__.max_level
-        if map_crowned:
-            return top
-        while top > 1 and self.__class__.unlock_game_levels.get(top, 0) > game_level:
+        while not map_crowned and top > 1 and top in self.__class__.crown_levels:
             top -= 1
         return top
 
@@ -381,7 +394,7 @@ class Fighter(Tower):
     range = 100
     max_level = 5
     target_modes = ("first", "strong", "last", "close")
-    unlock_game_levels = {5: 61}  # Nighthawk after the 60 main levels (or any level once the map is crowned)
+    crown_levels = (5,)  # Nighthawk needs the map's crown
     death_star_damage = {1: 4, 2: 7, 3: 9}  # level 5 damage per shot by enemy size
     idle_frames = 60  # frames since the level 5 beam last had a target (class default covers older saves)
 
@@ -521,7 +534,7 @@ class Burger(Tower):
     image = burger_img
     range = 60
     max_level = 5
-    unlock_game_levels = {5: 61}  # Burger King after the 60 main levels (or any level once the map is crowned)
+    crown_levels = (5,)  # Burger King needs the map's crown
 
     # Level 5 surge: ring of fire, red eyes and double damage for a short time
     surge_frames = 240  # how long a surge lasts (4 seconds at normal speed)
@@ -997,7 +1010,7 @@ class GlueGunner(Tower):
     image = gluegun_img
     range = 100
     max_level = 5
-    unlock_game_levels = {5: 61}  # tier 5 after the 60 main levels (or any level once the map is crowned)
+    crown_levels = (5,)  # Gloopocalypse needs the map's crown
     glue_times = {1: 180, 2: 240, 3: 300, 4: 360, 5: 360}  # frames before glue wears off (also wears off after glue_layers hits)
     nozzle_offsets = {1: (2, -24), 2: (-2, -25), 3: (5, -25), 4: (10, -24), 5: (11, -37)}  # nozzle tip from centre, unrotated image
     # Tier 5 smother: a big spray encases one enemy, stopping it while acid works
