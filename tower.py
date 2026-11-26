@@ -97,7 +97,7 @@ shuriken_img4 = shuriken_img
 shuriken_dark_img = pygame.image.load('images/shuriken_darkpath.png')
 shuriken_dark_img = pygame.transform.scale(shuriken_dark_img, (25, 25))
 shuriken_red_img = pygame.image.load('images/shuriken_red.png')
-shuriken_red_img = pygame.transform.scale(shuriken_red_img, (30, 30))
+shuriken_red_img = pygame.transform.smoothscale(shuriken_red_img, (30, 30))
 
 
 def line_intersects_rect(p1, p2, rect):
@@ -1792,9 +1792,9 @@ class Ninja(Tower):
             self.ghostsight = True
 
             self.orbit_angle = 0  # Starting angle in degrees
-            self.orbit_radius = 30  # Radius of the orbit (adjust as needed)
+            self.orbit_radius = 36  # Radius of the orbit (adjust as needed)
             self.shuriken_rotation_angle = 0  # For shuriken spinning effect
-            self.shuriken_rotation_speed = 45  # Degrees per frame for shuriken rotation
+            self.shuriken_rotation_speed = 10  # Degrees per frame for shuriken rotation
             self.orbit_speed = 5  # Degrees per frame for orbit movement
 
 
@@ -1927,7 +1927,7 @@ class Ninja(Tower):
             shuriken_position = (shuriken_x, shuriken_y)
 
             # Rotate the shuriken image
-            rotated_image = pygame.transform.rotate(shuriken_red_img, self.shuriken_rotation_angle)
+            rotated_image = pygame.transform.rotozoom(shuriken_red_img, self.shuriken_rotation_angle, 1)
             image_rect = rotated_image.get_rect(center=shuriken_position)
 
             # Draw the shuriken
