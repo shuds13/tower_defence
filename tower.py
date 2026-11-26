@@ -1811,7 +1811,8 @@ class Ninja(Tower):
         if self.level == 5:
             self.image = ninja5_img
             self.attack_speed = 3
-            self.multi_attack = 6
+            self.multi_attack = 14  # close strike hits multi_attack + 1, so 15 enemies
+            self.red_damage = 5  # close strike and red shuriken direct hit
             self.cost += self.upgrade_costs[3]
             self.range = 115
             self.num_orbit_stars = 3
