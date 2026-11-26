@@ -78,8 +78,8 @@ def reset_game(gmap=None):
     if gmap is not None:
         gmap = gmap.__class__()  # Reset map - only needed if removables.
         game.set_map(gmap)
-        # in case starting at a different level
-        gmap.map_update(initial_level) #, newstart=True)
+        # in case starting at a different level: right track and map layout for that level
+        game.reset_level(gmap, pygame.display, window)
     return game, gmap
 
 def in_range(my_range, mouse_x, mouse_y, obj):
@@ -114,7 +114,8 @@ def select_map():
         game = account.maps_in_progress[gmap.name]
         game.inset_window = inset_window  # saved games keep an old copy of the tower box settings
         game.restart_round(lev, gmap, decrement=False)  # TODO lev could just be imported in game_metrics
-        game.reset_level(gmap, pygame.display, window)
+    # Set up the first round (right track and map layout, also when starting on a later level)
+    game.reset_level(gmap, pygame.display, window)
     return gmap
 
 play_again_button = None  # To store the button rectangle
