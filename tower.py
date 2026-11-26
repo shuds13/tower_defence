@@ -1218,8 +1218,20 @@ class GlueGunner(Tower):
             frames = cls.smother_frames_large if enemy.size >= 3 else cls.smother_frames
             enemy.smother(self, frames, cls.smother_acid)
         self.smother_spray_target = target.position
-        # One big glob of goo where the spray lands, drawn once for this spray
-        self.smother_cloud = make_goo(cls.smother_radius * 1.1, cls.smother_radius * 0.65, random.random())
+        # Glob of goo sized to just cover the enemies it caught (by their own size), drawn once for this spray
+        caught = group[:cls.smother_max]
+        def half_size(e):
+            if e.image is not None:
+                return e.image.get_width() / 2, e.image.get_height() / 2
+            return 10 * e.size, 10 * e.size
+        left = min(e.position[0] - half_size(e)[0] for e in caught)
+        right = max(e.position[0] + half_size(e)[0] for e in caught)
+        top = min(e.position[1] - half_size(e)[1] for e in caught)
+        bottom = max(e.position[1] + half_size(e)[1] for e in caught)
+        rx, ry = (right - left) / 2 + 6, (bottom - top) / 2 + 5
+        self.smother_cloud = make_goo(rx, ry, random.random())
+        self.smother_cone_width = max(8, min(30, rx * 0.6))  # spray widens to roughly the splat
+        self.smother_cloud_centre = ((left + right) / 2, (top + bottom) / 2)
         self.viz_persist = self.__class__.smother_spray_frames
         sounds.play('glue')
 
@@ -1231,7 +1243,7 @@ class GlueGunner(Tower):
             dx, dy = tx - nozzle[0], ty - nozzle[1]
             dist = max((dx * dx + dy * dy) ** 0.5, 1)
             px, py = -dy / dist, dx / dist
-            near, far = 10, 30  # half widths at the barrel and at the target
+            near, far = 6, getattr(self, 'smother_cone_width', 30)  # half widths at the barrel and at the target
             cone = [(nozzle[0] + px * near, nozzle[1] + py * near), (tx + px * far, ty + py * far),
                     (tx - px * far, ty - py * far), (nozzle[0] - px * near, nozzle[1] - py * near)]
             spray = pygame.Surface(window.get_size(), pygame.SRCALPHA)
@@ -1241,7 +1253,8 @@ class GlueGunner(Tower):
             cloud = getattr(self, 'smother_cloud', None)
             if cloud is not None:
                 surface, (ox, oy) = cloud
-                window.blit(surface, (int(tx - ox), int(ty - oy)))
+                cx, cy = getattr(self, 'smother_cloud_centre', (tx, ty))
+                window.blit(surface, (int(cx - ox), int(cy - oy)))
         if self.viz_persist > 0:
             self.viz_persist -= 1
 
