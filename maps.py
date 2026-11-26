@@ -473,7 +473,7 @@ class Square(Map):
     def __init__(self):
         super().__init__()
         self.name = "Square"
-        self.difficulty = 3
+        self.difficulty = 4
         self.background_color = (54, 69, 79) # (0, 71, 171)
         self.font_color = (255, 191, 0)
         self.path_thickness = 20
@@ -506,7 +506,7 @@ class Vase(Map):
     def __init__(self):
         super().__init__()
         self.name = "Rubin's Vase"
-        self.difficulty = 3
+        self.difficulty = 4
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color =  (48, 25, 52) # (40, 40, 43) # (69, 75, 27)
         self.path_thickness = 20
@@ -1046,7 +1046,7 @@ class Catacombs(Map):
     def __init__(self):
         super().__init__()
         self.name = "Catacombs"
-        self.difficulty = 3  # if anything like now - will be Expert.
+        self.difficulty = 4
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (128, 0, 32) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
@@ -1138,7 +1138,7 @@ class Isthmus(Map):
     def __init__(self):
         super().__init__()
         self.name = "Isthmus"
-        self.difficulty = 2
+        self.difficulty = 3
         self.background_color = (25, 25, 112)
         self.path_thickness = 20
         self.path_color = (178, 190, 181)
