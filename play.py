@@ -383,6 +383,7 @@ while game.running:
 
         if game.lives <= 0:
             game.game_over = True
+            game.active = False  # stop now, so towers do not update (and e.g. re-surge) for the rest of this frame
             game.current_tower_type = None
             game.failed_map(gmap, account)
 

@@ -265,6 +265,7 @@ class Game():
             self.game_over = True
             self.current_tower_type = None
             self.map_complete = True
+            self.active = False  # stop now, so towers do not update (and e.g. re-surge) for the rest of this frame
             for tower in self.towers:
                 tower.new_round()  # clear round effects such as the Burger King surge
             self.current_tower_type = None
