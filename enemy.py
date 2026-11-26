@@ -16,8 +16,8 @@ king_img = pygame.image.load('images/kingblob.png')
 king_img = pygame.transform.scale(king_img, (100, 100))
 king2_img = pygame.image.load('images/kingblob_green.png')
 king2_img = pygame.transform.scale(king2_img, (110, 110))
-burger_king_img = pygame.image.load('images/burger_king.png')
-burger_king_img = pygame.transform.scale(burger_king_img, (120, 120))
+stone_head_img = pygame.image.load('images/stone_head.png')
+stone_head_img = pygame.transform.smoothscale(stone_head_img, (stone_head_img.get_width() * 96 // stone_head_img.get_height(), 96))
 
 armored_troll_img = pygame.image.load('images/armored_troll.png')
 armored_troll_img = pygame.transform.scale(armored_troll_img, (65, 65))
@@ -607,14 +607,14 @@ class KingBlob2(KingBlob):
 
 
 # Not sure if this should release meteors or big ghosts.
-class BurgerKing(KingBlob):
-    health = 200
+class StoneHead(KingBlob):
+    health = 250
     spawn = True
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.base_speed = 1 #1.5
         self.speed = 1 #1.5
-        self.image = burger_king_img  # could be 5th level burger - but here an enemy
+        self.image = stone_head_img
         #self.spawn_on_die = True
         self.spawn_type = Meteor
         self.spawn_count = 25
@@ -635,5 +635,5 @@ enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                17: ArmoredTroll, 18: ArmoredGiantTroll,
                19: BlackMeteor,
                101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 105:Enemy105,
-               110: BurgerKing,
+               110: StoneHead,
                201: KingBlob, 301: KingBlob2}
