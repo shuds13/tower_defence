@@ -609,6 +609,7 @@ class Burger(Tower):
         state = self.__dict__.copy()
         del state['image']
         del state['splat_img']  # Remove the non-picklable attribute
+        state.pop('splat_size', None)  # splat is resized on the next attack
         del state['target']
         #print('im here')
         for k,v in state.items():
@@ -744,6 +745,11 @@ class Burger(Tower):
 
     # Could do retention of image like wizard cloud but its actually ok
     def attack_animate(self, window):
+        # Size the splat to the real range (including totem boost); the splat's blobs fill about 85% of its image
+        size = int(2 * self.current_range() / 0.85)
+        if getattr(self, 'splat_size', None) != size:
+            self.splat_img = pygame.transform.scale(splat_img, (size, size))
+            self.splat_size = size
         image_rect = self.splat_img.get_rect(center=self.position)
         window.blit(self.splat_img, image_rect)
         # draw burger back on top of splat
