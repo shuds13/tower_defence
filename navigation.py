@@ -483,10 +483,12 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     # Draw the tower image
     image_y_pos = y + 104  # was 80
     # Crop empty margins, then fit within 100 wide x 90 high keeping its shape, leaving a gap above the level line
-    visible = tower.image.subsurface(tower.image.get_bounding_rect(min_alpha=40))
+    picture = tower.card_picture()
+    visible = picture.subsurface(picture.get_bounding_rect(min_alpha=40))
     iw, ih = visible.get_size()
     fit = min(100 / iw, 90 / ih)
-    tower_image = pygame.transform.scale(visible, (round(iw * fit), round(ih * fit)))
+    resize = pygame.transform.smoothscale if fit < 1 else pygame.transform.scale  # smooth only when shrinking
+    tower_image = resize(visible, (round(iw * fit), round(ih * fit)))
     image_rect = tower_image.get_rect(center=(x + width // 2, image_y_pos))
     surface.blit(tower_image, image_rect)
 

@@ -88,6 +88,9 @@ ninja3_img = pygame.image.load('images/ninja3.png')
 ninja3_img = pygame.transform.scale(ninja3_img, (50, 50))
 ninja4_img = pygame.image.load('images/ninja4.png')
 ninja4_img = pygame.transform.scale(ninja4_img, (50, 50))
+ninja5_img = pygame.image.load('images/ninja5.png')  # trial art
+ninja5_card_img = ninja5_img  # full size, for the tower card
+ninja5_img = pygame.transform.smoothscale(ninja5_img, (46, 60))
 
 shuriken_img = pygame.image.load('images/shuriken.png')
 shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
@@ -97,7 +100,7 @@ shuriken_img4 = shuriken_img
 shuriken_dark_img = pygame.image.load('images/shuriken_darkpath.png')
 shuriken_dark_img = pygame.transform.scale(shuriken_dark_img, (25, 25))
 shuriken_red_img = pygame.image.load('images/shuriken_red.png')
-shuriken_red_img = pygame.transform.scale(shuriken_red_img, (30, 30))
+shuriken_red_img = pygame.transform.smoothscale(shuriken_red_img, (30, 30))
 
 
 def line_intersects_rect(p1, p2, rect):
@@ -189,6 +192,10 @@ class Tower:
     def new_round(self):
         """Called before each round starts."""
         pass
+
+    def card_picture(self):
+        """Picture for the tower card; can be a larger version of the game image"""
+        return self.image
 
     @classmethod
     def level_names(cls):
@@ -1733,11 +1740,12 @@ class Ninja(Tower):
     name = 'Ninja'
     image = ninja_img
     range = 80
-    max_level = 4
+    max_level = 5
+    crown_levels = (5,)  # tier 5 needs the map's crown
     target_modes = ("first", "strong", "last", "close")
     footprint = (40,50)  # May make bigger
 
-    shurikens = {1: shuriken_img, 2:shuriken_img2, 3:shuriken_img3, 4:shuriken_img4}
+    shurikens = {1: shuriken_img, 2:shuriken_img2, 3:shuriken_img3, 4:shuriken_img4, 5:shuriken_img4}
 
     def __init__(self, position):
         super().__init__(position)
@@ -1746,7 +1754,7 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 55
-        self.upgrade_costs = [160, 480, 1200] # rough - need to decide
+        self.upgrade_costs = [160, 480, 1200, 4200] # rough - need to decide
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
         self.multi_attack = 1
@@ -1761,6 +1769,8 @@ class Ninja(Tower):
             self.image = ninja3_img
         elif self.level == 4:
             self.image = ninja4_img
+        elif self.level == 5:
+            self.image = ninja5_img
 
     def level_up(self):
         self.level +=1
@@ -1792,10 +1802,20 @@ class Ninja(Tower):
             self.ghostsight = True
 
             self.orbit_angle = 0  # Starting angle in degrees
-            self.orbit_radius = 30  # Radius of the orbit (adjust as needed)
+            self.orbit_radius = 36  # Radius of the orbit (adjust as needed)
             self.shuriken_rotation_angle = 0  # For shuriken spinning effect
-            self.shuriken_rotation_speed = 45  # Degrees per frame for shuriken rotation
+            self.shuriken_rotation_speed = 10  # Degrees per frame for shuriken rotation
             self.orbit_speed = 5  # Degrees per frame for orbit movement
+            self.num_orbit_stars = 1
+            self.upgrade_name = "Blue Lotus"
+        if self.level == 5:
+            self.image = ninja5_img
+            self.attack_speed = 3
+            self.multi_attack = 6
+            self.cost += self.upgrade_costs[3]
+            self.range = 115
+            self.num_orbit_stars = 3
+            self.orbit_radius = 42
 
 
     # soon to make first/strong/close options
@@ -1819,6 +1839,9 @@ class Ninja(Tower):
                 #closest_dist = dist
                 #closest_enemy = enemy
         #return closest_enemy
+
+    def card_picture(self):
+        return ninja5_card_img if self.level == 5 else self.image
 
     def use_red_shuriken(self):
         # whether to realesae a red shuriken
@@ -1888,7 +1911,7 @@ class Ninja(Tower):
 
             # Hits first then spawns shuriken from there
             self.find_target(enemies, gmap)
-            if self.level==4:
+            if self.level >= 4:
                 score, spawn = self.lev4_attack(enemies, gmap)
             else:
                 #self.find_target(enemies, gmap)
@@ -1911,7 +1934,7 @@ class Ninja(Tower):
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
 
-        if self.level == 4 and active:
+        if self.level >= 4 and active:
             if self.target:
                 booster = 5 * self.speed_mod
             else:
@@ -1920,18 +1943,17 @@ class Ninja(Tower):
             self.orbit_angle = (self.orbit_angle + self.orbit_speed*booster) % 360
             self.shuriken_rotation_angle = (self.shuriken_rotation_angle + self.shuriken_rotation_speed) % 360
 
-            # Calculate shuriken position around the ninja
-            angle_rad = math.radians(self.orbit_angle)
-            shuriken_x = self.position[0] + self.orbit_radius * math.cos(angle_rad)
-            shuriken_y = self.position[1] + self.orbit_radius * math.sin(angle_rad)
-            shuriken_position = (shuriken_x, shuriken_y)
-
             # Rotate the shuriken image
-            rotated_image = pygame.transform.rotate(shuriken_red_img, self.shuriken_rotation_angle)
-            image_rect = rotated_image.get_rect(center=shuriken_position)
+            rotated_image = pygame.transform.rotozoom(shuriken_red_img, self.shuriken_rotation_angle, 1)
 
-            # Draw the shuriken
-            window.blit(rotated_image, image_rect.topleft)
+            # Stars spaced evenly around the ninja
+            stars = getattr(self, 'num_orbit_stars', 1)
+            for i in range(stars):
+                angle_rad = math.radians(self.orbit_angle + i * 360 / stars)
+                shuriken_x = self.position[0] + self.orbit_radius * math.cos(angle_rad)
+                shuriken_y = self.position[1] + self.orbit_radius * math.sin(angle_rad)
+                image_rect = rotated_image.get_rect(center=(shuriken_x, shuriken_y))
+                window.blit(rotated_image, image_rect.topleft)
 
     def attack_animate(self, window):
         if type(self.target) is not list:
@@ -1995,6 +2017,11 @@ class Shuriken(Tower):
             self.hit_range = 180
             self.damage = 1  # tried 2
             self.max_attacks = 64
+        if self.launcher.level == 5:
+            self.image = Shuriken.image4
+            self.hit_range = 180
+            self.damage = 1
+            self.max_attacks = 200
 
         if self.launcher.darkpath:
             self.image = shuriken_dark_img  # RedShuriken overrides this after super().__init__
