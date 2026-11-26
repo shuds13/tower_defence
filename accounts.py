@@ -123,6 +123,7 @@ class Account():
         self.name = name
         self.maps_complete = []
         self.maps_aced = []
+        self.maps_complete_extended = []  # maps where all levels (beyond the first crown) are done
         self.maps_in_progress = {}
         self.dark_mode = False
 
@@ -137,6 +138,19 @@ class Account():
         if aced:
             if not gmap_class in self.maps_aced:
                 self.maps_aced.append(gmap_class)
+        self.maps_in_progress.pop(gmap.name, None)
+
+    def has_crown(self, gmap):
+        return gmap.__class__ in self.maps_complete
+
+    def has_extended_crown(self, gmap):
+        return gmap.__class__ in getattr(self, 'maps_complete_extended', [])  # older profiles lack this
+
+    def complete_map_extended(self, gmap):
+        if not hasattr(self, 'maps_complete_extended'):
+            self.maps_complete_extended = []
+        if not gmap.__class__ in self.maps_complete_extended:
+            self.maps_complete_extended.append(gmap.__class__)
         self.maps_in_progress.pop(gmap.name, None)
 
     def save_map(self, gmap, game):

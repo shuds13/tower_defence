@@ -2,6 +2,7 @@ import math
 import pygame
 import random
 import sounds
+from enemy import make_goo, GOO_FILL, GOO_SHINE
 
 fighter_img = pygame.image.load('images/tower1.png')
 fighter_img = pygame.transform.scale(fighter_img, (50, 50))
@@ -11,6 +12,8 @@ fighter3_img = pygame.image.load('images/tower1_lev3.png')
 fighter3_img = pygame.transform.scale(fighter3_img, (55, 55))
 fighter4_img = pygame.image.load('images/tower1_lev4.png')
 fighter4_img = pygame.transform.scale(fighter4_img, (60, 60))
+fighter5_img = pygame.image.load('images/tower1_lev5.png')  # placeholder art
+fighter5_img = pygame.transform.scale(fighter5_img, (64, 64))
 
 burger_img = pygame.image.load('images/burger.png')
 burger_img = pygame.transform.scale(burger_img, (50, 50))
@@ -20,8 +23,8 @@ burger3_img = pygame.image.load('images/burger3.png')
 burger3_img = pygame.transform.scale(burger3_img, (55, 55))
 burger4_img = pygame.image.load('images/burger4.png')
 burger4_img = pygame.transform.scale(burger4_img, (60, 60))
-#burger5_img = pygame.image.load('images/burger5.png')
-#burger5_img = pygame.transform.scale(burger5_img, (60, 60))
+burger5_img = pygame.image.load('images/burger_king.png')  # trying the Burger King image (also used by the enemy)
+burger5_img = pygame.transform.scale(burger5_img, (90, 90))  # image is narrow, so drawn larger to look bigger than the Whopper
 splat_img = pygame.image.load('images/splat.png')
 
 wizard_img = pygame.image.load('images/wizard.png')
@@ -41,6 +44,8 @@ gluegun3_img = pygame.image.load('images/glue_gun3.png')
 gluegun3_img = pygame.transform.scale(gluegun3_img, (50, 50))
 gluegun4_img = pygame.image.load('images/glue_gun4.png')
 gluegun4_img = pygame.transform.scale(gluegun4_img, (55, 55))
+gluegun5_img = pygame.image.load('images/glue_gun5.png')  # trial art
+gluegun5_img = pygame.transform.smoothscale(gluegun5_img, (53, 75))
 
 totem_img = pygame.image.load('images/totem.png')
 totem_img = pygame.transform.scale(totem_img, (50, 50))
@@ -135,6 +140,7 @@ class Tower:
     new_tower = False
     target_modes = ()  # Targeting options offered in the inset window (empty = no choice)
     target_mode = "first"  # class default also covers towers loaded from older saves
+    crown_levels = ()  # tower levels that need the map's crown (earned by winning level 60)
 
     def __init__(self, position):
         self.position = position
@@ -167,6 +173,7 @@ class Tower:
         state = self.__dict__.copy()
         del state['image']  # Remove the non-picklable attribute
         del state['target']
+        state.pop('smother_cloud', None)  # cached glue image, redrawn on the next spray
         #self.target = None  # can I do this rather than deleting
         return state
 
@@ -179,6 +186,38 @@ class Tower:
     def load_images(self):
         pass
 
+    def new_round(self):
+        """Called before each round starts."""
+        pass
+
+    @classmethod
+    def level_names(cls):
+        """Name of each level (the upgrade that reached it); level 1 has none. Worked out once per tower type."""
+        if '_level_names' not in cls.__dict__:
+            tower = cls((0, 0))
+            names = {1: ''}
+            while tower.level < cls.max_level:
+                name = tower.upgrade_name
+                tower.level_up()
+                names[tower.level] = name
+            cls._level_names = names
+        return cls._level_names
+
+    def level_name(self):
+        return self.level_names().get(self.level, '')
+
+    def next_level_taken(self, towers):
+        """True if the next upgrade is tier 5 and another tower of this type already has it (one of each allowed)."""
+        return self.level + 1 >= 5 and any(other is not self and type(other) is type(self) and other.level >= 5
+                                           for other in towers)
+
+    def max_level_at(self, map_crowned=False):
+        """Highest tower level that can be reached; crown levels need the map's crown."""
+        top = self.__class__.max_level
+        while not map_crowned and top > 1 and top in self.__class__.crown_levels:
+            top -= 1
+        return top
+
     def current_range(self):
         return self.range * self.range_mod
 
@@ -189,7 +228,11 @@ class Tower:
         pass
 
     def reset_attack_timer(self):
-        self.attack_timer = max(int(self.attack_speed * self.speed_mod), 1)
+        # Keep the fraction of a frame left over from this shot, so speed boosts give their exact
+        # percentage on average (e.g. a 1.8 frame interval fires at gaps of 2,2,2,2,1).
+        # A tower that was waiting with nothing to shoot carries nothing over, so it cannot save up shots.
+        leftover = self.attack_timer if self.attack_timer > -1 else 0
+        self.attack_timer = leftover + self.attack_speed * self.speed_mod
 
     def is_visible(self, enemy, gmap):
         if enemy.invis and not self.see_ghosts:
@@ -225,6 +268,15 @@ class Tower:
     def next_target_mode(self):
         modes = self.__class__.target_modes
         self.target_mode = modes[(modes.index(self.target_mode) + 1) % len(modes)]
+
+    def option_text(self):
+        """Text for the small clickable option in the tower box, or None if there is no option."""
+        if self.__class__.target_modes:
+            return f"Target: {self.target_mode.capitalize()}  >"
+        return None
+
+    def next_option(self):
+        self.next_target_mode()
 
     def in_range(self, enemy):
         distance = ((self.position[0] - enemy.position[0])**2 + (self.position[1] - enemy.position[1])**2)**0.5
@@ -340,8 +392,11 @@ class Fighter(Tower):
     name = 'Fighter'
     image = fighter_img
     range = 100
-    max_level = 4
+    max_level = 5
     target_modes = ("first", "strong", "last", "close")
+    crown_levels = (5,)  # Nighthawk needs the map's crown
+    death_star_damage = {1: 4, 2: 7, 3: 9}  # level 5 damage per shot by enemy size
+    idle_frames = 60  # frames since the level 5 beam last had a target (class default covers older saves)
 
     def __init__(self, position):
         super().__init__(position)
@@ -351,9 +406,17 @@ class Fighter(Tower):
         self.cost = Fighter.price
         self.image = Fighter.image
         self.level = 1
-        self.upgrade_costs = [40, 180, 400]
+        self.upgrade_costs = [40, 180, 400, 2500]
         self.beam_width = 5
         self.upgrade_name = "Rapid Fire"
+
+    def __setstate__(self, state):
+        super().__setstate__(state)
+        # Fighters saved before level 5 existed
+        if len(self.upgrade_costs) < 4:
+            self.upgrade_costs.append(2500)
+        if self.level == 4:
+            self.upgrade_name = "Nighthawk"
 
     def load_images(self):
         if self.level == 2:
@@ -362,6 +425,8 @@ class Fighter(Tower):
             self.image = fighter3_img
         elif self.level == 4:
             self.image = fighter4_img
+        elif self.level == 5:
+            self.image = fighter5_img
 
     def level_up(self):
         self.level +=1
@@ -387,6 +452,80 @@ class Fighter(Tower):
             self.cost += self.upgrade_costs[2]
             self.damage = 2
             self.beam_width = 7
+            self.upgrade_name = "Nighthawk"
+        if self.level == 5:
+            # Stealth jet: faster, ghost sight, and a Death Star beam (both nose beams join into one)
+            self.attack_speed = 2
+            self.range = 150
+            self.image = fighter5_img
+            self.cost += self.upgrade_costs[3]
+            self.ghostsight = True
+
+    def new_round(self):
+        self.idle_frames = 60  # so the power-up sound plays on the first shot of each round
+
+    def update(self, enemies, gmap):
+        result = super().update(enemies, gmap)
+        if self.level >= 5:
+            # Power-up sound when the beam starts firing after being idle for a second
+            if self.is_attacking:
+                if self.idle_frames >= 60:
+                    sounds.play('nighthawk')
+                self.idle_frames = 0
+            elif self.target is None:
+                self.idle_frames += 1
+        return result
+
+    def attack(self):
+        if self.level < 5:
+            return super().attack()
+        score = 0
+        if self.target and self.attack_timer <= 0:
+            self.attack_count += 1
+            # Death Star beam: more damage against bigger enemies
+            score = self.target.take_damage(self.__class__.death_star_damage[self.target.size])
+            self.reset_attack_timer()
+            self.is_attacking = True
+        else:
+            self.is_attacking = False
+        return score, False
+
+    def _get_nose_positions(self):
+        # Level 5 image has two noses; offsets from centre in the unrotated (pointing up) image
+        left = (self.position[0] - 6, self.position[1] - 29)
+        right = (self.position[0] + 4, self.position[1] - 29)
+        return self.rotate_point(self.position, left, self.angle), self.rotate_point(self.position, right, self.angle)
+
+    def attack_animate(self, window):
+        if self.level < 5:
+            super().attack_animate(window)
+            return
+        # Beams from both noses meet just in front of the jet, then fire as one big beam
+        left_nose, right_nose = self._get_nose_positions()
+        mid = ((left_nose[0] + right_nose[0]) / 2, (left_nose[1] + right_nose[1]) / 2)
+        tx, ty = self.target.position
+        dx, dy = tx - mid[0], ty - mid[1]
+        dist = max((dx**2 + dy**2)**0.5, 1)
+        join_dist = min(18, dist / 2)
+        join = (mid[0] + dx / dist * join_dist, mid[1] + dy / dist * join_dist)
+        # Bigger enemies get a stronger beam: thicker, with red edges
+        size = self.target.size
+        green, core, red = (60, 255, 60), (220, 255, 220), (255, 30, 30)
+        beam_width = 7 + 2 * size
+        core_width = 2 + size
+        pygame.draw.line(window, green, left_nose, join, 3)
+        pygame.draw.line(window, green, right_nose, join, 3)
+        pygame.draw.line(window, green, join, self.target.position, beam_width)
+        pygame.draw.line(window, core, join, self.target.position, core_width)
+        if size >= 2:
+            # Red lines just outside each edge of the beam
+            px, py = -dy / dist, dx / dist  # unit vector across the beam
+            off = beam_width / 2 + 1
+            for side in (1, -1):
+                start = (join[0] + side * px * off, join[1] + side * py * off)
+                end = (tx + side * px * off, ty + side * py * off)
+                pygame.draw.line(window, red, start, end, 2)
+        pygame.draw.circle(window, core, (int(join[0]), int(join[1])), 3 + size)
 
 class Burger(Tower):
 
@@ -394,7 +533,17 @@ class Burger(Tower):
     name = 'Burger'
     image = burger_img
     range = 60
-    max_level = 4 #5
+    max_level = 5
+    crown_levels = (5,)  # Burger King needs the map's crown
+
+    # Level 5 surge: ring of fire, red eyes and double damage for a short time
+    surge_frames = 240  # how long a surge lasts (4 seconds at normal speed)
+    surge_cooldown_frames = 480  # wait after a surge ends before the next can start (8 seconds)
+    surge_min_value = 50  # surge when enemies in range add up to this much health (including what they spawn)
+    surge_timer = 0  # frames of surge left (class defaults also cover older saves)
+    surge_cooldown = 0
+    surge_mode = "auto"  # "auto" surges by itself; "manual" waits for the surge button
+    eye_offsets = ((-10, 3), (9, 4))  # eyes on the level 5 image (drawn at 90x90), from the centre
 
     def __init__(self, position):
         super().__init__(position)
@@ -405,7 +554,7 @@ class Burger(Tower):
         #self.image = Burger.image  # all of these can be done in base class: self.thing = self.__class__.thing
         self.level = 1
         self.max_attacks = 4
-        self.upgrade_costs = [85, 220, 680] # , 1200]
+        self.upgrade_costs = [85, 220, 680, 3200]
         # range_mod cant be used here - so would have to update when update range_mod
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         self.upgrade_name = "With cheese"
@@ -417,6 +566,8 @@ class Burger(Tower):
             self.image = burger3_img
         elif self.level == 4:
             self.image = burger4_img
+        elif self.level == 5:
+            self.image = burger5_img
 
     def level_up(self):
         self.level +=1
@@ -443,20 +594,22 @@ class Burger(Tower):
             self.max_attacks = 15  # 12 (dam 2)
             self.cost += self.upgrade_costs[2]
             self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
-        #if self.level == 5:
-            #self.attack_speed = 8  # lower is better currently
-            #self.range =  100
-            #self.image = burger5_img
-            #self.max_attacks = 20
-            #self.cost += self.upgrade_costs[3]
-            #self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
-            #self.damage = 3 # not sure - with damage 2 and other stats nothing got past
+            self.upgrade_name = "Burger King"
+        if self.level == 5:
+            self.attack_speed = 6
+            self.range =  100
+            self.image = burger5_img
+            self.max_attacks = 30
+            self.cost += self.upgrade_costs[3]
+            self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
+            self.damage = 3 # not sure - with damage 2 and other stats nothing got past
 
     # For pickling override __getstate__
     def __getstate__(self):
         state = self.__dict__.copy()
         del state['image']
         del state['splat_img']  # Remove the non-picklable attribute
+        state.pop('splat_size', None)  # splat is resized on the next attack
         del state['target']
         #print('im here')
         for k,v in state.items():
@@ -470,6 +623,11 @@ class Burger(Tower):
         self.load_images()
         self.splat_img = pygame.transform.scale(splat_img, (self.range+60, self.range+60))
         self.target = None
+        # Burgers saved before level 5 existed
+        if len(self.upgrade_costs) < 4:
+            self.upgrade_costs.append(3200)
+        if self.level == 4:
+            self.upgrade_name = "Burger King"
 
     # Splat attack!
     def attack(self):
@@ -485,6 +643,8 @@ class Burger(Tower):
                         multiplier = 2
                     else:
                         multiplier = 1
+                    if self.surge_timer > 0:
+                        multiplier *= 2
                     score += target.take_damage(self.damage * multiplier)
             else:
                 # dont think ever here
@@ -497,10 +657,81 @@ class Burger(Tower):
             self.is_attacking = False  # Set to False otherwise
         return score, False
 
+    def new_round(self):
+        self.surge_timer = 0
+        self.surge_cooldown = 0
+
+    def option_text(self):
+        if self.level >= 5:
+            return f"Surge: {self.surge_mode.capitalize()}  >"
+        return None
+
+    def next_option(self):
+        self.surge_mode = "manual" if self.surge_mode == "auto" else "auto"
+
+    def surge_ready(self):
+        return self.level >= 5 and self.surge_timer == 0 and self.surge_cooldown == 0
+
+    def start_surge(self):
+        self.surge_timer = self.__class__.surge_frames
+        sounds.play('fireball')
+
+    def update(self, enemies, gmap):
+        if self.level >= 5:
+            self._update_surge(enemies, gmap)
+        return super().update(enemies, gmap)
+
+    def _update_surge(self, enemies, gmap):
+        if self.surge_timer > 0:
+            self.surge_timer -= 1
+            if self.surge_timer == 0:
+                self.surge_cooldown = self.__class__.surge_cooldown_frames
+            return
+        if self.surge_cooldown > 0:
+            self.surge_cooldown -= 1
+            return
+        if self.surge_mode == "manual":
+            return  # waits for the surge button
+        strength = sum(enemy.value for enemy in enemies if self.can_target(enemy, gmap))
+        if strength >= self.__class__.surge_min_value:
+            self.start_surge()
+
+    def _draw_ring_of_fire(self, window):
+        cx, cy = self.position
+        glow = pygame.Surface((120, 120), pygame.SRCALPHA)
+        pygame.draw.circle(glow, (255, 120, 0, 70), (60, 60), 50)
+        window.blit(glow, glow.get_rect(center=(cx, cy)))
+        flames = 18
+        for i in range(flames):
+            angle = 2 * math.pi * i / flames + random.uniform(-0.1, 0.1)
+            ux, uy = math.cos(angle), math.sin(angle)
+            px, py = -uy, ux  # across the flame
+            base = 38
+            length = random.uniform(8, 18)
+            half = random.uniform(4, 6)
+            b = (cx + ux * base, cy + uy * base)
+            tip = (cx + ux * (base + length), cy + uy * (base + length))
+            colour = random.choice(((255, 60, 0), (255, 140, 0), (255, 210, 40)))
+            pygame.draw.polygon(window, colour, [(b[0] + px * half, b[1] + py * half), tip, (b[0] - px * half, b[1] - py * half)])
+
+    def _draw_red_eyes(self, window):
+        for ox, oy in self.__class__.eye_offsets:
+            centre = (self.position[0] + ox, self.position[1] + oy)
+            glow = pygame.Surface((24, 24), pygame.SRCALPHA)
+            pygame.draw.circle(glow, (255, 0, 0, 110), (12, 12), 11)
+            window.blit(glow, glow.get_rect(center=centre))
+            pygame.draw.circle(window, (255, 40, 40), centre, 4)
+            pygame.draw.circle(window, (255, 220, 200), centre, 1)
+
     def draw(self, window, enemies=None, active=False):
         """Dont rotate burger"""
+        surging = self.level >= 5 and self.surge_timer > 0
+        if surging:
+            self._draw_ring_of_fire(window)
         new_rect = self.image.get_rect(center=self.image.get_rect(center=self.position).center)
         self.general_draw(window, self.image, new_rect)
+        if surging:
+            self._draw_red_eyes(window)
 
     def find_target(self, enemies, gmap):
         # Only place to call function - after just check self.cloud_attack
@@ -514,6 +745,11 @@ class Burger(Tower):
 
     # Could do retention of image like wizard cloud but its actually ok
     def attack_animate(self, window):
+        # Size the splat to the real range (including totem boost); the splat's blobs fill about 85% of its image
+        size = int(2 * self.current_range() / 0.85)
+        if getattr(self, 'splat_size', None) != size:
+            self.splat_img = pygame.transform.scale(splat_img, (size, size))
+            self.splat_size = size
         image_rect = self.splat_img.get_rect(center=self.position)
         window.blit(self.splat_img, image_rect)
         # draw burger back on top of splat
@@ -779,9 +1015,20 @@ class GlueGunner(Tower):
     name = 'Glue Gunner'
     image = gluegun_img
     range = 100
-    max_level = 4
-    glue_times = {1: 180, 2: 240, 3: 300, 4: 360}  # frames before glue wears off (also wears off after glue_layers hits)
-    nozzle_offsets = {1: (2, -24), 2: (-2, -25), 3: (5, -25), 4: (10, -24)}  # nozzle tip from centre, unrotated image
+    max_level = 5
+    crown_levels = (5,)  # Gloopocalypse needs the map's crown
+    glue_times = {1: 180, 2: 240, 3: 300, 4: 360, 5: 360}  # frames before glue wears off (also wears off after glue_layers hits)
+    nozzle_offsets = {1: (2, -24), 2: (-2, -25), 3: (5, -25), 4: (10, -24), 5: (11, -37)}  # nozzle tip from centre, unrotated image
+    # Tier 5 smother: a big spray encases one enemy, stopping it while acid works
+    smother_every_frames = 60  # time between big sprays
+    smother_cooldown = 0
+    smother_frames = 150  # how long a normal enemy is stopped
+    smother_frames_large = 60  # large (size 3) enemies break free sooner
+    smother_spray_frames = 10  # how long the big spray stays on screen
+    smother_radius = 50  # every enemy this close to the sprayed enemy gets smothered too
+    smother_max = 8  # most enemies smothered by one spray
+    smother_acid = 4  # acid damage every quarter second while smothered
+    smother_spray_target = None  # position the last big spray hit (class default covers older saves)
 
     def __init__(self, position):
         super().__init__(position)
@@ -791,7 +1038,7 @@ class GlueGunner(Tower):
         self.cost = GlueGunner.price
         #self.image = GlueGunner.image
         self.level = 1
-        self.upgrade_costs = [120, 280, 900]
+        self.upgrade_costs = [120, 280, 900, 3800]
         self.beam_width = 7
         self.slow_factor = [0.5, 0.8, 0.9]
         self.glue_layers = 2
@@ -808,6 +1055,16 @@ class GlueGunner(Tower):
             self.image = gluegun3_img
         elif self.level == 4:
             self.image = gluegun4_img
+        elif self.level == 5:
+            self.image = gluegun5_img
+
+    def __setstate__(self, state):
+        super().__setstate__(state)
+        # Glue gunners saved before tier 5 existed
+        if len(self.upgrade_costs) < 4:
+            self.upgrade_costs.append(3800)
+        if self.level == 4:
+            self.upgrade_name = "Gloopocalypse"
 
     def level_up(self):
         self.level +=1
@@ -852,6 +1109,17 @@ class GlueGunner(Tower):
             self.max_toxic_big_reattacks = 2  # Repeatedly attack same enemy - takes toxic damage for each
             self.max_toxic_giant_reattacks = 5
             self.attack_tower = True
+            self.upgrade_name = "Gloopocalypse"
+
+        if self.level == 5:
+            self.image = gluegun5_img
+            self.cost += self.upgrade_costs[3]
+            self.beam_width = 22
+            self.glue_color = (60, 160, 25)  # darker, stronger toxic glue
+            self.toxic_time = 30  # toxic glue ticks twice as often as level 4
+            self.attack_speed = 8
+            self.range = 130
+            self.max_attacks = 10
 
     def can_I_reglue(self, enemy):
         if not enemy.toxic_glued:
@@ -875,6 +1143,8 @@ class GlueGunner(Tower):
             self.target = None
 
         for enemy in enemies:
+            if self.target and not self._in_spray_arc(self.target[0], enemy):
+                continue  # one barrel: only glue enemies roughly in the direction of the first target
             if self.level >= 3 and self.in_range(enemy) and self.is_visible(enemy, gmap) and not enemy.reached_end and self.can_I_reglue(enemy):
                 count += 1  # TODO this updates whether same enemy or different...
                 self.target.append(enemy)
@@ -886,6 +1156,22 @@ class GlueGunner(Tower):
                 self.target.append(enemy)
                 if count >= self.max_attacks:
                     break
+
+    spray_arc_degrees = 60  # glue only goes to enemies within this angle either side of the first target
+
+    def _in_spray_arc(self, first, enemy):
+        a1 = math.atan2(first.position[1] - self.position[1], first.position[0] - self.position[0])
+        a2 = math.atan2(enemy.position[1] - self.position[1], enemy.position[0] - self.position[0])
+        diff = abs((a2 - a1 + math.pi) % (2 * math.pi) - math.pi)
+        return math.degrees(diff) <= self.__class__.spray_arc_degrees
+
+    def get_target_angle(self):
+        # Turn the barrel towards the big smother spray while it is showing
+        if self.viz_persist > 0 and self.smother_spray_target is not None:
+            dx = self.smother_spray_target[0] - self.position[0]
+            dy = self.smother_spray_target[1] - self.position[1]
+            return math.degrees(math.atan2(-dy, dx)) - 90
+        return super().get_target_angle()
 
     # Needs to take account of rotation
     #def get_nozzle_pos(self):
@@ -907,6 +1193,76 @@ class GlueGunner(Tower):
         nozzle = self._get_nozzle_pos()
         for target in self.target:
             pygame.draw.line(window, self.glue_color, nozzle, target.position, self.beam_width)
+
+    def new_round(self):
+        self.smother_cooldown = 0
+        self.viz_persist = 0
+
+    def update(self, enemies, gmap):
+        result = super().update(enemies, gmap)
+        if self.level >= 5:
+            if self.smother_cooldown > 0:
+                self.smother_cooldown -= 1
+            else:
+                self._smother_one(enemies, gmap)
+        return result
+
+    def _smother_one(self, enemies, gmap):
+        """Big spray at the strongest cluster in range (total health); globs everything clustered round it."""
+        cls = self.__class__
+        candidates = [e for e in enemies if e.can_be_smothered() and self.can_target(e, gmap)]
+        if not candidates:
+            return
+        r2 = cls.smother_radius ** 2
+        def cluster(centre):
+            cx, cy = centre.position
+            return [e for e in candidates if (e.position[0] - cx) ** 2 + (e.position[1] - cy) ** 2 <= r2]
+        target = max(candidates, key=lambda c: sum(e.value for e in cluster(c)))  # ties go to the one further along
+        self.smother_cooldown = cls.smother_every_frames
+        group = cluster(target)
+        for enemy in group[:cls.smother_max]:
+            frames = cls.smother_frames_large if enemy.size >= 3 else cls.smother_frames
+            enemy.smother(self, frames, cls.smother_acid)
+        self.smother_spray_target = target.position
+        # Glob of goo sized to just cover the enemies it caught (by their own size), drawn once for this spray
+        caught = group[:cls.smother_max]
+        def half_size(e):
+            if e.image is not None:
+                return e.image.get_width() / 2, e.image.get_height() / 2
+            return 10 * e.size, 10 * e.size
+        left = min(e.position[0] - half_size(e)[0] for e in caught)
+        right = max(e.position[0] + half_size(e)[0] for e in caught)
+        top = min(e.position[1] - half_size(e)[1] for e in caught)
+        bottom = max(e.position[1] + half_size(e)[1] for e in caught)
+        rx, ry = (right - left) / 2 + 6, (bottom - top) / 2 + 5
+        self.smother_cloud = make_goo(rx, ry, random.random())
+        self.smother_cone_width = max(8, min(30, rx * 0.6))  # spray widens to roughly the splat
+        self.smother_cloud_centre = ((left + right) / 2, (top + bottom) / 2)
+        self.viz_persist = self.__class__.smother_spray_frames
+        sounds.play('glue')
+
+    def show_viz_persist(self, window):
+        """The big smother spray: a wide cone of glue from the barrel that lingers for a few frames."""
+        if self.smother_spray_target is not None:
+            nozzle = self._get_nozzle_pos()
+            tx, ty = self.smother_spray_target
+            dx, dy = tx - nozzle[0], ty - nozzle[1]
+            dist = max((dx * dx + dy * dy) ** 0.5, 1)
+            px, py = -dy / dist, dx / dist
+            near, far = 6, getattr(self, 'smother_cone_width', 30)  # half widths at the barrel and at the target
+            cone = [(nozzle[0] + px * near, nozzle[1] + py * near), (tx + px * far, ty + py * far),
+                    (tx - px * far, ty - py * far), (nozzle[0] - px * near, nozzle[1] - py * near)]
+            spray = pygame.Surface(window.get_size(), pygame.SRCALPHA)
+            pygame.draw.polygon(spray, GOO_FILL + (170,), cone)
+            pygame.draw.line(spray, GOO_SHINE + (200,), nozzle, (tx, ty), 5)
+            window.blit(spray, (0, 0))
+            cloud = getattr(self, 'smother_cloud', None)
+            if cloud is not None:
+                surface, (ox, oy) = cloud
+                cx, cy = getattr(self, 'smother_cloud_centre', (tx, ty))
+                window.blit(surface, (int(cx - ox), int(cy - oy)))
+        if self.viz_persist > 0:
+            self.viz_persist -= 1
 
     # TODO - work out how more than one lev 4 toxic glue gunner combine - can they both attack
     # prob should be so they can both attack either no. times or until so many glue strikes on big target...
@@ -1390,7 +1746,7 @@ class Ninja(Tower):
         self.image = Ninja.image
         self.level = 1
         self.attack_speed = 60
-        self.upgrade_costs = [160, 520, 1200] # rough - need to decide
+        self.upgrade_costs = [160, 480, 1200] # rough - need to decide
         self.upgrade_name = "Spirit Eye"
         self.damage = 1  # same as normal shuriken
         self.multi_attack = 1

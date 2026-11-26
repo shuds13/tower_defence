@@ -7,7 +7,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
 from enemy import Enemy
-from tower import Tower, tower_types, Totem, CannonBall
+from tower import Tower, tower_types, Totem, CannonBall, Burger
 import placements as place
 import navigation as nav
 import levels as lev
@@ -49,9 +49,9 @@ inset_window = {
     'x': 4,  # X position of the window
     'xl': 4,
     'xr': window_size[0] - side_panel_width - 204,
-    'y': window_size[1] - 304,  # Y position of the window
+    'y': window_size[1] - 316,  # Y position of the window
     'width': 200,
-    'height': 300,
+    'height': 312,
     'tower': None,
     'totem': None
 }
@@ -78,8 +78,8 @@ def reset_game(gmap=None):
     if gmap is not None:
         gmap = gmap.__class__()  # Reset map - only needed if removables.
         game.set_map(gmap)
-        # in case starting at a different level
-        gmap.map_update(initial_level) #, newstart=True)
+        # in case starting at a different level: right track and map layout for that level
+        game.reset_level(gmap, pygame.display, window)
     return game, gmap
 
 def in_range(my_range, mouse_x, mouse_y, obj):
@@ -112,8 +112,10 @@ def select_map():
     # TODO put this in account (profile) function.
     if gmap.name in account.maps_in_progress:
         game = account.maps_in_progress[gmap.name]
+        game.inset_window = inset_window  # saved games keep an old copy of the tower box settings
         game.restart_round(lev, gmap, decrement=False)  # TODO lev could just be imported in game_metrics
-        game.reset_level(gmap, pygame.display, window)
+    # Set up the first round (right track and map layout, also when starting on a later level)
+    game.reset_level(gmap, pygame.display, window)
     return gmap
 
 play_again_button = None  # To store the button rectangle
@@ -121,7 +123,10 @@ start_level_button = None  # To store the button rectangle
 restart_round_button = None
 hint_button = None
 close_game_over = None
+crown_continue_button = None  # crown achieved box (after the crown level)
+crown_maps_button = None
 maps_button = None
+surge_button = None  # shown when the Burger King is set to manual surge
 
 opts_play_again = False
 opts_maps = False
@@ -153,6 +158,10 @@ def update_inset_totems(inset_window):
                     my_totem = totem
         inset_window['totem'] = my_totem
 
+def manual_surge_burger():
+    """The tier 5 Burger set to manual surge, if there is one (only one tier 5 of each allowed)."""
+    return next((t for t in game.towers if isinstance(t, Burger) and t.level >= 5 and t.surge_mode == "manual"), None)
+
 def show_tower_info(inset_window):
     for tower in game.towers:
         if tower.is_clicked(mouse_pos):
@@ -177,6 +186,17 @@ while game.running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
 
+            # Crown achieved box: only its buttons respond while it is showing
+            if game.crown_popup:
+                if crown_continue_button and crown_continue_button.collidepoint(mouse_pos):
+                    game.crown_popup = False
+                elif crown_maps_button and crown_maps_button.collidepoint(mouse_pos):
+                    game.crown_popup = False
+                    game, _ = reset_game()
+                    projectiles = []
+                    gmap = select_map()
+                continue
+
             # For helping make maps - comment out when done
             if print_pos:
                 print(mouse_pos)
@@ -186,6 +206,12 @@ while game.running:
                 opts_play_again, opts_maps, opts_restart = nav.draw_options_window(pygame.display, window, options_button, game)
                 # prevents restart round from working
                 # continue  # stops you accidently placing tower on cog and dont need to send it to is_valid_position
+
+            if surge_button and surge_button.collidepoint(mouse_pos):
+                burger = manual_surge_burger()
+                if game.active and burger is not None and burger.surge_ready():
+                    burger.start_surge()
+                continue
 
             gmap.background_mod(mouse_pos, window)
 
@@ -238,7 +264,7 @@ while game.running:
                     # should use object for inset window parameters
                     game.player_money, alert_message, alert_timer, clicked_nav = nav.process_inset_window(
                         mouse_pos, game.towers, game.totems, game.inset_window, upgrade_button, sell_button, target_button, game.player_money,
-                        alert_message, alert_timer, game.game_over
+                        alert_message, alert_timer, game.game_over, game.level_num, account.has_crown(gmap)
                     )
                 else:
                     removables = gmap.get_removables()
@@ -268,7 +294,7 @@ while game.running:
                             game.inset_window['x'] = game.inset_window['xr']
                         else:
                             game.inset_window['x'] = game.inset_window['xl']
-                        upgrade_button, sell_button, target_button = nav.draw_inset_window(window, game.inset_window, game.player_money)
+                        upgrade_button, sell_button, target_button = nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap), game.towers)
 
             # Place a tower
             else:
@@ -342,8 +368,12 @@ while game.running:
             # Check if the enemy has reached the end of the path (should stop the double use of reached_end !)
             if enemy.reached_end:
                 game.lives -= enemy.value  # Decrease the lives
-            elif enemy.toxic_glued:
-                hits = enemy.toxic_damage()
+            else:
+                hits = 0
+                if enemy.toxic_glued:
+                    hits += enemy.toxic_damage()
+                if enemy.smother_timer > 0 and not enemy.reached_end:
+                    hits += enemy.smother_damage()
                 game.process_hits(hits)
                 if enemy.health <= 0 and enemy.spawn_on_die:
                     enemy.spawn_func(game.enemies)
@@ -367,11 +397,13 @@ while game.running:
 
         if game.lives <= 0:
             game.game_over = True
+            game.active = False  # stop now, so towers do not update (and e.g. re-surge) for the rest of this frame
             game.current_tower_type = None
             game.failed_map(gmap, account)
 
             for tower in game.towers:
                 tower.target = None
+                tower.new_round()  # clear round effects such as the Burger King surge
 
             projectiles = []
             clean_cycle_needed = False
@@ -531,14 +563,24 @@ while game.running:
 
     if game.inset_window['active']:
         update_inset_totems(game.inset_window)
-    nav.draw_inset_window(window, game.inset_window, game.player_money)
+    inset_buttons = nav.draw_inset_window(window, game.inset_window, game.player_money, game.level_num, account.has_crown(gmap), game.towers)
+    if inset_buttons is not None:
+        # Keep click areas current (e.g. an option line appears after an upgrade)
+        upgrade_button, sell_button, target_button = inset_buttons
+
+    # Manual surge button (only during a round, so it does not clash with the hint box)
+    burger = manual_surge_burger()
+    surge_button = nav.draw_surge_button(window, burger, game.inset_window) if burger is not None and game.active else None
+
+    if game.crown_popup:
+        crown_continue_button, crown_maps_button = nav.draw_crown_window(window, game.aced)
 
     if game.game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)
 
         # Do we want to always bring up window - not if have last round restarts for now
         if not game.displayed_game_over and (game.map_complete or game.last_round_restarts <= 0):
-            close_game_over = nav.draw_game_over_window(pygame.display, window, game.map_complete, game.aced)
+            close_game_over = nav.draw_game_over_window(pygame.display, window, game.map_complete, game.aced, game.extended_complete)
         elif not game.map_complete:
             game_over_text = font.render("Game Over", True, (255, 0, 0))
             text_rect = game_over_text.get_rect(center=((window_size[0] - 100) / 2, window_size[1] / 2 - 50))

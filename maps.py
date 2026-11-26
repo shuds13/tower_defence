@@ -10,6 +10,7 @@ crown_img = pygame.image.load('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (50, 50))
 crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (50, 50))
+crown_extended_img = pygame.transform.scale(pygame.image.load('images/crown_extended.png'), (40, 40))  # placeholder art
 save_img = pygame.image.load('images/save.png')
 save_img = pygame.transform.scale(save_img, (40, 40))
 right_img = pygame.image.load('images/right_chevron.png')
@@ -195,6 +196,10 @@ def display_maps_page(display, surface, account, maps_page, width, height, font_
                 #crown_rect = crown.get_rect(topleft=(x, y+70))  # Appears over bottom left of map
                 crown_rect = crown.get_rect(center=(x+width//2, y))
                 surface.blit(crown, crown_rect.topleft)
+                if account.has_extended_crown(gmap):
+                    # Second crown, beside the first
+                    ext_rect = crown_extended_img.get_rect(center=(x+width//2 + 40, y))
+                    surface.blit(crown_extended_img, ext_rect.topleft)
 
             if gmap.name in account.maps_in_progress:
                 save_rect = save_img.get_rect(center=(x, y+60))
@@ -468,7 +473,7 @@ class Square(Map):
     def __init__(self):
         super().__init__()
         self.name = "Square"
-        self.difficulty = 3
+        self.difficulty = 4
         self.background_color = (54, 69, 79) # (0, 71, 171)
         self.font_color = (255, 191, 0)
         self.path_thickness = 20
@@ -501,7 +506,7 @@ class Vase(Map):
     def __init__(self):
         super().__init__()
         self.name = "Rubin's Vase"
-        self.difficulty = 3
+        self.difficulty = 4
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color =  (48, 25, 52) # (40, 40, 43) # (69, 75, 27)
         self.path_thickness = 20
@@ -1041,7 +1046,7 @@ class Catacombs(Map):
     def __init__(self):
         super().__init__()
         self.name = "Catacombs"
-        self.difficulty = 3  # if anything like now - will be Expert.
+        self.difficulty = 4
         #self.paths = [[(0, 100), (300, 250), (400, 250), (700, 100)]]
         self.background_color = (128, 0, 32) #(69, 75, 27) # (53, 94, 59)  # (0, 158, 96)
         self.path_thickness = 20
@@ -1133,7 +1138,7 @@ class Isthmus(Map):
     def __init__(self):
         super().__init__()
         self.name = "Isthmus"
-        self.difficulty = 2
+        self.difficulty = 3
         self.background_color = (25, 25, 112)
         self.path_thickness = 20
         self.path_color = (178, 190, 181)

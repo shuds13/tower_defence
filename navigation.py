@@ -1,6 +1,6 @@
 import pygame
 import sounds
-from tower import Tower, tower_types
+from tower import Tower, tower_types, burger5_img
 
 cross_img = pygame.image.load('images/cross.png')
 cross_img = pygame.transform.scale(cross_img, (50, 50))
@@ -12,6 +12,7 @@ crown_img = pygame.image.load('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (100, 100))
 crownace_img = pygame.image.load('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (100, 100))
+crown_extended_img = pygame.transform.scale(pygame.image.load('images/crown_extended.png'), (100, 100))  # placeholder art
 troll_img = pygame.image.load('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
@@ -60,6 +61,32 @@ def start_level_button(window, window_size):
     bw = 2  # Width of the border, change as needed
     pygame.draw.rect(window, border_color, (window_size[0] - 125 - bw,window_size[1] - 100 - bw, 50 + 2 * bw, 50 + 2 * bw))
     return draw_button(window, "Go", (window_size[0] - 125, window_size[1] - 100), (50, 50), (0,200,20))
+
+
+def draw_surge_button(surface, burger, inset):
+    """Burger King button, bottom left of the map (moved right if the tower box is open there).
+    Shows ready, surging or cooling down."""
+    x, y, size = 10, 540, 50
+    if inset['active'] and inset['x'] == inset['xl']:
+        x = inset['x'] + inset['width'] + 10
+    rect = pygame.Rect(x, y, size, size)
+    icon = pygame.transform.smoothscale(burger5_img, (size - 4, size - 4))
+    if burger.surge_timer > 0:
+        border, background = (255, 140, 0), (255, 200, 80)  # surging
+    elif burger.surge_cooldown > 0:
+        border, background = (60, 60, 60), (150, 150, 150)  # cooling down
+        icon = pygame.transform.grayscale(icon)
+    else:
+        border, background = (255, 215, 0), (120, 20, 0)  # ready
+    draw_border(surface, x, y, size, size, 3, border)
+    pygame.draw.rect(surface, background, rect)
+    if burger.surge_cooldown > 0:
+        # Fill rises as the cooldown runs down
+        done = 1 - burger.surge_cooldown / burger.__class__.surge_cooldown_frames
+        fill = int(size * done)
+        pygame.draw.rect(surface, (200, 120, 60), (x, y + size - fill, size, fill))
+    surface.blit(icon, icon.get_rect(center=rect.center))
+    return rect
 
 
 def draw_side_panel(surface, panel_rect, current_tower_type):
@@ -326,7 +353,26 @@ def are_you_sure(display, surface, msg, enabled=True, prompt="Are you sure?", co
 
 
 # okay really need to collect stats / player data together for this
-def draw_game_over_window(display, surface, map_complete, aced):
+def draw_crown_window(surface, aced):
+    """Box shown when the crown is first achieved mid-game. Returns the Continue and Maps buttons."""
+    x, y, width, height = 100, 140, 500, 340
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
+    pygame.draw.rect(surface, (25, 25, 112), (x, y, width, height))
+    title = "Crown Achieved (Aced)!" if aced else "Crown Achieved!"
+    title_text = pygame.font.SysFont('Arial', 38, bold=True).render(title, True, (196, 180, 84))
+    surface.blit(title_text, title_text.get_rect(midtop=(x + width // 2, y + 12)))
+    image = crownace_img if aced else crown_img
+    surface.blit(image, image.get_rect(center=(x + width // 2, y + 115)))
+    line = pygame.font.SysFont(None, 30).render("Tier 5 towers unlocked on this map", True, (255, 255, 255))
+    surface.blit(line, line.get_rect(center=(x + width // 2, y + 190)))
+    note = pygame.font.SysFont(None, 22).render("Advanced levels (Beta) - your progress is saved either way", True, (190, 190, 220))
+    surface.blit(note, note.get_rect(center=(x + width // 2, y + 220)))
+    continue_button = draw_button(surface, "Continue", (x + 90, y + 255), (140, 50), (0, 160, 40))
+    maps_button = draw_button(surface, "Maps", (x + 270, y + 255), (140, 50), (0, 0, 200))
+    return continue_button, maps_button
+
+
+def draw_game_over_window(display, surface, map_complete, aced, extended=False):
     #x, y, width, height = 100, 100, 500, 400
     x, y, width, height = 100, 200, 500, 300
 
@@ -356,7 +402,12 @@ def draw_game_over_window(display, surface, map_complete, aced):
     #map_complete = True
     #aced = True
 
-    if map_complete:
+    if map_complete and extended:
+        color = (25, 25, 112) # dark blue
+        complete_text = "All Levels Complete!"
+        image = crown_extended_img
+        game_over_text = font_title.render(complete_text, True, (196, 180, 84))
+    elif map_complete:
         color = (25, 25, 112) # dark blue
         if aced:
             complete_text = "Map Complete (Aced)!"
@@ -388,7 +439,7 @@ def draw_border(surface, x, y, width, height, border_width, color=(0,0,0)):
     pygame.draw.rect(surface, color, (x - border_width, y - border_width, width + 2 * border_width, height + 2 * border_width))
 
 
-def draw_inset_window(surface, window_info, player_money):
+def draw_inset_window(surface, window_info, player_money, game_level, map_crowned=False, towers=()):
     if not window_info['active']:
         return
 
@@ -430,34 +481,61 @@ def draw_inset_window(surface, window_info, player_money):
         surface.blit(tower_pops_text, tower_pops_rect.topleft)
 
     # Draw the tower image
-    image_y_pos = y + 105  # was 80
-    tower_image = pygame.transform.scale(tower.image, (100, 100))
+    image_y_pos = y + 104  # was 80
+    # Crop empty margins, then fit within 100 wide x 90 high keeping its shape, leaving a gap above the level line
+    visible = tower.image.subsurface(tower.image.get_bounding_rect(min_alpha=40))
+    iw, ih = visible.get_size()
+    fit = min(100 / iw, 90 / ih)
+    tower_image = pygame.transform.scale(visible, (round(iw * fit), round(ih * fit)))
     image_rect = tower_image.get_rect(center=(x + width // 2, image_y_pos))
     surface.blit(tower_image, image_rect)
 
-    # Targeting option (cycles through modes when clicked); click area is a little larger than the text
+    # Level dots (filled up to the current level, gold for tier 5) followed by the level name
+    max_level = tower.__class__.max_level
+    dot_spacing = 11
+    dots_width = max_level * dot_spacing
+    level_name = tower.level_name()
+    name_text = pygame.font.SysFont(None, 19).render(level_name, True, (60, 60, 60)) if level_name else None
+    line_width = dots_width + (6 + name_text.get_width() if name_text else 0)
+    line_x = x + width // 2 - line_width // 2
+    line_y = y + 166
+    reachable = tower.max_level_at(map_crowned)
+    for i in range(max_level):
+        centre = (line_x + i * dot_spacing + 4, line_y)
+        if i < tower.level:
+            pygame.draw.circle(surface, (255, 200, 0) if i == 4 else (60, 150, 60), centre, 4)
+        elif i < reachable:
+            pygame.draw.circle(surface, (150, 150, 150), centre, 4)
+        else:
+            pygame.draw.circle(surface, (120, 120, 120), centre, 4, 1)  # locked level: outline only
+    if name_text:
+        surface.blit(name_text, name_text.get_rect(midleft=(line_x + dots_width + 6, line_y)))
+
+    # Tower option, e.g. targeting (cycles when clicked); click area is a little larger than the text
     target_button = None
-    if tower.__class__.target_modes:
+    option_text = tower.option_text()
+    if option_text is not None:
         font_small = pygame.font.SysFont(None, 20)
-        target_text = font_small.render(f"Target: {tower.target_mode.capitalize()}  >", True, (50, 50, 90))
-        target_rect = target_text.get_rect(center=(x + width // 2, y + 163))
+        target_text = font_small.render(option_text, True, (50, 50, 90))
+        target_rect = target_text.get_rect(center=(x + width // 2, y + 184))
         surface.blit(target_text, target_rect)
         target_button = target_rect.inflate(10, 6)
 
     # Draw buttons for upgrade and sell
-    upgrade_y_pos = y + 175  # was 160
+    upgrade_y_pos = y + 198  # was 160
     upgrade_button = pygame.Rect(x + 30, upgrade_y_pos, 140, 40)
     draw_border(surface, x+30, upgrade_y_pos, 140, 40, 2)
     # DONT really like bigger button - looked better before - TODO might adjust size if needed
 
     #at_max_level = tower.level == tower.__class__.max_level
-    if tower.level == tower.__class__.max_level:
-        at_max_level = True
-    else:
-        at_max_level = False
+    at_max_level = tower.level >= tower.__class__.max_level
+    locked = not at_max_level and tower.level >= tower.max_level_at(map_crowned)
+    only_one = not at_max_level and not locked and tower.next_level_taken(towers)
 
     if at_max_level:
         upgrade_color = (0, 128, 128)
+    elif locked or only_one:
+        upgrade_color = (100, 100, 100)
     else:
         upgrade_cost = tower.upgrade_costs[tower.level-1]
         if player_money < upgrade_cost:
@@ -471,6 +549,14 @@ def draw_inset_window(surface, window_info, player_money):
         upgrade_text = font.render(f"Max Level", True, (255, 255, 255))  # White text
         upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button.center)
         surface.blit(upgrade_text, upgrade_text_rect)
+    elif locked or only_one:
+        # Tier 5: not unlocked yet on this map, or limited to one of each tower
+        cx, cy = upgrade_button.center
+        name_text = font.render(tower.upgrade_name, True, (255, 255, 255))
+        surface.blit(name_text, name_text.get_rect(center=(cx, cy - 8)))
+        note = "Locked" if locked else "Only one allowed"
+        note_text = pygame.font.SysFont(None, 20).render(note, True, (255, 255, 255))
+        surface.blit(note_text, note_text.get_rect(center=(cx, cy + 10)))
     else:
         # Upgrade name on the first line, price on the second
         cx, cy = upgrade_button.center
@@ -479,7 +565,7 @@ def draw_inset_window(surface, window_info, player_money):
         price_text = pygame.font.SysFont(None, 20).render(f"${upgrade_cost}", True, (255, 255, 255))
         surface.blit(price_text, price_text.get_rect(center=(cx, cy + 10)))
 
-    sell_y_pos = y + 240  # was 230
+    sell_y_pos = y + 250  # was 230
 
     sell_button = pygame.Rect(x + 30, sell_y_pos, 140, 40)
     draw_border(surface, x+30, sell_y_pos, 140, 40, 2)
@@ -495,20 +581,23 @@ def draw_inset_window(surface, window_info, player_money):
 
 
 def process_inset_window(mouse_pos, towers, totems, inset_window, upgrade_button,
-                         sell_button, target_button, player_money, alert_message, alert_timer, game_over):
+                         sell_button, target_button, player_money, alert_message, alert_timer, game_over, game_level, map_crowned=False):
     on_window = False  # was click on window
     tower = inset_window['tower']
     # Change targeting
     if target_button is not None and target_button.collidepoint(mouse_pos):
-        tower.next_target_mode()
+        tower.next_option()
         on_window = True
     # Upgrade tower
     elif upgrade_button.collidepoint(mouse_pos) and not game_over:
-        if tower.level < tower.__class__.max_level:
+        if tower.level < tower.max_level_at(map_crowned) and not tower.next_level_taken(towers):
             upgrade_cost = tower.upgrade_costs[tower.level-1]
             if player_money >= upgrade_cost:
                 tower.level_up()
                 player_money -= upgrade_cost
+        elif tower.level < tower.__class__.max_level and tower.level >= tower.max_level_at(map_crowned):
+            alert_message = "Needs this map's crown"
+            alert_timer = 120
         on_window = True
     # Sell tower
     elif sell_button.collidepoint(mouse_pos) and not game_over:
