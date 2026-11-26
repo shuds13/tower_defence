@@ -123,6 +123,8 @@ start_level_button = None  # To store the button rectangle
 restart_round_button = None
 hint_button = None
 close_game_over = None
+crown_continue_button = None  # crown achieved box (after the crown level)
+crown_maps_button = None
 maps_button = None
 surge_button = None  # shown when the Burger King is set to manual surge
 
@@ -183,6 +185,17 @@ while game.running:
             game.running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
+
+            # Crown achieved box: only its buttons respond while it is showing
+            if game.crown_popup:
+                if crown_continue_button and crown_continue_button.collidepoint(mouse_pos):
+                    game.crown_popup = False
+                elif crown_maps_button and crown_maps_button.collidepoint(mouse_pos):
+                    game.crown_popup = False
+                    game, _ = reset_game()
+                    projectiles = []
+                    gmap = select_map()
+                continue
 
             # For helping make maps - comment out when done
             if print_pos:
@@ -558,6 +571,9 @@ while game.running:
     # Manual surge button (only during a round, so it does not clash with the hint box)
     burger = manual_surge_burger()
     surge_button = nav.draw_surge_button(window, burger, game.inset_window) if burger is not None and game.active else None
+
+    if game.crown_popup:
+        crown_continue_button, crown_maps_button = nav.draw_crown_window(window, game.aced)
 
     if game.game_over:  # Game over condition
         font = pygame.font.SysFont(None, 72)

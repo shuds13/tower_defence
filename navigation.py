@@ -353,6 +353,25 @@ def are_you_sure(display, surface, msg, enabled=True, prompt="Are you sure?", co
 
 
 # okay really need to collect stats / player data together for this
+def draw_crown_window(surface, aced):
+    """Box shown when the crown is first achieved mid-game. Returns the Continue and Maps buttons."""
+    x, y, width, height = 100, 140, 500, 340
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
+    pygame.draw.rect(surface, (25, 25, 112), (x, y, width, height))
+    title = "Crown Achieved (Aced)!" if aced else "Crown Achieved!"
+    title_text = pygame.font.SysFont('Arial', 38, bold=True).render(title, True, (196, 180, 84))
+    surface.blit(title_text, title_text.get_rect(midtop=(x + width // 2, y + 12)))
+    image = crownace_img if aced else crown_img
+    surface.blit(image, image.get_rect(center=(x + width // 2, y + 115)))
+    line = pygame.font.SysFont(None, 30).render("Tier 5 towers unlocked on this map", True, (255, 255, 255))
+    surface.blit(line, line.get_rect(center=(x + width // 2, y + 190)))
+    note = pygame.font.SysFont(None, 22).render("Advanced levels (Beta) - your progress is saved either way", True, (190, 190, 220))
+    surface.blit(note, note.get_rect(center=(x + width // 2, y + 220)))
+    continue_button = draw_button(surface, "Continue", (x + 90, y + 255), (140, 50), (0, 160, 40))
+    maps_button = draw_button(surface, "Maps", (x + 270, y + 255), (140, 50), (0, 0, 200))
+    return continue_button, maps_button
+
+
 def draw_game_over_window(display, surface, map_complete, aced, extended=False):
     #x, y, width, height = 100, 100, 500, 400
     x, y, width, height = 100, 200, 500, 300

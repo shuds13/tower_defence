@@ -24,6 +24,7 @@ def find_surface_attributes(obj, parent_name=""):
 
 class Game():
     extended_complete = False  # class default also covers games saved before this existed
+    crown_popup = False  # showing the crown achieved box after the crown level
 
     def __init__(self, initial_money, initial_level, initial_lives, init_last_round_restarts,
                  lev, print_total_money, inset_window, test_setup=[]):
@@ -119,6 +120,7 @@ class Game():
         del state['enemies']
         del state['towers']
         del state['totems']
+        state.pop('crown_popup', None)  # the box is only shown once, not when a save is loaded
         for key, value in state.items():
             if isinstance(value, pygame.Surface):
                 print(f"Non-picklable pygame.Surface found in attribute: {key}")
@@ -229,14 +231,11 @@ class Game():
         crown_mid_game = self.level_num == lev.crown_level and lev.crown_level < lev.max_level
         font = pygame.font.SysFont(None, 72)
         centre = ((window_size[0] - 100) / 2, window_size[1] / 2)
-        if crown_mid_game:
-            win_text = font.render("Crown earned!", True, (196, 180, 84))
-            window.blit(crown_win_img, crown_win_img.get_rect(center=(centre[0], centre[1] - 80)))
-        else:
+        if not crown_mid_game:  # the crown level gets its own box instead
             win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text
-        text_rect = win_text.get_rect(center=centre)
-        window.blit(win_text, text_rect)
-        display.flip()  # Update the full display Surface to the screen
+            text_rect = win_text.get_rect(center=centre)
+            window.blit(win_text, text_rect)
+            display.flip()  # Update the full display Surface to the screen
         self.player_money += self.round_bonus
         self.total_money += self.round_bonus
 
@@ -256,7 +255,7 @@ class Game():
             self.aced = self.last_round_restarts == init_last_round_restarts and self.lives_lost == 0
             account.complete_map(gmap, self.aced)
             sounds.play('victory')
-            pygame.time.wait(2000)
+            self.crown_popup = True  # play.py shows the crown achieved box
         else:
             # Pause for a second to display the win message
             pygame.time.wait(1000)
