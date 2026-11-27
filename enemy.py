@@ -420,14 +420,14 @@ class Enemy104(Enemy4):
 
 class Enemy105(Enemy5):
     """Iron coated"""
-    health = 40
+    health = 30
     coat_color = (45, 48, 55)
     coat_points_per_px = 5
     coat_sound = 'ting_deep'
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
-        self.fort_health = 35
+        self.fort_health = 25
 
 
 class Enemy106(Enemy6):

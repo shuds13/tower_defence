@@ -3,6 +3,8 @@ pygame.mixer.init()
 
 # Channels kept for one-off tower sounds, so a flood of hit sounds cannot use them all up
 special_sounds = {'nighthawk', 'fireball'}
+# Sounds that must be heard even when hit sounds fill every channel
+must_play_sounds = {'victory'}
 num_reserved = pygame.mixer.set_reserved(len(special_sounds))
 reserved_channels = [pygame.mixer.Channel(i) for i in range(num_reserved)]
 
@@ -38,6 +40,9 @@ def play(snd):
         # Use a free reserved channel, or restart the first one if both are busy
         channel = next((c for c in reserved_channels if not c.get_busy()), reserved_channels[0])
         channel.play(sounds[snd])
+    elif snd in must_play_sounds:
+        # Take over the longest playing channel if none are free
+        pygame.mixer.find_channel(True).play(sounds[snd])
     else:
         sounds[snd].play()
 

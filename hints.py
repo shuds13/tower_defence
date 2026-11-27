@@ -8,6 +8,7 @@ r30 = "Report from scouts, trolls spotted!"
 r33 = "Meteors are reinforced and come fast."
 r40 = "A king this way comes."
 r47 = "Prepare for round 47. If you have money to spend, I would spend it now!"
+r61 = "Steel-coated purples are coming. They take a lot more hits!"
 
 hints = {
     1: r1,
@@ -17,6 +18,7 @@ hints = {
     33: r33,
     40: r40,
     47: r47,
+    61: r61,
     }
 
 
