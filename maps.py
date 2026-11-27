@@ -50,6 +50,8 @@ candle_img = pygame.transform.scale(candle_img, (40, 80))
 gravestone_img = load_image('images/gravestone.png')
 gravestone_img = pygame.transform.scale(gravestone_img, (55, 88))
 
+haunted_house_img = pygame.transform.smoothscale(load_image('images/haunted_house.png'), (140, 137))
+
 # What each removable is called in the remove window
 removable_names = {"bigtree_img": "tree", "shorttree_img": "tree", "shortwidetree_img": "trees", "gianttree_img": "giant tree",
                    "house1_img": "house", "house2_img": "house", "house3_img": "house", "candle_img": "candle",
@@ -66,6 +68,7 @@ img_dict = {
     "house3_img": house3_img,
     "candle_img": candle_img,
     "gravestone_img": gravestone_img,
+    "haunted_house_img": haunted_house_img,
     #"eye_img": eye_img,
     }
 
@@ -1428,10 +1431,10 @@ class Haunted(Map):
         self.alternate_paths = True
 
         path1 = [(0, 300), (110, 300), (110, 150), (207, 156), (201, 265), (330, 265),
-                 (330, 450), (432, 430),(426, 431), (434, 45), (526, 50), (533, 302), (693, 310)]
+                 (330, 375), (432, 368),(426, 369), (434, 45), (526, 50), (533, 302), (700, 310)]
 
         path2 = [(0, 300), (110, 300), (120, 436), (207, 436), (201, 265), (330, 265),
-                 (327, 548), (425, 554),(540, 485),(533, 387),(681, 431)]
+                 (327, 562), (440, 566),(545, 520),(533, 387),(700, 436)]
 
             #(330, 0), (330, 90), (450, 90), (450, 160), (540, 160), (540, 350),
                 #(430, 350), (430, 300),(330, 300), (330, 450), (200,450), (200,150),
@@ -1443,7 +1446,7 @@ class Haunted(Map):
         #self.path_color = (238, 220, 130)  # dev color
         self.path_color = (89,100,187) # Real color
 
-        self.tree1 = (350, 250, 70, 160)
+        self.tree1 = (345, 190, 70, 160)
         self.tree2 = (450, 170, 70, 160)
         self.tree3 = (220, 70, 90, 180)
         self.tree4 = (570, 140, 70, 160)
@@ -1451,11 +1454,16 @@ class Haunted(Map):
         self.tree6 = (220, 290, 90, 180)
         self.tree7 = (11, 320, 70, 160)
         self.gravestone = (130, 250, 50, 80)
+        self.more_gravestones = [(55, 478, 50, 80), (165, 478, 50, 80), (600, 472, 50, 80), (355, 95, 50, 80)]
 
+        self.objects = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree6, self.tree7, self.gravestone] + self.more_gravestones
 
-        self.objects = [self.tree1, self.tree2, self.tree3, self.tree4, self.tree5, self.tree6, self.tree7, self.gravestone]
+        # Haunted house over the best tower spot (inside the bottom loop) - can be bought out of the way
+        self.removables = [Removable((343, 392, 140, 137), 500, "haunted_house_img")]
 
     def paint_features(self, window):
+        for ob in self.removables:
+            window.blit(img_dict[ob.img], ob.loc)
         window.blit(tree1_img, self.tree1)
         window.blit(tree1_img, self.tree2)
         window.blit(bigtree_img, self.tree3)
@@ -1464,16 +1472,28 @@ class Haunted(Map):
         window.blit(bigtree_img, self.tree6)
         window.blit(tree1_img, self.tree7)
         window.blit(gravestone_img, self.gravestone)
+        for stone in self.more_gravestones:
+            window.blit(gravestone_img, stone)
 
     def can_I_place(self, pos, w, h):
-        for obj in self.objects:
+        for obj in self.objects + [removable.loc for removable in self.removables]:
             if not is_rect_out_box(pos[0], pos[1], w, h, obj, wh=True):
                 return False
         return True
 
     def barriers(self):
         """A list of barriers"""
-        return self.objects
+        return self.objects + [removable.loc for removable in self.removables]
+
+    def get_removables(self):
+        return self.removables
+
+    def set_removables(self, removables):
+        self.removables = removables
+
+    def remove(self, rem, display, window):
+        super().remove(rem, display, window)
+        self.removables.remove(rem)
 
 
 def wave_path(x_start, x_end, mid_y, amplitude, wavelength, step=8):
@@ -1541,6 +1561,6 @@ class Serpent(Map):
 
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
-                Tangle, Hermit, Suburbia, Isthmus, Creek, Catacombs, Serpent] #, AAA, BBB, Haunted]
+                Tangle, Hermit, Suburbia, Isthmus, Creek, Catacombs, Serpent, Haunted] #, AAA, BBB]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}
