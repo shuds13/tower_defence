@@ -668,9 +668,9 @@ class KingBlob3(KingBlob):
         self.base_speed = 1
         self.speed = 1
         self.image = king3_img
-        # Releases iron coated fast pink blobs
-        self.spawns = [(Enemy106, 100)]
-        self.spawn_type = Enemy106
+        # Releases iron coated purple blobs
+        self.spawns = [(Enemy105, 100)]
+        self.spawn_type = Enemy105
         self.spawn_count = 100
         self.size = 3
         self.value = self.health + sum(count * cls(path).value for cls, count in self.spawns)
