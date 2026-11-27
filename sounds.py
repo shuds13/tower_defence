@@ -16,11 +16,13 @@ snd_victory = pygame.mixer.Sound('sounds/fanfare.wav')
 snd_unlock = pygame.mixer.Sound('sounds/unlock.wav')
 snd_nighthawk = pygame.mixer.Sound('sounds/power_up_ray.wav')
 snd_fireball = pygame.mixer.Sound('sounds/small_fireball.wav')
+snd_ting_deep = pygame.mixer.Sound('sounds/ting_deep.wav')
 
 
 sounds = {
     'blop':snd_blop,
     'ting':snd_ting,
+    'ting_deep':snd_ting_deep,
     'place':snd_place,
     'sell':snd_sell,
     'pop':snd_pop,

@@ -73,6 +73,9 @@ class Enemy:
     smother_tick_frames = 15  # acid damage every this many frames while smothered
     smother_acid_damage = 2  # set by the tower that smothers it
     smother_immune_frames = 120
+    coat_color = (150, 121, 105)  # concrete
+    coat_points_per_px = 1  # coating hits shown by each pixel of ring thickness
+    coat_sound = 'ting'
     def __init__(self, path, position=None, path_index=0):
         self.path = path
         self.path_index = path_index
@@ -132,9 +135,9 @@ class Enemy:
             # TODO - check cant you use self.position - isn't it already int.
             pygame.draw.circle(window, self.color, (int(x), int(y)), 10*self.size)
             if self.fortified and self.fort_health > 0:
-                w = self.fort_health
+                w = math.ceil(self.fort_health / self.coat_points_per_px)
                 # could be same size or bigger to go round outside
-                pygame.draw.circle(window, (150, 121, 105), (int(x), int(y)), 10+w, w)
+                pygame.draw.circle(window, self.coat_color, (int(x), int(y)), 10+w, w)
             else:
                 pygame.draw.circle(window, (0, 0, 0), (int(x), int(y)), 11, 1)
         if self.glued:
@@ -250,7 +253,7 @@ class Enemy:
         self.glue_hit()
         if self.fortified and self.fort_health > 0:
             self.fort_health -= damage
-            sounds.play('ting')
+            sounds.play(self.coat_sound)
         else:
             sounds.play('blop')
         if self.health <= 0:
@@ -408,27 +411,39 @@ class Enemy103(Enemy3):
 
 
 class Enemy104(Enemy4):
-    health = 10
+    """Iron coated"""
+    health = 24
+    coat_color = (45, 48, 55)
+    coat_points_per_px = 5
+    coat_sound = 'ting_deep'
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
-        self.fort_health = 6
+        self.fort_health = 20
 
 
 class Enemy105(Enemy5):
-    health = 15
+    """Iron coated"""
+    health = 40
+    coat_color = (45, 48, 55)
+    coat_points_per_px = 5
+    coat_sound = 'ting_deep'
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
-        self.fort_health = 10
+        self.fort_health = 35
 
 
 class Enemy106(Enemy6):
-    health = 25
+    """Iron coated"""
+    health = 56
+    coat_color = (45, 48, 55)
+    coat_points_per_px = 5
+    coat_sound = 'ting_deep'
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
         self.fortified = True
-        self.fort_health = 19
+        self.fort_health = 50
 
 
 class Ghost(Enemy):
