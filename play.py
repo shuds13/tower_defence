@@ -121,6 +121,8 @@ def select_map():
 
 play_again_button = None  # To store the button rectangle
 start_level_button = None  # To store the button rectangle
+vanishing = []  # obstacles being cleared: [image, rect, frames left]
+vanish_frames = 45
 restart_round_button = None
 hint_button = None
 close_game_over = None
@@ -276,6 +278,7 @@ while game.running:
                                 if nav.remove_window(pygame.display, window, name, img_dict[rem.img], rem.price, game.player_money):
                                     game.player_money -= rem.price
                                     gmap.remove(rem, pygame.display, window)
+                                    vanishing.append([img_dict[rem.img], pygame.Rect(rem.loc), vanish_frames])
                                 break
 
                 # If user clicked on tower - open the info (inset) window
@@ -407,6 +410,17 @@ while game.running:
     # Render game state ------------------------------------------------------
     window.fill(gmap.background_color)  # Clear screen
     gmap.paint_features(window)
+
+    # Cleared obstacles fade out while swelling slightly
+    for item in vanishing:
+        image, rect, frames_left = item
+        done = 1 - frames_left / vanish_frames
+        size = (round(rect.width * (1 + 0.3 * done)), round(rect.height * (1 + 0.3 * done)))
+        faded = pygame.transform.smoothscale(image, size)
+        faded.set_alpha(round(255 * frames_left / vanish_frames))
+        window.blit(faded, faded.get_rect(center=rect.center))
+        item[2] -= 1
+    vanishing[:] = [item for item in vanishing if item[2] > 0]
 
     tower_option_rects = nav.draw_side_panel(window, side_panel_rect, game.current_tower_type)
     options_button = nav.draw_options_cog(window)

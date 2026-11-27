@@ -423,7 +423,7 @@ class Map():
         pass
 
     def remove(self, rem, display, window):
-        sounds.play('place')  #todo choose a sound
+        sounds.play('fireball')
         # Need to find a good way to just remove prompt box before showing explosion.
         #sounds.play('pop')  # this is not right either - no better than place sound - need explosion sound
         #expl_img = pygame.transform.scale(explosion_img, (rem.loc[2], rem.loc[3]))
