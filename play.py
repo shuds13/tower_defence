@@ -18,7 +18,7 @@ from tower import Tower, tower_types, Totem, CannonBall, Burger
 import placements as place
 import navigation as nav
 import levels as lev
-from maps import map_window
+from maps import map_window, img_dict, removable_names
 import sounds
 import hints
 from accounts import Account, load_profile, load_most_recent_profile, save_profile
@@ -272,20 +272,11 @@ while game.running:
                     if removables:  #unnecessary
                         for rem in removables:
                             if rem.rect.collidepoint(mouse_pos):
-                                #todo replace with window - and ok button
-                                #print(f"Remove {rem.price}")
-                                msg = f"Remove for {rem.price}"
-                                if game.player_money >= rem.price:
-                                    #window_was = pygame.Surface(window_size)
-                                    #window_was.blit( window, ( 0, 0 ), ( 0, 0, window_size[0], window_size[1] ) )
-                                    #window_was = window.copy()
-                                    if nav.are_you_sure(pygame.display, window, msg, True, "", (0, 0, 128)):
-                                        #pygame.display.flip()
-                                        game.player_money -= rem.price
-                                        #gmap.remove(rem, pygame.display, window_was)
-                                        gmap.remove(rem, pygame.display, window)
-                                else:
-                                    nav.are_you_sure(pygame.display, window, msg, False, "", (128,128,128))
+                                name = removable_names.get(rem.img, "obstacle")
+                                if nav.remove_window(pygame.display, window, name, img_dict[rem.img], rem.price, game.player_money):
+                                    game.player_money -= rem.price
+                                    gmap.remove(rem, pygame.display, window)
+                                break
 
                 # If user clicked on tower - open the info (inset) window
                 if not clicked_nav:

@@ -353,6 +353,64 @@ def are_you_sure(display, surface, msg, enabled=True, prompt="Are you sure?", co
         display.flip()
 
 
+def remove_window(display, surface, name, image, price, money):
+    """Ask whether to pay to clear an obstacle. Returns True if the player chose to remove it."""
+    # Dim the game behind the window
+    shade = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+    shade.fill((0, 0, 0, 140))
+    surface.blit(shade, (0, 0))
+
+    x, y, width, height = 175, 150, 350, 290
+    panel = pygame.Rect(x, y, width, height)
+    pygame.draw.rect(surface, (30, 28, 48), panel, border_radius=14)
+    pygame.draw.rect(surface, (196, 180, 84), panel, 3, border_radius=14)
+
+    affordable = money >= price
+    title = sys_font('Arial', 24, bold=True).render(f"Clear the {name}?" if affordable else f"Can't clear the {name}", True, (255, 255, 255))
+    surface.blit(title, title.get_rect(midtop=(panel.centerx, y + 14)))
+
+    # Picture of the obstacle, fitted into a box keeping its shape
+    iw, ih = image.get_size()
+    fit = min(130 / iw, 100 / ih)
+    picture = pygame.transform.smoothscale(image, (round(iw * fit), round(ih * fit)))
+    surface.blit(picture, picture.get_rect(center=(panel.centerx, y + 110)))
+
+    price_text = sys_font('Arial', 26, bold=True).render(f"${price}", True, (196, 180, 84))
+    surface.blit(price_text, price_text.get_rect(center=(panel.centerx, y + 180)))
+    if not affordable:
+        short_text = sys_font(None, 22).render(f"You have ${money}", True, (230, 120, 120))
+        surface.blit(short_text, short_text.get_rect(center=(panel.centerx, y + 205)))
+
+    def button(text, rect, color):
+        pygame.draw.rect(surface, color, rect, border_radius=10)
+        pygame.draw.rect(surface, (255, 255, 255), rect, 2, border_radius=10)
+        label = sys_font(None, 30).render(text, True, (255, 255, 255))
+        surface.blit(label, label.get_rect(center=rect.center))
+        return rect
+
+    if affordable:
+        yes_button = button("Remove", pygame.Rect(x + 45, y + 222, 120, 46), (0, 150, 60))
+        no_button = button("Cancel", pygame.Rect(x + 185, y + 222, 120, 46), (90, 90, 110))
+    else:
+        yes_button = None
+        no_button = button("OK", pygame.Rect(panel.centerx - 60, y + 228, 120, 46), (90, 90, 110))
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.event.post(event)  # let the main loop close the game
+                return False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if yes_button and yes_button.collidepoint(mouse_pos):
+                    return True
+                if no_button.collidepoint(mouse_pos) or not panel.collidepoint(mouse_pos):
+                    return False
+        display.flip()
+
+
 # okay really need to collect stats / player data together for this
 def draw_crown_window(surface, aced):
     """Box shown when the crown is first achieved mid-game. Returns the Continue and Maps buttons."""

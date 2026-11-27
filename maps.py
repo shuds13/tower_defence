@@ -50,6 +50,11 @@ candle_img = pygame.transform.scale(candle_img, (40, 80))
 gravestone_img = load_image('images/gravestone.png')
 gravestone_img = pygame.transform.scale(gravestone_img, (55, 88))
 
+# What each removable is called in the remove window
+removable_names = {"bigtree_img": "tree", "shorttree_img": "tree", "shortwidetree_img": "trees", "gianttree_img": "giant tree",
+                   "house1_img": "house", "house2_img": "house", "house3_img": "house", "candle_img": "candle",
+                   "gravestone_img": "gravestone", "haunted_house_img": "haunted house"}
+
 # Used in removables so does not store images
 img_dict = {
     "bigtree_img": bigtree_img,
