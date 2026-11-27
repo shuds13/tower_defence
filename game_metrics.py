@@ -220,8 +220,10 @@ class Game():
             self.money_per_hit = 0.3
         elif self.level_num < 60:
             self.money_per_hit = 0.2
-        else:
+        elif self.level_num < 70:
             self.money_per_hit = 0.15
+        else:
+            self.money_per_hit = 0.1
 
         #print(f"{self.money_per_hit=}")
 
