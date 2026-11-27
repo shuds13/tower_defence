@@ -393,6 +393,10 @@ class Map():
     def paint_features(self, window):
         pass
 
+    def paint_over_path(self, window):
+        """Drawn after the path, for markings on it (e.g. road lines)"""
+        pass
+
     def round_path_points(self, spacing=3):
         """Points every few pixels along all paths, for drawing curved paths with circles (worked out once)."""
         if getattr(self, '_round_points', None) is None:
@@ -1002,8 +1006,9 @@ class Suburbia(Map):
         self.name = "Suburbia"
         self.difficulty = 2
         self.background_color = (184, 115, 51) #(53, 94, 59)
-        self.path_thickness = 20
-        self.path_color = (178, 190, 181)
+        self.path_thickness = 24
+        self.path_color = (70, 70, 75)  # road
+        self.darkpath = True  # dark road, so the ninja throws the light shuriken
         self.paths = [[(0, 130), (120, 130),(120, 510),(300, 510),
                        (300, 242),(410, 242),(410, 510),
                        (590, 510),(590, 130), (700, 130)
@@ -1044,6 +1049,31 @@ class Suburbia(Map):
     def paint_features(self, window):
         for ob in self.removables:
             window.blit(img_dict[ob.img], ob.loc)
+
+    def paint_over_path(self, window):
+        """Road: square corners and a dashed centre line"""
+        half = self.path_thickness // 2
+        for path in self.paths:
+            for x, y in path[1:-1]:
+                pygame.draw.rect(window, self.path_color, (x - half, y - half, self.path_thickness, self.path_thickness))
+        for start, end in self.road_dashes():
+            pygame.draw.line(window, (235, 235, 225), start, end, 2)
+
+    def road_dashes(self, dash=12, gap=10):
+        """Centre line dashes along each straight piece, kept clear of the corners (worked out once)"""
+        if getattr(self, '_dashes', None) is None:
+            dashes = []
+            margin = self.path_thickness // 2
+            for path in self.paths:
+                for (x1, y1), (x2, y2) in zip(path, path[1:]):
+                    length = math.hypot(x2 - x1, y2 - y1)
+                    ux, uy = (x2 - x1) / length, (y2 - y1) / length
+                    d = margin
+                    while d + dash <= length - margin:
+                        dashes.append(((x1 + ux * d, y1 + uy * d), (x1 + ux * (d + dash), y1 + uy * (d + dash))))
+                        d += dash + gap
+            self._dashes = dashes
+        return self._dashes
 
     def can_I_place(self, pos, w, h):
         for obstacle in self.removables:

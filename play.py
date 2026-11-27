@@ -437,6 +437,7 @@ while game.running:
     if gmap.round_joints:  # curved paths: circles packed along the path give an even width with no notches
         for point in gmap.round_path_points():
             pygame.draw.circle(window, path_color, point, path_thickness / 2)
+    gmap.paint_over_path(window)
 
     for tower in game.towers:
         if game.active:
