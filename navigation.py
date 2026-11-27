@@ -20,12 +20,24 @@ troll_img = pygame.transform.scale(troll_img, (100, 100))
 frames_per_second = 60
 # frames_per_second = 30 # testing
 
+def is_hovered(rect):
+    """True if the mouse is over this rect"""
+    return rect is not None and rect.collidepoint(pygame.mouse.get_pos())
+
+
+def hover_color(color, rect):
+    """Lighter version of a button colour while the mouse is over it"""
+    if not is_hovered(rect):
+        return color
+    return tuple(min(255, c + (255 - c) * 0.3) for c in color[:3])
+
+
 def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
     #font = sys_font(None, 36)
     draw_border(surface, pos[0], pos[1], size[0], size[1], 3)
     font = sys_font(None, fontsize)
     button_rect = pygame.Rect(pos, size)
-    pygame.draw.rect(surface, color, button_rect)  # Blue button
+    pygame.draw.rect(surface, hover_color(color, button_rect), button_rect)  # Blue button
     text_surf = font.render(text, True, (255, 255, 255))  # White text
     text_rect = text_surf.get_rect(center=button_rect.center)
     surface.blit(text_surf, text_rect)
@@ -78,7 +90,7 @@ def draw_surge_button(surface, burger, inset):
         border, background = (60, 60, 60), (150, 150, 150)  # cooling down
         icon = pygame.transform.grayscale(icon)
     else:
-        border, background = (255, 215, 0), (120, 20, 0)  # ready
+        border, background = (255, 215, 0), hover_color((120, 20, 0), rect)  # ready
     draw_border(surface, x, y, size, size, 3, border)
     pygame.draw.rect(surface, background, rect)
     if burger.surge_cooldown > 0:
@@ -99,7 +111,7 @@ def draw_side_panel(surface, panel_rect, current_tower_type):
     def draw_tower_option(tower_type, y_offset):
         # Draw tower selection options (simple rectangles or icons)
         rect = pygame.Rect(panel_rect.x + 10, panel_rect.y + y_offset, 180, 50)
-        pygame.draw.rect(surface, (100, 100, 100), rect)  # Dark grey option box
+        pygame.draw.rect(surface, hover_color((100, 100, 100), rect), rect)  # Dark grey option box
 
         image_rect_1 = tower_type.image.get_rect(center=(rect.centerx - 40, rect.centery))
         surface.blit(tower_type.image, image_rect_1.topleft)
@@ -330,16 +342,15 @@ def are_you_sure(display, surface, msg, enabled=True, prompt="Are you sure?", co
         sure_text2 = font_title.render(prompt, True, (255, 255, 255))
         text_rect2 = sure_text2.get_rect(midtop=(x+width//2, y+30))
         surface.blit(sure_text2, text_rect2)
-        pos = (x + width // 2 - 90, y + height//2)
-        yes_button = draw_button(surface, "Yes", pos, (80, 40), color=(250, 95, 85))
-        pos = (x + width // 2 +10, y + height//2)
-        no_button = draw_button(surface, "No", pos, (80, 40), color=(250, 95, 85))
     else:
         no_button = cross_img.get_rect(center=(x+width//2, y+height - 60))
         surface.blit(cross_img, no_button.topleft)
         yes_button = None
 
     while True:
+        if enabled:  # redrawn each time round so they light up under the mouse
+            yes_button = draw_button(surface, "Yes", (x + width // 2 - 90, y + height//2), (80, 40), color=(250, 95, 85))
+            no_button = draw_button(surface, "No", (x + width // 2 + 10, y + height//2), (80, 40), color=(250, 95, 85))
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -382,20 +393,20 @@ def remove_window(display, surface, name, image, price, money):
         surface.blit(short_text, short_text.get_rect(center=(panel.centerx, y + 205)))
 
     def button(text, rect, color):
-        pygame.draw.rect(surface, color, rect, border_radius=10)
+        pygame.draw.rect(surface, hover_color(color, rect), rect, border_radius=10)
         pygame.draw.rect(surface, (255, 255, 255), rect, 2, border_radius=10)
         label = sys_font(None, 30).render(text, True, (255, 255, 255))
         surface.blit(label, label.get_rect(center=rect.center))
         return rect
 
-    if affordable:
-        yes_button = button("Remove", pygame.Rect(x + 45, y + 222, 120, 46), (0, 150, 60))
-        no_button = button("Cancel", pygame.Rect(x + 185, y + 222, 120, 46), (90, 90, 110))
-    else:
-        yes_button = None
-        no_button = button("OK", pygame.Rect(panel.centerx - 60, y + 228, 120, 46), (90, 90, 110))
+    def draw_buttons():
+        if affordable:
+            return (button("Remove", pygame.Rect(x + 45, y + 222, 120, 46), (0, 150, 60)),
+                    button("Cancel", pygame.Rect(x + 185, y + 222, 120, 46), (90, 90, 110)))
+        return None, button("OK", pygame.Rect(panel.centerx - 60, y + 228, 120, 46), (90, 90, 110))
 
     while True:
+        yes_button, no_button = draw_buttons()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.event.post(event)  # let the main loop close the game
@@ -577,10 +588,11 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     option_text = tower.option_text()
     if option_text is not None:
         font_small = sys_font(None, 20)
-        target_text = font_small.render(option_text, True, (50, 50, 90))
-        target_rect = target_text.get_rect(center=(x + width // 2, y + 184))
-        surface.blit(target_text, target_rect)
+        target_rect = font_small.render(option_text, True, (50, 50, 90)).get_rect(center=(x + width // 2, y + 184))
         target_button = target_rect.inflate(10, 6)
+        target_hover = is_hovered(target_button)
+        target_text = font_small.render(option_text, True, (20, 20, 200) if target_hover else (50, 50, 90))
+        surface.blit(target_text, target_rect)
 
     # Draw buttons for upgrade and sell
     upgrade_y_pos = y + 198  # was 160
@@ -602,7 +614,7 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
         if player_money < upgrade_cost:
             upgrade_color = (100, 100, 100)
         else:
-            upgrade_color = (80, 200, 120)
+            upgrade_color = hover_color((80, 200, 120), upgrade_button)  # only highlights when it can be bought
 
     pygame.draw.rect(surface, upgrade_color, upgrade_button)  # Dark grey button
 
@@ -631,7 +643,7 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     sell_button = pygame.Rect(x + 30, sell_y_pos, 140, 40)
     draw_border(surface, x+30, sell_y_pos, 140, 40, 2)
 
-    pygame.draw.rect(surface, (196, 30, 58), sell_button)  # Dark grey button
+    pygame.draw.rect(surface, hover_color((196, 30, 58), sell_button), sell_button)
     # Render and draw "Sell" text and amount
     sell_text = font.render(f"Sell ${int(tower.cost * 0.8)}", True, (255, 255, 255))  # White text
     sell_text_rect = sell_text.get_rect(center=sell_button.center)
