@@ -1,4 +1,5 @@
 import pygame
+import levels
 from assets import load_image, sys_font
 import sounds
 from tower import Tower, tower_types, burger5_img
@@ -442,6 +443,28 @@ def draw_crown_window(surface, aced):
     return continue_button, maps_button
 
 
+def draw_game_complete_window(surface, max_level):
+    """Box shown when the last level is won: the platinum crown. Returns the close button."""
+    x, y, width, height = 100, 120, 500, 380
+    draw_border(surface, x, y, width, height, 4, (255, 255, 255))
+    pygame.draw.rect(surface, (25, 25, 112), (x, y, width, height))
+    title = sys_font('Arial', 42, bold=True).render("Platinum Crown!", True, (220, 225, 240))
+    surface.blit(title, title.get_rect(midtop=(x + width // 2, y + 12)))
+    image = pygame.transform.smoothscale(crown_extended_img, (140, 140))
+    surface.blit(image, image.get_rect(center=(x + width // 2, y + 140)))
+    line = sys_font(None, 32).render(f"All {max_level} levels complete on this map", True, (255, 255, 255))
+    surface.blit(line, line.get_rect(center=(x + width // 2, y + 230)))
+    note = sys_font(None, 28).render("You've beaten the game!", True, (196, 180, 84))
+    surface.blit(note, note.get_rect(center=(x + width // 2, y + 262)))
+    close_button = pygame.Rect(0, 0, 140, 46)
+    close_button.center = (x + width // 2, y + height - 55)
+    pygame.draw.rect(surface, hover_color((0, 150, 60), close_button), close_button, border_radius=10)
+    pygame.draw.rect(surface, (255, 255, 255), close_button, 2, border_radius=10)
+    label = sys_font(None, 30).render("Close", True, (255, 255, 255))
+    surface.blit(label, label.get_rect(center=close_button.center))
+    return close_button
+
+
 def draw_game_over_window(display, surface, map_complete, aced, extended=False):
     #x, y, width, height = 100, 100, 500, 400
     x, y, width, height = 100, 200, 500, 300
@@ -473,11 +496,8 @@ def draw_game_over_window(display, surface, map_complete, aced, extended=False):
     #aced = True
 
     if map_complete and extended:
-        color = (25, 25, 112) # dark blue
-        complete_text = "All Levels Complete!"
-        image = crown_extended_img
-        game_over_text = font_title.render(complete_text, True, (196, 180, 84))
-    elif map_complete:
+        return draw_game_complete_window(surface, levels.max_level)
+    if map_complete:
         color = (25, 25, 112) # dark blue
         if aced:
             complete_text = "Map Complete (Aced)!"
