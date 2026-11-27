@@ -345,10 +345,10 @@ class Level36(Level):
 class Level37(Level):
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 150
-        self.spawn_intervals = [2,2,3,3,4]
-        self.phase_counts = [40, 70, 100, 125, 150]
-        self.enemy_types = [1,2,3,4,5]
+        self.num_enemies = 165
+        self.spawn_intervals = [2,2,3,3,4,100,8]  # pause, then a few pinks
+        self.phase_counts = [40, 70, 100, 125, 150, 151, 165]
+        self.enemy_types = [1,2,3,4,5,6,6]
 
 # before money per hit reduction
 #class Level38(Level):
@@ -582,7 +582,7 @@ class Level56(Level):
         self.num_enemies = 150
         self.spawn_intervals = [3, 3, 1, 1, 5]
         self.phase_counts = [25, 55, 80, 100, 150]
-        self.enemy_types = [5, 3, 1, 3, 102]
+        self.enemy_types = [6, 3, 1, 3, 102]
 
 #class Level57(Level):
     #def __init__(self):
@@ -775,9 +775,9 @@ class Level78(Level):
     # Black meteor swarm
     def __init__(self):
         Level.__init__(self)
-        self.num_enemies = 140
-        self.spawn_intervals = [15, 4,  3]
-        self.phase_counts =    [40, 80, 140]
+        self.num_enemies = 120
+        self.spawn_intervals = [15, 4,  5]
+        self.phase_counts =    [40, 80, 120]
         self.enemy_types =     [19, 15, 19]
 
 class Level79(Level):
