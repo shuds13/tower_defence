@@ -682,7 +682,7 @@ class KingBlob3(KingBlob):
 
 class TrollWagon(KingBlob):
     """Pulled along by armoured trolls; armoured trolls burst out when it breaks"""
-    health = 800
+    health = 750
     spawn = True
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
@@ -690,7 +690,7 @@ class TrollWagon(KingBlob):
         self.speed = 2
         self.image = troll_wagon_img
         self.spawn_type = ArmoredTroll
-        self.spawn_count = 40
+        self.spawn_count = 30
         self.size = 3
         self.value = self.health + self.spawn_count * self.spawn_type(path).value
         self.puller = None
