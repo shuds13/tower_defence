@@ -378,7 +378,7 @@ def remove_window(display, surface, name, image, price, money):
     price_text = sys_font('Arial', 26, bold=True).render(f"${price}", True, (196, 180, 84))
     surface.blit(price_text, price_text.get_rect(center=(panel.centerx, y + 180)))
     if not affordable:
-        short_text = sys_font(None, 22).render(f"You have ${money}", True, (230, 120, 120))
+        short_text = sys_font(None, 22).render(f"You have ${int(money)}", True, (230, 120, 120))
         surface.blit(short_text, short_text.get_rect(center=(panel.centerx, y + 205)))
 
     def button(text, rect, color):
