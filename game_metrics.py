@@ -1,10 +1,11 @@
 import copy
 import pygame
+from assets import load_image, sys_font
 import sounds
 from accounts import Account, load_profile
 from tower import Totem, tower_types
 
-crown_win_img = pygame.transform.scale(pygame.image.load('images/crown.png'), (100, 100))
+crown_win_img = pygame.transform.scale(load_image('images/crown.png'), (100, 100))
 
 
 # tmp for debugging saves
@@ -229,7 +230,7 @@ class Game():
     def level_complete(self, display, window, window_size, lev, gmap, init_last_round_restarts, account):
         # The first crown comes at crown_level; if there are more levels the game carries on
         crown_mid_game = self.level_num == lev.crown_level and lev.crown_level < lev.max_level
-        font = pygame.font.SysFont(None, 72)
+        font = sys_font(None, 72)
         centre = ((window_size[0] - 100) / 2, window_size[1] / 2)
         if not crown_mid_game:  # the crown level gets its own box instead
             win_text = font.render("Win!", True, (0, 255, 0))  # Green color for the win text

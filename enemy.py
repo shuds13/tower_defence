@@ -1,25 +1,26 @@
 import math
 import pygame
+from assets import load_image, sys_font
 import sounds
 import random
 
-ghost_img = pygame.image.load('images/ghost.png')
+ghost_img = load_image('images/ghost.png')
 ghost_img = pygame.transform.scale(ghost_img, (50, 50))
 big_ghost_img = pygame.transform.scale(ghost_img, (70, 70))
-devil_img = pygame.image.load('images/devil.png')
+devil_img = load_image('images/devil.png')
 devil_img = pygame.transform.scale(devil_img, (50, 50))
 bigdevil_img = pygame.transform.scale(devil_img, (75, 75))
-troll_img = pygame.image.load('images/troll.png')
+troll_img = load_image('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (50, 50))
 giant_troll_img = pygame.transform.scale(troll_img, (90, 90))
-king_img = pygame.image.load('images/kingblob.png')
+king_img = load_image('images/kingblob.png')
 king_img = pygame.transform.scale(king_img, (100, 100))
-king2_img = pygame.image.load('images/kingblob_green.png')
+king2_img = load_image('images/kingblob_green.png')
 king2_img = pygame.transform.scale(king2_img, (110, 110))
-stone_head_img = pygame.image.load('images/stone_head.png')
+stone_head_img = load_image('images/stone_head.png')
 stone_head_img = pygame.transform.smoothscale(stone_head_img, (stone_head_img.get_width() * 96 // stone_head_img.get_height(), 96))
 
-armored_troll_img = pygame.image.load('images/armored_troll.png')
+armored_troll_img = load_image('images/armored_troll.png')
 armored_troll_img = pygame.transform.scale(armored_troll_img, (65, 65))
 giant_armored_troll_img = pygame.transform.scale(armored_troll_img, (100, 100))
 

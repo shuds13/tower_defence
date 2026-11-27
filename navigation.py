@@ -1,28 +1,29 @@
 import pygame
+from assets import load_image, sys_font
 import sounds
 from tower import Tower, tower_types, burger5_img
 
-cross_img = pygame.image.load('images/cross.png')
+cross_img = load_image('images/cross.png')
 cross_img = pygame.transform.scale(cross_img, (50, 50))
 
-cog_img = pygame.image.load('images/options.png')
+cog_img = load_image('images/options.png')
 cog_img = pygame.transform.scale(cog_img, (40, 40))
 
-crown_img = pygame.image.load('images/crown.png')
+crown_img = load_image('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (100, 100))
-crownace_img = pygame.image.load('images/crown_ace.png')
+crownace_img = load_image('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (100, 100))
-crown_extended_img = pygame.transform.scale(pygame.image.load('images/crown_extended.png'), (100, 100))  # placeholder art
-troll_img = pygame.image.load('images/troll.png')
+crown_extended_img = pygame.transform.scale(load_image('images/crown_extended.png'), (100, 100))  # placeholder art
+troll_img = load_image('images/troll.png')
 troll_img = pygame.transform.scale(troll_img, (100, 100))
 
 frames_per_second = 60
 # frames_per_second = 30 # testing
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
-    #font = pygame.font.SysFont(None, 36)
+    #font = sys_font(None, 36)
     draw_border(surface, pos[0], pos[1], size[0], size[1], 3)
-    font = pygame.font.SysFont(None, fontsize)
+    font = sys_font(None, fontsize)
     button_rect = pygame.Rect(pos, size)
     pygame.draw.rect(surface, color, button_rect)  # Blue button
     text_surf = font.render(text, True, (255, 255, 255))  # White text
@@ -92,7 +93,7 @@ def draw_surge_button(surface, burger, inset):
 def draw_side_panel(surface, panel_rect, current_tower_type):
     # Draw the background of the side panel
     pygame.draw.rect(surface, (200, 200, 200), panel_rect)  # Light grey background
-    font = pygame.font.SysFont(None, 24)
+    font = sys_font(None, 24)
     y_offset = 10
 
     def draw_tower_option(tower_type, y_offset):
@@ -215,7 +216,7 @@ def draw_game_options(display, surface, game, x, y, width, height):
     # Draw the window background
     pygame.draw.rect(surface, (245, 245, 220), (x, y, width, height))
 
-    font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
+    font_title = sys_font('Arial', 24, bold=True)  # Choose a font and size
 
     # Should this count during the round?
     if game.active and game.last_round_restarts > 0:
@@ -321,7 +322,7 @@ def are_you_sure(display, surface, msg, enabled=True, prompt="Are you sure?", co
     #pygame.draw.rect(surface, (255, 127, 80), (x, y, width, height))
     pygame.draw.rect(surface, col, (x, y, width, height))
 
-    font_title = pygame.font.SysFont('Arial', 20, bold=True)  # Choose a font and size
+    font_title = sys_font('Arial', 20, bold=True)  # Choose a font and size
     sure_text1 = font_title.render(msg, True, (255, 255, 255))
     text_rect1 = sure_text1.get_rect(midtop=(x+width//2, y+10))
     surface.blit(sure_text1, text_rect1)
@@ -359,13 +360,13 @@ def draw_crown_window(surface, aced):
     draw_border(surface, x, y, width, height, 4, (255, 255, 255))
     pygame.draw.rect(surface, (25, 25, 112), (x, y, width, height))
     title = "Crown Achieved (Aced)!" if aced else "Crown Achieved!"
-    title_text = pygame.font.SysFont('Arial', 38, bold=True).render(title, True, (196, 180, 84))
+    title_text = sys_font('Arial', 38, bold=True).render(title, True, (196, 180, 84))
     surface.blit(title_text, title_text.get_rect(midtop=(x + width // 2, y + 12)))
     image = crownace_img if aced else crown_img
     surface.blit(image, image.get_rect(center=(x + width // 2, y + 115)))
-    line = pygame.font.SysFont(None, 30).render("Tier 5 towers unlocked on this map", True, (255, 255, 255))
+    line = sys_font(None, 30).render("Tier 5 towers unlocked on this map", True, (255, 255, 255))
     surface.blit(line, line.get_rect(center=(x + width // 2, y + 190)))
-    note = pygame.font.SysFont(None, 22).render("Advanced levels (Beta) - your progress is saved either way", True, (190, 190, 220))
+    note = sys_font(None, 22).render("Advanced levels (Beta) - your progress is saved either way", True, (190, 190, 220))
     surface.blit(note, note.get_rect(center=(x + width // 2, y + 220)))
     continue_button = draw_button(surface, "Continue", (x + 90, y + 255), (140, 50), (0, 160, 40))
     maps_button = draw_button(surface, "Maps", (x + 270, y + 255), (140, 50), (0, 0, 200))
@@ -394,8 +395,8 @@ def draw_game_over_window(display, surface, map_complete, aced, extended=False):
     #surface.blit(background, (x,y))
 
     # Compare
-    font_title = pygame.font.SysFont('Arial', 42, bold=True)  # Choose a font and size
-    #font_title = pygame.font.SysFont(None, 72)
+    font_title = sys_font('Arial', 42, bold=True)  # Choose a font and size
+    #font_title = sys_font(None, 72)
 
 
     #tmp to test
@@ -460,8 +461,8 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     # Draw the window background
     pygame.draw.rect(surface, (200, 200, 200), (x, y, width, height))
 
-    font_title = pygame.font.SysFont('Arial', 16, bold=True)  # Choose a font and size
-    font = pygame.font.SysFont(None, 24)
+    font_title = sys_font('Arial', 16, bold=True)  # Choose a font and size
+    font = sys_font(None, 24)
 
     if totem is not None:
         #import pdb;pdb.set_trace()
@@ -497,7 +498,7 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     dot_spacing = 11
     dots_width = max_level * dot_spacing
     level_name = tower.level_name()
-    name_text = pygame.font.SysFont(None, 19).render(level_name, True, (60, 60, 60)) if level_name else None
+    name_text = sys_font(None, 19).render(level_name, True, (60, 60, 60)) if level_name else None
     line_width = dots_width + (6 + name_text.get_width() if name_text else 0)
     line_x = x + width // 2 - line_width // 2
     line_y = y + 166
@@ -517,7 +518,7 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
     target_button = None
     option_text = tower.option_text()
     if option_text is not None:
-        font_small = pygame.font.SysFont(None, 20)
+        font_small = sys_font(None, 20)
         target_text = font_small.render(option_text, True, (50, 50, 90))
         target_rect = target_text.get_rect(center=(x + width // 2, y + 184))
         surface.blit(target_text, target_rect)
@@ -557,14 +558,14 @@ def draw_inset_window(surface, window_info, player_money, game_level, map_crowne
         name_text = font.render(tower.upgrade_name, True, (255, 255, 255))
         surface.blit(name_text, name_text.get_rect(center=(cx, cy - 8)))
         note = "Locked" if locked else "Only one allowed"
-        note_text = pygame.font.SysFont(None, 20).render(note, True, (255, 255, 255))
+        note_text = sys_font(None, 20).render(note, True, (255, 255, 255))
         surface.blit(note_text, note_text.get_rect(center=(cx, cy + 10)))
     else:
         # Upgrade name on the first line, price on the second
         cx, cy = upgrade_button.center
         name_text = font.render(tower.upgrade_name, True, (255, 255, 255))  # White text
         surface.blit(name_text, name_text.get_rect(center=(cx, cy - 8)))
-        price_text = pygame.font.SysFont(None, 20).render(f"${upgrade_cost}", True, (255, 255, 255))
+        price_text = sys_font(None, 20).render(f"${upgrade_cost}", True, (255, 255, 255))
         surface.blit(price_text, price_text.get_rect(center=(cx, cy + 10)))
 
     sell_y_pos = y + 250  # was 230

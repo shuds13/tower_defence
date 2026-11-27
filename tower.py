@@ -1,105 +1,106 @@
 import math
 import pygame
+from assets import load_image, sys_font
 import random
 import sounds
 from enemy import make_goo, GOO_FILL, GOO_SHINE
 
-fighter_img = pygame.image.load('images/tower1.png')
+fighter_img = load_image('images/tower1.png')
 fighter_img = pygame.transform.scale(fighter_img, (50, 50))
-fighter2_img = pygame.image.load('images/tower1_lev2.png')
+fighter2_img = load_image('images/tower1_lev2.png')
 fighter2_img = pygame.transform.scale(fighter2_img, (50, 50))
-fighter3_img = pygame.image.load('images/tower1_lev3.png')
+fighter3_img = load_image('images/tower1_lev3.png')
 fighter3_img = pygame.transform.scale(fighter3_img, (55, 55))
-fighter4_img = pygame.image.load('images/tower1_lev4.png')
+fighter4_img = load_image('images/tower1_lev4.png')
 fighter4_img = pygame.transform.scale(fighter4_img, (60, 60))
-fighter5_img = pygame.image.load('images/tower1_lev5.png')  # placeholder art
+fighter5_img = load_image('images/tower1_lev5.png')  # placeholder art
 fighter5_img = pygame.transform.scale(fighter5_img, (64, 64))
 
-burger_img = pygame.image.load('images/burger.png')
+burger_img = load_image('images/burger.png')
 burger_img = pygame.transform.scale(burger_img, (50, 50))
-burger2_img = pygame.image.load('images/burger2.png')
+burger2_img = load_image('images/burger2.png')
 burger2_img = pygame.transform.scale(burger2_img, (52, 52))
-burger3_img = pygame.image.load('images/burger3.png')
+burger3_img = load_image('images/burger3.png')
 burger3_img = pygame.transform.scale(burger3_img, (55, 55))
-burger4_img = pygame.image.load('images/burger4.png')
+burger4_img = load_image('images/burger4.png')
 burger4_img = pygame.transform.scale(burger4_img, (60, 60))
-burger5_img = pygame.image.load('images/burger_king.png')  # trying the Burger King image (also used by the enemy)
+burger5_img = load_image('images/burger_king.png')  # trying the Burger King image (also used by the enemy)
 burger5_img = pygame.transform.scale(burger5_img, (90, 90))  # image is narrow, so drawn larger to look bigger than the Whopper
-splat_img = pygame.image.load('images/splat.png')
+splat_img = load_image('images/splat.png')
 
-wizard_img = pygame.image.load('images/wizard.png')
+wizard_img = load_image('images/wizard.png')
 wizard_img = pygame.transform.scale(wizard_img, (50, 50))
-wizard2_img = pygame.image.load('images/wizard2.png')
+wizard2_img = load_image('images/wizard2.png')
 wizard2_img = pygame.transform.scale(wizard2_img, (55, 55))
-wizard3_img = pygame.image.load('images/wizard3.png')
+wizard3_img = load_image('images/wizard3.png')
 wizard3_img = pygame.transform.scale(wizard3_img, (60, 60))
-wizard4_img = pygame.image.load('images/wizard4.png')
+wizard4_img = load_image('images/wizard4.png')
 wizard4_img = pygame.transform.scale(wizard4_img, (58, 60))
 
-gluegun_img = pygame.image.load('images/glue_gun.png')
+gluegun_img = load_image('images/glue_gun.png')
 gluegun_img = pygame.transform.scale(gluegun_img, (50, 50))
-gluegun2_img = pygame.image.load('images/glue_gun2.png')
+gluegun2_img = load_image('images/glue_gun2.png')
 gluegun2_img = pygame.transform.scale(gluegun2_img, (50, 50))
-gluegun3_img = pygame.image.load('images/glue_gun3.png')
+gluegun3_img = load_image('images/glue_gun3.png')
 gluegun3_img = pygame.transform.scale(gluegun3_img, (50, 50))
-gluegun4_img = pygame.image.load('images/glue_gun4.png')
+gluegun4_img = load_image('images/glue_gun4.png')
 gluegun4_img = pygame.transform.scale(gluegun4_img, (55, 55))
-gluegun5_img = pygame.image.load('images/glue_gun5.png')  # trial art
+gluegun5_img = load_image('images/glue_gun5.png')  # trial art
 gluegun5_img = pygame.transform.smoothscale(gluegun5_img, (53, 75))
 
-totem_img = pygame.image.load('images/totem.png')
+totem_img = load_image('images/totem.png')
 totem_img = pygame.transform.scale(totem_img, (50, 50))
 totem_img_ingame = pygame.transform.scale(totem_img, (70, 70))
-totem2_img = pygame.image.load('images/totem2.png')
+totem2_img = load_image('images/totem2.png')
 totem2_img = pygame.transform.scale(totem2_img, (73, 73))
-totem3_img = pygame.image.load('images/totem3.png')
+totem3_img = load_image('images/totem3.png')
 totem3_img = pygame.transform.scale(totem3_img, (80, 80))
-totem4_img = pygame.image.load('images/totem4.png')
+totem4_img = load_image('images/totem4.png')
 totem4_img = pygame.transform.scale(totem4_img, (90, 90))
 
-cannon_img = pygame.image.load('images/cannon.png')
+cannon_img = load_image('images/cannon.png')
 cannon_img = pygame.transform.scale(cannon_img, (50, 50))
 cannon_img_ingame = pygame.transform.scale(cannon_img, (70, 70))
-cannon2_img = pygame.image.load('images/cannon2.png')
+cannon2_img = load_image('images/cannon2.png')
 cannon2_img = pygame.transform.scale(cannon2_img, (70, 70))
-cannon3_img = pygame.image.load('images/cannon3.png')
+cannon3_img = load_image('images/cannon3.png')
 cannon3_img = pygame.transform.scale(cannon3_img, (75, 75))
-cannon4_img = pygame.image.load('images/cannon4.png')
+cannon4_img = load_image('images/cannon4.png')
 cannon4_img = pygame.transform.scale(cannon4_img, (80, 80))
 
-cannonball_img = pygame.image.load('images/cannonball.png')
+cannonball_img = load_image('images/cannonball.png')
 cannonball1_img = pygame.transform.scale(cannonball_img, (25, 25))
 cannonball2_img = pygame.transform.scale(cannonball_img, (32, 32))
 cannonball3_img = pygame.transform.scale(cannonball_img, (38, 38))
 cannonball4_img = pygame.transform.scale(cannonball_img, (45, 45))
 
-explosion_img = pygame.image.load('images/explosion.png')
+explosion_img = load_image('images/explosion.png')
 explosion1_img = pygame.transform.scale(explosion_img, (80, 80))
 explosion2_img = pygame.transform.scale(explosion_img, (90, 90))
 explosion3_img = pygame.transform.scale(explosion_img, (100, 100))
 explosion4_img = pygame.transform.scale(explosion_img, (110, 110))
 explosionMini_img = pygame.transform.scale(explosion_img, (50, 50))
 
-ninja_img = pygame.image.load('images/ninja.png')
+ninja_img = load_image('images/ninja.png')
 ninja_img = pygame.transform.scale(ninja_img, (50, 50))
-ninja2_img = pygame.image.load('images/ninja2.png')
+ninja2_img = load_image('images/ninja2.png')
 ninja2_img = pygame.transform.scale(ninja2_img, (50, 50))
-ninja3_img = pygame.image.load('images/ninja3.png')
+ninja3_img = load_image('images/ninja3.png')
 ninja3_img = pygame.transform.scale(ninja3_img, (50, 50))
-ninja4_img = pygame.image.load('images/ninja4.png')
+ninja4_img = load_image('images/ninja4.png')
 ninja4_img = pygame.transform.scale(ninja4_img, (50, 50))
-ninja5_img = pygame.image.load('images/ninja5.png')  # trial art
+ninja5_img = load_image('images/ninja5.png')  # trial art
 ninja5_card_img = ninja5_img  # full size, for the tower card
 ninja5_img = pygame.transform.smoothscale(ninja5_img, (46, 60))
 
-shuriken_img = pygame.image.load('images/shuriken.png')
+shuriken_img = load_image('images/shuriken.png')
 shuriken_img = pygame.transform.scale(shuriken_img, (25, 25))
 shuriken_img2 = shuriken_img
 shuriken_img3 = shuriken_img
 shuriken_img4 = shuriken_img
-shuriken_dark_img = pygame.image.load('images/shuriken_darkpath.png')
+shuriken_dark_img = load_image('images/shuriken_darkpath.png')
 shuriken_dark_img = pygame.transform.scale(shuriken_dark_img, (25, 25))
-shuriken_red_img = pygame.image.load('images/shuriken_red.png')
+shuriken_red_img = load_image('images/shuriken_red.png')
 shuriken_red_img = pygame.transform.smoothscale(shuriken_red_img, (30, 30))
 
 

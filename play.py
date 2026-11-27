@@ -6,6 +6,13 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import sys
+
+# Create the window before the game modules load their images, so the images are converted for fast drawing
+pygame.init()
+pygame.display.set_caption("Tower Defense Game")
+window_size = (900, 600)
+window = pygame.display.set_mode(window_size)
+
 from enemy import Enemy
 from tower import Tower, tower_types, Totem, CannonBall, Burger
 import placements as place
@@ -16,6 +23,7 @@ import sounds
 import hints
 from accounts import Account, load_profile, load_most_recent_profile, save_profile
 from game_metrics import Game
+from assets import sys_font
 
 pygame.font.init()  # Initialize font module
 
@@ -28,15 +36,8 @@ init_last_round_restarts = 5
 restart_testing = False
 print_pos = False
 
-# Initialize Pygame
-pygame.init()
-
-pygame.display.set_caption("Tower Defense Game")
 clock = pygame.time.Clock()
 
-# Set up the display
-window_size = (900, 600)
-window = pygame.display.set_mode(window_size)
 side_panel_width = 200
 side_panel_height = window_size[1]  # same as the game window height
 side_panel_rect = pygame.Rect(window_size[0] - side_panel_width, 0, side_panel_width, side_panel_height)
@@ -461,7 +462,7 @@ while game.running:
 
         game.enemies = [enemy for enemy in game.enemies if enemy.health > 0 and not enemy.reached_end]
 
-    font = pygame.font.SysFont(None, 36)
+    font = sys_font(None, 36)
 
     if game.lives_highlight > 0:
         lives_text = font.render(f"Lives: {game.lives}", True, (0, 255, 0))
@@ -472,11 +473,11 @@ while game.running:
     window.blit(lives_text, (10, 10))
 
     # In your game loop, within the rendering section
-    font = pygame.font.SysFont(None, 36)
+    font = sys_font(None, 36)
     money_text = font.render(f"Money: ${int(game.player_money)}", True, gmap.font_color)
     window.blit(money_text, (10, 50))  # Adjust position as needed
 
-    font = pygame.font.SysFont(None, 36)
+    font = sys_font(None, 36)
     lives_text = font.render(f"Level: {game.level_num}", True, gmap.font_color)
     window.blit(lives_text, (200, 10))
 
@@ -576,7 +577,7 @@ while game.running:
         crown_continue_button, crown_maps_button = nav.draw_crown_window(window, game.aced)
 
     if game.game_over:  # Game over condition
-        font = pygame.font.SysFont(None, 72)
+        font = sys_font(None, 72)
 
         # Do we want to always bring up window - not if have last round restarts for now
         if not game.displayed_game_over and (game.map_complete or game.last_round_restarts <= 0):

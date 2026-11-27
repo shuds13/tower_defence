@@ -1,51 +1,52 @@
 import copy
 import pygame
+from assets import load_image, sys_font
 import navigation as nav
 import time
 import sounds
 import spiral
 from accounts import profile_menu, new_profile
 
-crown_img = pygame.image.load('images/crown.png')
+crown_img = load_image('images/crown.png')
 crown_img = pygame.transform.scale(crown_img, (50, 50))
-crownace_img = pygame.image.load('images/crown_ace.png')
+crownace_img = load_image('images/crown_ace.png')
 crownace_img = pygame.transform.scale(crownace_img, (50, 50))
-crown_extended_img = pygame.transform.scale(pygame.image.load('images/crown_extended.png'), (40, 40))  # placeholder art
-save_img = pygame.image.load('images/save.png')
+crown_extended_img = pygame.transform.scale(load_image('images/crown_extended.png'), (40, 40))  # placeholder art
+save_img = load_image('images/save.png')
 save_img = pygame.transform.scale(save_img, (40, 40))
-right_img = pygame.image.load('images/right_chevron.png')
+right_img = load_image('images/right_chevron.png')
 right_img = pygame.transform.scale(right_img, (60, 60))
 left_img =  pygame.transform.flip(right_img, True, False)
 
-lightmode_img = pygame.image.load('images/lightmode.png')
+lightmode_img = load_image('images/lightmode.png')
 lightmode_img = pygame.transform.scale(lightmode_img, (50, 50))
-darkmode_img = pygame.image.load('images/darkmode.png')
+darkmode_img = load_image('images/darkmode.png')
 darkmode_img = pygame.transform.scale(darkmode_img, (50, 50))
 
-#moon_img = pygame.image.load('images/moon.png')
+#moon_img = load_image('images/moon.png')
 #moon_img = pygame.transform.scale(moon_img, (50, 50))
 
-house1_img = pygame.image.load('images/house1.png')
+house1_img = load_image('images/house1.png')
 house1_img = pygame.transform.scale(house1_img, (160, 140))
-house2_img = pygame.image.load('images/house2.png')
+house2_img = load_image('images/house2.png')
 house2_img = pygame.transform.scale(house2_img, (160, 140))
-house3_img = pygame.image.load('images/house3.png')
+house3_img = load_image('images/house3.png')
 house3_img = pygame.transform.scale(house3_img, (160, 140))
-tree_img = pygame.image.load('images/tree1.png')
+tree_img = load_image('images/tree1.png')
 tree1_img = pygame.transform.scale(tree_img, (70, 160))
 bigtree_img = pygame.transform.scale(tree_img, (90, 180))
 shorttree_img = pygame.transform.scale(tree_img, (90, 60))
 shortwidetree_img = pygame.transform.scale(tree_img, (160, 60))
 gianttree_img = pygame.transform.scale(tree_img, (130, 260))
 
-explosion_img = pygame.image.load('images/explosion.png')
+explosion_img = load_image('images/explosion.png')
 
-candle_img = pygame.image.load('images/candle.png')
+candle_img = load_image('images/candle.png')
 candle_img = pygame.transform.scale(candle_img, (40, 80))
-#eye_img = pygame.image.load('images/eye.png')
+#eye_img = load_image('images/eye.png')
 #eye_img = pygame.transform.scale(eye_img, (90, 90))
 
-gravestone_img = pygame.image.load('images/gravestone.png')
+gravestone_img = load_image('images/gravestone.png')
 gravestone_img = pygame.transform.scale(gravestone_img, (55, 88))
 
 # Used in removables so does not store images
@@ -164,7 +165,7 @@ def display_maps_page(display, surface, account, maps_page, width, height, font_
     maps = []
     gmap = None
 
-    font = pygame.font.SysFont(None, 24)
+    font = sys_font(None, 24)
 
     for count, map_class in enumerate(maps_page):
         gmap = map_class()
@@ -244,7 +245,7 @@ def draw_map_window(display, surface, window_size, account=None, page=1):
     window_width = window_size[0]
     window_height = window_size[1]
 
-    font_title = pygame.font.SysFont('Arial', 24, bold=True)  # Choose a font and size
+    font_title = sys_font('Arial', 24, bold=True)  # Choose a font and size
     map_menu_text = font_title.render("Choose a map", True, font_color)
     map_menu_rect = map_menu_text.get_rect(center=(window_width//2, 20))
     surface.blit(map_menu_text, map_menu_rect.topleft)
