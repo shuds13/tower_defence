@@ -661,7 +661,7 @@ class KingBlob2(KingBlob):
 
 
 class KingBlob3(KingBlob):
-    health = 2000
+    health = 1000
     spawn = True
     def __init__(self, path, position=None, path_index=0):
         super().__init__(path, position, path_index)
@@ -669,9 +669,9 @@ class KingBlob3(KingBlob):
         self.speed = 1
         self.image = king3_img
         # Releases iron coated fast pink blobs
-        self.spawns = [(Enemy106, 150)]
+        self.spawns = [(Enemy106, 100)]
         self.spawn_type = Enemy106
-        self.spawn_count = 150
+        self.spawn_count = 100
         self.size = 3
         self.value = self.health + sum(count * cls(path).value for cls, count in self.spawns)
 
