@@ -1,4 +1,5 @@
 import copy
+import math
 import pygame
 from assets import load_image, sys_font
 import navigation as nav
@@ -374,6 +375,8 @@ def map_select():
     draw_map_window()
 
 class Map():
+    round_joints = False  # draw a circle at each path point (smooths curves made of many short sections)
+
     def __init__(self):
         self.alternate_paths = False
         self.font_color = (255, 255, 255)
@@ -381,6 +384,18 @@ class Map():
 
     def paint_features(self, window):
         pass
+
+    def round_path_points(self, spacing=3):
+        """Points every few pixels along all paths, for drawing curved paths with circles (worked out once)."""
+        if getattr(self, '_round_points', None) is None:
+            points = []
+            for path in self.paths:
+                for (x1, y1), (x2, y2) in zip(path, path[1:]):
+                    steps = max(1, int(math.hypot(x2 - x1, y2 - y1) / spacing))
+                    points.extend((x1 + (x2 - x1) * i / steps, y1 + (y2 - y1) * i / steps) for i in range(steps))
+                points.append(path[-1])
+            self._round_points = points
+        return self._round_points
 
     def can_I_place(self, pos, w, h):
         return True
@@ -1456,8 +1471,71 @@ class Haunted(Map):
         return self.objects
 
 
+def wave_path(x_start, x_end, mid_y, amplitude, wavelength, step=8):
+    """Points along a sine wave, worked out once when the map is made."""
+    points = []
+    x = x_start
+    while x < x_end:
+        points.append((x, mid_y + amplitude * math.sin(2 * math.pi * x / wavelength)))
+        x += step
+    points.append((x_end, mid_y + amplitude * math.sin(2 * math.pi * x_end / wavelength)))
+    return points
+
+
+class Serpent(Map):
+    def __init__(self):
+        super().__init__()
+        self.name = "Serpent"
+        self.round_joints = True
+        self.difficulty = 2
+        self.background_color = (60, 90, 40)
+        self.path_thickness = 20
+        self.path_color = (205, 180, 120)
+        self.paths = [wave_path(0, 700, 300, 170, 350)]
+
+        # A tree in each bend, where a tower would cover the most path
+        self.objects = [(52, 220, 70, 160), (227, 220, 70, 160), (402, 220, 70, 160), (577, 220, 70, 160)]
+        # Water along the bottom and top with wavy shores (blocks placement only - towers shoot over water)
+        self.shore = [(x, self.shore_y(x)) for x in range(0, 701, 10)]
+        self.lake = self.shore + [(700, 600), (0, 600)]
+        self.top_shore = [(x, self.top_shore_y(x)) for x in range(0, 701, 10)]
+        self.top_water = [(0, 0), (700, 0)] + self.top_shore[::-1]
+
+    @staticmethod
+    def shore_y(x):
+        return 507 + 14 * math.sin(x / 47) + 7 * math.sin(x / 19 + 1)
+
+    @staticmethod
+    def top_shore_y(x):
+        return 93 + 14 * math.sin(x / 43 + 2) + 7 * math.sin(x / 17)
+
+    def paint_features(self, window):
+        pygame.draw.polygon(window, (40, 90, 150), self.lake)
+        pygame.draw.lines(window, (90, 150, 200), False, self.shore, 4)
+        pygame.draw.polygon(window, (40, 90, 150), self.top_water)
+        pygame.draw.lines(window, (90, 150, 200), False, self.top_shore, 4)
+        for tree in self.objects:
+            window.blit(tree1_img, tree)
+
+    def can_I_place(self, pos, w, h):
+        for tree in self.objects:
+            if not is_rect_out_box(pos[0], pos[1], w, h, tree, wh=True):
+                return False
+        # Not if any part of the tower is in the water (same 5px leeway as other obstacles)
+        bottom = pos[1] + h / 2 - 5
+        top = pos[1] - h / 2 + 5
+        for x in (pos[0] - w / 2, pos[0], pos[0] + w / 2):
+            if bottom > self.shore_y(x) or top < self.top_shore_y(x):
+                return False
+        return True
+
+    def barriers(self):
+        """A list of barriers"""
+        return self.objects
+
+
 map_classes  = [PicnicPlace, Spiral, Staircase, Diamond, Valley, Square,
                 Village, Vase, Castle, Pentagram3, Distortion, DarkForest,
-                Tangle, Hermit, Suburbia, Isthmus, Creek, Catacombs] #, AAA, BBB, Haunted]
+                Tangle, Hermit, Suburbia, Isthmus, Creek, Catacombs, Serpent] #, AAA, BBB, Haunted]
 
 difficulty  = {1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"}

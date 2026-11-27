@@ -426,9 +426,12 @@ while game.running:
         alert_timer -= 1
 
     # Draw the paths - try drawing before towers how does it look
-    for path in paths:
+    for path in (paths if not gmap.round_joints else []):
         for i in range(len(path) - 1):
             pygame.draw.line(window, (path_color), path[i], path[i+1], path_thickness)
+    if gmap.round_joints:  # curved paths: circles packed along the path give an even width with no notches
+        for point in gmap.round_path_points():
+            pygame.draw.circle(window, path_color, point, path_thickness / 2)
 
     for tower in game.towers:
         if game.active:
