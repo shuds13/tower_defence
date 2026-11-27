@@ -17,6 +17,11 @@ king_img = load_image('images/kingblob.png')
 king_img = pygame.transform.scale(king_img, (100, 100))
 king2_img = load_image('images/kingblob_green.png')
 king2_img = pygame.transform.scale(king2_img, (110, 110))
+troll_wagon_img = load_image('images/troll_wagon.png')
+troll_wagon_img = pygame.transform.smoothscale(troll_wagon_img, (168, 120))  # faces right
+troll_wagon_left_img = pygame.transform.flip(troll_wagon_img, True, False)
+king3_img = load_image('images/kingblob_red.png')
+king3_img = pygame.transform.scale(king3_img, (125, 125))
 stone_head_img = load_image('images/stone_head.png')
 stone_head_img = pygame.transform.smoothscale(stone_head_img, (stone_head_img.get_width() * 96 // stone_head_img.get_height(), 96))
 
@@ -112,6 +117,10 @@ class Enemy:
         pygame.draw.circle(window, color, (int(x)-2, int(y)-3), 4+esize)
         pygame.draw.circle(window, color, (int(x)+2, int(y)+4), 4+esize)
         pygame.draw.circle(window, color, (int(x)+2, int(y)-3), 4+esize)
+
+    def on_spawn(self, enemies):
+        """Called when a level spawns this enemy, before it joins the list"""
+        pass
 
     def draw(self, window):
         x = self.position[0]
@@ -353,6 +362,27 @@ class Enemy5(Enemy4):
         return val
 
 
+class Enemy6(Enemy5):
+    """Fastest blob - quicker than meteors"""
+    health = 6
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.base_speed = 8
+        self.speed = 8
+        self.color = (255, 105, 180)
+
+    def take_damage(self, damage):
+        val = super().take_damage(damage)
+        if self.health == 5:
+            self.color = (127, 0, 255)
+            self.base_speed = 6
+            self.speed = 6
+            self.value = 5
+            if self.glued > 0:
+                self.speed *= self.slow_factor
+        return val
+
+
 class Enemy101(Enemy):
     health = 4
     def __init__(self, path, position=None, path_index=0):
@@ -391,6 +421,14 @@ class Enemy105(Enemy5):
         super().__init__(path, position, path_index)
         self.fortified = True
         self.fort_health = 10
+
+
+class Enemy106(Enemy6):
+    health = 25
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.fortified = True
+        self.fort_health = 19
 
 
 class Ghost(Enemy):
@@ -607,6 +645,89 @@ class KingBlob2(KingBlob):
         self.value = self.health + self.spawn_count*self.spawn_type.health
 
 
+class KingBlob3(KingBlob):
+    health = 2000
+    spawn = True
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.base_speed = 1
+        self.speed = 1
+        self.image = king3_img
+        # Releases fast pink blobs and two King Blob 2s
+        self.spawns = [(Enemy106, 150), (KingBlob2, 2)]
+        self.spawn_type = Enemy106
+        self.spawn_count = 152
+        self.size = 3
+        self.value = self.health + sum(count * cls(path).value for cls, count in self.spawns)
+
+    def spawn_func(self, enemies):
+        points = self.generate_point_cloud(self.position, self.spawn_count, spread=100)
+        kinds = [cls for cls, count in self.spawns for _ in range(count)]
+        for cls, point in zip(kinds, points):
+            enemy = cls(self.path, point, self.path_index)
+            enemy.distance = self.distance
+            enemies.append(enemy)
+
+
+class TrollWagon(KingBlob):
+    """Pulled along by armoured trolls; armoured trolls burst out when it breaks"""
+    health = 800
+    spawn = True
+    def __init__(self, path, position=None, path_index=0):
+        super().__init__(path, position, path_index)
+        self.base_speed = 2  # same as the trolls pulling it
+        self.speed = 2
+        self.image = troll_wagon_img
+        self.spawn_type = ArmoredTroll
+        self.spawn_count = 40
+        self.size = 3
+        self.value = self.health + self.spawn_count * self.spawn_type(path).value
+        self.puller = None
+
+    def on_spawn(self, enemies):
+        # Chained to the nearest armoured giant troll or wagon ahead on the same path
+        ahead = [e for e in enemies if isinstance(e, (ArmoredGiantTroll, TrollWagon)) and e.path is self.path]
+        self.puller = min(ahead, key=lambda e: e.distance) if ahead else None
+
+    def facing(self):
+        return 1 if self.image is troll_wagon_img else -1
+
+    def draw(self, window):
+        # Face the way it is going (keeps the last facing on up/down stretches)
+        if self.path_index < len(self.path) - 1:
+            dx = self.path[self.path_index + 1][0] - self.position[0]
+            if dx > 0.5:
+                self.image = troll_wagon_img
+            elif dx < -0.5:
+                self.image = troll_wagon_left_img
+        self.draw_chain(window)
+        super().draw(window)
+
+    def draw_chain(self, window):
+        """Chain from the hitch to the troll pulling the wagon, while that troll is alive and close"""
+        puller = self.puller
+        if puller is None or puller.health <= 0 or puller.reached_end:
+            return
+        start = (self.position[0] + 76 * self.facing(), self.position[1] + 28)  # hitch ring
+        if isinstance(puller, TrollWagon):
+            end = (puller.position[0] - 80 * puller.facing(), puller.position[1] + 28)  # back of the wagon ahead
+        else:
+            tx, ty = puller.position[0], puller.position[1] + 12  # troll's hands
+            dx, dy = tx - start[0], ty - start[1]
+            length = math.hypot(dx, dy)
+            end = (tx - dx / length * 28, ty - dy / length * 28) if length > 28 else start  # stop at the troll's back
+        if math.hypot(end[0] - start[0], end[1] - start[1]) > 120:
+            return  # separated (e.g. glued) - chain would look wrong
+        n = max(2, int(math.hypot(end[0] - start[0], end[1] - start[1]) / 8))
+        for i in range(n + 1):
+            x = start[0] + (end[0] - start[0]) * i / n
+            y = start[1] + (end[1] - start[1]) * i / n
+            # links alternate flat and upright; dark edge so they show on any background
+            rect = (x - 6, y - 4, 12, 8) if i % 2 else (x - 4, y - 6, 8, 12)
+            pygame.draw.ellipse(window, (30, 30, 35), pygame.Rect(rect).inflate(2, 2), 4)
+            pygame.draw.ellipse(window, (175, 175, 185), rect, 3)
+
+
 # Not sure if this should release meteors or big ghosts.
 class StoneHead(KingBlob):
     health = 250
@@ -635,6 +756,7 @@ enemy_types = {1: Enemy, 2: Enemy2, 3: Enemy3, 4: Enemy4, 5: Enemy5,
                10: Ghost, 11: Troll, 12: GiantTroll, 13: Devil, 14: BigGhost, 15: Meteor, 16: BigDevil,
                17: ArmoredTroll, 18: ArmoredGiantTroll,
                19: BlackMeteor,
-               101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 105:Enemy105,
-               110: StoneHead,
-               201: KingBlob, 301: KingBlob2}
+               6: Enemy6,
+               101: Enemy101, 102: Enemy102, 103: Enemy103, 104: Enemy104, 105:Enemy105, 106: Enemy106,
+               110: StoneHead, 120: TrollWagon,
+               201: KingBlob, 301: KingBlob2, 401: KingBlob3}

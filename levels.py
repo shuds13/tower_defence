@@ -22,7 +22,9 @@ class Level():
     def spawn_enemy(self, enemies, path):
         enemy_id = self.enemy_types[self.phase]
         enemy_class = enemy_types[enemy_id]
-        enemies.append(enemy_class(path))
+        enemy = enemy_class(path)
+        enemy.on_spawn(enemies)
+        enemies.append(enemy)
 
 
 class Level1(Level):
@@ -706,7 +708,96 @@ class Level70(Level):
         self.enemy_types = [110]
 
 
+class Level71(Level):
+    # Swarm opener, first fast pink 106s
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 260
+        self.spawn_intervals = [3,  15,  2,   20,  2,   6]
+        self.phase_counts =    [60, 80,  140, 160, 220, 260]
+        self.enemy_types =     [5,  106, 104, 14,  105, 106]
+
+class Level72(Level):
+    # Armoured trolls, then a troll wagon pulled by two armoured giant trolls
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 26
+        self.spawn_intervals = [20, 60, 15, 44, 78]  # pullers close together, wagon chained a short way behind
+        self.phase_counts =    [10, 13, 23, 25, 26]
+        self.enemy_types =     [17, 18, 17, 18, 120]
+
+class Level73(Level):
+    # Black meteors and big devils together
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 60
+        self.spawn_intervals = [40, 30, 25, 20]
+        self.phase_counts =    [10, 25, 40, 60]
+        self.enemy_types =     [16, 19, 16, 19]
+
+class Level74(Level):
+    # Biggest swarm, ending in a King Blob 2
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 500
+        self.spawn_intervals = [1,  2,   2,   1,   2,   4,   1,   3,   60]
+        self.phase_counts =    [60, 120, 200, 260, 330, 380, 440, 499, 500]
+        self.enemy_types =     [3,  103, 104, 5,   105, 106, 104, 106, 301]
+
+class Level75(Level):
+    # Four Stone Heads
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 4
+        self.spawn_intervals = [45]
+        self.phase_counts = [4]
+        self.enemy_types = [110]
+
+class Level76(Level):
+    # Invisible: ghosts and devils
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 240
+        self.spawn_intervals = [2,  8,   3,   20,  6,   15]
+        self.phase_counts =    [80, 110, 170, 190, 220, 240]
+        self.enemy_types =     [10, 14,  13,  16,  14,  16]
+
+class Level77(Level):
+    # Armoured trolls with meteors, then two troll wagons chained together
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 144
+        self.spawn_intervals = [10, 5,  40, 4,   25,  40,  44,  78,  100]
+        self.phase_counts =    [30, 70, 78, 120, 130, 140, 142, 143, 144]
+        self.enemy_types =     [17, 15, 18, 15,  19,  18,  18,  120, 120]
+
+class Level78(Level):
+    # Black meteor swarm
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 140
+        self.spawn_intervals = [15, 4,  3]
+        self.phase_counts =    [40, 80, 140]
+        self.enemy_types =     [19, 15, 19]
+
+class Level79(Level):
+    # Gauntlet before the last boss
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 300
+        self.spawn_intervals = [3,  2,   40,  30,  20,  90,  2]
+        self.phase_counts =    [80, 160, 170, 180, 200, 202, 300]
+        self.enemy_types =     [106, 105, 18, 16,  19,  301, 106]
+
+class Level80(Level):
+    def __init__(self):
+        Level.__init__(self)
+        self.num_enemies = 1
+        self.spawn_intervals = [1]
+        self.phase_counts = [1]
+        self.enemy_types = [401]
+
 crown_level = 60  # first crown: the original levels (game continues after this)
-max_level = 70  # second crown for completing all levels  # TODO get this from last key in levels
+max_level = 80  # second crown for completing all levels  # TODO get this from last key in levels
 
 levels = {i: globals()[f'Level{i}'] for i in range(1, max_level+1)}
