@@ -26,10 +26,10 @@ def is_hovered(rect):
 
 
 def hover_color(color, rect):
-    """Lighter version of a button colour while the mouse is over it"""
+    """Slightly darker version of a button colour while the mouse is over it"""
     if not is_hovered(rect):
         return color
-    return tuple(min(255, c + (255 - c) * 0.3) for c in color[:3])
+    return tuple(round(c * 0.82) for c in color[:3])
 
 
 def draw_button(surface, text, pos, size, color=(0, 0, 255), fontsize=30):
